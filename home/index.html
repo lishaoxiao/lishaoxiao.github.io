@@ -162,6 +162,107 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/05/04/java-class-file/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="冲破黎明前的黑暗">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/05/04/java-class-file/" class="post-title-link" itemprop="url">java类文件原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-05-04 22:25:40 / 修改时间：22:29:26" itemprop="dateCreated datePublished" datetime="2022-05-04T22:25:40+08:00">2022-05-04</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="java类文件原理"><a href="#java类文件原理" class="headerlink" title="java类文件原理"></a>java类文件原理</h1><blockquote>
+<p>作者： breakDraw<br>博客地址：<a target="_blank" rel="noopener" href="https://blog.csdn.net/a799581229">https://blog.csdn.net/a799581229</a><br>联系方式： qq-799581229   wx 15990050657</p>
+</blockquote>
+<h1 id="class文件结构"><a href="#class文件结构" class="headerlink" title="class文件结构"></a>class文件结构</h1><p><img src="/images/java-class-file/5d1a2d97e4b0f7ca49d84a3a-1651674390359.png" alt="java类文件结构"></p>
+<p>Q: 常量池计数器是什么？<br>A:<br>constant_pool_count常量池的组成元素 常量池项 (cp_info) 的个数<br>是常量池的前2个字节<br>紧接着会排列着 constant_pool_count-1 个常量池项 (cp_info)</p>
+<hr>
+<p>Q： 为什么常量池计数器要从1开始计数？即1的时候，才代表0个常量<br>A:<br>有些时候需要表达不引用任何常量池对象，所以用0来代替<br> <img src="/images/java-class-file/2508e0b68cf482bcc60e05ce4ac543ee98b4bca9.png" alt="2508e0b68cf482bcc60e05ce4ac543ee98b4bca9"> </p>
+<p>例如匿名类就是没有名字的，但是类文件结构中，类名那边总需要填入类名常量索引，因此可以填入0，表示“没有类名”的意思。</p>
+<p>还有object类，是没有父类的，所以他的父类索引也是0</p>
+<hr>
+<p>Q: jvm符合Synthetic自动生成的字段和方法有哪些？<br>A:</p>
+<hr>
+<p>Q: 桥接方法是什么？<br>A:<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/jiaobuchong/article/details/83722193">https://blog.csdn.net/jiaobuchong/article/details/83722193</a></p>
+<hr>
+<p>Q: jvm运算指令会抛出哪些异常？<br>A:<br>除法和求余指令钟出现除数0时，会有ArthmeticException<br>其他例如溢出、 浮点计算都不会溢出，  存在无穷大、NAN等定义。<br>所有使用NAN作为操作数的算数操作，都会返回NaN。</p>
+<hr>
+<p>Q:<br>java虚拟机对浮点数运算时，有哪些特点和规则？<br>A:</p>
+<ul>
+<li>遵循IEEE754规范， 支持非正规浮点数 和逐级下溢</li>
+<li>精度选择：按照IEEE754中的默认舍入模式： 最接近数模式，即一定是接近原数值的向上或者向下舍入，如果一样接近，则选择最低有效位为0的</li>
+<li>浮点数转整数，有3个连续的规则：</li>
+</ul>
+<ol>
+<li>如果是NaN，则转成0 </li>
+<li>如果不是无穷大， 则左向零舍入， 选择最接近但是不大于原值的数字来作为最精确的舍入结果（直接截断数字）</li>
+<li>如果是无穷大，则转成整数能表示的最大或者最小正数<br>double转float类似。</li>
+</ol>
+<hr>
+<p>Q: long或者int， 强转成更低级的时候，怎么处理的<br>A:<br>简单丢弃高位字节。  因此符号可能发生变化。</p>
+<hr>
+<p>Q:<br> invokevirtual指令和invokedynamic指令有什么区别？<br>A:<br>前者是虚拟机内部的分派逻辑<br>后者是用户设定的引导方法（todo:不太懂，待补充）</p>
+<hr>
+<p>Q: catch操作是字节码指令实现的吗？<br>A:<br>错误， catch （xxx e）{do something} 这段代码是由code属性里的异常表实现的<br>涉及异常的指令码是 throw new exception这个抛出的动作</p>
+<hr>
+<p>Q:<br>jvm的synchronized关键字本质是monitorenter和monitorexit两个指令<br>但是如果发生异常了，monitorexit怎么办？<br>A:<br>生成code字节码时，jvm会自动为synchronized生成异常表和throw指令，保证中间同步块发生异常时，monitorexit能够正确被指令（类似于放到了一个自动生成的finally代码中）</p>
+<hr>
+<p>Q: java虚拟机的私有化实现主要有哪两种方式？<br>A:<br>将输入的java虚拟机代码在加载或者执行时， 翻译成另外一种虚拟机的指令集<br>将输入的虚拟机代码在加载或者执行时，翻译成宿主机CPU的本地指令集（JIT代码生成技术）</p>
+<hr>
+<p>Q:jvm的异常实现字节码是怎么样的？<br>A:<br> <img src="/images/java-class-file/3d1ef2dd7d72b2b5acc9faa7ce6ed3c6cb329740.png" alt="3d1ef2dd7d72b2b5acc9faa7ce6ed3c6cb329740"><br>可以看到先new一个异常，再抛出，然后跳转。<br> <img src="/images/java-class-file/4316359f40262a4c0eab32017477234236da05ed.png" alt="4316359f40262a4c0eab32017477234236da05ed"><br> <img src="/images/java-class-file/837c4e9b32cf090067bce54435ec290539778da9.png" alt="837c4e9b32cf090067bce54435ec290539778da9"> </p>
+<hr>
+<p>Q: 异常的finally操作代码加在哪里？<br>A:<br>finally模块在java语言中是必须执行的，在编译的时候，通过将finally中代码块分别在try模块的最后和catch模块的最后都复制了一份，通过这样来保证finally的必定执行</p>
+<hr>
+<p>finally里做return会覆盖try的return的原理：<br>获取到了对象中的finalValue，写入栈顶，然后返回，这里相当于覆盖了return变量里的值，因此try中的return失效了<br><img src="/images/java-class-file/f660e6344a53f698204c7c1dc5fd102a93232d5f.png" alt="f660e6344a53f698204c7c1dc5fd102a93232d5f"> </p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2022/05/03/java-object-in-heap/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -307,7 +408,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/05/03/why-study-java-stack/" class="post-title-link" itemprop="url">【反八股系列】为什么我们要学习java虚拟机栈的原理？</a>
+            <a href="/2022/05/03/why-study-java-stack/" class="post-title-link" itemprop="url">【反八股系列】一、为什么我们要学习java虚拟机栈的原理？</a>
         </h2>
 
         <div class="post-meta">
@@ -316,10 +417,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-05-03 19:15:36 / 修改时间：23:06:07" itemprop="dateCreated datePublished" datetime="2022-05-03T19:15:36+08:00">2022-05-03</time>
+              <time title="创建时间：2022-05-03 19:15:36" itemprop="dateCreated datePublished" datetime="2022-05-03T19:15:36+08:00">2022-05-03</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-04 15:15:59" itemprop="dateModified" datetime="2022-05-04T15:15:59+08:00">2022-05-04</time>
+              </span>
 
           
 
@@ -332,8 +439,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>反八股系列的2大宗旨：</p>
+          <p>曾经的八股文：</p>
+<p>xxx</p>
+<p>现在的八股文：</p>
+<p>xxx</p>
+<p>为了找回对编程最初的乐趣</p>
+<p>决定自制反八股系列的知识视频</p>
+<p>本系列的三大宗旨：</p>
 <p>拒绝死记硬背</p>
+<p>拒绝管中窥豹</p>
 <p>拒绝浅尝则止</p>
 <hr>
 <p>对于jvm的虚拟机内存结构，大家应该都能背会有“2个堆”、“2个栈”、“1个计数器” 这种内容，就像下面这张图一样。  其中java的栈是虚拟机指令执行的关键。</p>
@@ -341,37 +455,35 @@
 <p>哦，是面试要用么？然而个人不希望这些内容成为新一代的“科技八股文”。</p>
 <p>因此本系列希望先从为什么学习入手，再深入到更深层次的东西，，希望能带来的是长久的收获，而非短暂的记忆。</p>
 <hr>
-<p>首先回答第一个问题， 为什么要学习背后的虚拟机栈。</p>
+<p>为什么我们要学习背后的虚拟机栈。</p>
 <p>首先，你debug的时候，你都不知道这个是什么东西，瞎猜可不行，你要知道暂停时现在是个请什么情况， IDE上的东西到底是什么，他们对程序运行又有什么影响</p>
 <p>[debug图片]</p>
-<p>其次，这有部分内容是垃圾收集的前置知识点， 栈帧有关， JIT优化和栈有关，如果你不知道，遇到线管知识点，只会产生“这是啥”“这又是啥”，背吧背吧， 然后陷入背诵八股文的折磨中。</p>
-<p>[知识点图谱]</p>
+<p>其次，虚拟机栈的内容是很多重要知识的前置知识点。  垃圾收集的GC-ROOT与栈有关， JIT优化和栈有关。如果你不知道，那么在遇到相关知识点，只会产生“这是啥”、“这又是啥”的连锁反应， 就有可能陷入背诵八股文的折磨却不知所以然的地步。</p>
 <p>最后，java虚拟机栈为我们生动展示了 一个小心的迷你的CPU执行逻辑。  </p>
-<p>[cpu图]</p>
-<p>[CSAPP图]</p>
 <p>对于很多没有学习过计算机底层原理（例如CSAPP这本书） 的人来说， 是完全不知道计算机是如何执行机器码指令的。 而java虚拟机栈可以更好理解 指令是如何运行的， 虽然这个指令不是真正的机器码执行， 而是jvm字节码指令。  但是通过字节码指令， 我们可以快速对应到java中常见的各种操作。</p>
 <p>这对于很多入门时直奔删减改查的同学来说， 是不可多得的学习底层的机会。</p>
 <p>另外数据结构里学习的栈的知识也会在这里得以应用。</p>
 <hr>
-<p>清楚了上述好处后，我们开始深入了解虚拟机栈背后的东西。</p>
+<p>清楚了上述好处后，我们开始深入了解虚拟机栈的细节。</p>
 <p>首先，栈帧是什么？</p>
-<p>当我们每进入一个方法，就生成了一个栈帧， 此刻只有栈顶在运行， 而前面的方法全部暂定（咋瓦鲁多）</p>
-<p>对于栈帧， 经典4个词：</p>
-<p>局部变量表</p>
-<p>操作数栈</p>
-<p>动态链接</p>
-<p>方法返回地址</p>
-<p>其实与之配合的还有个“程序计数器”，共同实现了jvm指令的执行。</p>
-<p>首先拿局部变量表而言， 为什么要有这个东西？</p>
-<p>这个可能好理解</p>
-<p>我们声明的变量， 直接放到局部变量表中。</p>
-<p>但是，变量表有多大呢？</p>
+<p>不需要去记忆概念，就记得我们调试时，框框里的每一行，就是一个栈帧。 可以看到除了栈顶的方法正在执行外， 其他行都仿佛静止了一般， 因此就像拍照时的一帧。</p>
+<p>对于栈帧里有什么， 经典背诵4件套：</p>
+<p>局部变量表，</p>
+<p>操作数栈，</p>
+<p>动态链接，</p>
+<p>方法返回地址，</p>
+<p>其实与上面这4样配合的，还有个虚拟机栈所使用的“程序计数器”，才共同实现了jvm指令的执行。</p>
+<p>首先对局部变量表而言， 为什么要有这个东西？</p>
+<p>5 4 3 2 1 .</p>
+<p>因为我们声明的局部变量a、b、c等， 都需要有一个地方存放， 但局部变量只有这个方法中才会使用， 所以才会在栈帧中开辟局部连量表的空间。</p>
+<p>那么，变量表有多大呢？</p>
 <p>编译时指定定死了</p>
 <p>为什么能定死？</p>
 <p>因为编译器很聪明，通过分析代码，他就能知道到底这个方法要用几个变量。</p>
-<p>那我在一个for循环里反复生成一个变量，这个不会很大吗？</p>
-<p>所以会支持变量表的复用，  编译器会知道你在重复声明变量，在实际字节码指令中写下“这个变量继续放到第8个槽”， 这样就会覆盖了之前使用的槽了。 </p>
-<p>你问我怎么分析的？ 请阅读《编译原理》</p>
+<p>为什么我们需要思考这个问题？因为我们要考虑我们写的代码，可能会带来多大的局部栈的消耗。</p>
+<p>例如，我在一个for循环里反复定义同一个变量，那局部变量表是不是在无限增大？我是不是要提前加大栈的分配内存？</p>
+<p>其实不需要， 因为编译器支持变量表的复用，  它会知道你在重复声明变量，所以实际字节码指令中，它会明确写下“这个变量继续放到前面那个槽”的指令，  从而覆盖使用了之前的槽。 </p>
+<p>你问我怎么分析的？ 请阅读《编译原理》。</p>
 <p>然后操作数栈又是干什么的？ 如果要做a+b,我直接从变量表上取a的值和b的值，加起来不就好了？</p>
 <p>直接让CPU取a和b的值拿去算完回来，不就好了？</p>
 <p>那我如果是 a + b*c呢</p>
@@ -792,7 +904,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-count">6</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
