@@ -167,6 +167,243 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/05/05/java-class-load/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="冲破黎明前的黑暗">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/05/05/java-class-load/" class="post-title-link" itemprop="url">java类加载核心原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-05-05 23:41:35" itemprop="dateCreated datePublished" datetime="2022-05-05T23:41:35+08:00">2022-05-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-06 00:09:11" itemprop="dateModified" datetime="2022-05-06T00:09:11+08:00">2022-05-06</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="java类加载核心原理"><a href="#java类加载核心原理" class="headerlink" title="java类加载核心原理"></a>java类加载核心原理</h1><p><img src="/images/java-class-load/5e7eed6ce4b08b6157409373-1651765505812.png" alt="java类加载原理大图"></p>
+<p>除invokedynamic指令外， 其他的涉及符号引用的指令，都会做缓存，在常量池中记录真正的类或方法的引用位置，并把常量标记为已解析状态 。</p>
+<hr>
+<p>Q: 类引用解析过程中， 对数组类符号引用的有什么区别？<br>A:<br>数组类的符号引用ClassInfo，一般只用于指令中的引用。（因为不会有继承自数组类的情况）<br>这个引用的UTF8字符串常量名字里，会携带一个”[L”， 例如”[Ljava/lang/Integer”</p>
+<hr>
+<p>Q: 接口方法引用CONSTANT_inteface_method_ref_info和类方法引用CONSTANT_methodref_info有什么区别？</p>
+<hr>
+<p>cinit方法 是编译器收集所有类静态变量的赋值动作和静态语句块static{}中的语句合并产生，按照顺序收集， 因此类加载赋值的顺序和类定义顺序有关，原理就取决于cinit生成的原理。</p>
+<hr>
+<p>Q: 下面这段代码哪一行会编译错误？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">	<span class="keyword">static</span> &#123;</span><br><span class="line">		i = <span class="number">0</span>;</span><br><span class="line">		System.out.println(i);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">static</span> <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>A:<br>    i = 0; 可以正常编译， 而System.out.println(i);会编译错误，报”非法向前引用“</p>
+<p>为什么？<br>静态语句块只能”访问“定义在它之前的变量， 但是可以”赋值“定义在它之后的变量。</p>
+<p>真正含义是cinit方法， 是将类变量的初始定义语句收集后，再将这个类变量的赋值操作，根据顺序放在后面。<br>因此如果上面不打印i，类加载完后， i是=0， 即先ini i = 1,再i=0.</p>
+<hr>
+<p>Q: 类的类加载初始化cinit和接口的类加载初始化cinit有什么区别？<br>A:</p>
+<ol>
+<li>接口中不能使用静态语句块（但可以做静态变量赋值）</li>
+<li>（重要） 接口不会主动去优先调用父接口的cinit方法，除非使用到父接口的变量，才会去初始化父接口！</li>
+<li>同理，类初始化的时候，如果它实现了一个接口，如果没用到接口里的变量，那么也不会对这个接口做类加载和初始化。</li>
+</ol>
+<hr>
+<p>Q: cinit类初始化是线程安全的吗？<br>A:<br>是线程安全的，虚拟机会保证一个类的加载和cinit方法会被正确的加锁、同步<br>因此多线程场景下，同时使用一个之前没初始化过的类，且类初始化过程耗时非常久， 且可能会造成线程阻塞。</p>
+<hr>
+<h1 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h1><h1 id="类加载器-1"><a href="#类加载器-1" class="headerlink" title="类加载器"></a>类加载器</h1><h2 id="双亲委派"><a href="#双亲委派" class="headerlink" title="双亲委派"></a>双亲委派</h2><hr>
+<p>类加载时的双亲委派模型，反正就记得优先去父类加载器中看类是否能加载。<br>就贴个图吧<br> <img src="/images/java-class-load/a4c77999a2f8a0d5bc6401d05efeca9cdcecef43.png" alt="a4c77999a2f8a0d5bc6401d05efeca9cdcecef43"> </p>
+<hr>
+<p>注意，上面的图有问题。<br>Bootsrap不是ClassLoader的子类，他是C++编写的。<br>而ExtClassLoader和AppClassLoader都是继承自ClassLoader的<br>##<br>Q：<br>java中， 是否类和接口的包名和名字相同， 那么就一定是同一个类或者接口？<br>A：<br>错误。<br>1个jvm中， 类和接口的唯一性由 <em><strong>二进制名称以及它的定义类加载器</strong></em> 共同决定。<br>因此2个不同的加载器加载出来相同的类或接口时， 实际上是不同的。<br>因此instance对于同一个类名，可能会返回false</p>
+<hr>
+<p>Q: 讲一下ClassLoader原理或者源码的大概调用过程， 以及应用场景</p>
+<p>loaderClass  双亲加载实现（这里会体现先去父亲找，再自己）<strong>注意，jdk1.2之后不提倡覆盖loadClass方法</strong><br>findClass  如何根据名字，生成1个class（内部需要借助defineClass）<br>defineClass  通过这个方法生成1个class类</p>
+<p>例如需要根据类目，从某个远端网络加载获取这个类， 而且获取过来的时候还是加密的，需要在findClass里对byte数组做解密并加载。</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zzti_erlie/article/details/82757435">https://blog.csdn.net/zzti_erlie/article/details/82757435</a></p>
+<hr>
+<p>Q:<br>如果在你项目中建一个java.lang.String的类，那系统中用的String类是你定义的String类，还是原生api中的String类？</p>
+<p>A:<br>用的原生api中的string， 因为双亲委派机制。</p>
+<hr>
+<p>Q ： 为什么要用双亲委托，有什么好处？<br>A:</p>
+<ul>
+<li>对于任意一个类，都需要由加载它的”类加载器和这个类本身”来一同确立其在Java虚拟机中的唯一性。那么双亲委派可以保证顺序加载的特性。</li>
+<li>核心类的安全。Object类如果不使用双亲委派原则的话，那么A创建的Object对象就可能和B创建的Object是不一样的。不使用双亲委派原则无法保证一些java核心类库的唯一性</li>
+<li>例如类java.lang.Object，它存放在rt.jar中，无论哪个类加载器要加载这个类，最终都会委派给启动类加载器进行加载，因此Object类在程序的各种类加载器环境中都是同一个类。相反，如果用户自己写了一个名为java.lang.Object的类，并放在程序的Classpath中，那系统中将会出现多个不同的Object类，java类型体系中最基础的行为也无法保证，应用程序也会变得一片混乱。<blockquote>
+<blockquote>
+<p>书中提到的原因就一个： java类随着类加载器，具备了带有优先级的层次关系。<br>保证了例如object类在每个环境里都是同一种，不会出现混乱。</p>
+</blockquote>
+</blockquote>
+</li>
+</ul>
+<hr>
+<p>Q: 那我如果真的有需求， 不想用双亲的机制呢？<br>A:<br>按照上 面说的， 自己重写类加载的loaderClass就行了， 不走双亲机制的那块代码。<br>还有2种特殊的破坏：</p>
+<hr>
+<p>Q: 有没有可能在父加载器里加载某个A类时，需要在A类加载过程中反向加载用户加载器中某个类的情况？那父加载器怎么办？<br>A:<br>可以使用线程上下文TCCL机制， 例如java的JNDI服务，JNDI是在启动类加载器里入加载的（JDK1.3的rt.jar)， 但是JNDI会加载很多扩展性很强的新资源类。 因此可以在JNDI加载类的过程中，从TCCL这个context对象中，拿到set进去的用户加载器，然后进行加载即可。（JDBC、JBI等SPI机制都是如此）</p>
+<hr>
+<p>Q: OSGI模块化部署有了解么？它是如何实现类加载过？<br>A:<br>OSGI中， 每一个程序模块（bundle）都有一个自己的类加载器，当需要更换一个bundle时，就把bundle连同类加载器一起换掉，实现代码的热替换</p>
+<p>它是一个网状的类加载结构，只有java.*以及委派名单的，才会用双亲委派机制，否则都是各种网状的加载。加载过程如下所示：<br><img src="/images/java-class-load/62408d2e1e08530789333ccd-1651765505820.png" alt="OSGI加载"></p>
+<hr>
+<p>Q: 为什么这种网状的类加载机制，可以实现OSGI的热部署？<br>A:<br>首先，理解双亲委派模型下，不能热部署的原因：<br>如果有新升级的同名类要加入，它只能在新给出的一个加载器去加载， 但是双亲模型限定了必须是先交给父加载器加载，这导致了升级困难，无法让新的加载器去做抢先加载。</p>
+<p>OSGi类加载模型则是网络图状的，可以在bundle间互相委托<br>例如bundleA、B都依赖于bundleC，当他们访问bundleC中的类时，就会委托给bundleC的类加载器，由它来查找类；如果它发现还要依赖bundleE中的类，就会再委托给bundleE的类加载器。</p>
+<p>另一篇文章的解释：</p>
+<ul>
+<li>由于类加载机制的原因，导致一个类一旦加载进去就再也无法释放，因此，OSGi引入了基于插件的类加载机制</li>
+<li>举例说明：plugin1里有examples.Test1类，而pulgin2里也有examples.Test1类，在载入这两个插件时，两个类是可以同时载入进入到类缓存中，这归功于OSGi实现的插件类加载器(ClassLoader)</li>
+<li>我们把“examples.Test”服务的 Service Ranking 属性更改成了 100，那么其他bundle使用这个bundle对应的example类时，就会用优先级最高的类。</li>
+<li>在不需要停止服务和其他插件都不用更新的情况下，我们只需要再安装一个更新版本的插件，其所注册的服务就可以自动更新并应用到所有调用该插件的插件中，达到了热部署的目的。<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/yipsilon/article/details/83369177">OSGi的热部署特性及实现</a></li>
+</ul>
+<hr>
+<p>Q: 数组类是怎么做加载的？<br>A:<br>数组类是由AppClassLoader加载的。<br>数组类打印className时，前面会有个[Lxx类<br>二维数组就是[[Lxxx类<br>数组类的父类型是Object</p>
+<p>注意此时加载的是数组类，而数组类里面的对象是不会做自动加载的<br>因此xx类的静态代码并不会被直接调用</p>
+<hr>
+<p>Q: 静态解析用的是哪个指令？<br>A:<br>是invokevirtual指令<br>编译器编译时， 在代码中放入invokevirtual指令时，会根据静态类型和方法参数，<br>确定使用哪个方法，并把该方法的符号引用，放到指令后面。</p>
+<p>相当于静态解析，就是invokevitual指令确定用方法a的符号引用还是方法b的符号引用（但还不是直接引用），但是还没有转成真正的直接引用</p>
+<hr>
+<p>Q: 符号引用转直接引用，会缓存么？<br>A:<br>除了invokeddynamic动态调用指令， 其他的invokevirual之类的，都会缓存解析结果。</p>
+<hr>
+<p>Q:  java里的虚方法表和C++的虚表有什么区别呢？<br>A:<br>C++：<br>当编译器遇到调用虚方法的代码时，是通过vtable指针以及对应方法在虚表里的offset，然后获取对应的函数指针实现的，由于offset在编译过程就已经固定了，这样在执行过程中几乎没有产生任何额外的计算就实现了多态调用，效率相当高。<br>缺点就是当你修改了一个dll链接文件，另一个dll链接文件可能还是用的老的偏移，这导致你即使重启程序了，仍然还是错误的调用。 你必须将两个链接文件都重新编译才可以。</p>
+<p>但对于java而言，只需要替换一个jar包即可， 类之间的方法调用关系，方法偏移，都是可以类加载过程中去生成的。</p>
+<hr>
+<p>Q: java的虚方法表是怎么生成的呢？<br>A:</p>
+<ol>
+<li>在加载该类的时候，常量池的所有虚函数的签名（包括调用的以及自身定义的）都会添加到全局的符号表（事实上是一个HashTable）。</li>
+<li>首先对字符值进行Hash值计算，然后在全局HashTable进行查找，如果发现已经存在对应的Hash值，则返回对应的符号指针Symbol *，否则创建新的Symbol并添加到HashTable中，然后返回新创建的Symbol *。这样常量池就把字符串的引用转换成符号的引用。另外这个过程可以确保所有字符串在jvm只存有一个引用。、</li>
+<li>当在某个类对象调用虚方法的时候，通过调用函数的符号和自身定义的符号进行比较（由于这里都是引用全局符号表的唯一符号，因此可以通过内存地址进行快速比较），就会解析出调用虚函数的信息，通过信息就可以获取虚表的索引，然后调用对应的虚函数字节码</li>
+<li>为了提高调用时的性能，Java采用的是Lazy解析，第一次解析出虚表的索引后，则会保留到cache里面，这样下次调用就可以从缓存直接获取索引</li>
+</ol>
+<hr>
+<p>Q: java的接口方法调用也是有虚方法表吗？<br>A:</p>
+<ul>
+<li>如果是调用接口，则需要每次都要进行解析来获取索引。</li>
+<li>这是由于Java可以实现多个接口，不同的类可能会实现了多个或者不同的接口，在虚表里该接口所实现方法的索引会不一致。<br>比如类B，继承自object，B的方法表是固定的，先object方法，再B的覆写方法。<br>后面的人如果继承自类B，调用类B的方法一定是固定的索引</li>
+</ul>
+<p>但如果是接口方法，假设有ABC三个接口<br>类X实现了A\B两个接口，假设A\B接口放在虚表里，那么调用A接口方法，假设是t位置<br>类T实现了B\C\A接口，A可能按照顺序被放在了另一个位置，也就是调用接口A时，无法直接确定A里面方法的位置，因为一个类可以实现多个接口，而且顺序可以改。但是单继承模式下的类方法可以固定。<br>因此有invokeVirtual和invokeIteface的区别。</p>
+<ul>
+<li>这样每次解析的虚表索引都可能会不同，因此不能进行缓存，需要每次都进行重新的解析。因此，接口的方法调用会比普通的子类继承的虚函数调用要慢。</li>
+<li>为了表现接口调用的不同解析做法，JVM会插入另外的字节码invokeinterface来指示需要每次调用解析</li>
+</ul>
+<p>来源：<a target="_blank" rel="noopener" href="https://blog.csdn.net/Pun_C/article/details/43118697?utm_source=blogxgwz1">Java调用重载方法(invokevirtual)和接口方法(invokeinterface)的解析</a></p>
+<hr>
+<h2 id="MethodHandle"><a href="#MethodHandle" class="headerlink" title="MethodHandle"></a>MethodHandle</h2><p>Q: 什么是动态类型语言？和静态类型语言的区别？优劣是什么？<br>A:<br>动态类型语言： 类型检查的主体是运行期而不是编译器。 例如PHP、Lua\python<br>而静态类型语言就是编译器将类型都检查完，比如C++、java</p>
+<p>静态语言的好处：在编译器就能确定类型，可以进行严谨的类型检查， 代价就是代码会很臃肿。<br>动态语言编写时更为随意，可以快速开发和运行。</p>
+<hr>
+<p>jdk1.7之后提供的 MethodHandle， 类似于C/C++里的函数指针， 或者C#里的delegate。<br>C里面可以<br>sort(list, size,  int (* compare)(int, int))<br>即传入一个函数指针，这个函数是哪个类调用的？不知道</p>
+<p>java提供了methodHandle用法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">ClassA</span> &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">println</span><span class="params">(String s)</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;this is a print:&quot;</span> + s);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> MethodHandle <span class="title function_">getPrintlnMethodHandle</span><span class="params">(Object object)</span> <span class="keyword">throws</span> NoSuchMethodException, IllegalAccessException &#123;</span><br><span class="line">        <span class="comment">// 返回值，入参</span></span><br><span class="line">        <span class="type">MethodType</span> <span class="variable">methodType</span> <span class="operator">=</span> MethodType.methodType(<span class="keyword">void</span>.class, String.class);</span><br><span class="line">        <span class="keyword">return</span> MethodHandles.lookup()</span><br><span class="line">                <span class="comment">// 找到对象所对应的类，确认是否存在方法</span></span><br><span class="line">                .findVirtual(object.getClass(), <span class="string">&quot;println&quot;</span>, methodType)</span><br><span class="line">                <span class="comment">// 这个对对象绑定上去调用. java的反射不是也能做到吗》？</span></span><br><span class="line">                .bindTo(object);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">        <span class="type">Solution</span> <span class="variable">solution</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Solution</span>();</span><br><span class="line">        <span class="type">ClassA</span> <span class="variable">classA</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ClassA</span>();</span><br><span class="line">        <span class="comment">// invokeExact：执行并传入参数，classA和System.out不是同一个父类或者接口，但是可以执行相同的方法</span></span><br><span class="line">        getPrintlnMethodHandle(classA).invokeExact(<span class="string">&quot;afdsafds&quot;</span>);</span><br><span class="line">        getPrintlnMethodHandle(System.out).invokeExact(<span class="string">&quot;afdsafds&quot;</span>);</span><br><span class="line">        <span class="comment">// 以后排序就可以这样做了：  sort(list, MethodHandle mt)</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>Q: java的methodHandle和reflection的反射有什么区别吗？<br>A:</p>
+<ol>
+<li>调用指令层面：</li>
+</ol>
+<ul>
+<li>reflection是模拟java代码调用，不关心底层指令</li>
+<li>而methodHandle是模拟了字节码的执行，上面的Loopup().findVirtual，等同于invokevirtual指令（同理还有invokestatic\invokeinteface\invokespecial)</li>
+</ul>
+<ol start="2">
+<li>method对象大小问题</li>
+</ol>
+<ul>
+<li>reflection返回的method对象，包含的信息更多，例如签名、描述、属性等，返回的method比较重量级</li>
+<li>而methodHandle仅包含执行方法相关的信息，是轻量级、</li>
+</ul>
+<ol start="3">
+<li>可以基于methodHandle手动做虚拟机的相关调用优化（例如内联），而反射无法实现。</li>
+<li>从最终设计目的而言，反射只针对java， 而methodHandle的核心目的在于可以将其他无类型的语言运行在java迅即之上！</li>
+</ol>
+<hr>
+<p>Q： 如何在儿子类中，分派调用祖父类的虚方法？ 且儿子类和父类都已经实现了这个虚方法。父类不能提供新的方法<br>A:<br>通过loopup().findSpecial(祖父类， “方法名”， MethodHandle.methodType(返回值，入参),  当前类)<br>拿到一个方法句柄mh<br>然后方法句柄mh.invoke(this)，即可调用祖父类的方法。</p>
+<hr>
+<h2 id="jdk动态代理"><a href="#jdk动态代理" class="headerlink" title="jdk动态代理"></a>jdk动态代理</h2><p>Q: 简述实现jdk动态代理时需要哪些步骤？<br>A:</p>
+<ol>
+<li>有一个目标类Class， 目标类必须implment某个行为接口Inteface</li>
+<li>有一个代理类XxxProxy，实现自InvocationHandler接口</li>
+<li>代理类必须实现一个invoke方法， invoke方法的入参是  被代理对象（目标对象）、执行方法（method的反射对象）、执行参数<br>通过调用“ 执行方法.invoke(被代理对象，执行参数)” 这个常见的反射操作，  即可执行实际调用方法，然后你可以在这个方法的前后做各种处理或者改造。</li>
+<li>使用Proxy.newProxyInstance(被代理类的类加载器， 被代理类的接口， 这个proxy代理对象)生成一个做过绑定的代理对象，能被调用的方法都是行为接口Inteface里的。</li>
+</ol>
+<hr>
+<p>Q: JDK动态代理的invoke原理是什么？<br>A:<br>proxy类里面真正的那个代理方法字节码类似如下（这个类就是给被别人调用的代理类，是newProxyxxx（）操作后的那个类，不是invokeHandler类）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Proxy0.class</span><br><span class="line">public final void sayHello(object[] args) &#123;</span><br><span class="line">	try &#123;</span><br><span class="line">		// this.h就是继承了invokeHandler的那个类对象</span><br><span class="line">		this.h.invoke(this, m3, args);</span><br><span class="line">	&#125; catch(Excetion ...) &#123;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">static &#123;</span><br><span class="line">	m3 = Class.forname(&quot;那个接口的类名&quot;).getMethod(&quot;sayHello&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>m3就是通过static初始化阶段生成一个m方法， 然后调用sayHello时，调用invokeHandler.invoke，从而走进他里面实现的那个方法。</p>
+<p>Proxy.newProxyInstance()会通过调用sun.misc.ProxyGenerator.generateProxyClass()来生成一个字节码，从而得到一个描述代理类的字节码数组。<br>生成字节码的过程就是根据class文件的格式规范去拼装字节码。</p>
+<p>更多源码逻辑见<a target="_blank" rel="noopener" href="https://blog.csdn.net/Trunks2009/article/details/123106582">Proxy源码解析</a></p>
+<hr>
+<p>Q: 为什么Proxy.newProxyInstance必须要传入一个类加载器？<br>A:<br> <img src="/images/java-class-load/48a3a4503f728f9ce9520a2c4820e9a9858c237a.png" alt="48a3a4503f728f9ce9520a2c4820e9a9858c237a"><br>因为他需要创建一个新的proxy类时，必须要基于接口去构造一个新的类对象，后面再使用类对象去反射一个实际代理对象<br> <img src="/images/java-class-load/08a7c84b1abfab8a47fa544fd0de4603c1699e88.png" alt="08a7c84b1abfab8a47fa544fd0de4603c1699e88"> </p>
+<hr>
+<p>Q: 为什么jdk动态代理必须依赖一个接口？底层逻辑是什么？<br>A:<br>因为真正给用户调用的那个代理对象类XXXProxy$0， 实际上他为了做相关的代理操作（比如将inovkeHnandler作为成员，并调用各种字节码生产方法），需要extends Proxy这个类<br>也就是说他的类结构长这样：<br> <img src="/images/java-class-load/5d5edf4370eff2c399096e1fefdd76e9cb7c90ee.png" alt="5d5edf4370eff2c399096e1fefdd76e9cb7c90ee"><br>因为java是单继承，导致父类已经被Proxy占用了，但你有需要对Worker对象做代理封装，并提供这个接口对外提供的方法，因此只能用implements的形式。</p>
+<p>另一个更好的解释：</p>
+<blockquote>
+<blockquote>
+<p>Cglib代理实际上是通过继承，也就是生成一个继承被代理对象的类，编译成class文件时还会额外生成一个fastclass文件<br>该文件记录各个method的class索引（类名+方法名+参数），当执行某个方法时，通过计算索引，定位到具体的方法，代理对象执行该方法，然后super调用父类（执行了被代理对象的方法）。<br>生成代理对象时通过fastclass索引机制直接定位到被代理对象的class文件，从而实现反复调用，等于说是class复用，每次都是直接拿被代理对象的class内容执行的。</p>
+</blockquote>
+</blockquote>
+<hr>
+<p>Q: 那么spring里的CGLIB为啥不需要接口呢？<br>A:<br>因为CGLIB是直接继承被代理类做字节码增加的，相当于做了字节码改造。</p>
+<p>而jdk动态代理需要继承自Proxy类，利用父类的机制引用invokeHandler+反射的方法，来做代理操作。</p>
+<hr>
+<p>Q: 那么CGLIB和jdk动态代理哪个更好？<br>A:</p>
+<ol>
+<li>性能上比较</li>
+</ol>
+<ul>
+<li>jdk动态代理生成类速度快，调用慢</li>
+<li>cglib生成类速度慢，但后续调用快</li>
+</ul>
+<p>但是实际上JDK的速度在版本升级的时候每次都提高很多性能,而CGLIB仍止步不前.<br>在对JDK动态代理与CGlib动态代理的代码实验中看，1W次执行下，JDK7及8的动态代理性能比CGlib要好20%左右。</p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/eea9a3acbaad">JDK 动态代理和Cglib性能对比</a><br>2. 稳定性上比较</p>
+<ul>
+<li>jdk动态代理Java本身支持，不用担心依赖问题，随着版本稳定升级和优化。</li>
+<li>而CGLIB是外部技术，字节码库需要进行更新以保证在新版java上能运行<br>；</li>
+</ul>
+<ol start="3">
+<li>使用上比较<br>jdk动态代理必须依赖接口，CGLIB不需要，在设计不当的历史包袱下<br>如果必须对非接口对象做代理，那么只能用CGLIB临时过度。</li>
+</ol>
+<p>因此spring实现AOP时，都是优先使用jdk动态代理，如果没有实现接口，才改成CGLIB过度，这也是为什么我们spring里的service类一般都要先定义1个接口，即使你只有1个service实现类。 </p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2022/05/04/heart/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1011,7 +1248,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
