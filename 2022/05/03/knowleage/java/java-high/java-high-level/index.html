@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="尊重个人内心的感受 有时候，他人对你的疑问，例如“天气这么好，你怎么没出去玩呢？” ，也许仅仅只是他寒暄时提出的一个观点而已，并非对你做职责或者命令。 以此类推， 对于其他的一些疑问，不要过于恶意地揣测或者做过多想象。   不要因为身边大部分人做了什么就感到焦虑，他们的行为可以是你的参考，但并非是最适合你的。你需要清楚自己内心想要的是什么，内心的感受是怎样的，并尊重和理解自己的感受，坚持自己的那份">
+  <meta name="description" content="Java原理进阶jvm内存区域结构(栈、方法区、计数器)jvm堆分配对象原理jvm类文件原理java类加载核心原理Java应用进阶">
 <meta property="og:type" content="article">
-<meta property="og:title" content="心理成长感悟">
-<meta property="og:url" content="http://example.com/2022/05/04/heart/index.html">
+<meta property="og:title" content="java高阶知识点进阶">
+<meta property="og:url" content="http://example.com/2022/05/03/knowleage/java/java-high/java-high-level/index.html">
 <meta property="og:site_name" content="冲破黎明前的黑暗">
-<meta property="og:description" content="尊重个人内心的感受 有时候，他人对你的疑问，例如“天气这么好，你怎么没出去玩呢？” ，也许仅仅只是他寒暄时提出的一个观点而已，并非对你做职责或者命令。 以此类推， 对于其他的一些疑问，不要过于恶意地揣测或者做过多想象。   不要因为身边大部分人做了什么就感到焦虑，他们的行为可以是你的参考，但并非是最适合你的。你需要清楚自己内心想要的是什么，内心的感受是怎样的，并尊重和理解自己的感受，坚持自己的那份">
+<meta property="og:description" content="Java原理进阶jvm内存区域结构(栈、方法区、计数器)jvm堆分配对象原理jvm类文件原理java类加载核心原理Java应用进阶">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-05-04T15:35:22.000Z">
-<meta property="article:modified_time" content="2022-05-04T15:53:14.103Z">
+<meta property="article:published_time" content="2022-05-03T08:03:55.000Z">
+<meta property="article:modified_time" content="2022-05-06T14:57:37.479Z">
 <meta property="article:author" content="breakDawn">
-<meta property="article:tag" content="心理">
+<meta property="article:tag" content="目录">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/2022/05/04/heart/">
+<link rel="canonical" href="http://example.com/2022/05/03/knowleage/java/java-high/java-high-level/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>心理成长感悟 | 冲破黎明前的黑暗</title>
+  <title>java高阶知识点进阶 | 冲破黎明前的黑暗</title>
   
 
 
@@ -171,7 +171,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/05/04/heart/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/05/03/knowleage/java/java-high/java-high-level/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/abd.png">
@@ -184,7 +184,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          心理成长感悟
+          java高阶知识点进阶
         </h1>
 
         <div class="post-meta">
@@ -193,10 +193,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-05-04 23:35:22 / 修改时间：23:53:14" itemprop="dateCreated datePublished" datetime="2022-05-04T23:35:22+08:00">2022-05-04</time>
+              <time title="创建时间：2022-05-03 16:03:55" itemprop="dateCreated datePublished" datetime="2022-05-03T16:03:55+08:00">2022-05-03</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-06 22:57:37" itemprop="dateModified" datetime="2022-05-06T22:57:37+08:00">2022-05-06</time>
+              </span>
 
           
 
@@ -209,26 +215,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="尊重个人内心的感受"><a href="#尊重个人内心的感受" class="headerlink" title="尊重个人内心的感受"></a>尊重个人内心的感受</h2><ul>
-<li><p>有时候，他人对你的疑问，例如“天气这么好，你怎么没出去玩呢？” ，<strong>也许仅仅只是他寒暄时提出的一个观点而已，并非对你做职责或者命令</strong>。 以此类推， 对于其他的一些疑问，不要过于恶意地揣测或者做过多想象。 </p>
-</li>
-<li><p>不要因为身边大部分人做了什么就感到焦虑，他们的行为可以是你的参考，但并非是最适合你的。<strong>你需要清楚自己内心想要的是什么，内心的感受是怎样的，并尊重和理解自己的感受，坚持自己的那份个性</strong>，而不是为了迎合他人去隐瞒自己的喜好、感受或者真实想法。 无论是假期活动还是工作待遇等，都是如此。</p>
-</li>
-<li><p> “我想逃避”也是一种感受， 逃避是一种可以被理解的行为，但可能是一种不合时宜的行为，因为逃避更像是儿童时期做出的避险行为。<strong>自己需要意识到自己当前的行为模式是否是陈旧的</strong>，以及是否应当稍微找起来，尝试做点和儿童时期不一样的事情。</p>
-</li>
-</ul>
-<h2 id="计划和行动"><a href="#计划和行动" class="headerlink" title="计划和行动"></a>计划和行动</h2><ul>
-<li><p><strong>不要通过幻想，来给自己设定过于严苛的计划或者目的</strong>。 后果就是一旦发生阻碍或者完不成，挫败感会很重，以后做计划也会愈发纠结和犹豫。   因此尽量千万不要定“我xx月前必须怎么怎么”、“我必须每天xxx”，这样对意外情况容错性会降低，或者一次没成，后面就可能直接不再考虑 。 </p>
-</li>
-<li><p><strong>想要做一件事， 核心不在于计划， 而在于是否开始逐步行动</strong>，这个行动是可以很小的，但只要你开了头，就相当于获取了这件事的入门门槛。 无论是写博客、跑步、学习、刷题，都是如此。不要把时间浪费在纠结上， 与其纠结，还不如先拆分好之后，随便挑一件做。  </p>
-<p>对于跑步，应该是“我想跑的时候就跑，这次简单跑个500米试试，并非要周三或者周五，只是想开个头而已”</p>
-<p>例如博客，我想写的时候就写一下， 今天空，正好想做，就做了</p>
-<p>例如去哪个地方，那就先提前做些小的准备，当你准备充分了，自然也就有选择的余地，而不是强行设置期限，导致自己陷入焦虑之中。</p>
-</li>
-<li><p>当很多想做的事情交叉重叠，先做影响最近的，例如洗澡、扫地、拖地，再做比较久远影响的。</p>
-</li>
-</ul>
-
+        <h1 id="Java原理进阶"><a href="#Java原理进阶" class="headerlink" title="Java原理进阶"></a>Java原理进阶</h1><h3 id="jvm内存区域结构-栈、方法区、计数器"><a href="#jvm内存区域结构-栈、方法区、计数器" class="headerlink" title="jvm内存区域结构(栈、方法区、计数器)"></a><a target="_blank" rel="noopener" href="http://breakdawncoder.com/2022/05/03/java-jvm-memory/">jvm内存区域结构(栈、方法区、计数器)</a></h3><h3 id="jvm堆分配对象原理"><a href="#jvm堆分配对象原理" class="headerlink" title="jvm堆分配对象原理"></a><a target="_blank" rel="noopener" href="http://breakdawncoder.com/2022/05/03/java-object-in-heap/">jvm堆分配对象原理</a></h3><h3 id="jvm类文件原理"><a href="#jvm类文件原理" class="headerlink" title="jvm类文件原理"></a><a target="_blank" rel="noopener" href="http://breakdawncoder.com/2022/05/04/java-class-file/">jvm类文件原理</a></h3><h3 id="java类加载核心原理"><a href="#java类加载核心原理" class="headerlink" title="java类加载核心原理"></a><a target="_blank" rel="noopener" href="http://breakdawncoder.com/2022/05/05/java-class-load/">java类加载核心原理</a></h3><h1 id="Java应用进阶"><a href="#Java应用进阶" class="headerlink" title="Java应用进阶"></a>Java应用进阶</h1>
     </div>
 
     
@@ -237,7 +224,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E5%BF%83%E7%90%86/" rel="tag"># 心理</a>
+              <a href="/tags/%E7%9B%AE%E5%BD%95/" rel="tag"># 目录</a>
           </div>
 
         
@@ -246,12 +233,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2022/05/04/java-class-file/" rel="prev" title="java类文件原理">
-      <i class="fa fa-chevron-left"></i> java类文件原理
+    <a href="/2022/05/03/knowleage/java/java-high/java-jvm-memory/" rel="prev" title="jvm内存区域知识点">
+      <i class="fa fa-chevron-left"></i> jvm内存区域知识点
     </a></div>
       <div class="post-nav-item">
-    <a href="/2022/05/05/java-class-load/" rel="next" title="java类加载核心原理">
-      java类加载核心原理 <i class="fa fa-chevron-right"></i>
+    <a href="/2022/05/03/why-study-java-stack/" rel="next" title="【反八股系列】一、为什么我们要学习java虚拟机栈的原理？">
+      【反八股系列】一、为什么我们要学习java虚拟机栈的原理？ <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -311,7 +298,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8A%E9%87%8D%E4%B8%AA%E4%BA%BA%E5%86%85%E5%BF%83%E7%9A%84%E6%84%9F%E5%8F%97"><span class="nav-number">1.</span> <span class="nav-text">尊重个人内心的感受</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E5%88%92%E5%92%8C%E8%A1%8C%E5%8A%A8"><span class="nav-number">2.</span> <span class="nav-text">计划和行动</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java%E5%8E%9F%E7%90%86%E8%BF%9B%E9%98%B6"><span class="nav-number">1.</span> <span class="nav-text">Java原理进阶</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E7%BB%93%E6%9E%84-%E6%A0%88%E3%80%81%E6%96%B9%E6%B3%95%E5%8C%BA%E3%80%81%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="nav-number">1.0.1.</span> <span class="nav-text">jvm内存区域结构(栈、方法区、计数器)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#jvm%E5%A0%86%E5%88%86%E9%85%8D%E5%AF%B9%E8%B1%A1%E5%8E%9F%E7%90%86"><span class="nav-number">1.0.2.</span> <span class="nav-text">jvm堆分配对象原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#jvm%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86"><span class="nav-number">1.0.3.</span> <span class="nav-text">jvm类文件原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86"><span class="nav-number">1.0.4.</span> <span class="nav-text">java类加载核心原理</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Java%E5%BA%94%E7%94%A8%E8%BF%9B%E9%98%B6"><span class="nav-number">2.</span> <span class="nav-text">Java应用进阶</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
