@@ -595,6 +595,141 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/05/04/knowleage/java/java-high/java-class-file/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="冲破黎明前的黑暗">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/05/04/knowleage/java/java-high/java-class-file/" class="post-title-link" itemprop="url">java类文件原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-05-04 22:25:40" itemprop="dateCreated datePublished" datetime="2022-05-04T22:25:40+08:00">2022-05-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-06 23:29:17" itemprop="dateModified" datetime="2022-05-06T23:29:17+08:00">2022-05-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="class文件结构"><a href="#class文件结构" class="headerlink" title="class文件结构"></a>class文件结构</h1><p><img src="/images/java-class-file/5d1a2d97e4b0f7ca49d84a3a-1651674390359.png" alt="java类文件结构"></p>
+<p>Q: 常量池计数器是什么？<br>A:<br>constant_pool_count常量池的组成元素 常量池项 (cp_info) 的个数<br>是常量池的前2个字节<br>紧接着会排列着 constant_pool_count-1 个常量池项 (cp_info)</p>
+<hr>
+<p>Q： 为什么常量池计数器要从1开始计数？即1的时候，才代表0个常量<br>A:<br>有些时候需要表达不引用任何常量池对象，所以用0来代替<br> <img src="/images/java-class-file/2508e0b68cf482bcc60e05ce4ac543ee98b4bca9.png" alt="2508e0b68cf482bcc60e05ce4ac543ee98b4bca9"> </p>
+<p>例如匿名类就是没有名字的，但是类文件结构中，类名那边总需要填入类名常量索引，因此可以填入0，表示“没有类名”的意思。</p>
+<p>还有object类，是没有父类的，所以他的父类索引也是0</p>
+<hr>
+<p>Q: 桥接方法是什么？<br>A:</p>
+<p> 为了保持重写的语义，Java 编译器会在 字节码文件中自动生成一个<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E6%A1%A5%E6%8E%A5&spm=1001.2101.3001.7020">桥接</a>方法来保证重写语义： </p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/jiaobuchong/article/details/83722193">https://blog.csdn.net/jiaobuchong/article/details/83722193</a></p>
+<hr>
+<p>Q: jvm符合Synthetic自动生成的字段和方法有哪些？<br>A:</p>
+<ol>
+<li>泛型重写</li>
+</ol>
+<p> Base类编译后，由于泛型擦除，f方法签名将变为<strong>f(Ljava/lang/Object;)V</strong>，即入参为Object类型。</p>
+<p>Sub类不存在泛型，所以编译后，f方法的签名将变为<strong>f(Ljava/lang/String;)V</strong> </p>
+<p>此时方法签名不一致， 编译器在子类Sub中生成一个签名为<strong>f(Ljava/lang/Object;)V</strong>的方法，这个方法调用重写的<strong>f(Ljava/lang/String;)V</strong>方法 。</p>
+<p>相当于重写了<strong>f(Ljava/lang/Object;)V</strong></p>
+<ol start="2">
+<li>返回值重写</li>
+</ol>
+<p>子类在重写父类方法时，可以修改方法的返回值，也会导致啊方法签名不一致 。但按语法上来只要名字和入参相同就可以重写了，因此会做一个桥接， 生成一个返回值相同的方法，进行拼接。（前期是返回值可以转）</p>
+<ol start="3">
+<li>反射时， 如果子类继承父类，但是没重写父类的方法f， 试图通过子类去反射方法f时，会出现问题，因为反射时的权限校验，是用的Base#f做校验。  而直接在代码中调用子类对象.f时， 是直接按符号引用校验方法权限的。  为了解决反射的问题，子类及时没有实现f，也会有一个桥接的方法f，指向父类。</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_32868023/article/details/123980578">Java几种生成synthetic方法的情况</a></p>
+<hr>
+<p>Q: jvm运算指令会抛出哪些异常？<br>A:<br>除法和求余指令钟出现除数0时，会有ArthmeticException<br>其他例如溢出、 浮点计算都不会溢出，  存在无穷大、NAN等定义。<br>所有使用NAN作为操作数的算数操作，都会返回NaN。</p>
+<hr>
+<p>Q:<br>java虚拟机对浮点数运算时，有哪些特点和规则？<br>A:</p>
+<ul>
+<li>遵循IEEE754规范， 支持非正规浮点数 和逐级下溢</li>
+<li>精度选择：按照IEEE754中的默认舍入模式： 最接近数模式，即一定是接近原数值的向上或者向下舍入，如果一样接近，则选择最低有效位为0的</li>
+<li>浮点数转整数，有3个连续的规则：</li>
+</ul>
+<ol>
+<li>如果是NaN，则转成0 </li>
+<li>如果不是无穷大， 则左向零舍入， 选择最接近但是不大于原值的数字来作为最精确的舍入结果（直接截断数字）</li>
+<li>如果是无穷大，则转成整数能表示的最大或者最小正数<br>double转float类似。</li>
+</ol>
+<hr>
+<p>Q: long或者int， 强转成更低级的时候，怎么处理的<br>A:<br>简单丢弃高位字节。  因此符号可能发生变化。</p>
+<hr>
+<p>Q:<br> invokevirtual指令和invokedynamic指令有什么区别？<br>A:<br>前者是虚拟机内部的分派逻辑。<br>后者是用户设定的引导方法，通常是为了适配脚本执行语言而设计的。</p>
+<p><img src="/images/java-class-file/1651677053371.png" alt="1651677053371"></p>
+<hr>
+<p>Q: catch操作是字节码指令实现的吗？<br>A:<br>错误， catch （xxx e）{do something} 这段代码是由code属性里的异常表实现的<br>涉及异常的指令码是 throw new exception这个抛出的动作</p>
+<hr>
+<p>Q:<br>jvm的synchronized关键字本质是monitorenter和monitorexit两个指令<br>但是如果发生异常了，monitorexit怎么办？<br>A:<br>生成code字节码时，jvm会自动为synchronized生成异常表和throw指令，保证中间同步块发生异常时，monitorexit能够正确被指令（类似于放到了一个自动生成的finally代码中）</p>
+<hr>
+<p>Q: java虚拟机的私有化实现主要有哪两种方式？<br>A:</p>
+<ul>
+<li>将输入的java虚拟机代码在加载或者执行时， 翻译成另外一种虚拟机的指令集</li>
+<li>将输入的虚拟机代码在加载或者执行时，翻译成宿主机CPU的本地指令集（JIT代码生成技术）</li>
+</ul>
+<hr>
+<p>Q:jvm的异常实现字节码是怎么样的？<br>A:<br> <img src="/images/java-class-file/3d1ef2dd7d72b2b5acc9faa7ce6ed3c6cb329740.png" alt="3d1ef2dd7d72b2b5acc9faa7ce6ed3c6cb329740"><br>可以看到先new一个异常，再抛出，然后跳转。<br> <img src="/images/java-class-file/4316359f40262a4c0eab32017477234236da05ed.png" alt="4316359f40262a4c0eab32017477234236da05ed"><br> <img src="/images/java-class-file/837c4e9b32cf090067bce54435ec290539778da9.png" alt="837c4e9b32cf090067bce54435ec290539778da9"> </p>
+<hr>
+<p>Q: 异常的finally操作代码加在哪里？<br>A:<br>finally模块在java语言中是必须执行的，在编译的时候，通过将finally中代码块分别在try模块的最后和catch模块的最后都复制了一份，通过这样来保证finally的必定执行</p>
+<hr>
+<p>finally里做return会覆盖try的return的原理：<br>获取到了对象中的finalValue，写入栈顶，然后返回，这里相当于覆盖了return变量里的值，因此try中的return失效了<br><img src="/images/java-class-file/f660e6344a53f698204c7c1dc5fd102a93232d5f.png" alt="f660e6344a53f698204c7c1dc5fd102a93232d5f"> </p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2022/05/03/knowleage/java/java-high/java-object-in-heap/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1272,7 +1407,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">9</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
