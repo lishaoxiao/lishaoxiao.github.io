@@ -153,6 +153,195 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/06/05/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="冲破黎明前的黑暗">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/06/05/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/" class="post-title-link" itemprop="url">java-class类文件原理详解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 16:40:27 / 修改时间：16:45:01" itemprop="dateCreated datePublished" datetime="2022-06-05T16:40:27+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">java高级原理</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>重读了一遍《深入理解java虚拟机》， 发现第一遍读类文件相关内容的时候，真的是囫囵吞枣，很多细节都被我跳过了，无论是符号引用的含义，还是属性表的理解，都没有弄懂，当时想着“反正也用不到，跳过吧”，却没注意到他们包含了许多java底层实现的核心原理。</p>
+<p><strong>看来经典书籍要多读多总结，是有道理的。</strong></p>
+<p>于是在阅读这个章节时，用processorOn做了一副超大的类文件解析图，方便自己通过浏览这个图能马上回忆起class文件的结构以及内部的指令。<br>下面的内容是拆分后的内容，对于每块拆分的内容，会有详细的解释。<br><strong>对于完整大图，我放在文末，需要收藏的可以自取</strong> </p>
+<p>好了下面我们开始，文章内容较长，建议收藏一下分时段阅读。<br>[toc]</p>
+<h1><span id="mo-shu-ban-ben-hao">魔数、版本号</span><a href="#mo-shu-ban-ben-hao" class="header-anchor">#</a></h1><p><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652269180508772459.png" alt="image.png"></p>
+<ul>
+<li>每类文件都有一个魔数，用于快速校验文件类型。</li>
+<li>对于高低版本号，只要明确java11\java8这种版本是主版本号</li>
+<li>永远向下兼容， <strong>即高版本jvm可以读取低版本的class文件， 但是低版本的jvm无法读取高版本的class文件</strong>。</li>
+</ul>
+<hr>
+<h1><span id="chang-liang-chi-chang-liang-chi-ge-shu-duo-ge-chang-liang-xiang">常量池（常量池个数、多个常量项）</span><a href="#chang-liang-chi-chang-liang-chi-ge-shu-duo-ge-chang-liang-xiang" class="header-anchor">#</a></h1><p><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652269423338180081.png" alt="image.png"><br>大部分文件协议格式中，都会先给定一个某项的数量长度，再决定某项的个数，方便确认遍历几次才结束。常量池的设置也是这个原理。<br><strong>因此学习java的class格式，对我们设计某些文件格式或者协议都是一种不错的借鉴。</strong></p>
+<hr>
+<h2><span id="chang-liang-chi-zhong-de-chang-liang-dao-di-shi-gan-ma-de-he-wo-men-li-jie-de-static-final-string-xxx-chang-liang-shi-yi-ge-yi-si-ma">常量池中的常量到底是干嘛的？和我们理解的static final String xxx常量是一个意思吗？</span><a href="#chang-liang-chi-zhong-de-chang-liang-dao-di-shi-gan-ma-de-he-wo-men-li-jie-de-static-final-string-xxx-chang-liang-shi-yi-ge-yi-si-ma" class="header-anchor">#</a></h2><p>不对！代码中定义的final类型字符串常量只是一种用途。更重要的一种用途是符号引用。<br>而对符号引用的理解，是对java类文件原理最难也最重要的地方。<br>直接去解释符号引用的话，还是很难理解的，因此我们按下不表，在第4部分“类索引”部分会给出详细解释。</p>
+<hr>
+<h2><span id="chang-liang-chi-de-suo-yin-ji-shu-wei-shi-me-cong-1-kai-shi-ji-qi-ta-di-fang-yao-shi-yong-chang-liang-chi-de-di-yi-ge-chang-liang-shi-bi-xu-xie-cheng-1-er-bu-shi-0">常量池的索引计数为什么从1开始（即其他地方要使用常量池的第一个常量时，必须写成1而不是0）？</span><a href="#chang-liang-chi-de-suo-yin-ji-shu-wei-shi-me-cong-1-kai-shi-ji-qi-ta-di-fang-yao-shi-yong-chang-liang-chi-de-di-yi-ge-chang-liang-shi-bi-xu-xie-cheng-1-er-bu-shi-0" class="header-anchor">#</a></h2><p>因为要留一个0，表示不引用任何常量</p>
+<blockquote>
+<blockquote>
+<ul>
+<li>举例：匿名类就是没有名字的，但是类文件结构中，类名那边总需要填入类名常量索引，因此可以填入0，表示“没有类名”的意思。</li>
+<li>再来一个例子：object类，是没有父类的，所以他的父类那一栏填的常量索引也是0</li>
+</ul>
+</blockquote>
+</blockquote>
+<ul>
+<li>对于常量池的作用，后面会有更详细的体现和解释。<h1><span id="lei-ding-yi-de-di-yi-xing-lei-fang-wen-biao-zhi-ben-lei-fu-lei-shi-xian-jie-kou">类定义的第一行（类访问标志、本类、父类、实现接口）</span><a href="#lei-ding-yi-de-di-yi-xing-lei-fang-wen-biao-zhi-ben-lei-fu-lei-shi-xian-jie-kou" class="header-anchor">#</a></h1><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652271151313964089.png" alt="image.png"></li>
+</ul>
+<p>为什么叫类定义的第一行，因为这就来自我们写每个类时的第一行内容。<br>例如<br>public abstract class A extend B implement C,D<br>这句话对应的所有信息就包含在了上图中，因此我叫他“类定义的第一行”</p>
+<hr>
+<p>CONSTANT_class_info这个类常量到底是干嘛的？<br>从图上可以看到，他其实就是指向了一个表示类名的字符串常量。<br>这里也可以看到，java文件中的所有名称例如类名、方法名、字段名，都会以Utf_info的形式，存储在常量池中。<br><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652272385081190034.png" alt="image.png"></p>
+<hr>
+<h2><span id="wei-shi-me-yao-zhe-yang-duo-zou-yi-ceng-wei-shi-me-bu-neng-zhi-jie-zhi-xiang-yi-ge-zi-fu-chuan-chang-liang">为什么要这样多走一层？为什么不能直接指向一个字符串常量？</span><a href="#wei-shi-me-yao-zhe-yang-duo-zou-yi-ceng-wei-shi-me-bu-neng-zhi-jie-zhi-xiang-yi-ge-zi-fu-chuan-chang-liang" class="header-anchor">#</a></h2><p>这个问题我没找到解释，但可以理解为这是最基础的一层封装。</p>
+<p><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652271891308501334.png" alt="image.png"></p>
+<hr>
+<h1><span id="zi-duan-biao-zi-duan-shu-liang-ge-zi-duan-xiu-shi-fu-ming-lei-xing-shu-xing">字段表（字段数量，各字段（修饰符、名、类型、属性））</span><a href="#zi-duan-biao-zi-duan-shu-liang-ge-zi-duan-xiu-shi-fu-ming-lei-xing-shu-xing" class="header-anchor">#</a></h1><p><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652275768314487190.png" alt="image.png"></p>
+<hr>
+<p>可以看到，字段名、字段类型分别对应了2个字符串常量。<br>特别注意字段类型使用一个字符串来表示的，而不是一个constant_field_info。<br>那么constant_field_info是干嘛的呢？</p>
+<hr>
+<h2><span id="zi-duan-xiu-shi-fu-zhong-de-synchetics-zhi-de-shi-bian-yi-qi-zi-dong-sheng-cheng-de-zi-duan-zen-me-li-jie-ni-shi-me-qing-kuang-xia-hui-yong-dao">字段修饰符中的synchetics指的是编译器自动生成的字段，怎么理解呢？什么情况下会用到？</span><a href="#zi-duan-xiu-shi-fu-zhong-de-synchetics-zhi-de-shi-bian-yi-qi-zi-dong-sheng-cheng-de-zi-duan-zen-me-li-jie-ni-shi-me-qing-kuang-xia-hui-yong-dao" class="header-anchor">#</a></h2><p>找到一个简单的例子(<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/228854843">代码出处:知乎-不凋花</a>),用枚举做switch：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">Foobar</span> &#123;</span><br><span class="line">    FOO,</span><br><span class="line">    BAR;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">test</span><span class="params">(Foobar var0)</span> &#123;</span><br><span class="line">        <span class="keyword">switch</span> (var0) &#123;</span><br><span class="line">            <span class="keyword">case</span> FOO:</span><br><span class="line">                <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">case</span> BAR:</span><br><span class="line">                <span class="keyword">return</span> <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>switch的原理，我们应该很容易想到，就是做一次顺序检查，那么检查时，肯定程序里需要有一个列表吧，因此上面switch的背后逻辑代码是长这样的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Test$1</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span>[] $SwitchMap$Foobar;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        $SwitchMap$Foobar = <span class="keyword">new</span> <span class="title class_">int</span>[Foobar.values().length];</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            $SwitchMap$Foobar[Foobar.FOO.ordinal()] = <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NoSuchFieldError e) &#123;</span><br><span class="line">            ;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            $SwitchMap$Foobar[Foobar.BAR.ordinal()] = <span class="number">2</span>;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NoSuchFieldError e) &#123;</span><br><span class="line">            ;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到有一个“static final int[] $SwitchMap$Foobar;”， 这个静态数组字段，就是编译器帮忙生成的字段，他会被标记成synchetics</p>
+<hr>
+<h2><span id="shang-mian-ke-yi-kan-dao-mei-ge-zi-duan-xiang-de-zui-hou-bao-han-shu-xing-shu-liang-he-shu-xing-chang-du-na-me-class-zhong-de-shu-xing-he-shang-mian-de-zi-duan-ming-zi-duan-lei-xing-you-shi-me-qu-bie-ni">上面可以看到每个字段项的最后包含属性数量和属性长度，那么class中的属性和上面的“字段名”、“字段类型”有什么区别呢？</span><a href="#shang-mian-ke-yi-kan-dao-mei-ge-zi-duan-xiang-de-zui-hou-bao-han-shu-xing-shu-liang-he-shu-xing-chang-du-na-me-class-zhong-de-shu-xing-he-shang-mian-de-zi-duan-ming-zi-duan-lei-xing-you-shi-me-qu-bie-ni" class="header-anchor">#</a></h2><p>属性是可有可无的，而且提供了高度的“jvm可扩展性”。<br>换言之，在jvm虚拟机规范中，“字段修饰符”、“字段名”、“字段类型”都是必备的，而属性则没有限制。<br><strong>因此我们甚至可以自己实现一个虚拟机，定义新的属性，在class中加上属性项然后自己使用</strong></p>
+<p>对于属性作用的更详细理解，可以看后面的方法章节，方法中的属性是比较重要且用得最多的。</p>
+<hr>
+<p>从字段属性可以看到， 类似于static final int a =10这种常量，就是通过属性里的constant属性来设置的。</p>
+<p>有个泛型签名的属性，可能不太好马上理解，后面在方法章节中会一并提到这个属性的作用！</p>
+<h1><span id="fang-fa-biao-fang-fa-shu-liang-fang-fa-xiang-xiu-shi-fu-ming-miao-shu-shu-xing">方法表（方法数量、方法项（修饰符、名、描述、属性））</span><a href="#fang-fa-biao-fang-fa-shu-liang-fang-fa-xiang-xiu-shi-fu-ming-miao-shu-shu-xing" class="header-anchor">#</a></h1><p><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652317738015425066.png" alt="image.png"><br>class文件中，最值得学习的就是常量池和方法表了！</p>
+<hr>
+<h2><span id="fang-fa-xiu-shi-fu-zhong-de-qiao-jie">方法修饰符中的桥接</span><a href="#fang-fa-xiu-shi-fu-zhong-de-qiao-jie" class="header-anchor">#</a></h2><p>对于方法修饰符，大部分都很好理解，有2个修饰符需要关注：“bridge”和“synthetic”。</p>
+<p>其实很多bridge桥接方法本身也是synthetics系统生成的，所以我不太想去区分二者，只要关注他们2个用来做什么。</p>
+<p>思考下面这个问题：<br><strong>1. 假设有个非公开的类A，A中有个public方法f()，有个继承自A的公开类B，没有重写f()，那么外部是否可以调用b.f()？</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">	f() &#123;..&#125;</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">B</span> extend A&#123;</span><br><span class="line">	<span class="comment">// 不重写任何方法</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String args[])</span> &#123;</span><br><span class="line">	<span class="type">B</span> <span class="variable">b</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">B</span>();</span><br><span class="line">   b.f();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们很容易可以得出b.f()可以调用的结论。<br>但由于B没有重写f(), 所以对于编译后的B.class而言，这意味着不会在class文件中包含f方法。<br>那么当执行f时，通过多态，会定位到A.f()，此时A是非公开的类，权限就会出错，因为不允许直接引用非公开的类的方法，只能间接使用。</p>
+<p>如何解决？要修改多态的动态分派校验机制吗？</p>
+<p>不需要，<strong>编译器为了方便，直接为我们在B中重写了f()来间接调用父类方法</strong>，类似于</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public void f() &#123;</span><br><span class="line">	super.f()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样的话就不用担心外部调用者没有权限使用A.f()了。</p>
+<p><strong>2. 有个泛型基类Base&lt;T&gt;，包含一个方法f(T t),  有个子类Sub&lt;String&gt;, 实现了方法f(String s)， 两个f方法的入参并不一致，为什么还多态的机制还能生效？</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Base</span>&lt;T&gt; &#123;</span><br><span class="line">	f(T t);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Sub</span> extend Base&lt;String&gt;&#123;</span><br><span class="line">	f(String t);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这2个方法的入参确实不同， 前者的方法签名是f(Ljava/lang/Object;)V，  后者是f(Ljava/lang/String;)V。 多态（动态分派）的规则也没有变，确实是要求入参一致。<br>因此编译器为Sub类自动生成了一个f(Ljava/lang/Object;)V,代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">f</span><span class="params">(Object o)</span> &#123;</span><br><span class="line">	<span class="built_in">this</span>.f((String)o);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样多态的机制也能实现了。<br><strong>可以看到这一切都是为了适配多态，同时避免过多的特殊逻辑，因此使用桥接方法，来生成了我们看不到的重写方法</strong></p>
+<hr>
+<p>从下面可以看到， 方法描述符是一个<strong>包含“入参和返回值”</strong>的描述符<br><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652355928364525434.png" alt="image.png"></p>
+<p>因此，java是允许 <strong>同入参、同方法名、不同返回值</strong>的方法存在于同一个class文件中的。</p>
+<p>这是不是有点反常识？这种情况我们好像编写不出来的，编译器不会通过！</p>
+<p>其实这也是桥接+自动生成才会有这种情况。<br>前文的泛型例子，用泛型T做入参，会生成一个桥接方法，和父类的匹配。</p>
+<p>那么如果泛型T是一个返回值呢:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Base</span>&lt;T&gt; &#123;</span><br><span class="line">	T <span class="title function_">f</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Sub</span> extend Base&lt;String&gt;&#123;</span><br><span class="line">	String <span class="title function_">f</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么也是一样的道理，桥接了一个父类的f方法，但仅仅是返回值不同而已。所以会出现只有返回值不同的方法。</p>
+<hr>
+<p>方法表的属性和字段的属性类似， 也是属性数量 + N个属性项。<br>但是方法表属性里的干货就更多了！</p>
+<h2><span id="shu-xing-de-jie-gou">属性的结构</span><a href="#shu-xing-de-jie-gou" class="header-anchor">#</a></h2><p>之前字段属性中没提到属性到底长啥样，以方法中的throws异常属性为例，：<br><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652395329500135926.png" alt="image.png"></p>
+<p>从这里可以看到，每个属性都有个属性名，和常量不同，区分不同常量用的是1个2字节的数字，而属性则是用一个字符串来表示。<br>这样的区别就是因为常量个数有限，而属性为了扩展性，不能存在数量限制。</p>
+<p>另外从这也可以知道， 我们在方法名上写的f() throws IOException 都是存在于异常属性中的。</p>
+<hr>
+<h2><span id="zui-guan-jian-de-code-shu-xing">最关键的Code属性</span><a href="#zui-guan-jian-de-code-shu-xing" class="header-anchor">#</a></h2><p>Code属性是方法属性中最最最重要的属性。<br>他告诉我们编译器是怎样将我们的文本代码封装成一个class文件的。<br>首先，code属性的属性名就是一个“Code”<br><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652395457163163025.png" alt="image.png"></p>
+<h3><span id="cao-zuo-shu-zhan-ju-bu-bian-liang-biao-da-xiao-zhi-ling-ma-shu-liang">操作数栈、局部变量表大小、指令码数量</span><a href="#cao-zuo-shu-zhan-ju-bu-bian-liang-biao-da-xiao-zhi-ling-ma-shu-liang" class="header-anchor">#</a></h3><p>接着会包含3个重要的内容：max_stack、max_local和code_length<br><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652395539642165989.png" alt="image.png"><br>从max_stack和max_local我们可以看到，操作数栈和局部变量表的大小，已经在class文件中计算出来了，因此当开辟一个新的栈帧时，jvm便能够知道给这个方法开辟多大的空间，不用担心栈上分配不够的问题。<br><strong>注意，是操作数栈的大小，而不是程序执行的栈的深度，程序可没法感知我们能够递归多少次。</strong></p>
+<hr>
+<h3><span id="zhi-ling-ma-jie-du">指令码解读</span><a href="#zhi-ling-ma-jie-du" class="header-anchor">#</a></h3><p>code_length代表了我们这个方法在编译后，有多少条字节码指令，而后面紧跟着的，就是对应数量的java字节码指令了。<br><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652397966852235844.png" alt="image.png"></p>
+<p>指令码种类非常多，这里只列举关键的一些信息。</p>
+<h4><span id="shu-ju-ji-suan-yong-de-zhi-ling-ma">数据计算用的指令码</span><a href="#shu-ju-ji-suan-yong-de-zhi-ling-ma" class="header-anchor">#</a></h4><p>首先，每种涉及基本数据类型的计算指令，都会在指令最前方，携带一个T，如图：<br><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652396223751707461.png" alt="image.png"><br>里面有句话：<strong>“不是每种数据类型和每个操作都有指令对应（否则数量太多）”</strong><br>这句话怎么理解呢，可以结果图上右侧的表格，从而得知，有些指令是不包含所有类型的，所以可能会借用一些的技巧，比如把byte、short都视为int在操作上去操作。</p>
+<h4><span id="dui-xiang-cao-zuo-de-zhi-ling-ma">对象操作的指令码</span><a href="#dui-xiang-cao-zuo-de-zhi-ling-ma" class="header-anchor">#</a></h4><p>另一个类指令码是和对象操作有关，例如：<br><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652396601906806136.png" alt="image.png"><br>可以看到，当试图获取一个类字段时，他指向的是一个class_field_info常量索引，这个常量会提前被放进class文件的常量池中。</p>
+<hr>
+<h5><span id="wei-shi-me-dui-xiang-cao-zuo-zhi-ling-ma-zhong-zhi-bao-han-liao-lei-yin-yong-he-ming-cheng-ni-wo-zen-me-zhi-dao-wo-diao-yong-de-shi-na-ge-dui-xiang-de-zi-duan">为什么对象操作指令码中只包含了类引用和名称呢，我怎么知道我调用的是哪个对象的字段？</span><a href="#wei-shi-me-dui-xiang-cao-zuo-zhi-ling-ma-zhong-zhi-bao-han-liao-lei-yin-yong-he-ming-cheng-ni-wo-zen-me-zhi-dao-wo-diao-yong-de-shi-na-ge-dui-xiang-de-zi-duan" class="header-anchor">#</a></h5><p>A: 你要调用的对象，已经通过前面提到的操作数栈相关指令，把引用放到了操作数栈的第一个，因此，jvm只要取栈顶对象，然后根据名字进行字段操作即可，后面的方法调用也是一样的道理。</p>
+<hr>
+<h5><span id="new-dui-xiang-he-new-shu-zu-yong-de-shi-2-ge-bu-tong-de-zhi-ling-wei-shi-me-yao-you-qu-fen-bu-neng-ba-shu-zu-dang-cheng-yi-ge-java-dui-xiang-ma">new对象和new数组，用的是2个不同的指令，为什么要有区分？不能把数组当成一个java对象吗</span><a href="#new-dui-xiang-he-new-shu-zu-yong-de-shi-2-ge-bu-tong-de-zhi-ling-wei-shi-me-yao-you-qu-fen-bu-neng-ba-shu-zu-dang-cheng-yi-ge-java-dui-xiang-ma" class="header-anchor">#</a></h5><p>这要从对象的内存结构，以及类加载机制上去思考。<br>因为数组的对象头，和普通对象的对象头是不一样的。</p>
+<ul>
+<li>数组的对象头中包含了数组长度，而普通对象没有</li>
+<li>new一个数组时，数组中包含的类并不会做类加载。<br>有这么多区别，肯定是新增一个单独针对数组的指令来处理，要简单很多</li>
+</ul>
+<hr>
+<h4><span id="cao-zuo-shu-zhan-zhi-ling-pop-deng">操作数栈指令（pop等）</span><a href="#cao-zuo-shu-zhan-zhi-ling-pop-deng" class="header-anchor">#</a></h4><p><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652397315515649848.png" alt="image.png"><br>其他指令好理解， 但操作数栈指令有个dup_x指令，例如dup1_1 就是复制栈顶并再放入1个。为什么需要这么一个指令？</p>
+<p>其实当我们调用 A a = new A()时，这一句话生成的指令中就包含了dup指令<br>因为当我们new出1个A引用时，它有两件事要做：</p>
+<ol>
+<li>调用A的构造函数。</li>
+<li>把引用地址赋值给a这个局部变量<br>而每件事都会消耗一个A的引用！所以才需要赋值。<br>因此可以看到，<strong>指令码很多时候都是基于操作数栈进行操作的，每操作一个数据或引用，就消耗一个</strong><h4><span id="fang-fa-diao-yong-zhi-ling-invokevirtual-deng">方法调用指令（invokevirtual等)</span><a href="#fang-fa-diao-yong-zhi-ling-invokevirtual-deng" class="header-anchor">#</a></h4><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652397689648709059.png" alt="image.png"><br>对于方法调用指令，和前面的类字段调用有点像，也是一个方法常量，方法常量包含类索引和方法描述索引。<br>对于方法究竟是如何触发调用实现多态的、invokevirtual指令和invokedynamic指令有什么区别，这个内容就更多了，后面我会放到类加载的图解笔记中讲解。<h3><span id="yi-chang-biao-shu-xing">异常表属性</span><a href="#yi-chang-biao-shu-xing" class="header-anchor">#</a></h3>指令码结束后，后面会紧跟着一个异常表。表中的每一行长这样：<br><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652398026144920939.png" alt="image.png"><br>是不是恍然大悟，原来try-catch代码的逻辑在这边， 它本质上就是抛异常时，根据try的位置和异常类型，这个异常表中进行查找到对应的catch代码位置，从而实现异常处理。</li>
+</ol>
+<hr>
+<h4><span id="na-finally-de-cao-zuo-bei-fang-dao-na-liao-catch-cao-zuo-wan-liao-zhi-hou-ta-zen-me-zhi-dao-yao-tiao-zhuan-dao-na-li">那finally的操作被放到哪了？catch操作完了之后，它怎么知道要跳转到哪里？</span><a href="#na-finally-de-cao-zuo-bei-fang-dao-na-liao-catch-cao-zuo-wan-liao-zhi-hou-ta-zen-me-zhi-dao-yao-tiao-zhuan-dao-na-li" class="header-anchor">#</a></h4><p>finally模块在java语言中是必须执行的，在编译的时候，通过将finally中代码块分别在try模块的最后和catch模块的最后都复制了一份，通过这样来保证finally的必定执行</p>
+<hr>
+<h4><span id="dui-yu-synchronized-guan-jian-zi-ta-ben-zhi-shi-sheng-cheng-liao-monitorenter-he-monitorexit-liang-ge-zhi-ling-shang-mian-fang-fa-diao-yong-zhi-ling-li-de-zui-hou-2-ge-dan-ru-guo-fa-sheng-liao-yi-chang-na-hui-bu-hui-wu-fa-monitorexit-liao">对于synchronized关键字，它本质是生成了monitorenter和monitorexit两个指令（上面方法调用指令里的最后2个）。但如果发生了异常，那会不会无法monitorexit了？</span><a href="#dui-yu-synchronized-guan-jian-zi-ta-ben-zhi-shi-sheng-cheng-liao-monitorenter-he-monitorexit-liang-ge-zhi-ling-shang-mian-fang-fa-diao-yong-zhi-ling-li-de-zui-hou-2-ge-dan-ru-guo-fa-sheng-liao-yi-chang-na-hui-bu-hui-wu-fa-monitorexit-liao" class="header-anchor">#</a></h4><p>生成code字节码时，jvm会自动为synchronized生成1个默认的异常表和throw指令，保证中间同步块发生异常时，monitorexit能够正确被指令（类似于放了一个自动生成的try-catch代码，或者在已有的catch操作后添加）。</p>
+<hr>
+<h4><span id="qian-mian-ti-dao-fang-fa-shu-xing-zhong-yi-jing-you-yi-ge-ming-jiao-exception-de-shu-xing-he-zhe-ge-code-shu-xing-zhong-de-yi-chang-biao-you-shi-me-qu-bie">前面提到方法属性中，已经有一个名叫“Exception”的属性，和这个code属性中的异常表有什么区别？</span><a href="#qian-mian-ti-dao-fang-fa-shu-xing-zhong-yi-jing-you-yi-ge-ming-jiao-exception-de-shu-xing-he-zhe-ge-code-shu-xing-zhong-de-yi-chang-biao-you-shi-me-qu-bie" class="header-anchor">#</a></h4><p>上面code<strong>异常表</strong>指的是代码执行时try-catch的逻辑部分<br>而方法中的<strong>exception属性</strong>则是方法名上所声明的throws异常。</p>
+<h3><span id="code-de-kuo-zhan-shu-xing">Code的扩展属性</span><a href="#code-de-kuo-zhan-shu-xing" class="header-anchor">#</a></h3><p>在code属性中，竟然还携带了属性，也就是说，是允许“属性中的属性”。毕竟属性的实现是可以完全自定义的，那么自己给自己新增额外特性完全是允许的。<br><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652398314647685943.png" alt="image.png"><br>里面有个属性叫“局部变量描述属性”，长这样：<br><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652398431353725133.png" alt="image.png"><br>从这里，你就能明白，为什么你从IDEA里看到反解后的class文件，有时候是var1、var2之类莫名其妙的局部变量，有时候却又能看到完整的变量名了吧？就是通过这个属性决定的。毕竟存储局部变量名的代价还是很高的。</p>
+<h3><span id="qi-ta-de-fang-fa-shu-xing">其他的方法属性</span><a href="#qi-ta-de-fang-fa-shu-xing" class="header-anchor">#</a></h3><p><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652398713702736921.png" alt="image.png"><br>泛型签名这个属性很迷惑，不是有泛型擦除吗，为什么还需要这个属性？<br><strong>其实泛型签名属性是为了方便反射的。</strong><br>我们通过前面关于桥接的原理，可以知道编译时会发生泛型擦除，方法入参都变成了object。<br>但是反射API可能希望获取泛型信息因此可通过这个扩展属性进行获取。所以会增加这个属性，从而能感知一些泛型属性相关的信息。</p>
+<h1><span id="lei-shu-xing">类属性</span><a href="#lei-shu-xing" class="header-anchor">#</a></h1><p>既然方法和字段都有属性，那么类肯定也有属性：<br><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652399133483878712.png" alt="image.png"><br>其他属性都比较好理解或者不重要，重点讲一下内部类属性。<br>通过内部类属性，我们可以看到内部类并不是直接包含在这个class文件中，它其实是生成了另一个class文件，所以才需要一个内部类属性，来确认对应的名字，方便类加载时能找到内部类。</p>
+<hr>
+<h2><span id="wei-shi-me-nei-bu-lei-shu-xing-zhong-yao-bao-han-su-zhu-lei-de-lei-ming-nan-dao-su-zhu-lei-bu-jiu-shi-ta-ben-shen-ma">为什么内部类属性中，要包含宿主类的类名？难道宿主类，不就是它本身吗？</span><a href="#wei-shi-me-nei-bu-lei-shu-xing-zhong-yao-bao-han-su-zhu-lei-de-lei-ming-nan-dao-su-zhu-lei-bu-jiu-shi-ta-ben-shen-ma" class="header-anchor">#</a></h2><p>因为，内部类中，还可以继续定义内部类</p>
+<hr>
+<p>另外，从上面的一些属性中可以看到， <strong>很多debug用的调试、展示信息，都会包含在class中</strong><br>因此，当我们希望调试一些环境上执行的程序时，如果想提供最为贴近原代码，那就需要class文件中能有充足的信息，如果想要class文件小，那就去掉，具体怎么去掉或者添加，肯定就是一些编译选项的区别了。</p>
+<hr>
+<hr>
+<h1><span id="zui-hou-de-wan-zheng-tu">最后的完整图</span><a href="#zui-hou-de-wan-zheng-tu" class="header-anchor">#</a></h1><p>好累，终于写完了，感觉能看到最后的人不会太多，但一通详细地分析和解决中间发现的问题，还是收获了不少。<br>最后贴上完整的大图，欢迎保存和收藏。<br><a target="_blank" rel="noopener" href="https://www.processon.com/view/link/5d1a2d97e4b07c7231731b02">图片在线查看</a><br><a target="_blank" rel="noopener" href="https://www.processon.com/view/link/5d1a2d97e4b07c7231731b02">https://www.processon.com/view/link/5d1a2d97e4b07c7231731b02</a></p>
+<p><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/5d1a2d97e4b0f7ca49d84a3a.png" alt="完整大图"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2022/06/05/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/jdk%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1721,7 +1910,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
