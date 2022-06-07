@@ -153,6 +153,156 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/06/08/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="冲破黎明前的黑暗">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/06/08/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">volatile和CPU-MESI协议底层原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-08 07:29:34 / 修改时间：07:31:40" itemprop="dateCreated datePublished" datetime="2022-06-08T07:29:34+08:00">2022-06-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">java高级原理</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>《深入理解Java虚拟机》第二版中，关于volatile的原理，特地先讲述了如下图所示的JMM内存模型：<br><img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652969587838877545.png" alt="image.png"><br>它用了8种内存操作，以及多种规则，来告诉你特定情况下线程间的数据会如何同步。<br><strong>然而这个模型实际上已经在JDK5之后的虚拟机规范中被废弃了。</strong><br>最新官方文档中是采用“happens-before”模型来帮助java程序员分析多线程环境下的运行情况。<br>关于happends-before模型的详细解释，建议阅读《java并发编程的艺术》一书的第三章节。<br>本文并不讨论happends-before模型，只讨论底层原理，希望借着理解volatile，去理解一下它和CPU之间的关系。关于这部分内容，网上其实有很多错误的解读，根本原因在于没有从真正底层运行的原理考虑，导致了很多误区的产生。</p>
+<p>本文将为你解答一下三大误区问题：</p>
+<ol>
+<li>MESI缓存一致性，为什么要设置4种状态这么复杂？是否都是同步、阻塞地保证缓存一致？</li>
+<li>更新变量后，另一个线程真的永远不可见吗？多线程问题的本质是什么？</li>
+<li>volatile保证一致性的真正底层运行逻辑是什么？</li>
+</ol>
+<p>以上问题，我将从CPU的层面，以超长图解和文字的形式，为你完整呈现。</p>
+<hr>
+<p>[toc]</p>
+<h1><span id="jmm-nei-cun-mo-xing-he-cpu">JMM内存模型和CPU</span><a href="#jmm-nei-cun-mo-xing-he-cpu" class="header-anchor">#</a></h1><h2><span id="wei-shi-me-xu-yao-zhe-ge-jmm-mo-xing-yong-lai-zuo-shi-me-de">为什么需要这个JMM模型？用来做什么的？</span><a href="#wei-shi-me-xu-yao-zhe-ge-jmm-mo-xing-yong-lai-zuo-shi-me-de" class="header-anchor">#</a></h2><p>这是为了给java开发者提供屏蔽平台差异性的、统一的多线程执行语义<br>不同的操作系统或者不同的CPU，其对多线程并发问题的支持情况是不同的，但jvm尽量在背后将其实现成一套统一的逻辑。<br><strong>即你按照我的关键字操作，就可以像JMM模型里那样运作，不需要关心背后的CPU怎么跑的</strong></p>
+<h2><span id="shang-shu-mo-xing-he-bei-hou-cao-zuo-xi-tong-cpu-shi-xian-you-shi-me-guan-xi-gong-zuo-nei-cun-dui-ying-shi-me-zhu-nei-cun-dui-ying-shi-me">上述模型和背后操作系统、CPU实现有什么关系？工作内存对应什么，主内存对应什么？</span><a href="#shang-shu-mo-xing-he-bei-hou-cao-zuo-xi-tong-cpu-shi-xian-you-shi-me-guan-xi-gong-zuo-nei-cun-dui-ying-shi-me-zhu-nei-cun-dui-ying-shi-me" class="header-anchor">#</a></h2><p><img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652969950678545272.png" alt="image.png"></p>
+<ul>
+<li>主内存对应于java堆中的对象实例部分（物理硬件的内存）</li>
+<li>工作内存对应于虚拟机栈中的部分区域（ 寄存器，高速缓存， 线程主要访问读写的都是工作内存）</li>
+</ul>
+<h2><span id="shi-me-shi-cpu-huan-cun-cpu-huan-cun-chang-shi-me-yang">什么是CPU缓存？CPU缓存长什么样？</span><a href="#shi-me-shi-cpu-huan-cun-cpu-huan-cun-chang-shi-me-yang" class="header-anchor">#</a></h2><p>CPU缓存可以理解为一个容量有限的哈希表。<br>将某地址数据根据地址做哈希，映射到缓存的某一行，并且有替换的情况。<br>而划分两列，则是避免一出现hash冲突，就马上淘汰原内容的情况。<br>因此增加了备用列。通过这样一个多行两列的结构，根据内存地址实现了缓存的功能。<br><img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652970057734778836.png" alt="image.png"></p>
+<h2><span id="2-ge-cpu-tong-shi-geng-xin-shu-ju-shi-you-shi-me-ban-fa-bi-mian-tong-shi-xiu-gai-zhu-cun">2个CPU同时更新数据时，有什么办法避免同时修改主存？</span><a href="#2-ge-cpu-tong-shi-geng-xin-shu-ju-shi-you-shi-me-ban-fa-bi-mian-tong-shi-xiu-gai-zhu-cun" class="header-anchor">#</a></h2><ul>
+<li>一种方式是使用总线锁：确保CPU在持有总线锁期间，处理器可以独占任何共享内存。</li>
+</ul>
+<p>总线锁的代价是开销很大，其他CPU会一直在等待总线释放，读和写操作都无法处理。</p>
+<ul>
+<li>另一种方式是缓存锁，锁住各自的缓存，并<strong>通过缓存一致性协议MESI来进行和主存的同步。</strong></li>
+</ul>
+<h1><span id="mesi-xie-yi-chao-ji-xiang-jie">MESI协议超级详解</span><a href="#mesi-xie-yi-chao-ji-xiang-jie" class="header-anchor">#</a></h1><p>画了很多张图，顺便带上很多文字，来解释MESI协议的原理：<br>首先，CPU1和CPU2中的缓存都是空的， 因此缓存状态位是“I”（Invalid）<br>后面会相继提到各个状态的变化。<br><img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652970611412999019.png" alt="image.png"></p>
+<hr>
+<p>此时主存会将a的数据返回给CPU1， 并把CPU1的缓存状态<strong>设置为独占E（Exclude)</strong><br><img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652970706864127998.png" alt="image.png"></p>
+<h2><span id="wei-shi-me-yao-she-ji-du-zhan-zhuang-tai">为什么要设计独占状态？</span><a href="#wei-shi-me-yao-she-ji-du-zhan-zhuang-tai" class="header-anchor">#</a></h2><p>目的是为了<strong>减少不必要的全局同步消息。</strong><br>当这个a变量只有CPU1使用时，无论CPU1怎么修改，也只有CPU1在查看，没必要把信息同步给其他CPU，从而提升了效率， 对于一些不参与竞争的变量来说，非常有用。</p>
+<hr>
+<p>好，独占的问题搞定，那么当CPU2也读取时，会发生什么？<br>此时就会不再是独占状态了，2个CPU同时被修改为共享状态S（Share）<br><img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652971231021900637.png" alt="image.png"></p>
+<h2><span id="wei-shi-me-cpu2-dui-a-zhi-de-huo-qu-neng-gou-xiu-gai-cpu1-de-zhuang-tai">为什么CPU2对a值的获取，能够修改CPU1的状态？</span><a href="#wei-shi-me-cpu2-dui-a-zhi-de-huo-qu-neng-gou-xiu-gai-cpu1-de-zhuang-tai" class="header-anchor">#</a></h2><p>这是因为CPU可以通过总线广播+监听消息来变更状态， 也称嗅探机制。<br><strong>即CPU核心都会经常监听总线上的广播事件，根据事件（消息）类型，来做不同的应对。</strong><br>因此当CPU2更改后，总线会广播read消息，当CPU1收到read消息，并确认这个数据的地址和自己缓存中的地址是一致的时候，就会修改状态为S了。</p>
+<hr>
+<p>上述问题搞定，再看最关键的<strong>修改缓存</strong>的部分了！</p>
+<ol>
+<li>当CPU1触发对a变量的修改时，会先发送一个Invalid消息。</li>
+<li>CPU1此时会等待不动，停止任何操作，类似于阻塞了，它在等待其他CPU给他回应。</li>
+<li>当其他的CPU收到Invalid消息时，会将缓存中的a变量修改为I（Invalid）无效状态</li>
+<li>当所有CPU都处理完成时，总线为CPU1返回Invalid ack消息，CPU1才放心的将S状态修改为了M（modify）状态。<br>结合下面的图进行阅读更佳，注意图中的序号：<br><img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652971828729412023.png" alt="image.png"><br>很容易想到， 要将其他CPU设置为无效的原因，是为了保证其他CPU后面再次试图取a值时，取到的是最新的，而不是缓存的错误数据。</li>
+</ol>
+<h2><span id="xiu-gai-wan-m-zhuang-tai-hou-fa-sheng-liao-shi-me-shi-zhi-jie-tong-bu-hui-nei-cun-ma">修改完M状态后，发生了什么？是直接同步回内存吗？</span><a href="#xiu-gai-wan-m-zhuang-tai-hou-fa-sheng-liao-shi-me-shi-zhi-jie-tong-bu-hui-nei-cun-ma" class="header-anchor">#</a></h2><p>不是的！M状态此时就像“独占状态”一样，贪婪地占有这个缓存，后续的修改、读取，都直接读这个缓存，不再走任何总线</p>
+<p>其目的和独占状态E一样，都是为了减少非竞争情况下不必要的总线消耗<br><img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652972577879290980.png" alt="image.png"></p>
+<hr>
+<p>那么什么时候Modify状态会变化呢？<br>当其他的CPU试图获取a值，就会发生变化。其过程与 Exclude独占状态到Share状态 是类似的<br><img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652972743188732799.png" alt="image.png"><br><img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652972759885249610.png" alt="image.png"></p>
+<p>上面的内容给我一种感觉，MESI协议中，一直在给我们传达一个信息：<strong>MESI设置那么多状态，主要是为了避免每次都竞争。竞争只是偶然发生的，我们要尽可能少地乱锁总线！</strong></p>
+<h2><span id="bu-ke-jian-de-wu-qu-li-zi">不可见的误区例子</span><a href="#bu-ke-jian-de-wu-qu-li-zi" class="header-anchor">#</a></h2><p>从上面可以看到，当我们修改缓存时，会通过触发对其他缓存的无效化，达到变量对其他线程“可见”的效果。<br>因此，<strong>MESI缓存一致性协议已经实现了缓存的可见性</strong>，<br>下面这种例子中，当flag=true时， 其他CPU通过MESI协议，是能够感知到flag的变化的，因为缓存一定会在那个时刻被设置为无效，从而获取最新的数据。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="type">boolean</span> <span class="variable">flag</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="type">int</span> <span class="variable">num</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(()-&gt;&#123;</span><br><span class="line">            <span class="keyword">while</span> (!flag)&#123;</span><br><span class="line">               num++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).start();</span><br><span class="line">        flag = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="comment">//输出结果</span></span><br><span class="line">	<span class="number">1255362997</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1><span id="chong-tou-xi-you-mesi-bao-zheng-ke-jian-xing-de-xia-wei-shi-me-huan-you-hui-duo-xian-cheng-wen-ti">重头戏：有MESI保证可见性的下，为什么还有会多线程问题？</span><a href="#chong-tou-xi-you-mesi-bao-zheng-ke-jian-xing-de-xia-wei-shi-me-huan-you-hui-duo-xian-cheng-wen-ti" class="header-anchor">#</a></h1><p>首先可以看这个知乎问题的回答，如果看不懂，可以看我为你整理的详细解释：<br><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/277395220">https://www.zhihu.com/question/277395220</a></p>
+<hr>
+<p>每个java线程有自己的寄存器。<br>线程寄存器和CPU缓存的关系？</p>
+<hr>
+<p>上面的MESI协议图中，其实缺少了2个关键的优化，这2个优化点，也成了可见性问题的根源。<br>为了好好讲清楚这2个优化点带来的影响，我特地放到这里才讲述，也将会帮助你大大理解“可见性”问题的本质！</p>
+<p>首先我们回到CPU1修改a值时的那张图：<br><img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652973240336374790.png" alt="image.png"></p>
+<p>里面提到，CPU1会等待所有CPU都将状态位置为I（无效）后，才开始修改状态并更新。那么有个问题：</p>
+<h2><span id="cpu1-deng-dai-qi-ta-cpu-qing-kong-huan-cun-de-zu-sai-deng-dai-xing-wei-hui-bu-hui-tai-man-liao">CPU1等待其他CPU清空缓存的阻塞等待行为会不会太慢了？</span><a href="#cpu1-deng-dai-qi-ta-cpu-qing-kong-huan-cun-de-zu-sai-deng-dai-xing-wei-hui-bu-hui-tai-man-liao" class="header-anchor">#</a></h2><p>如果CPU1后面有好几条和a无关的指令（例如b=3,d=e等)，都在为了等待a的更新而不执行，未免太浪费时间了！</p>
+<p>因此MESI设计了一个叫做 <strong>“StoreBuffer”</strong> 的东西，它会接收CPU1的修改动作，并由StoreBuffer来触发“阻塞等待-&gt;全部收到-&gt;修改状态M”的动作。<br>而CPU1则继续管自己去执行后续与a无关的指令。<br>因此<strong>StoreBuffer就像是一个异步的“生产者消息队列”。</strong>，如下所示：<br><img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652973451807966252.png" alt="image.png"></p>
+<p>但是还有个问题，因为是等待所有CPU将a状态改为I，这个修改动作是需要时间的。<br>如果有一个CPU修改的比较慢，可能会导致 StoreBuffer这个生产者队列出现队满的情况，于是继续引发了阻塞。</p>
+<h2><span id="you-shi-me-ban-fa-neng-jia-kuai-xiang-ying-su-du-invalid-xiao-xi-de-xiang-ying-su-du-ni">有什么办法能加快响应速度Invalid消息的响应速度呢？</span><a href="#you-shi-me-ban-fa-neng-jia-kuai-xiang-ying-su-du-invalid-xiao-xi-de-xiang-ying-su-du-ni" class="header-anchor">#</a></h2><p>那就是<strong>再引入一个“异步的消费者队列”，名叫Invalid Queue</strong><br>这样其他CPU收到消息时，先别急着处理，而是存到这个Queue中，然后直接返回Invalid消息，这样响应就变快了！ 也就是更新动作，和失效消息的接收，都加了一个队列！<br>如下图所示：<br><img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652973806095977745.png" alt="image.png"></p>
+<h2><span id="duo-xian-cheng-wen-ti-yu-storebuffer-invalid-queue-zhi-jian-de-guan-xi">多线程问题与StoreBuffer、Invalid-Queue之间的关系</span><a href="#duo-xian-cheng-wen-ti-yu-storebuffer-invalid-queue-zhi-jian-de-guan-xi" class="header-anchor">#</a></h2><p>终于来到了关键的部分了。<br>从刚才的描述中，可以看到CPU引入了2个异步的队列，来处理数据的更新动作。<br>那么就可能存在赋值的动作被放入异步队列，导致延迟触发的情况。<br>而正是这个延迟放入的动作，可能导致数据延迟修改，<strong>即使没有发生指令重排序。</strong><br>这样干讲比较难懂，还是需要结合代码和图解。<br>首先是这个经典的多线程代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ReorderExample</span> &#123;</span><br><span class="line">       <span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">       <span class="type">boolean</span> <span class="variable">flag</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line">       <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">writer</span><span class="params">()</span> &#123;</span><br><span class="line">           a = <span class="number">1</span>;                  <span class="comment">// 1</span></span><br><span class="line">           flag = <span class="literal">true</span>;            <span class="comment">// 2</span></span><br><span class="line">       &#125;</span><br><span class="line">       Public <span class="keyword">void</span> <span class="title function_">reader</span><span class="params">()</span> &#123;</span><br><span class="line">           <span class="keyword">while</span> (flag != <span class="literal">true</span>) &#123;            <span class="comment">// 3</span></span><br><span class="line">             ;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="type">int</span> <span class="variable">c</span> <span class="operator">=</span>  a * <span class="number">2</span>;     <span class="comment">// 4</span></span><br><span class="line">           …………</span><br><span class="line">       &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>按照设想，程序员本是希望有如下的表现：<br><img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1653490107416809220.png" alt="image.png"><br>但是事与愿违，当reader方法中离开了flag循环时，a的值仍然是初始化值0，导致c的值为0。</p>
+<p>那么在了解了刚才的CPU原理后，我们终于可以开始分析这段代码为什么会发生这种问题了：</p>
+<ol>
+<li><p>当线程writer执行a=1时，CPU要做更新，会通过上面提到的异步机制进行更新。如果这个CPU此时堆积了很多的写操作，会导致a=1这个动作在异步队列中处于等待。<br><img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1653492190388870916.png" alt="image.png"></p>
+</li>
+<li><p>时间片切换，线程writer切到了另一个CPU上<br><img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1653492292075803742.png" alt="image.png"><br>注意一个很重要的点：</p>
+</li>
+</ol>
+<p><strong>线程执行指令，并非只在1个CPU上运行，是可以通过时间片轮转切换的。因此CPU和线程并非完全绑定的关系</strong></p>
+<ol start="3">
+<li>flag=true动作在CPU2上迅速响应，很快完成了缓存一致性<br><img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1653492398662891252.png" alt="image.png"></li>
+</ol>
+<p>4.reader线程读到了最新的flag，却没有读到新的a，导致了a还在用旧的值。<br><img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1653492531372457392.png" alt="image.png"></p>
+<p>因此可以看到，<strong>正是CPU之间缓存更新的延迟，导致了多线程不同步问题的发生</strong></p>
+<h1><span id="volatile-you-shi-ru-he-bi-mian-cpu-geng-xin-yan-chi-wen-ti-de">volatile又是如何避免CPU更新延迟问题的？</span><a href="#volatile-you-shi-ru-he-bi-mian-cpu-geng-xin-yan-chi-wen-ti-de" class="header-anchor">#</a></h1><p>这里不谈论那让人费解的内存屏障， 只要记住一点：<br><strong>对于volatile变量，一旦更新，不会走CPU异步更新，而是在这个CPU阻塞住，直到写动作完整完成，才会继续下一个指令的运行</strong><br>本质上是利用的#LOCK指令。<br>它的作用就是必须等待该变量的storeBuffer的清空，读取时也必须等待InvalidQueue的清空，才能去做写和读。从而保证不会出现因异步导致的多线程不同步问题</p>
+<hr>
+<h1><span id="tu-jie-zong-jie">图解总结</span><a href="#tu-jie-zong-jie" class="header-anchor">#</a></h1><p>写文章不容易，学习也不容易，给我点个关注点个赞，未来会持续更新具有思考深度的学习文章。欢迎在华为云社区共同交流和学习。</p>
+<p>MESI缓存一致性原理图解如下：<br><img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/625af1a7e0b34d1a88113212.png" alt="image.png"></p>
+<p>多线程同步问题如下：<br><img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1653492544846491616.png" alt="image.png"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2022/06/05/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC296%E5%9C%BA%E5%91%A8%E8%B5%9B-209%E5%90%8D-36%E5%88%86%E9%92%9F4%E9%A2%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1601,7 +1751,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-06-05 16:47:08" itemprop="dateModified" datetime="2022-06-05T16:47:08+08:00">2022-06-05</time>
+                <time title="修改时间：2022-06-05 23:02:44" itemprop="dateModified" datetime="2022-06-05T23:02:44+08:00">2022-06-05</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1682,10 +1832,16 @@
 <li>当实在决定不了，先尝试性在2个决定上做一些前置工作，至少保证事情在推进。</li>
 <li></li>
 </ol>
-<h2><span id="gong-zuo-zhi-wai-de-xing-qu-chang-shi">工作之外的兴趣、尝试</span><a href="#gong-zuo-zhi-wai-de-xing-qu-chang-shi" class="header-anchor">#</a></h2><p>工作之内的事情一般会有目标和绩效。</p>
-<p>工作之外的事情，则要注意不要带入工作思维。</p>
-<p>避免定过于高的目标，例如一定要完成xxxx，一定要达到xxx， 而忽略了做这件事的意义。</p>
-<p>不如先开始做，做一部分，如果真的不喜欢就不要勉强</p>
+<h2><span id="gong-zuo-zhi-wai-de-xing-qu-chang-shi">工作之外的兴趣、尝试</span><a href="#gong-zuo-zhi-wai-de-xing-qu-chang-shi" class="header-anchor">#</a></h2><ul>
+<li><p>工作之内的事情一般会有目标和绩效。工作之外的事情，则要注意不要带入工作思维。</p>
+</li>
+<li><p>避免定过于高的目标，例如一定要完成xxxx，一定要达到xxx， 而忽略了做这件事的意义。</p>
+</li>
+<li><p>不如先开始做，做一部分，如果真的不喜欢就不要勉强</p>
+</li>
+<li><p>注意并不是只有工作技能上的提升才叫提升或者成长， 个人心理、生理状态等进步都是一种提升，因此不要只看这一周工作上有没有学习或者进步之类的。  如果人的焦虑、恐惧症状比前几周有改善，或者开始关注到自己的感受和内心想法，那么也是一种进步。</p>
+</li>
+</ul>
 
       
     </div>
@@ -1851,146 +2007,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/05/03/why-study-java-stack/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="冲破黎明前的黑暗">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/05/03/why-study-java-stack/" class="post-title-link" itemprop="url">【反八股系列】一、为什么我们要学习java虚拟机栈的原理？</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-05-03 19:15:36" itemprop="dateCreated datePublished" datetime="2022-05-03T19:15:36+08:00">2022-05-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-05-04 15:15:59" itemprop="dateModified" datetime="2022-05-04T15:15:59+08:00">2022-05-04</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>曾经的八股文：</p>
-<p>xxx</p>
-<p>现在的八股文：</p>
-<p>xxx</p>
-<p>为了找回对编程最初的乐趣</p>
-<p>决定自制反八股系列的知识视频</p>
-<p>本系列的三大宗旨：</p>
-<p>拒绝死记硬背</p>
-<p>拒绝管中窥豹</p>
-<p>拒绝浅尝则止</p>
-<hr>
-<p>对于jvm的虚拟机内存结构，大家应该都能背会有“2个堆”、“2个栈”、“1个计数器” 这种内容，就像下面这张图一样。  其中java的栈是虚拟机指令执行的关键。</p>
-<p>那么，为什么我们要学习背后的这个虚拟机栈呢？ 我的代码能跑起来不就了可以吗？</p>
-<p>哦，是面试要用么？然而个人不希望这些内容成为新一代的“科技八股文”。</p>
-<p>因此本系列希望先从为什么学习入手，再深入到更深层次的东西，，希望能带来的是长久的收获，而非短暂的记忆。</p>
-<hr>
-<p>为什么我们要学习背后的虚拟机栈。</p>
-<p>首先，你debug的时候，你都不知道这个是什么东西，瞎猜可不行，你要知道暂停时现在是个请什么情况， IDE上的东西到底是什么，他们对程序运行又有什么影响</p>
-<p>[debug图片]</p>
-<p>其次，虚拟机栈的内容是很多重要知识的前置知识点。  垃圾收集的GC-ROOT与栈有关， JIT优化和栈有关。如果你不知道，那么在遇到相关知识点，只会产生“这是啥”、“这又是啥”的连锁反应， 就有可能陷入背诵八股文的折磨却不知所以然的地步。</p>
-<p>最后，java虚拟机栈为我们生动展示了 一个小心的迷你的CPU执行逻辑。  </p>
-<p>对于很多没有学习过计算机底层原理（例如CSAPP这本书） 的人来说， 是完全不知道计算机是如何执行机器码指令的。 而java虚拟机栈可以更好理解 指令是如何运行的， 虽然这个指令不是真正的机器码执行， 而是jvm字节码指令。  但是通过字节码指令， 我们可以快速对应到java中常见的各种操作。</p>
-<p>这对于很多入门时直奔删减改查的同学来说， 是不可多得的学习底层的机会。</p>
-<p>另外数据结构里学习的栈的知识也会在这里得以应用。</p>
-<hr>
-<p>清楚了上述好处后，我们开始深入了解虚拟机栈的细节。</p>
-<p>首先，栈帧是什么？</p>
-<p>不需要去记忆概念，就记得我们调试时，框框里的每一行，就是一个栈帧。 可以看到除了栈顶的方法正在执行外， 其他行都仿佛静止了一般， 因此就像拍照时的一帧。</p>
-<p>对于栈帧里有什么， 经典背诵4件套：</p>
-<p>局部变量表，</p>
-<p>操作数栈，</p>
-<p>动态链接，</p>
-<p>方法返回地址，</p>
-<p>其实与上面这4样配合的，还有个虚拟机栈所使用的“程序计数器”，才共同实现了jvm指令的执行。</p>
-<p>首先对局部变量表而言， 为什么要有这个东西？</p>
-<p>5 4 3 2 1 .</p>
-<p>因为我们声明的局部变量a、b、c等， 都需要有一个地方存放， 但局部变量只有这个方法中才会使用， 所以才会在栈帧中开辟局部连量表的空间。</p>
-<p>那么，变量表有多大呢？</p>
-<p>编译时指定定死了</p>
-<p>为什么能定死？</p>
-<p>因为编译器很聪明，通过分析代码，他就能知道到底这个方法要用几个变量。</p>
-<p>为什么我们需要思考这个问题？因为我们要考虑我们写的代码，可能会带来多大的局部栈的消耗。</p>
-<p>例如，我在一个for循环里反复定义同一个变量，那局部变量表是不是在无限增大？我是不是要提前加大栈的分配内存？</p>
-<p>其实不需要， 因为编译器支持变量表的复用，  它会知道你在重复声明变量，所以实际字节码指令中，它会明确写下“这个变量继续放到前面那个槽”的指令，  从而覆盖使用了之前的槽。 </p>
-<p>你问我怎么分析的？ 请阅读《编译原理》。</p>
-<p>然后操作数栈又是干什么的？ 如果要做a+b,我直接从变量表上取a的值和b的值，加起来不就好了？</p>
-<p>直接让CPU取a和b的值拿去算完回来，不就好了？</p>
-<p>那我如果是 a + b*c呢</p>
-<p>b*c的值放哪里？</p>
-<p>如果是a+b*(c+d)呢？</p>
-<p>这时候如果你学习过数据结构里栈的应用 ，就会知道 模拟一个计算器，往往需要一个栈。</p>
-<p>而操作数栈就是这个作用。</p>
-<p>当你学习jvm指令时，就会看到有专门的指令就是取栈顶或者把值推送到栈顶的指令。</p>
-<p>这样做加法的时候，也就不用关心变量的地址了，只要你把栈顶的值存好，我直接拿去加就行。</p>
-<p>那么动态链接又是个什么玩意？ </p>
-<p>就这么说， 你怎么知道这个方法此时要做哪些动作？</p>
-<p>肯定有一段代码区（即jvm指令），让我一条条执行对吧？</p>
-<p>那么这个代码区放哪呢？我总需要知道一个地址， 因此，动态链接，就是这个方法代码的位置。</p>
-<p>那干嘛叫动态链接这么抽象啊？</p>
-<p>因为有的方法往往是等运行的时候才知道地址， 所以统一就叫做动态链接了，这就是未来会提到的java多态的核心本质而。</p>
-<p>那么返回地址比较好理解，方法执行完成， 返回上一层方法执行的位置。</p>
-<p>等等，这个地址是实际的地址吗？例如0x2313212这种？</p>
-<p>应该是把，不然怎么叫地址？</p>
-<p>但是我已经有动态链接标记的方法指令的起始位置了，你为什么还要整这么长？</p>
-<p>哦，那就用偏移值就可以了！</p>
-<p>那现在再看，程序计数器，代表的是什么</p>
-<p>很显然和方法返回地址一样， 也是指令偏移值，  这样通过动态链接 + 计数器， 就能知道这个方法当前执行到什么位置了， 即使发生了线程切换或者方法返回， 都不用担心了~！ </p>
-<p>那么再深度扩展一下，根据以上理解，是否能清楚下面这个的原因代码的原因</p>
-<p>当你知道远离后，你就不需要记忆这种情况，而是一想背后的实现，就能明白这么写是不对的。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123; </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123; </span><br><span class="line">   System.out.println(<span class="string">&quot;value : &quot;</span> + getValue()); </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">getValue</span><span class="params">()</span> &#123; </span><br><span class="line">   <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; </span><br><span class="line">   <span class="keyword">try</span> &#123; </span><br><span class="line">        <span class="keyword">return</span> i; </span><br><span class="line">   &#125; <span class="keyword">finally</span> &#123; </span><br><span class="line">        i++; </span><br><span class="line">   &#125; </span><br><span class="line">&#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p> 就是在执行 finally 语句块之前，try 或者 catch 语句块会保留其返回值到本地变量表（Local Variable Table）中。待 subroutine 执行完毕之后，再恢复保留的返回值到操作数栈中，然后通过 return 或者 throw 语句将其返回给该方法的调用者（invoker） </p>
-<p>因为你要处理finally块时， 操作数栈要腾出来给finally使用， 因此返回值不能放在这，所以整了个局部变量ret放进去， 执行完成返回来。</p>
-<p><a target="_blank" rel="noopener" href="https://www.jb51.net/article/74771.htm">https://www.jb51.net/article/74771.htm</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2062,7 +2078,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">12</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -2109,7 +2125,30 @@
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
 
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
         
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
 
 
 
