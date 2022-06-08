@@ -178,7 +178,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2022-06-08 07:29:34 / 修改时间：07:31:40" itemprop="dateCreated datePublished" datetime="2022-06-08T07:29:34+08:00">2022-06-08</time>
+              <time title="创建时间：2022-06-08 07:29:34 / 修改时间：08:02:57" itemprop="dateCreated datePublished" datetime="2022-06-08T07:29:34+08:00">2022-06-08</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -213,6 +213,38 @@
 <li>volatile保证一致性的真正底层运行逻辑是什么？</li>
 </ol>
 <p>以上问题，我将从CPU的层面，以超长图解和文字的形式，为你完整呈现。</p>
+<div class="toc">
+
+<!-- toc -->
+
+<ul>
+<li><a href="#jmm-nei-cun-mo-xing-he-cpu">JMM内存模型和CPU</a><ul>
+<li><a href="#wei-shi-me-xu-yao-zhe-ge-jmm-mo-xing-yong-lai-zuo-shi-me-de">为什么需要这个JMM模型？用来做什么的？</a></li>
+<li><a href="#shang-shu-mo-xing-he-bei-hou-cao-zuo-xi-tong-cpu-shi-xian-you-shi-me-guan-xi-gong-zuo-nei-cun-dui-ying-shi-me-zhu-nei-cun-dui-ying-shi-me">上述模型和背后操作系统、CPU实现有什么关系？工作内存对应什么，主内存对应什么？</a></li>
+<li><a href="#shi-me-shi-cpu-huan-cun-cpu-huan-cun-chang-shi-me-yang">什么是CPU缓存？CPU缓存长什么样？</a></li>
+<li><a href="#2-ge-cpu-tong-shi-geng-xin-shu-ju-shi-you-shi-me-ban-fa-bi-mian-tong-shi-xiu-gai-zhu-cun">2个CPU同时更新数据时，有什么办法避免同时修改主存？</a></li>
+</ul>
+</li>
+<li><a href="#mesi-xie-yi-chao-ji-xiang-jie">MESI协议超级详解</a><ul>
+<li><a href="#wei-shi-me-yao-she-ji-du-zhan-zhuang-tai">为什么要设计独占状态？</a></li>
+<li><a href="#wei-shi-me-cpu2-dui-a-zhi-de-huo-qu-neng-gou-xiu-gai-cpu1-de-zhuang-tai">为什么CPU2对a值的获取，能够修改CPU1的状态？</a></li>
+<li><a href="#xiu-gai-wan-m-zhuang-tai-hou-fa-sheng-liao-shi-me-shi-zhi-jie-tong-bu-hui-nei-cun-ma">修改完M状态后，发生了什么？是直接同步回内存吗？</a></li>
+<li><a href="#bu-ke-jian-de-wu-qu-li-zi">不可见的误区例子</a></li>
+</ul>
+</li>
+<li><a href="#chong-tou-xi-you-mesi-bao-zheng-ke-jian-xing-de-xia-wei-shi-me-huan-you-hui-duo-xian-cheng-wen-ti">重头戏：有MESI保证可见性的下，为什么还有会多线程问题？</a><ul>
+<li><a href="#cpu1-deng-dai-qi-ta-cpu-qing-kong-huan-cun-de-zu-sai-deng-dai-xing-wei-hui-bu-hui-tai-man-liao">CPU1等待其他CPU清空缓存的阻塞等待行为会不会太慢了？</a></li>
+<li><a href="#you-shi-me-ban-fa-neng-jia-kuai-xiang-ying-su-du-invalid-xiao-xi-de-xiang-ying-su-du-ni">有什么办法能加快响应速度Invalid消息的响应速度呢？</a></li>
+<li><a href="#duo-xian-cheng-wen-ti-yu-storebuffer-invalid-queue-zhi-jian-de-guan-xi">多线程问题与StoreBuffer、Invalid-Queue之间的关系</a></li>
+</ul>
+</li>
+<li><a href="#volatile-you-shi-ru-he-bi-mian-cpu-geng-xin-yan-chi-wen-ti-de">volatile又是如何避免CPU更新延迟问题的？</a></li>
+<li><a href="#tu-jie-zong-jie">图解总结</a></li>
+</ul>
+<!-- tocstop -->
+
+</div>
+
 <hr>
 <p>[toc]</p>
 <h1><span id="jmm-nei-cun-mo-xing-he-cpu">JMM内存模型和CPU</span><a href="#jmm-nei-cun-mo-xing-he-cpu" class="header-anchor">#</a></h1><h2><span id="wei-shi-me-xu-yao-zhe-ge-jmm-mo-xing-yong-lai-zuo-shi-me-de">为什么需要这个JMM模型？用来做什么的？</span><a href="#wei-shi-me-xu-yao-zhe-ge-jmm-mo-xing-yong-lai-zuo-shi-me-de" class="header-anchor">#</a></h2><p>这是为了给java开发者提供屏蔽平台差异性的、统一的多线程执行语义<br>不同的操作系统或者不同的CPU，其对多线程并发问题的支持情况是不同的，但jvm尽量在背后将其实现成一套统一的逻辑。<br><strong>即你按照我的关键字操作，就可以像JMM模型里那样运作，不需要关心背后的CPU怎么跑的</strong></p>
