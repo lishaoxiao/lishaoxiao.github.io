@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="为什么说线程切换会很慢？ 对象头中的mark-word 锁状态标志位 +偏向锁标记位（2bit + 1bit） 为什么无锁&#x2F;偏向锁的标志位是01，而轻量级锁的标志位是00？   hashcode（31bit） markword中的hashcode是哪个方法生成的？ markword中的hashcode是什么时候生成？ hashcode在其他锁状态中去哪了？   gc分代年龄（4bit）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="synchronized关键字原理超级详解">
+<meta property="og:url" content="http://example.com/2022/06/08/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%86%E8%B6%85%E7%BA%A7%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="冲破黎明前的黑暗">
+<meta property="og:description" content="为什么说线程切换会很慢？ 对象头中的mark-word 锁状态标志位 +偏向锁标记位（2bit + 1bit） 为什么无锁&#x2F;偏向锁的标志位是01，而轻量级锁的标志位是00？   hashcode（31bit） markword中的hashcode是哪个方法生成的？ markword中的hashcode是什么时候生成？ hashcode在其他锁状态中去哪了？   gc分代年龄（4bit）">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%86%E8%B6%85%E7%BA%A7%E8%AF%A6%E8%A7%A3/1655422124426.png">
+<meta property="og:image" content="http://example.com/images/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%86%E8%B6%85%E7%BA%A7%E8%AF%A6%E8%A7%A3/1655422054870.png">
+<meta property="og:image" content="http://example.com/images/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%86%E8%B6%85%E7%BA%A7%E8%AF%A6%E8%A7%A3/1655337139035.png">
+<meta property="og:image" content="http://example.com/images/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%86%E8%B6%85%E7%BA%A7%E8%AF%A6%E8%A7%A3/1655537149976.png">
+<meta property="og:image" content="http://example.com/images/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%86%E8%B6%85%E7%BA%A7%E8%AF%A6%E8%A7%A3/1655534605569.png">
+<meta property="og:image" content="http://example.com/images/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%86%E8%B6%85%E7%BA%A7%E8%AF%A6%E8%A7%A3/1655599370757.png">
+<meta property="og:image" content="http://example.com/images/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%86%E8%B6%85%E7%BA%A7%E8%AF%A6%E8%A7%A3/1655542634901.png">
+<meta property="og:image" content="http://example.com/images/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%86%E8%B6%85%E7%BA%A7%E8%AF%A6%E8%A7%A3/1655600519145.png">
+<meta property="og:image" content="http://example.com/images/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%86%E8%B6%85%E7%BA%A7%E8%AF%A6%E8%A7%A3/1655603492133.png">
+<meta property="article:published_time" content="2022-06-08T13:05:11.000Z">
+<meta property="article:modified_time" content="2022-06-19T02:21:36.269Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="java,深入理解jvm">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%86%E8%B6%85%E7%BA%A7%E8%AF%A6%E8%A7%A3/1655422124426.png">
+
+<link rel="canonical" href="http://example.com/2022/06/08/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%86%E8%B6%85%E7%BA%A7%E8%AF%A6%E8%A7%A3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>synchronized关键字原理超级详解 | 冲破黎明前的黑暗</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">冲破黎明前的黑暗</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/06/08/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%86%E8%B6%85%E7%BA%A7%E8%AF%A6%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="冲破黎明前的黑暗">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          synchronized关键字原理超级详解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-06-08 21:05:11" itemprop="dateCreated datePublished" datetime="2022-06-08T21:05:11+08:00">2022-06-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-06-19 10:21:36" itemprop="dateModified" datetime="2022-06-19T10:21:36+08:00">2022-06-19</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">java高级原理</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+
+<!-- toc -->
+
+<ul>
+<li><a href="#wei-shi-me-shuo-xian-cheng-qie-huan-hui-hen-man">为什么说线程切换会很慢？</a></li>
+<li><a href="#dui-xiang-tou-zhong-de-mark-word">对象头中的mark-word</a><ul>
+<li><a href="#suo-zhuang-tai-biao-zhi-wei-pian-xiang-suo-biao-ji-wei-2bit-1bit">锁状态标志位 +偏向锁标记位（2bit + 1bit）</a><ul>
+<li><a href="#wei-shi-me-wu-suo-pian-xiang-suo-de-biao-zhi-wei-shi-01-er-qing-liang-ji-suo-de-biao-zhi-wei-shi-00">为什么无锁/偏向锁的标志位是01，而轻量级锁的标志位是00？</a></li>
+</ul>
+</li>
+<li><a href="#hashcode-31bit">hashcode（31bit）</a><ul>
+<li><a href="#markword-zhong-de-hashcode-shi-na-ge-fang-fa-sheng-cheng-de">markword中的hashcode是哪个方法生成的？</a></li>
+<li><a href="#markword-zhong-de-hashcode-shi-shi-me-shi-hou-sheng-cheng">markword中的hashcode是什么时候生成？</a></li>
+<li><a href="#hashcode-zai-qi-ta-suo-zhuang-tai-zhong-qu-na-liao">hashcode在其他锁状态中去哪了？</a></li>
+</ul>
+</li>
+<li><a href="#gc-fen-dai-nian-ling-4bit">gc分代年龄（4bit）</a></li>
+<li><a href="#cms-free">cms_free</a></li>
+</ul>
+</li>
+<li><a href="#suo-sheng-ji-si-ge-jie-duan-chao-ji-xiang-jie">锁升级四个阶段超级详解</a><ul>
+<li><a href="#wu-suo">无锁</a><ul>
+<li><a href="#chu-yu-wu-suo-zhuang-tai-de-tiao-jian-huo-zhe-shi-ji-shi-shi-me">处于无锁状态的条件或者时机是什么？</a></li>
+<li><a href="#dui-xiang-cong-mei-jin-ru-tong-bu-kuai-wei-shi-me-pian-xiang-suo-biao-zhi-wei-que-shi-1">对象从没进入同步块，为什么偏向锁标志位却是1？</a></li>
+</ul>
+</li>
+<li><a href="#pian-xiang-suo">偏向锁</a><ul>
+<li><a href="#wei-shi-me-yao-you-pian-xiang-suo">为什么要有偏向锁？</a></li>
+<li><a href="#pian-xiang-suo-de-markword-xiang-jie">偏向锁的markword详解</a><ul>
+<li><a href="#markword-zhong-de-dang-qian-xian-cheng-id">markword中的当前线程id</a><ul>
+<li><a href="#java-de-xian-cheng-id-shi-yi-ge-long-lei-xing-an-li-shuo-shi-64-wei-dan-wei-shi-me-zhi-lei-de-xian-cheng-id-zhi-you-54-wei">java的线程id是一个long类型， 按理说是64位，但为什么之类的线程id只有54位？</a></li>
+<li><a href="#xian-cheng-id-ru-he-xie-ru">线程id如何写入？</a></li>
+</ul>
+</li>
+<li><a href="#ha-xi-code-qu-na-liao">哈希code去哪了</a></li>
+<li><a href="#epoch-shi-shi-me">epoch是什么？</a></li>
+</ul>
+</li>
+<li><a href="#pian-xiang-suo-yun-zuo-xiang-jie">偏向锁运作详解</a><ul>
+<li><a href="#chi-kai-tong-bu-dai-ma-kuai-shi-markword-zhong-de-xian-cheng-id-hui-chong-xin-bian-wei-0-ma">离开同步代码块时， markword中的线程id会重新变为0吗？</a></li>
+<li><a href="#pian-xiang-suo-fa-sheng-jing-zheng-shi-de-qie-suo-huo-zhe-sheng-ji-cao-zuo">偏向锁发生竞争时的切锁或者升级操作。</a><ul>
+<li><a href="#wei-shi-me-yao-deng-dai-an-quan-dian-cai-neng-zuo-che-xiao-cao-zuo">为什么要等待安全点，才能做撤销操作？</a></li>
+<li><a href="#wei-shi-me-yao-xian-tui-hua-cheng-wu-suo-zhuang-tai-zai-shi-tu-jing-zheng-cheng-pian-xiang-suo-bu-neng-zhi-jie-pian-xiang-ma">为什么要先退化成无锁状态，再试图竞争成偏向锁？不能直接偏向吗？</a></li>
+<li><a href="#wei-shi-me-yuan-pian-xiang-xian-cheng-zai-tong-bu-dai-ma-kuai-zhong-shi-jiu-bi-xu-sheng-ji-wei-qing-liang-ji-suo-neng-fou-tong-yang-che-xiao-wu-suo-lai-jing-zheng">为什么原偏向线程在同步代码块中时，就必须升级为轻量级锁？能否同样撤销无锁来竞争？</a></li>
+</ul>
+</li>
+<li><a href="#pi-liang-chong-pian-xiang-yi-ji-epoch-de-ying-yong">批量重偏向，以及epoch的应用</a></li>
+<li><a href="#pi-liang-che-xiao">批量撤销</a></li>
+<li><a href="#pian-xiang-suo-de-yan-chi-qi-dong">偏向锁的延迟启动</a></li>
+</ul>
+</li>
+<li><a href="#pian-xiang-suo-de-chong-yao-yan-bian-li-shi-he-si-kao">偏向锁的重要演变历史和思考</a></li>
+</ul>
+</li>
+<li><a href="#qing-liang-ji-suo">轻量级锁</a><ul>
+<li><a href="#yuan-xian-markword-zhong-de-xin-xi-du-qu-na-li-liao">原先markword中的信息都去哪里了？</a></li>
+<li><a href="#qing-liang-ji-suo-de-shang-suo-jie-suo-guo-cheng">轻量级锁的上锁/解锁过程</a></li>
+<li><a href="#qing-liang-ji-suo-ru-he-chu-li-chong-ru-wen-ti">轻量级锁如何处理重入问题？</a></li>
+</ul>
+</li>
+<li><a href="#chong-liang-ji-suo">重量级锁</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+
+</div>
+
+<p>[toc]</p>
+<h1><span id="wei-shi-me-shuo-xian-cheng-qie-huan-hui-hen-man">为什么说线程切换会很慢？</span><a href="#wei-shi-me-shuo-xian-cheng-qie-huan-hui-hen-man" class="header-anchor">#</a></h1><p>所谓的用户态和内核态之间的切换仅仅是一方面， 并非全部， 更关键的在于， 多CPU的机器中，<strong>当你切换了线程，意味着线程在原先CPU上的缓存也许不再有用</strong>，  因为当线程重新触发时，可能在另一个CPU上执行了。</p>
+<p>正因如此，不建议没事就挂起线程， 让线程自旋会比挂起后切换CPU好很多。</p>
+<p>正与基于这一点，才有了后面的sync锁升级机制，理解了为什么要锁升级，才能逐步理解锁升级过程，</p>
+<h1><span id="dui-xiang-tou-zhong-de-mark-word">对象头中的mark-word</span><a href="#dui-xiang-tou-zhong-de-mark-word" class="header-anchor">#</a></h1><p>java每个对象的对象头中， 都有32或者64位的mark-word。</p>
+<p>mark-word是理解锁升级过程的重要部分，且后面的锁升级过程都会涉及，因此这里会进行一个非常详细的解释。这部分只对一个对象必有的属性做解释（即一般不会随着锁状态变化而消失的属性）。对于各锁状态独有的属性，会在锁升级过程中做详细的解释。</p>
+<p><img src="/images/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%86%E8%B6%85%E7%BA%A7%E8%AF%A6%E8%A7%A3/1655422124426.png" alt="1655422124426"></p>
+<h2><span id="suo-zhuang-tai-biao-zhi-wei-pian-xiang-suo-biao-ji-wei-2bit-1bit">锁状态标志位 +偏向锁标记位（2bit + 1bit）</span><a href="#suo-zhuang-tai-biao-zhi-wei-pian-xiang-suo-biao-ji-wei-2bit-1bit" class="header-anchor">#</a></h2><p>除了markword中的2位锁状态标志位， 其他62位都会随着锁状态标志位的变化而变化。</p>
+<p>这里先列出各锁状态标志位代表的当前对象所用锁的情况。后面会详细解释各种锁的含义和运行原理。</p>
+<ul>
+<li>锁状态标志位为01： 属于无锁或者偏向锁状态。<strong>因此还需要额外的偏向锁标记位1bit来确认是无锁还是偏向锁</strong></li>
+<li>锁状态标志位为00： 轻量级锁</li>
+<li>锁状态标志位为10： 重量级锁</li>
+<li>锁状态标志位为11： 已经被gc标记，即将释放</li>
+</ul>
+<h3><span id="wei-shi-me-wu-suo-pian-xiang-suo-de-biao-zhi-wei-shi-01-er-qing-liang-ji-suo-de-biao-zhi-wei-shi-00">为什么无锁/偏向锁的标志位是01，而轻量级锁的标志位是00？</span><a href="#wei-shi-me-wu-suo-pian-xiang-suo-de-biao-zhi-wei-shi-01-er-qing-liang-ji-suo-de-biao-zhi-wei-shi-00" class="header-anchor">#</a></h3><p>即按理说，无锁是锁状态的初始情况，为什么标志位不是从00开始？</p>
+<p>个人查询到的一个解释，是因为 轻量级锁除了锁标志位外，另外62位都是一个指针地址。</p>
+<p>如果将轻量级锁标志位设置为00， 那么在判断标志位为00后， <strong>jvm无需再额外做一次markWord&gt;&gt;2的操作，而是直接将markWord拿来当作地址使用即可！</strong></p>
+<p>可以从这里看到jvm的设计者还是非常细节的，并没有随意地定义各状态的标志位</p>
+<h2><span id="hashcode-31bit">hashcode（31bit）</span><a href="#hashcode-31bit" class="header-anchor">#</a></h2><p>哈希code很容易理解，将对象存储到一些map或者set里时，都需要hashcode来确认插入位置。</p>
+<p>但markword里的hashcode，和我们平时经常覆写的hashCode()还是有区别的。</p>
+<h3><span id="markword-zhong-de-hashcode-shi-na-ge-fang-fa-sheng-cheng-de">markword中的hashcode是哪个方法生成的？</span><a href="#markword-zhong-de-hashcode-shi-na-ge-fang-fa-sheng-cheng-de" class="header-anchor">#</a></h3><p>很多人误以为，markword中的hashcode是由我们经常覆写的hashcode（）方法生成的。</p>
+<p>实际上， markword中的hashcode只由底层 JDK C++ 源码计算得到（java侧调用方法为 System.identityHashCode() ）， 生成后固化到markword中，</p>
+<p>如果你覆写了hashcode()方法， 那么每次都会重新调用<code>hashCode()</code>方法重新计算哈希值。</p>
+<p>根本原因是因为你覆写hashcode()之后，该方法中很可能会利用被修改的成员来计算哈希值，所以jvm不敢将其存储到markword中。 </p>
+<p>**因此，如果覆写了hashcode（）方法，对象头中就不会生成hashcode，而是每次通过hashcode()方法调用 **</p>
+<h3><span id="markword-zhong-de-hashcode-shi-shi-me-shi-hou-sheng-cheng">markword中的hashcode是什么时候生成？</span><a href="#markword-zhong-de-hashcode-shi-shi-me-shi-hou-sheng-cheng" class="header-anchor">#</a></h3><p>很容易误以为会是对象一创建就生成了。</p>
+<p>实际上，是采用了<strong>延迟加载技术</strong>，只有在用到的时候才生成。</p>
+<p>毕竟有可能对象创建出来使用时，并不需要做哈希的操作。</p>
+<h3><span id="hashcode-zai-qi-ta-suo-zhuang-tai-zhong-qu-na-liao">hashcode在其他锁状态中去哪了？</span><a href="#hashcode-zai-qi-ta-suo-zhuang-tai-zhong-qu-na-liao" class="header-anchor">#</a></h3><p>这个问题会在后面锁升级的3个阶段中，解释hashcode的去向。其他的例如分代年龄同理。</p>
+<h2><span id="gc-fen-dai-nian-ling-4bit">gc分代年龄（4bit）</span><a href="#gc-fen-dai-nian-ling-4bit" class="header-anchor">#</a></h2><p>在jvm垃圾收集机制中， 决定年轻代什么时候进入老年代的根据之一， 就是确认他的分代年龄是否达到阈值，如下图所示。</p>
+<p><img src="/images/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%86%E8%B6%85%E7%BA%A7%E8%AF%A6%E8%A7%A3/1655422054870.png" alt="1655422054870"></p>
+<p>分代年龄只有4bit可以看出，最大值只能是15。因此我们设置的进入老年代年龄阈值 -XX:MaxTenuringThreshold 最大只能设置15。</p>
+<h2><span id="cms-free">cms_free</span><a href="#cms-free" class="header-anchor">#</a></h2><p>在无锁和偏向锁中，还可以看到有1bit的cms_free。</p>
+<p> 实际上就是只有CMS收集器用到的。但最新java11中更多用的是G1收集器了，这一位相当于不怎么常用，因此提到的也非常少。</p>
+<p>从上述可以看出， 只有锁状态标记位、 hashcode、 分代年龄、cms_free是必有的， 但是从markword最初的示意图来看， hashcode、 分代年龄、cms_free似乎并非一直存在，那么他们去哪了呢？会在后面的锁升级过程进行详细解释。</p>
+<h1><span id="suo-sheng-ji-si-ge-jie-duan-chao-ji-xiang-jie">锁升级四个阶段超级详解</span><a href="#suo-sheng-ji-si-ge-jie-duan-chao-ji-xiang-jie" class="header-anchor">#</a></h1><h2><span id="wu-suo">无锁</span><a href="#wu-suo" class="header-anchor">#</a></h2><p>无锁状态的markword如下所示，可以看到上文提到的信息都存在</p>
+<p><img src="/images/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%86%E8%B6%85%E7%BA%A7%E8%AF%A6%E8%A7%A3/1655337139035.png" alt="1655337139035"></p>
+<h3><span id="chu-yu-wu-suo-zhuang-tai-de-tiao-jian-huo-zhe-shi-ji-shi-shi-me">处于无锁状态的条件或者时机是什么？</span><a href="#chu-yu-wu-suo-zhuang-tai-de-tiao-jian-huo-zhe-shi-ji-shi-shi-me" class="header-anchor">#</a></h3><p>无锁状态用于对象刚创建，<strong>且还未进入过同步代码块的时候</strong></p>
+<p>这一点很重要， 意味着如果你没有同步代码块或者同步方法， 那么将是无锁状态。</p>
+<h3><span id="dui-xiang-cong-mei-jin-ru-tong-bu-kuai-wei-shi-me-pian-xiang-suo-biao-zhi-wei-que-shi-1">对象从没进入同步块，为什么偏向锁标志位却是1？</span><a href="#dui-xiang-cong-mei-jin-ru-tong-bu-kuai-wei-shi-me-pian-xiang-suo-biao-zhi-wei-que-shi-1" class="header-anchor">#</a></h3><p>上面这个问题说过，没进入同步块， 不会上偏向锁。</p>
+<p>但是我们如果用java的jol工具测试打印新对象，会看到低3位是101</p>
+<p><img src="/images/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%86%E8%B6%85%E7%BA%A7%E8%AF%A6%E8%A7%A3/1655537149976.png" alt="1655537149976"></p>
+<p>这其实是jvm后面加入的一种优化， 对每个新对象，预置了一个<strong>“可偏向状态”</strong>，也叫做<strong>匿名偏向状态</strong>，是对象初始化中，JVM 帮我们做的。 </p>
+<p>注意此时 markword中高位是不存在ThreadID的， 都是0， 说明此时并没有线程偏向发生，因此也可以理解成是无锁。</p>
+<p>好处在于后续做偏向锁加锁时，无需再去改动偏向锁标记位，只需要对线程id做cas即可。</p>
+<h2><span id="pian-xiang-suo">偏向锁</span><a href="#pian-xiang-suo" class="header-anchor">#</a></h2><p>一旦代码第一次进入sync同步方法块，就<strong>可能</strong>从无锁状态进入偏向锁状态。</p>
+<p>另外很多人应该都知道， 偏向锁只存储了当前偏向的线程id， 只有线程id不同的才会触发升级。</p>
+<p>但这是非常简化的说法， 实际上中间的细节和优化非常之多！这里将为你详细讲述。</p>
+<h3><span id="wei-shi-me-yao-you-pian-xiang-suo">为什么要有偏向锁？</span><a href="#wei-shi-me-yao-you-pian-xiang-suo" class="header-anchor">#</a></h3><p>理解这个才能理解偏向锁中的各种设计。   假设我们new出来的对象带有同步代码块方法，但在整个生命周期中只被一个线程访问，那么是否有必要做消耗消耗的竞争动作，甚至引入额外的内存开销？没有必要。 </p>
+<p>因此针对的是 <strong>对象有同步方法调用，但是实际不存在竞争的场景</strong></p>
+<h3><span id="pian-xiang-suo-de-markword-xiang-jie">偏向锁的markword详解</span><a href="#pian-xiang-suo-de-markword-xiang-jie" class="header-anchor">#</a></h3><p><img src="/images/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%86%E8%B6%85%E7%BA%A7%E8%AF%A6%E8%A7%A3/1655534605569.png" alt="1655534605569"></p>
+<p>这个markword和无锁对比，  偏向标志位变成了1，   hashcode没了，多了个epoch和线程id。</p>
+<h4><span id="markword-zhong-de-dang-qian-xian-cheng-id">markword中的当前线程id</span><a href="#markword-zhong-de-dang-qian-xian-cheng-id" class="header-anchor">#</a></h4><p>这个id就是在进入了对象同步代码块的线程id。</p>
+<h5><span id="java-de-xian-cheng-id-shi-yi-ge-long-lei-xing-an-li-shuo-shi-64-wei-dan-wei-shi-me-zhi-lei-de-xian-cheng-id-zhi-you-54-wei">java的线程id是一个long类型， 按理说是64位，但为什么之类的线程id只有54位？</span><a href="#java-de-xian-cheng-id-shi-yi-ge-long-lei-xing-an-li-shuo-shi-64-wei-dan-wei-shi-me-zhi-lei-de-xian-cheng-id-zhi-you-54-wei" class="header-anchor">#</a></h5><p>具体没有找到解释，可能是jvm团队认为54位线程id足够用了，不至于会创建2^54那么多的线程，真的有需要创建这么频繁的程序，也会优先采用线程池池才对</p>
+<h5><span id="xian-cheng-id-ru-he-xie-ru">线程id如何写入？</span><a href="#xian-cheng-id-ru-he-xie-ru" class="header-anchor">#</a></h5><p>线程id是直接写入markword吗？ 不对， 一定要注意到这时候是存在同时写的可能的。</p>
+<p>因此会<strong>采用CAS的方式进行线程id的写入</strong>。 简而言之， 就是先取原线程id后，再更新线程id，更新后检查一下是否和预期一致，不一致则说明被人改动过，则线程id写入失败，说明存在竞争，升级为轻量级锁。</p>
+<h4><span id="ha-xi-code-qu-na-liao">哈希code去哪了</span><a href="#ha-xi-code-qu-na-liao" class="header-anchor">#</a></h4><p>我们注意到无锁时的hashcode不见了。</p>
+<p>对于偏向锁而言， <strong>一旦在对象头中设置过hashcode， 那么进入同步块时就不会进入偏向锁状态</strong>，会直接跳到轻量级锁，毕竟偏向锁里没有存放hashcode的地方（下文的轻量级锁和重量级锁则有存储的地方）</p>
+<p>因此凡是做过类似hashmap.put(k,v)操作且没覆写hashcode的k对象， 以后加锁时，都会直接略过偏向锁。</p>
+<h4><span id="epoch-shi-shi-me">epoch是什么？</span><a href="#epoch-shi-shi-me" class="header-anchor">#</a></h4><p>这个属性很多人叫它“偏向时间戳”， 却鲜有人进行详细解释。</p>
+<p>主要是因为它涉及到了偏向锁中非常重要的2个优化（批量重偏向和批量撤销）</p>
+<p>对于这个epoch，放到下文的偏向锁解锁过程进行解释。 </p>
+<p>你可以先简单理解为，<strong>通过epoch，jvm可以知道这个对象的偏向锁是否过期了，过期的情况下允许直接试图抢占，而不进行撤销偏向锁的操作。</strong></p>
+<h3><span id="pian-xiang-suo-yun-zuo-xiang-jie">偏向锁运作详解</span><a href="#pian-xiang-suo-yun-zuo-xiang-jie" class="header-anchor">#</a></h3><p>当没有竞争发生时，我们通过CAS设置好了线程id，那么这个偏向锁就算挂上了。</p>
+<p>后面每次访问时，检查线程id一致，就直接进入同步代码块执行了。</p>
+<h4><span id="chi-kai-tong-bu-dai-ma-kuai-shi-markword-zhong-de-xian-cheng-id-hui-chong-xin-bian-wei-0-ma">离开同步代码块时， markword中的线程id会重新变为0吗？</span><a href="#chi-kai-tong-bu-dai-ma-kuai-shi-markword-zhong-de-xian-cheng-id-hui-chong-xin-bian-wei-0-ma" class="header-anchor">#</a></h4><p>并不会，这个偏向锁线程id会一直挂着， 后面只要识别到id一致，就不用做特殊处理。</p>
+<h4><span id="pian-xiang-suo-fa-sheng-jing-zheng-shi-de-qie-suo-huo-zhe-sheng-ji-cao-zuo">偏向锁发生竞争时的切锁或者升级操作。</span><a href="#pian-xiang-suo-fa-sheng-jing-zheng-shi-de-qie-suo-huo-zhe-sheng-ji-cao-zuo" class="header-anchor">#</a></h4><p>但当有其他线程来访问时，之前设置的偏向锁就有问题了，说明存在多线程访问同一个对象的情况。</p>
+<p><strong>注意！！！这里并非像很多资料里说的那样， 一旦发生多线程调用， 偏向锁就升级成轻量级锁</strong>，而是做了很多的细节处理，来尽可能避免轻量级锁这种耗费CPU的操作。</p>
+<p>首先，jvm考虑到了这种场景：</p>
+<p>最开始1h内，都是线程A在调用大量的对象obj， 于是偏向锁一直都是线程A。</p>
+<p>后来线程A不跑了， 对象obj的调用交给了线程B，即未来都是线程B来调用。</p>
+<p>那么这时候，有必要马上升级轻量级锁吗？ </p>
+<p>没必要！因为未来仍然是单线程调用，仅仅是线程不同而已，也许可以尝试仍旧用偏向锁？</p>
+<p>于是就有了如下的撤销偏向锁的动作：</p>
+<ol>
+<li>当线程B发现是偏向锁，且线程id不为自己时，开始撤销操作</li>
+<li>首先，线程B会一直等待 对象obj 到达jvm<strong>安全点</strong>。</li>
+<li>到达安全点后， 线程B检查线程A是否正处在obj的同步代码块内。</li>
+<li>如果线程A正在同步代码块中， 则没得商量了，直接升级为轻量级锁。</li>
+<li>如果线程A不在同步代码块中， 那么线程B还有机会， 它先把偏向锁改成无锁状态，然后再用CAS的方式尝试重新竞争，如果能竞争到，那么就会偏向自己。</li>
+</ol>
+<p>完整过程如下图所示：</p>
+<p><img src="/images/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%86%E8%B6%85%E7%BA%A7%E8%AF%A6%E8%A7%A3/1655599370757.png" alt="1655599370757"></p>
+<h5><span id="wei-shi-me-yao-deng-dai-an-quan-dian-cai-neng-zuo-che-xiao-cao-zuo">为什么要等待安全点，才能做撤销操作？</span><a href="#wei-shi-me-yao-deng-dai-an-quan-dian-cai-neng-zuo-che-xiao-cao-zuo" class="header-anchor">#</a></h5><p>这是为了保证撤销操作的安全性。否则可能出现jvm正在撤销的时候， 另一个线程又开始对该对象做操作，引发错误。</p>
+<h5><span id="wei-shi-me-yao-xian-tui-hua-cheng-wu-suo-zhuang-tai-zai-shi-tu-jing-zheng-cheng-pian-xiang-suo-bu-neng-zhi-jie-pian-xiang-ma">为什么要先退化成无锁状态，再试图竞争成偏向锁？不能直接偏向吗？</span><a href="#wei-shi-me-yao-xian-tui-hua-cheng-wu-suo-zhuang-tai-zai-shi-tu-jing-zheng-cheng-pian-xiang-suo-bu-neng-zhi-jie-pian-xiang-ma" class="header-anchor">#</a></h5><p>因为你无法预测A是否会卷土重来，置成无锁后， A和B可以公平竞争。</p>
+<h5><span id="wei-shi-me-yuan-pian-xiang-xian-cheng-zai-tong-bu-dai-ma-kuai-zhong-shi-jiu-bi-xu-sheng-ji-wei-qing-liang-ji-suo-neng-fou-tong-yang-che-xiao-wu-suo-lai-jing-zheng">为什么原偏向线程在同步代码块中时，就必须升级为轻量级锁？能否同样撤销无锁来竞争？</span><a href="#wei-shi-me-yuan-pian-xiang-xian-cheng-zai-tong-bu-dai-ma-kuai-zhong-shi-jiu-bi-xu-sheng-ji-wei-qing-liang-ji-suo-neng-fou-tong-yang-che-xiao-wu-suo-lai-jing-zheng" class="header-anchor">#</a></h5><p>不可以，因为同步代码块还在执行的话，那B线程此时是注定无法立刻得到锁的，注定了它必须升级为轻量级锁，通过轻量级锁中的循环能力来做获取锁的操作。</p>
+<h4><span id="pi-liang-chong-pian-xiang-yi-ji-epoch-de-ying-yong">批量重偏向，以及epoch的应用</span><a href="#pi-liang-chong-pian-xiang-yi-ji-epoch-de-ying-yong" class="header-anchor">#</a></h4><p>上文提到，  线程B重新抢偏向锁时，会试图等待安全点，撤销成无锁，再做公平抢占。 这个动作还是比较费时的。</p>
+<p>假设有一个场景， 我们new 了30个obj对象， 最初都是由A线程使用，后面通过for循环都由B线程使用，那么会发现在很短的时间内，连续发生了偏向锁撤销为无锁，且未因同步块竞争而发生轻量升级的情况。</p>
+<p>那么，jvm猜测此时后面都是类似的情况，于是B线程调用obj对象时，不再撤销了，直接CAS竞争threadId，因为jvm预测A不会来抢了，具体步骤如下所示：</p>
+<ol>
+<li><p>jvm会在obj对象的<strong>类class对象</strong>中， 定义了一个偏向撤销计数器以及epoch偏向版本。</p>
+</li>
+<li><p>每当有一个对象被撤销偏向锁， 都会让偏向撤销计数器+1。 </p>
+</li>
+<li><p>一旦加到20， 则认为出现大规模的锁撤销动作。 于是class类对象中的epoch值+1（但是epoch一般只有2位即0~3）。</p>
+</li>
+<li><p>接着， jvm会找到所有正处在同步代码块中的obj对象， 让他的epoch等于class类对象的epoch。</p>
+</li>
+<li><p>其他不在同步代码块中的obj对象，则不修改epoch。</p>
+</li>
+<li><p>当B线程来访问时，发现obj对象的epoch和class对象的epoch不相等，则不再做撤销动作，直接CAS抢占。  <strong>因为当epoch不等时，这说明该obj对象之前一直没被原主人使用， 但它的兄弟们之前纷纷投降倒戈了， 那我应该直接尝试占用就好，没必要那么谨慎了！</strong></p>
+</li>
+</ol>
+<p>详细过程如下图所示：</p>
+<p><img src="/images/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%86%E8%B6%85%E7%BA%A7%E8%AF%A6%E8%A7%A3/1655542634901.png" alt="1655542634901"></p>
+<h4><span id="pi-liang-che-xiao">批量撤销</span><a href="#pi-liang-che-xiao" class="header-anchor">#</a></h4><p>但如果短时间内该类的撤销动作超过40个， jvm会认为这个数量太多了， 不保险，数量一多，预测就不准了。</p>
+<p>jvm此时会将 obj对象的类class对象中的偏向标记<strong>（注意是类中的偏向锁开启标记，而不是对象头中的偏向锁标记）</strong>设置为禁用偏向锁。  后续该对象的new操作将直接走轻量级锁的逻辑。</p>
+<p><img src="/images/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%86%E8%B6%85%E7%BA%A7%E8%AF%A6%E8%A7%A3/1655600519145.png" alt="1655600519145"></p>
+<h4><span id="pian-xiang-suo-de-yan-chi-qi-dong">偏向锁的延迟启动</span><a href="#pian-xiang-suo-de-yan-chi-qi-dong" class="header-anchor">#</a></h4><p>即使你开启了偏向锁，但是这个偏向锁的启用是有延迟，大概 4s左右。</p>
+<p>即java进程启动的4s内，都会直接跳过偏向锁，有同步代码块时直接使用轻量级锁。</p>
+<p>原因是 JVM 初始化的代码有很多地方用到了synchronized，如果直接开启偏向，产生竞争就要有锁升级，会带来额外的性能损耗，jvm团队经过测试和评估， 选择了启动速度最快的方案， 即强制4s内禁用偏向锁，所以就有了这个延迟策略 （当然这个延迟时间也可以通过参数自己调整）</p>
+<h3><span id="pian-xiang-suo-de-chong-yao-yan-bian-li-shi-he-si-kao">偏向锁的重要演变历史和思考</span><a href="#pian-xiang-suo-de-chong-yao-yan-bian-li-shi-he-si-kao" class="header-anchor">#</a></h3><p>偏向锁在JDK6引入,  且默认开启偏向锁优化, 可通过JVM参数-XX:-UseBiasedLocking来禁用偏向锁。</p>
+<p>jdk的演变过程中， 为偏向锁做了如上所述的批量升级、撤销等诸多动作。</p>
+<p>但随着时代发展，发现偏向锁带来的维护、撤销成本， 远大于轻量级锁的少许CAS动作。</p>
+<p>于是jdk团队在Jdk15之后， 再次默认关闭了偏向锁。</p>
+<p>也许你会问，那前面学习了那么一堆还有啥意义，都不推荐使用了。</p>
+<p>但大部分java应用还是基于jdk8开发的， 并且偏向锁里的思想还是值得借鉴的。</p>
+<p>还有就是奥卡姆剃刀原理， 如果增加的内容带来很大的成本，不如大胆的废除掉，接受一点落差，将精力放在提升度更大的地方。</p>
+<h2><span id="qing-liang-ji-suo">轻量级锁</span><a href="#qing-liang-ji-suo" class="header-anchor">#</a></h2><p>轻量级锁的markword如下所示，可以看到除了锁状态标记位，其他的都变成了一个栈帧中lockRecord记的地址。</p>
+<p><img src="/images/synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E5%8E%9F%E7%90%86%E8%B6%85%E7%BA%A7%E8%AF%A6%E8%A7%A3/1655603492133.png" alt="1655603492133"></p>
+<h3><span id="yuan-xian-markword-zhong-de-xin-xi-du-qu-na-li-liao">原先markword中的信息都去哪里了？</span><a href="#yuan-xian-markword-zhong-de-xin-xi-du-qu-na-li-liao" class="header-anchor">#</a></h3><p>之前提到markword中有分代年龄、cms_free、hashcode等固有属性。</p>
+<p>他们会存储到对应线程栈帧中的lockRecord中。</p>
+<p>lockRecord格式如下：</p>
+<p><strong>另外注意， 当轻量级锁未上锁时， 其实存储的还是原markword内容！</strong></p>
+<h3><span id="qing-liang-ji-suo-de-shang-suo-jie-suo-guo-cheng">轻量级锁的上锁/解锁过程</span><a href="#qing-liang-ji-suo-de-shang-suo-jie-suo-guo-cheng" class="header-anchor">#</a></h3><p>轻量级锁是存在上锁和解锁过程的， 因此没上锁时，  lockRecord中仍旧是原来的markword内容。</p>
+<p>当试图抢占时， 通过CAS的方式，先将</p>
+<h3><span id="qing-liang-ji-suo-ru-he-chu-li-chong-ru-wen-ti">轻量级锁如何处理重入问题？</span><a href="#qing-liang-ji-suo-ru-he-chu-li-chong-ru-wen-ti" class="header-anchor">#</a></h3><h2><span id="chong-liang-ji-suo">重量级锁</span><a href="#chong-liang-ji-suo" class="header-anchor">#</a></h2>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java-%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3jvm/" rel="tag"># java,深入理解jvm</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/08/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" rel="prev" title="volatile和CPU-MESI协议底层原理">
+      <i class="fa fa-chevron-left"></i> volatile和CPU-MESI协议底层原理
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">为什么说线程切换会很慢？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">对象头中的mark-word</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">锁状态标志位 +偏向锁标记位（2bit + 1bit）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.1.1.</span> <span class="nav-text">为什么无锁&#x2F;偏向锁的标志位是01，而轻量级锁的标志位是00？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">hashcode（31bit）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.2.1.</span> <span class="nav-text">markword中的hashcode是哪个方法生成的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.2.2.</span> <span class="nav-text">markword中的hashcode是什么时候生成？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.2.3.</span> <span class="nav-text">hashcode在其他锁状态中去哪了？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">gc分代年龄（4bit）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.4.</span> <span class="nav-text">cms_free</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">锁升级四个阶段超级详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">无锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.1.1.</span> <span class="nav-text">处于无锁状态的条件或者时机是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.1.2.</span> <span class="nav-text">对象从没进入同步块，为什么偏向锁标志位却是1？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">偏向锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.2.1.</span> <span class="nav-text">为什么要有偏向锁？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.2.2.</span> <span class="nav-text">偏向锁的markword详解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.2.1.</span> <span class="nav-text">markword中的当前线程id</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">3.2.2.1.1.</span> <span class="nav-text">java的线程id是一个long类型， 按理说是64位，但为什么之类的线程id只有54位？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">3.2.2.1.2.</span> <span class="nav-text">线程id如何写入？</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.2.2.</span> <span class="nav-text">哈希code去哪了</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.2.3.</span> <span class="nav-text">epoch是什么？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.2.3.</span> <span class="nav-text">偏向锁运作详解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.3.1.</span> <span class="nav-text">离开同步代码块时， markword中的线程id会重新变为0吗？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.3.2.</span> <span class="nav-text">偏向锁发生竞争时的切锁或者升级操作。</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">3.2.3.2.1.</span> <span class="nav-text">为什么要等待安全点，才能做撤销操作？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">3.2.3.2.2.</span> <span class="nav-text">为什么要先退化成无锁状态，再试图竞争成偏向锁？不能直接偏向吗？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">3.2.3.2.3.</span> <span class="nav-text">为什么原偏向线程在同步代码块中时，就必须升级为轻量级锁？能否同样撤销无锁来竞争？</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.3.3.</span> <span class="nav-text">批量重偏向，以及epoch的应用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.3.4.</span> <span class="nav-text">批量撤销</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.3.5.</span> <span class="nav-text">偏向锁的延迟启动</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.2.4.</span> <span class="nav-text">偏向锁的重要演变历史和思考</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">轻量级锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.3.1.</span> <span class="nav-text">原先markword中的信息都去哪里了？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.3.2.</span> <span class="nav-text">轻量级锁的上锁&#x2F;解锁过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.3.3.</span> <span class="nav-text">轻量级锁如何处理重入问题？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.4.</span> <span class="nav-text">重量级锁</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
