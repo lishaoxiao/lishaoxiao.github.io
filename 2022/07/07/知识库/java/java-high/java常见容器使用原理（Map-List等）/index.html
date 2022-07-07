@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="[toc]       ArrayList CopyOnWriteArrayList 原理 为什么需要写时复制？ 如何避免多线程修改的冲突？ 如何保证更新后，数组引用的变动能及时对外呈现？   HashMap核心原理 hashMap完整的put过程 hashMap的扩容过程，java7和8扩容的区别 为什么java8要改成尾插法？ 虽然解决了死循环问题， 但java8的hashMap仍然是线程不">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java常见容器使用原理（Map\List等)">
+<meta property="og:url" content="http://example.com/2022/07/07/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/index.html">
+<meta property="og:site_name" content="冲破黎明前的黑暗">
+<meta property="og:description" content="[toc]       ArrayList CopyOnWriteArrayList 原理 为什么需要写时复制？ 如何避免多线程修改的冲突？ 如何保证更新后，数组引用的变动能及时对外呈现？   HashMap核心原理 hashMap完整的put过程 hashMap的扩容过程，java7和8扩容的区别 为什么java8要改成尾插法？ 虽然解决了死循环问题， 但java8的hashMap仍然是线程不">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/c0f46fd3dbc58ac475051f1102dd4c43f80fc8e0.png">
+<meta property="og:image" content="http://example.com/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/395ae953519c9a0a9cba440644a6d8dd4999db66.png">
+<meta property="og:image" content="http://example.com/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/11f8400ec134b045dae9118f28877a284924b1c3.png">
+<meta property="og:image" content="http://example.com/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/61d85897f346fb06cb884b84.png">
+<meta property="article:published_time" content="2022-07-07T15:29:15.000Z">
+<meta property="article:modified_time" content="2022-07-07T15:46:25.837Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="java,深入理解jvm">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/c0f46fd3dbc58ac475051f1102dd4c43f80fc8e0.png">
+
+<link rel="canonical" href="http://example.com/2022/07/07/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java常见容器使用原理（Map\List等) | 冲破黎明前的黑暗</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">冲破黎明前的黑暗</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/07/07/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="冲破黎明前的黑暗">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java常见容器使用原理（Map\List等)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-07-07 23:29:15 / 修改时间：23:46:25" itemprop="dateCreated datePublished" datetime="2022-07-07T23:29:15+08:00">2022-07-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">java高级原理</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/07/07/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/07/07/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <hr>
+<p>[toc]</p>
+ <div class="toc">
+
+<!-- toc -->
+
+<ul>
+<li><a href="#arraylist">ArrayList</a></li>
+<li><a href="#copyonwritearraylist-yuan-li">CopyOnWriteArrayList 原理</a><ul>
+<li><a href="#wei-shi-me-xu-yao-xie-shi-fu-zhi">为什么需要写时复制？</a></li>
+<li><a href="#ru-he-bi-mian-duo-xian-cheng-xiu-gai-de-chong-tu">如何避免多线程修改的冲突？</a></li>
+<li><a href="#ru-he-bao-zheng-geng-xin-hou-shu-zu-yin-yong-de-bian-dong-neng-ji-shi-dui-wai-cheng-xian">如何保证更新后，数组引用的变动能及时对外呈现？</a></li>
+</ul>
+</li>
+<li><a href="#hashmap-he-xin-yuan-li">HashMap核心原理</a><ul>
+<li><a href="#hashmap-wan-zheng-de-put-guo-cheng">hashMap完整的put过程</a></li>
+<li><a href="#hashmap-de-kuo-rong-guo-cheng-java7-he-8-kuo-rong-de-qu-bie">hashMap的扩容过程，java7和8扩容的区别</a></li>
+<li><a href="#wei-shi-me-java8-yao-gai-cheng-wei-cha-fa">为什么java8要改成尾插法？</a></li>
+<li><a href="#sui-ran-jie-jue-liao-si-xun-huan-wen-ti-dan-java8-de-hashmap-reng-ran-shi-xian-cheng-bu-an-quan-de-wei-shi-me">虽然解决了死循环问题， 但java8的hashMap仍然是线程不安全的，为什么？</a></li>
+<li><a href="#ju-ti-dao-di-man-zu-shi-me-qing-kuang-cai-hui-resize-kuo-rong-ni">具体到底满足什么情况，才会resize扩容呢？</a></li>
+<li><a href="#kuo-rong-hou-capacity-kuo-rong-duo-shao-bei-ni">扩容后，capacity扩容多少倍呢？</a></li>
+</ul>
+</li>
+<li><a href="#concurrenthashmap-he-xin-yuan-li">ConcurrentHashMap 核心原理</a></li>
+</ul>
+<!-- tocstop -->
+
+</div> 
+
+
+
+<h1><span id="arraylist">ArrayList</span><a href="#arraylist" class="header-anchor">#</a></h1><p>Q: 讲一下啊arrayList的扩容原理？<br>A:<br>比较简单，算出新容量后，直接Arrays.copy拷贝到新数组，搞定<br> <img src="/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/c0f46fd3dbc58ac475051f1102dd4c43f80fc8e0.png" alt="c0f46fd3dbc58ac475051f1102dd4c43f80fc8e0"> </p>
+<p>扩容容量= 原容量 + (原容量右移1位，即0.5倍)= 1.5倍<br> <img src="/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/395ae953519c9a0a9cba440644a6d8dd4999db66.png" alt="395ae953519c9a0a9cba440644a6d8dd4999db66"> </p>
+<hr>
+<p>Q: arrayList的初始最大容量是多少？可以更改吗？<br>A:<br>初始容量为10。不可修改<br> <img src="/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/11f8400ec134b045dae9118f28877a284924b1c3.png" alt="11f8400ec134b045dae9118f28877a284924b1c3"> </p>
+<h1><span id="copyonwritearraylist-yuan-li">CopyOnWriteArrayList 原理</span><a href="#copyonwritearraylist-yuan-li" class="header-anchor">#</a></h1><p>就是一个写时复制列表</p>
+<p>当发生“删除/修改/新增”时，会先新建一个数组，更新后的数据拷贝到数组中</p>
+<p>最后再更新到CopyOnWriteArrayList的数组成员引用上。</p>
+<h2><span id="wei-shi-me-xu-yao-xie-shi-fu-zhi">为什么需要写时复制？</span><a href="#wei-shi-me-xu-yao-xie-shi-fu-zhi" class="header-anchor">#</a></h2><p>针对多线程环境下，读多写少的情况，如果每个读都加线程同步，太浪费了</p>
+<p>因此可以读的时候不加锁</p>
+<p>只有写的时候加锁，写完更新</p>
+<p>读的时候可能会有点延迟的数据，但不影响。</p>
+<h2><span id="ru-he-bi-mian-duo-xian-cheng-xiu-gai-de-chong-tu">如何避免多线程修改的冲突？</span><a href="#ru-he-bi-mian-duo-xian-cheng-xiu-gai-de-chong-tu" class="header-anchor">#</a></h2><p>加了一个sync锁，修改动作是线程安全的。</p>
+<h2><span id="ru-he-bao-zheng-geng-xin-hou-shu-zu-yin-yong-de-bian-dong-neng-ji-shi-dui-wai-cheng-xian">如何保证更新后，数组引用的变动能及时对外呈现？</span><a href="#ru-he-bao-zheng-geng-xin-hou-shu-zu-yin-yong-de-bian-dong-neng-ji-shi-dui-wai-cheng-xian" class="header-anchor">#</a></h2><p>数组成员设置成volatile</p>
+<h1><span id="hashmap-he-xin-yuan-li">HashMap核心原理</span><a href="#hashmap-he-xin-yuan-li" class="header-anchor">#</a></h1><h2><span id="hashmap-wan-zheng-de-put-guo-cheng">hashMap完整的put过程</span><a href="#hashmap-wan-zheng-de-put-guo-cheng" class="header-anchor">#</a></h2><ol>
+<li>首先，要获取key的哈希值。<br>如果为空，就统一是0<br>否则，调用对象的.hashCode()方法，接着再与自己的右移16位进行异或，以便充分利用高位信息。</li>
+<li>接着判断内部node数组是否为空，如果是，先进行初始化扩容。默认为16。</li>
+<li>根据(n-1)&amp;hash值，获取哈希表索引位置。 （&amp;的性能比取余要高,具体讨论见<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/21070971">CPU取余原理</a>）</li>
+<li>哈希表的node数组中，存放的是每组链表的头节点。<br>先检查头节点是否和自己要存放的key完全匹配 （hash值相同，key值相同，先hash再key，是因为hash的判断简单，key的equals判断可能会复杂）<br>如果匹配，得到需要替换的节点。</li>
+<li>头节点和自己要放的key不匹配，则判断一下这个头节点是否是红黑树节点，如果是，说明已经升级成红黑树了，调用putTree插入到红黑树中。</li>
+<li>如果不是红黑树， 那就是遍历链表，完全匹配就得到需要替换的节点。如果到尾部了，也没匹配的，则插入新节点。</li>
+<li>如果前面找到了要替换的节点，则判断一下是否可以替换（是否没要求putIfAbsent，或者value为null），是就替换，不是就结束</li>
+<li>如果前面是插入了新节点，非替换， 则要modCount++（方便迭代器确认map是否更新），  同时++size， 然后和扩容阈值做判断， 如果太大，就resize进行扩容<br><img src="/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/61d85897f346fb06cb884b84.png" alt="hashMap-put详解"></li>
+</ol>
+<hr>
+<h2><span id="hashmap-de-kuo-rong-guo-cheng-java7-he-8-kuo-rong-de-qu-bie">hashMap的扩容过程，java7和8扩容的区别</span><a href="#hashmap-de-kuo-rong-guo-cheng-java7-he-8-kuo-rong-de-qu-bie" class="header-anchor">#</a></h2><ol>
+<li>java7：</li>
+</ol>
+<ul>
+<li>当resize时，新建一个数组newTable</li>
+<li>遍历原table中的每个链表和节点，重新hash，找到新的位置放入</li>
+<li>放入的方式是头插法，即始终插在链表的头节点。</li>
+</ul>
+<ol start="2">
+<li>java8:</li>
+</ol>
+<ul>
+<li>不再每个点rehash放置，而是最高位是0则坐标不变，最高位是1则坐标变为“10000+原坐标”，即“原长度+原坐标. 避免了频繁的哈希计算和搬移过程。</li>
+<li>使用尾插法在链表上插入节点</li>
+<li>桶内元素超过8个，链表转成红黑树</li>
+</ul>
+<hr>
+<h2><span id="wei-shi-me-java8-yao-gai-cheng-wei-cha-fa">为什么java8要改成尾插法？</span><a href="#wei-shi-me-java8-yao-gai-cheng-wei-cha-fa" class="header-anchor">#</a></h2><p>A:<br>多线程时，java7的map-put可能造成死循环。<br>A线程扩容到那一半， 还处在遍历链表做头插法搬移的过程时，存了2个局部变量，当前链点now指向a， next指向b，正准备搬移（a-&gt;b-&gt;c这样的链表，a是头节点）</p>
+<p>B线程则同时完成线程扩容，但是map里都是引用，浅拷贝，** 因为是头插法， 会导致顺序变化**， 原本a-&gt;b-&gt;c 变成了c-&gt;b-&gt;a。<br>因此A恢复时， 链点还是a，next还是b， 于是往下走到了b， 取bbs的next时，已经变成了a， 于是发生了a-&gt;b-&gt;a的循环<br>导致后续操作的next都是错误操作，引发环形指针。</p>
+<p>java8里改成尾插法，这样做resize时，a-&gt;b-&gt;c 如果仍然哈希到同一个节点， 顺序是不会发生变化的。</p>
+<hr>
+<h2><span id="sui-ran-jie-jue-liao-si-xun-huan-wen-ti-dan-java8-de-hashmap-reng-ran-shi-xian-cheng-bu-an-quan-de-wei-shi-me">虽然解决了死循环问题， 但java8的hashMap仍然是线程不安全的，为什么？</span><a href="#sui-ran-jie-jue-liao-si-xun-huan-wen-ti-dan-java8-de-hashmap-reng-ran-shi-xian-cheng-bu-an-quan-de-wei-shi-me" class="header-anchor">#</a></h2><p>A:<br>因为缺乏同步，导致同节点发生哈希碰撞时，if条件的判断都可能是有问题的，导致本该插在链表头节点后面的，结果直接作为链表头覆盖到数组上了。</p>
+<hr>
+<h2><span id="ju-ti-dao-di-man-zu-shi-me-qing-kuang-cai-hui-resize-kuo-rong-ni">具体到底满足什么情况，才会resize扩容呢？</span><a href="#ju-ti-dao-di-man-zu-shi-me-qing-kuang-cai-hui-resize-kuo-rong-ni" class="header-anchor">#</a></h2><p>A:<br>　HashMap负载因子 LoadFactor，默认值为0.75f。<br>　衡量HashMap是否进行Resize的条件如下：<br>　HashMap.Size &gt;= Capacity * LoadFactor</p>
+<p>另一种情况。JDK1.8源码中，执行树形化之前，会先检查数组长度，如果长度小于64，则对数组进行扩容，而不是进行树形化</p>
+<hr>
+<h2><span id="kuo-rong-hou-capacity-kuo-rong-duo-shao-bei-ni">扩容后，capacity扩容多少倍呢？</span><a href="#kuo-rong-hou-capacity-kuo-rong-duo-shao-bei-ni" class="header-anchor">#</a></h2><p>A:<br>哈希表每次扩容是两倍</p>
+<h1><span id="concurrenthashmap-he-xin-yuan-li">ConcurrentHashMap 核心原理</span><a href="#concurrenthashmap-he-xin-yuan-li" class="header-anchor">#</a></h1><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_18300037/article/details/123795776">https://blog.csdn.net/qq_18300037/article/details/123795776</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/every__day/article/details/114293107">https://blog.csdn.net/every__day/article/details/114293107</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java-%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3jvm/" rel="tag"># java,深入理解jvm</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/07/06/%E9%9A%8F%E7%AC%94/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/" rel="prev" title="hexo-next主题使用笔记">
+      <i class="fa fa-chevron-left"></i> hexo-next主题使用笔记
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">ArrayList</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">CopyOnWriteArrayList 原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">为什么需要写时复制？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">如何避免多线程修改的冲突？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">如何保证更新后，数组引用的变动能及时对外呈现？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">HashMap核心原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">hashMap完整的put过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">hashMap的扩容过程，java7和8扩容的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">为什么java8要改成尾插法？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.4.</span> <span class="nav-text">虽然解决了死循环问题， 但java8的hashMap仍然是线程不安全的，为什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.5.</span> <span class="nav-text">具体到底满足什么情况，才会resize扩容呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.6.</span> <span class="nav-text">扩容后，capacity扩容多少倍呢？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">ConcurrentHashMap 核心原理</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/182319148" title="Genshin-UID → 182319148"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
