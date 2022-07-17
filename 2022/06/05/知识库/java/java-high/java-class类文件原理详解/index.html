@@ -18,46 +18,46 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="重读了一遍《深入理解java虚拟机》， 发现第一遍读类文件相关内容的时候，真的是囫囵吞枣，很多细节都被我跳过了，无论是符号引用的含义，还是属性表的理解，都没有弄懂，当时想着“反正也用不到，跳过吧”，却没注意到他们包含了许多java底层实现的核心原理。 看来经典书籍要多读多总结，是有道理的。 于是在阅读这个章节时，用processorOn做了一副超大的类文件解析图，方便自己通过浏览这个图能马上回忆起">
 <meta property="og:type" content="article">
 <meta property="og:title" content="java-class类文件原理详解">
-<meta property="og:url" content="http://example.com/2022/06/05/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:url" content="http://breakdawncoder.com/2022/06/05/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/index.html">
 <meta property="og:site_name" content="冲破黎明前的黑暗">
 <meta property="og:description" content="重读了一遍《深入理解java虚拟机》， 发现第一遍读类文件相关内容的时候，真的是囫囵吞枣，很多细节都被我跳过了，无论是符号引用的含义，还是属性表的理解，都没有弄懂，当时想着“反正也用不到，跳过吧”，却没注意到他们包含了许多java底层实现的核心原理。 看来经典书籍要多读多总结，是有道理的。 于是在阅读这个章节时，用processorOn做了一副超大的类文件解析图，方便自己通过浏览这个图能马上回忆起">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652269180508772459.png">
-<meta property="og:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652269423338180081.png">
-<meta property="og:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652271151313964089.png">
-<meta property="og:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652272385081190034.png">
-<meta property="og:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652271891308501334.png">
-<meta property="og:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652275768314487190.png">
-<meta property="og:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652317738015425066.png">
-<meta property="og:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652355928364525434.png">
-<meta property="og:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652395329500135926.png">
-<meta property="og:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652395457163163025.png">
-<meta property="og:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652395539642165989.png">
-<meta property="og:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652397966852235844.png">
-<meta property="og:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652396223751707461.png">
-<meta property="og:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652396601906806136.png">
-<meta property="og:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652397315515649848.png">
-<meta property="og:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652397689648709059.png">
-<meta property="og:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652398026144920939.png">
-<meta property="og:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652398314647685943.png">
-<meta property="og:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652398431353725133.png">
-<meta property="og:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652398713702736921.png">
-<meta property="og:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652399133483878712.png">
-<meta property="og:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/5d1a2d97e4b0f7ca49d84a3a.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652269180508772459.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652269423338180081.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652271151313964089.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652272385081190034.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652271891308501334.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652275768314487190.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652317738015425066.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652355928364525434.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652395329500135926.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652395457163163025.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652395539642165989.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652397966852235844.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652396223751707461.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652396601906806136.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652397315515649848.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652397689648709059.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652398026144920939.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652398314647685943.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652398431353725133.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652398713702736921.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652399133483878712.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/5d1a2d97e4b0f7ca49d84a3a.png">
 <meta property="article:published_time" content="2022-06-05T08:40:27.000Z">
 <meta property="article:modified_time" content="2022-06-05T08:48:05.881Z">
 <meta property="article:author" content="breakDawn">
 <meta property="article:tag" content="java,深入理解jvm">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652269180508772459.png">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652269180508772459.png">
 
-<link rel="canonical" href="http://example.com/2022/06/05/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/">
+<link rel="canonical" href="http://breakdawncoder.com/2022/06/05/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/">
 
 
 <script id="page-configurations">
@@ -180,7 +180,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/06/05/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/06/05/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/abd.png">
@@ -435,6 +435,23 @@
     
     
     
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/2022/06/05/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/" title="java-class类文件原理详解">http://breakdawncoder.com/2022/06/05/知识库/java/java-high/java-class类文件原理详解/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
 
       <footer class="post-footer">
           <div class="post-tags">
@@ -529,14 +546,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-count">19</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -558,6 +575,9 @@
       <span class="links-of-author-item">
         <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
       </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
   </div>
 
 

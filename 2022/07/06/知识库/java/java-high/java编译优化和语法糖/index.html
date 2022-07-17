@@ -18,31 +18,31 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="早期编译优化 第一步： ——-词法分析： ——-语法分析（注意实际上只是生成一个语法树，还没做语法的校验）： ——-填充符号表：   第二步： ——-注解处理器：   第三步： ——-语义分析： ——-解语法糖: ——-字节码生成：     java语法糖 泛型擦除: Signature: 自动装箱拆箱、循环 条件编译：     晚期编译优化 解释器Interperter 编译器   晚">
 <meta property="og:type" content="article">
 <meta property="og:title" content="java编译优化和语法糖">
-<meta property="og:url" content="http://example.com/2022/07/06/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/index.html">
+<meta property="og:url" content="http://breakdawncoder.com/2022/07/06/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/index.html">
 <meta property="og:site_name" content="冲破黎明前的黑暗">
 <meta property="og:description" content="早期编译优化 第一步： ——-词法分析： ——-语法分析（注意实际上只是生成一个语法树，还没做语法的校验）： ——-填充符号表：   第二步： ——-注解处理器：   第三步： ——-语义分析： ——-解语法糖: ——-字节码生成：     java语法糖 泛型擦除: Signature: 自动装箱拆箱、循环 条件编译：     晚期编译优化 解释器Interperter 编译器   晚">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/images/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/da80a1a1a8f52928a88e81bac0766d8a0eeab3ed.png">
-<meta property="og:image" content="http://example.com/images/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/e87a2122c8d20662ac01c4a7f8af159ee4c8a865.png">
-<meta property="og:image" content="http://example.com/images/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/2fe67bfe0e1f3e543deba464130880231b32df7d.png">
-<meta property="og:image" content="http://example.com/images/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/08cce0ef45b40e3db03ec3c0362444eb3dee4a24.png">
-<meta property="og:image" content="http://example.com/images/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/19956ec4da3e080289d22e64e04b58e9253e0de0.png">
-<meta property="og:image" content="http://example.com/images/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/20210719233205601.png">
-<meta property="og:image" content="http://example.com/images/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/f25fce1b1f632496074589dad0c260c0f1cc936a.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/da80a1a1a8f52928a88e81bac0766d8a0eeab3ed.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/e87a2122c8d20662ac01c4a7f8af159ee4c8a865.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/2fe67bfe0e1f3e543deba464130880231b32df7d.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/08cce0ef45b40e3db03ec3c0362444eb3dee4a24.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/19956ec4da3e080289d22e64e04b58e9253e0de0.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/20210719233205601.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/f25fce1b1f632496074589dad0c260c0f1cc936a.png">
 <meta property="article:published_time" content="2022-07-06T14:55:46.000Z">
 <meta property="article:modified_time" content="2022-07-06T14:59:45.649Z">
 <meta property="article:author" content="breakDawn">
 <meta property="article:tag" content="java,深入理解jvm">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/images/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/da80a1a1a8f52928a88e81bac0766d8a0eeab3ed.png">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/da80a1a1a8f52928a88e81bac0766d8a0eeab3ed.png">
 
-<link rel="canonical" href="http://example.com/2022/07/06/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/">
+<link rel="canonical" href="http://breakdawncoder.com/2022/07/06/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/">
 
 
 <script id="page-configurations">
@@ -165,7 +165,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/07/06/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/07/06/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/abd.png">
@@ -542,6 +542,23 @@
     
     
     
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/2022/07/06/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/" title="java编译优化和语法糖">http://breakdawncoder.com/2022/07/06/知识库/java/java-high/java编译优化和语法糖/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
 
       <footer class="post-footer">
           <div class="post-tags">
@@ -636,14 +653,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-count">19</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -665,6 +682,9 @@
       <span class="links-of-author-item">
         <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
       </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
   </div>
 
 

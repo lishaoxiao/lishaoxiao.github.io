@@ -18,31 +18,31 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="重读了一遍《深入理解java虚拟机》， 发现第一遍读“运行时数据区”相关内容的时候，只关注了最简单的概念部分，对于其中的细节部分没有深入探究，觉得那些东西太底层了，没啥用。其实他们背后的原理，和我们平时运行进程时的各种报错息息相关。另外如果能理解运行时数据区，也能够对“代码究竟是如何运行的”有更深的理解。 看来经典书籍要多读多总结，是有道理的。于是在阅读这个章节时，针对每个结构，思考了非常多的问题">
 <meta property="og:type" content="article">
 <meta property="og:title" content="jvm内存区域原理">
-<meta property="og:url" content="http://example.com/2022/05/29/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:url" content="http://breakdawncoder.com/2022/05/29/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/index.html">
 <meta property="og:site_name" content="冲破黎明前的黑暗">
 <meta property="og:description" content="重读了一遍《深入理解java虚拟机》， 发现第一遍读“运行时数据区”相关内容的时候，只关注了最简单的概念部分，对于其中的细节部分没有深入探究，觉得那些东西太底层了，没啥用。其实他们背后的原理，和我们平时运行进程时的各种报错息息相关。另外如果能理解运行时数据区，也能够对“代码究竟是如何运行的”有更深的理解。 看来经典书籍要多读多总结，是有道理的。于是在阅读这个章节时，针对每个结构，思考了非常多的问题">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1653815416671.png">
-<meta property="og:image" content="http://example.com/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800419071211329.png">
-<meta property="og:image" content="http://example.com/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800601102172178.png">
-<meta property="og:image" content="http://example.com/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800735895914907.png">
-<meta property="og:image" content="http://example.com/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800699980785954.png">
-<meta property="og:image" content="http://example.com/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800897811439190.png">
-<meta property="og:image" content="http://example.com/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800987016832820.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1653815416671.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800419071211329.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800601102172178.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800735895914907.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800699980785954.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800897811439190.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800987016832820.png">
 <meta property="article:published_time" content="2022-05-29T06:53:55.000Z">
 <meta property="article:modified_time" content="2022-05-30T23:22:13.858Z">
 <meta property="article:author" content="breakDawn">
 <meta property="article:tag" content="java">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1653815416671.png">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1653815416671.png">
 
-<link rel="canonical" href="http://example.com/2022/05/29/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/">
+<link rel="canonical" href="http://breakdawncoder.com/2022/05/29/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/">
 
 
 <script id="page-configurations">
@@ -165,7 +165,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/05/29/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/05/29/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/abd.png">
@@ -450,6 +450,23 @@
     
     
     
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/2022/05/29/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/" title="jvm内存区域原理">http://breakdawncoder.com/2022/05/29/知识库/java/java-high/jvm内存区域原理/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
 
       <footer class="post-footer">
           <div class="post-tags">
@@ -544,14 +561,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-count">19</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -573,6 +590,9 @@
       <span class="links-of-author-item">
         <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
       </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
   </div>
 
 
