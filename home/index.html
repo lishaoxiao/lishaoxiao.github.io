@@ -184,7 +184,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-07-19 23:40:49" itemprop="dateModified" datetime="2022-07-19T23:40:49+08:00">2022-07-19</time>
+                <time title="修改时间：2022-07-21 00:07:38" itemprop="dateModified" datetime="2022-07-21T00:07:38+08:00">2022-07-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -248,10 +248,13 @@
 <li><a href="#chu-dui-guo-cheng-hui-fa-sheng-shi-me">出队过程会发生什么？</a></li>
 </ul>
 </li>
-<li><a href="#aqs">AQS</a></li>
 <li><a href="#aqs-de-du-zhan-mo-shi-xiang-xi-zi-yuan-huo-qu-liu-cheng">AQS的独占模式详细资源获取流程</a><ul>
 <li><a href="#1-tryacquire-chang-shi-huo-qu-zi-yuan">1. tryAcquire尝试获取资源</a><ul>
-<li><a href="#tryacquire-de-ji-chong-zi-lei-shi-xian">tryAcquire的几种子类实现</a></li>
+<li><a href="#tryacquire-de-ji-chong-zi-lei-shi-xian">tryAcquire的几种子类实现</a><ul>
+<li><a href="#reentrantlock-zhong-de-sync-tong-bu-qi">①ReentrantLock中的Sync同步器</a></li>
+<li><a href="#xin-hao-liang-semaphore-de-sync-tong-bu-qi">②信号量Semaphore的Sync同步器</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#2-addwaiter-tian-jia-dao-deng-dai-dui-lie">2.addWaiter 添加到等待队列</a></li>
@@ -316,7 +319,7 @@
 <p>于是首节点的线程释放同步状态后，将会唤醒它的后继节点（next）</p>
 <p>而后继节点将会在获取同步状态成功时将自己设置为首节点 </p>
 <p> **注意在这个过程是不需要使用CAS来保证的，因为只有一个线程能够成功获取到同步状态 **</p>
-<h2><span id="aqs">AQS</span><a href="#aqs" class="header-anchor">#</a></h2><h3><span id></span><a href="#" class="header-anchor">#</a></h3><h2><span id="aqs-de-du-zhan-mo-shi-xiang-xi-zi-yuan-huo-qu-liu-cheng">AQS的独占模式详细资源获取流程</span><a href="#aqs-de-du-zhan-mo-shi-xiang-xi-zi-yuan-huo-qu-liu-cheng" class="header-anchor">#</a></h2><h3><span id="1-tryacquire-chang-shi-huo-qu-zi-yuan">1. tryAcquire尝试获取资源</span><a href="#1-tryacquire-chang-shi-huo-qu-zi-yuan" class="header-anchor">#</a></h3><p>AQS使用的设计模式是模板方法模式。</p>
+<h2><span id="aqs-de-du-zhan-mo-shi-xiang-xi-zi-yuan-huo-qu-liu-cheng">AQS的独占模式详细资源获取流程</span><a href="#aqs-de-du-zhan-mo-shi-xiang-xi-zi-yuan-huo-qu-liu-cheng" class="header-anchor">#</a></h2><h3><span id="1-tryacquire-chang-shi-huo-qu-zi-yuan">1. tryAcquire尝试获取资源</span><a href="#1-tryacquire-chang-shi-huo-qu-zi-yuan" class="header-anchor">#</a></h3><p>AQS使用的设计模式是模板方法模式。</p>
 <p>具体代码如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">acquire</span><span class="params">(<span class="type">int</span> arg)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!tryAcquire(arg) &amp;&amp;</span><br><span class="line">        acquireQueued(addWaiter(Node.EXCLUSIVE), arg))</span><br><span class="line">        selfInterrupt();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -324,8 +327,7 @@
 
 <p> 即AQS抽象基类AbstractQueuedSynchronizer给外部调用时，都是调的acquire(int arg)方法。这个方法的内容是写死的。<br>而acquire中，需要调用<strong>tryAcquire(arg)， 这个方法是需要子类实现的，作用是判断资源是否足够获取arg个</strong></p>
 <h4><span id="tryacquire-de-ji-chong-zi-lei-shi-xian">tryAcquire的几种子类实现</span><a href="#tryacquire-de-ji-chong-zi-lei-shi-xian" class="header-anchor">#</a></h4><p> <a target="_blank" rel="noopener" href="https://blog.csdn.net/Mutou_ren/article/details/103864432">(2条消息) AQS子类的tryAcquire和tryRelease的实现_Mutou_ren的博客-CSDN博客_aqs tryacquire</a> </p>
-<p>①ReentrantLock中的Sync同步器</p>
-<p>它内部有两种同步器的实现：</p>
+<h5><span id="reentrantlock-zhong-de-sync-tong-bu-qi">①ReentrantLock中的Sync同步器</span><a href="#reentrantlock-zhong-de-sync-tong-bu-qi" class="header-anchor">#</a></h5><p>它内部有两种同步器的实现：</p>
 <ul>
 <li><p>非公平同步器NonfairSync</p>
 </li>
@@ -341,6 +343,19 @@
 <p>而非公平锁是只要唤醒了就可以尝试竞争。</p>
 <p>因此核心区别在于hasQueuedPredecessors方法！</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="type">boolean</span> <span class="title function_">tryAcquire</span><span class="params">(<span class="type">int</span> acquires)</span>&#123;</span><br><span class="line"> <span class="keyword">final</span> <span class="type">Thread</span> <span class="variable">current</span> <span class="operator">=</span> Thread.currentThread();</span><br><span class="line">            <span class="type">int</span> <span class="variable">c</span> <span class="operator">=</span> getState();</span><br><span class="line">            <span class="comment">// state==0代表当前没有锁，可以进行获取</span></span><br><span class="line">            <span class="keyword">if</span> (c == <span class="number">0</span>) &#123;</span><br><span class="line">            	<span class="comment">// 非公平才有的判断，会判断是否还有前驱节点，直接自己为头节点了或者同步队列空了才会继续后面的锁的获取操作</span></span><br><span class="line">                <span class="keyword">if</span> (!hasQueuedPredecessors() </span><br><span class="line">                     <span class="comment">//CAS设置state为acquires，成功后标记exclusiveOwnerThread为当前线程</span></span><br><span class="line">                    &amp;&amp; compareAndSetState(<span class="number">0</span>, acquires)) &#123;</span><br><span class="line">                    setExclusiveOwnerThread(current);</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 当前占有线程等于自己，代表重入</span></span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (current == getExclusiveOwnerThread()) &#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">nextc</span> <span class="operator">=</span> c + acquires;</span><br><span class="line">                <span class="comment">// 出现负数，说明溢出了</span></span><br><span class="line">                <span class="keyword">if</span> (nextc &lt; <span class="number">0</span>) <span class="comment">// </span></span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">&quot;Maximum lock count exceeded&quot;</span>);</span><br><span class="line">                <span class="comment">// 因为是重入操作，可以直接进行state的增加，所以不需要CAS</span></span><br><span class="line">                setState(nextc);</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5><span id="xin-hao-liang-semaphore-de-sync-tong-bu-qi">②信号量Semaphore的Sync同步器</span><a href="#xin-hao-liang-semaphore-de-sync-tong-bu-qi" class="header-anchor">#</a></h5><p>先实现了一个静态内部类Sync</p>
+<p>和上面的RLock类一个区别在于需要state初始化值，不一定为1</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Sync(<span class="type">int</span> permits) &#123;</span><br><span class="line">    setState(permits);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>再继承实现了FairSync和NoFairSync</p>
+<p>使用CAS实现值的增加或者减少</p>
+<p>公平/非公平的区别同样是hasQueuedPredecessors的判断</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="type">int</span> <span class="title function_">tryAcquireShared</span><span class="params">(<span class="type">int</span> acquires)</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">        <span class="comment">// 队头判断，公平锁核心</span></span><br><span class="line">        <span class="keyword">if</span> (hasQueuedPredecessors())</span><br><span class="line">            <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">available</span> <span class="operator">=</span> getState();</span><br><span class="line">        <span class="type">int</span> <span class="variable">remaining</span> <span class="operator">=</span> available - acquires;</span><br><span class="line">        <span class="comment">// 信号量不足，直接返回负数</span></span><br><span class="line">        <span class="keyword">if</span> (remaining &lt; <span class="number">0</span> ||</span><br><span class="line">            <span class="comment">// 能抢成功，返回修改后的值，抢失败则for循环继续</span></span><br><span class="line">            compareAndSetState(available, remaining))</span><br><span class="line">            <span class="keyword">return</span> remaining;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
@@ -1763,6 +1778,123 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/06/05/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC301%E5%9C%BA%E5%91%A8%E8%B5%9B-808%E5%90%8D-3%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="冲破黎明前的黑暗">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/06/05/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC301%E5%9C%BA%E5%91%A8%E8%B5%9B-808%E5%90%8D-3%E9%A2%98/" class="post-title-link" itemprop="url">第301场周赛-808名-3题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-06-05 22:12:42" itemprop="dateCreated datePublished" datetime="2022-06-05T22:12:42+08:00">2022-06-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-07-12 00:10:39" itemprop="dateModified" datetime="2022-07-12T00:10:39+08:00">2022-07-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">力扣周赛记录</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC301%E5%9C%BA%E5%91%A8%E8%B5%9B-808%E5%90%8D-3%E9%A2%98/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC301%E5%9C%BA%E5%91%A8%E8%B5%9B-808%E5%90%8D-3%E9%A2%98/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+
+<!-- toc -->
+
+
+
+<!-- tocstop -->
+
+</div> 
+
+<p> <a target="_blank" rel="noopener" href="https://leetcode.cn/contest/weekly-contest-301/">第 301 场周赛 - 力扣（LeetCode）</a> </p>
+<p><img src="/images/%E7%AC%AC301%E5%9C%BA%E5%91%A8%E8%B5%9B-808%E5%90%8D-3%E9%A2%98/1657468677496.png" alt="1657468677496"></p>
+<p>第四题要点：</p>
+<ol>
+<li><p>我直接站在n（10^4)的角度去推演和动规，  却忘记了必须是连续被整除的条件。</p>
+<p>即使n=100， maxValue=32， 实际上大部分都是重复的数字，  连续被整除的关键点最长只有1-&gt;2-&gt;4-&gt;8-&gt;16-&gt;32，  这是最长的6个关键点， 剩下的就是从n=100中选6个放入关键点，其他数字保持一致。</p>
+</li>
+<li><p> 因此dp关键点方案数的数组的定义不是dp[n][maxValue],   而是dp[log2(maxValue)][maxValue]</p>
+</li>
+<li><p>基于dp和排列组合方式， 联合计算</p>
+</li>
+<li><p>排列组合方式求解。</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="variable">MOD</span> <span class="operator">=</span> <span class="number">1000000007</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// c[n][m],数组下标就是m，n-1是固定的了</span></span><br><span class="line"><span class="type">long</span>[][] c;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 关键点1：预处理的话，如果C（n,m)的m比较小，就用杨辉三角来预处理，记住杨辉三角特点，纵轴是n，横轴是m</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getC</span><span class="params">(<span class="type">int</span> n, <span class="type">int</span> m)</span> &#123;</span><br><span class="line">    c = <span class="keyword">new</span> <span class="title class_">long</span>[n+<span class="number">1</span>][m+<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>;i&lt;=n;i++) &#123;</span><br><span class="line">        c[i][<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">        <span class="comment">// 注意这里判断</span></span><br><span class="line">        <span class="keyword">if</span> (i &lt;=m) &#123;</span><br><span class="line">            c[i][i] = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">1</span>;j&lt;m &amp;&amp; j &lt; i;j++) &#123;</span><br><span class="line">            c[i][j] = c[i-<span class="number">1</span>][j-<span class="number">1</span>] + c[i-<span class="number">1</span>][j];</span><br><span class="line">            c[i][j] %= MOD;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">idealArrays</span><span class="params">(<span class="type">int</span> n, <span class="type">int</span> maxValue)</span> &#123;</span><br><span class="line">    Set&lt;Integer&gt;[] divNums = <span class="keyword">new</span> <span class="title class_">Set</span>[maxValue+<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>;i&lt;=maxValue;i++) &#123;</span><br><span class="line">        divNums[i]= <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">value</span> <span class="operator">=</span> <span class="number">2</span>;value&lt;=maxValue;value++) &#123;</span><br><span class="line">        divNums[value].add(<span class="number">1</span>);</span><br><span class="line">        <span class="comment">// 关键点：求除数，只需要根号(value)即可求解出来，不需要遍历整个value</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">div</span> <span class="operator">=</span> <span class="number">2</span>; div  * div &lt;= value;div++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (value % div == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="comment">// 注意加上value/div</span></span><br><span class="line">                divNums[value].add(div);</span><br><span class="line">                divNums[value].add(value/div);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如何快速求log2?</span></span><br><span class="line">    <span class="comment">// 关键点：x-&gt;y-&gt;z-&gt;maxValue， 最大变化长度为log2(mavValue)，其他数字全是相同的</span></span><br><span class="line">    <span class="comment">// 因此不需要以n做动态规划</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">maxDivCount</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span> <span class="variable">value</span> <span class="operator">=</span> maxValue;</span><br><span class="line">    <span class="keyword">while</span> (value &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        value /= <span class="number">2</span>;</span><br><span class="line">        maxDivCount++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">long</span>[][] dp = <span class="keyword">new</span> <span class="title class_">long</span>[maxDivCount+<span class="number">1</span>][maxValue+<span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 以变换点个数做数组长度进行动态规划</span></span><br><span class="line">    <span class="keyword">for</span> (value = <span class="number">0</span>; value &lt;=maxValue;value++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;=maxDivCount;i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (i==<span class="number">1</span>) &#123;</span><br><span class="line">                dp[i][value] = <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> div : divNums[value]) &#123;</span><br><span class="line">                dp[i][value] += dp[i-<span class="number">1</span>][div];</span><br><span class="line">                dp[i][value] %= MOD;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 组合数</span></span><br><span class="line">    getC(n-<span class="number">1</span>, maxDivCount);</span><br><span class="line"></span><br><span class="line">    <span class="type">long</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (value = <span class="number">1</span>;value &lt;= maxValue;value++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">divCount</span> <span class="operator">=</span> <span class="number">1</span>; divCount &lt;=maxDivCount;divCount++) &#123;</span><br><span class="line">            <span class="comment">// value作为末尾点，长度为divCount，不相同时的方案数，  乘上(n-1)里面选(divCount-1）的组合数</span></span><br><span class="line">            sum += c[n-<span class="number">1</span>][divCount-<span class="number">1</span>] * dp[divCount][value];</span><br><span class="line">            sum %= MOD;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> (<span class="type">int</span>)sum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/06/05/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC296%E5%9C%BA%E5%91%A8%E8%B5%9B-209%E5%90%8D-36%E5%88%86%E9%92%9F4%E9%A2%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1887,123 +2019,6 @@
 
 <p>关于这一题，更好的做法是用2个栈，因为始终只划分左右两边，且都是相邻移动，不会直接跳转，用2个栈是更合适的一种实现。</p>
 <h2><span id="shi-yong-zhan-shi-xian-5-fen-zhong-xie-wan">使用栈实现，5分钟写完：</span><a href="#shi-yong-zhan-shi-xian-5-fen-zhong-xie-wan" class="header-anchor">#</a></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">TextEditor</span> &#123;</span><br><span class="line"></span><br><span class="line">    Deque&lt;Character&gt; leftStack = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;&gt;();</span><br><span class="line">    Deque&lt;Character&gt; rightStack = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">TextEditor</span><span class="params">()</span> &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">addText</span><span class="params">(String text)</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">char</span> c : text.toCharArray()) &#123;</span><br><span class="line">            leftStack.push(c);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">deleteText</span><span class="params">(<span class="type">int</span> k)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">deleCount</span> <span class="operator">=</span> Math.min(k, leftStack.size());</span><br><span class="line">        <span class="keyword">while</span> (!leftStack.isEmpty() &amp;&amp; k-- &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            leftStack.pop();    </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> deleCount;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">cursorLeft</span><span class="params">(<span class="type">int</span> k)</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (!leftStack.isEmpty() &amp;&amp; k--&gt;<span class="number">0</span>) &#123;</span><br><span class="line">            rightStack.push(leftStack.pop());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> getLeftStr();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getLeftStr</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">k</span> <span class="operator">=</span> <span class="number">10</span>;</span><br><span class="line">        <span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">        <span class="keyword">while</span> (!leftStack.isEmpty() &amp;&amp; k--&gt;<span class="number">0</span>) &#123;</span><br><span class="line">            sb.append(leftStack.pop());                </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">String</span> <span class="variable">result</span> <span class="operator">=</span> sb.reverse().toString();</span><br><span class="line">        addText(result);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">cursorRight</span><span class="params">(<span class="type">int</span> k)</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (!rightStack.isEmpty() &amp;&amp; k--&gt;<span class="number">0</span>) &#123;</span><br><span class="line">            leftStack.push(rightStack.pop());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> getLeftStr();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Your TextEditor object will be instantiated and called as such:</span></span><br><span class="line"><span class="comment"> * TextEditor obj = new TextEditor();</span></span><br><span class="line"><span class="comment"> * obj.addText(text);</span></span><br><span class="line"><span class="comment"> * int param_2 = obj.deleteText(k);</span></span><br><span class="line"><span class="comment"> * String param_3 = obj.cursorLeft(k);</span></span><br><span class="line"><span class="comment"> * String param_4 = obj.cursorRight(k);</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/06/05/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC301%E5%9C%BA%E5%91%A8%E8%B5%9B-808%E5%90%8D-3%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="冲破黎明前的黑暗">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/06/05/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC301%E5%9C%BA%E5%91%A8%E8%B5%9B-808%E5%90%8D-3%E9%A2%98/" class="post-title-link" itemprop="url">第301场周赛-808名-3题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-06-05 22:12:42" itemprop="dateCreated datePublished" datetime="2022-06-05T22:12:42+08:00">2022-06-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-07-12 00:10:39" itemprop="dateModified" datetime="2022-07-12T00:10:39+08:00">2022-07-12</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">力扣周赛记录</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/06/05/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC301%E5%9C%BA%E5%91%A8%E8%B5%9B-808%E5%90%8D-3%E9%A2%98/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC301%E5%9C%BA%E5%91%A8%E8%B5%9B-808%E5%90%8D-3%E9%A2%98/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-
-<!-- toc -->
-
-
-
-<!-- tocstop -->
-
-</div> 
-
-<p> <a target="_blank" rel="noopener" href="https://leetcode.cn/contest/weekly-contest-301/">第 301 场周赛 - 力扣（LeetCode）</a> </p>
-<p><img src="/images/%E7%AC%AC301%E5%9C%BA%E5%91%A8%E8%B5%9B-808%E5%90%8D-3%E9%A2%98/1657468677496.png" alt="1657468677496"></p>
-<p>第四题要点：</p>
-<ol>
-<li><p>我直接站在n（10^4)的角度去推演和动规，  却忘记了必须是连续被整除的条件。</p>
-<p>即使n=100， maxValue=32， 实际上大部分都是重复的数字，  连续被整除的关键点最长只有1-&gt;2-&gt;4-&gt;8-&gt;16-&gt;32，  这是最长的6个关键点， 剩下的就是从n=100中选6个放入关键点，其他数字保持一致。</p>
-</li>
-<li><p> 因此dp关键点方案数的数组的定义不是dp[n][maxValue],   而是dp[log2(maxValue)][maxValue]</p>
-</li>
-<li><p>基于dp和排列组合方式， 联合计算</p>
-</li>
-<li><p>排列组合方式求解。</p>
-</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="variable">MOD</span> <span class="operator">=</span> <span class="number">1000000007</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// c[n][m],数组下标就是m，n-1是固定的了</span></span><br><span class="line"><span class="type">long</span>[][] c;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 关键点1：预处理的话，如果C（n,m)的m比较小，就用杨辉三角来预处理，记住杨辉三角特点，纵轴是n，横轴是m</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getC</span><span class="params">(<span class="type">int</span> n, <span class="type">int</span> m)</span> &#123;</span><br><span class="line">    c = <span class="keyword">new</span> <span class="title class_">long</span>[n+<span class="number">1</span>][m+<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>;i&lt;=n;i++) &#123;</span><br><span class="line">        c[i][<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">        <span class="comment">// 注意这里判断</span></span><br><span class="line">        <span class="keyword">if</span> (i &lt;=m) &#123;</span><br><span class="line">            c[i][i] = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">1</span>;j&lt;m &amp;&amp; j &lt; i;j++) &#123;</span><br><span class="line">            c[i][j] = c[i-<span class="number">1</span>][j-<span class="number">1</span>] + c[i-<span class="number">1</span>][j];</span><br><span class="line">            c[i][j] %= MOD;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">idealArrays</span><span class="params">(<span class="type">int</span> n, <span class="type">int</span> maxValue)</span> &#123;</span><br><span class="line">    Set&lt;Integer&gt;[] divNums = <span class="keyword">new</span> <span class="title class_">Set</span>[maxValue+<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>;i&lt;=maxValue;i++) &#123;</span><br><span class="line">        divNums[i]= <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">value</span> <span class="operator">=</span> <span class="number">2</span>;value&lt;=maxValue;value++) &#123;</span><br><span class="line">        divNums[value].add(<span class="number">1</span>);</span><br><span class="line">        <span class="comment">// 关键点：求除数，只需要根号(value)即可求解出来，不需要遍历整个value</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">div</span> <span class="operator">=</span> <span class="number">2</span>; div  * div &lt;= value;div++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (value % div == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="comment">// 注意加上value/div</span></span><br><span class="line">                divNums[value].add(div);</span><br><span class="line">                divNums[value].add(value/div);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如何快速求log2?</span></span><br><span class="line">    <span class="comment">// 关键点：x-&gt;y-&gt;z-&gt;maxValue， 最大变化长度为log2(mavValue)，其他数字全是相同的</span></span><br><span class="line">    <span class="comment">// 因此不需要以n做动态规划</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">maxDivCount</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span> <span class="variable">value</span> <span class="operator">=</span> maxValue;</span><br><span class="line">    <span class="keyword">while</span> (value &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        value /= <span class="number">2</span>;</span><br><span class="line">        maxDivCount++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">long</span>[][] dp = <span class="keyword">new</span> <span class="title class_">long</span>[maxDivCount+<span class="number">1</span>][maxValue+<span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 以变换点个数做数组长度进行动态规划</span></span><br><span class="line">    <span class="keyword">for</span> (value = <span class="number">0</span>; value &lt;=maxValue;value++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;=maxDivCount;i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (i==<span class="number">1</span>) &#123;</span><br><span class="line">                dp[i][value] = <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> div : divNums[value]) &#123;</span><br><span class="line">                dp[i][value] += dp[i-<span class="number">1</span>][div];</span><br><span class="line">                dp[i][value] %= MOD;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 组合数</span></span><br><span class="line">    getC(n-<span class="number">1</span>, maxDivCount);</span><br><span class="line"></span><br><span class="line">    <span class="type">long</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (value = <span class="number">1</span>;value &lt;= maxValue;value++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">divCount</span> <span class="operator">=</span> <span class="number">1</span>; divCount &lt;=maxDivCount;divCount++) &#123;</span><br><span class="line">            <span class="comment">// value作为末尾点，长度为divCount，不相同时的方案数，  乘上(n-1)里面选(divCount-1）的组合数</span></span><br><span class="line">            sum += c[n-<span class="number">1</span>][divCount-<span class="number">1</span>] * dp[divCount][value];</span><br><span class="line">            sum %= MOD;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> (<span class="type">int</span>)sum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
       
