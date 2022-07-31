@@ -21,12 +21,12 @@
     var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="重读了一遍《深入理解java虚拟机》， 发现第一遍读“运行时数据区”相关内容的时候，只关注了最简单的概念部分，对于其中的细节部分没有深入探究，觉得那些东西太底层了，没啥用。其实他们背后的原理，和我们平时运行进程时的各种报错息息相关。另外如果能理解运行时数据区，也能够对“代码究竟是如何运行的”有更深的理解。 看来经典书籍要多读多总结，是有道理的。于是在阅读这个章节时，针对每个结构，思考了非常多的问题">
+  <meta name="description" content="重读了一遍《深入理解java虚拟机》， 发现第一遍读“运行时数据区”相关内容的时候，只关注了最简单的概念部分，对于其中的细节部分没有深入探究，觉得那些东西太底层了，没啥用。 其实他们背后的原理，和我们平时运行进程时的各种报错息息相关。 另外如果能理解运行时数据区，也能够对“代码究竟是如何运行的”有更深的理解。 看来经典书籍要多读多总结，是有道理的。 于是在阅读这个章节时，针对每个结构，思考了非常多">
 <meta property="og:type" content="article">
 <meta property="og:title" content="jvm内存区域原理">
 <meta property="og:url" content="http://breakdawncoder.com/2022/05/29/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/index.html">
 <meta property="og:site_name" content="冲破黎明前的黑暗">
-<meta property="og:description" content="重读了一遍《深入理解java虚拟机》， 发现第一遍读“运行时数据区”相关内容的时候，只关注了最简单的概念部分，对于其中的细节部分没有深入探究，觉得那些东西太底层了，没啥用。其实他们背后的原理，和我们平时运行进程时的各种报错息息相关。另外如果能理解运行时数据区，也能够对“代码究竟是如何运行的”有更深的理解。 看来经典书籍要多读多总结，是有道理的。于是在阅读这个章节时，针对每个结构，思考了非常多的问题">
+<meta property="og:description" content="重读了一遍《深入理解java虚拟机》， 发现第一遍读“运行时数据区”相关内容的时候，只关注了最简单的概念部分，对于其中的细节部分没有深入探究，觉得那些东西太底层了，没啥用。 其实他们背后的原理，和我们平时运行进程时的各种报错息息相关。 另外如果能理解运行时数据区，也能够对“代码究竟是如何运行的”有更深的理解。 看来经典书籍要多读多总结，是有道理的。 于是在阅读这个章节时，针对每个结构，思考了非常多">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://breakdawncoder.com/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1653815416671.png">
 <meta property="og:image" content="http://breakdawncoder.com/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800419071211329.png">
@@ -243,21 +243,24 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>重读了一遍《深入理解java虚拟机》， 发现第一遍读“运行时数据区”相关内容的时候，只关注了最简单的概念部分，对于其中的细节部分没有深入探究，觉得那些东西太底层了，没啥用。<br>其实他们背后的原理，和我们平时运行进程时的各种报错息息相关。<br>另外如果能理解运行时数据区，也能够对“代码究竟是如何运行的”有更深的理解。</p>
-<p><strong>看来经典书籍要多读多总结，是有道理的。</strong><br>于是在阅读这个章节时，针对每个结构，思考了非常多的问题，提出了很多QA，方便进行深度的思考和学习。</p>
+        <p>重读了一遍《深入理解java虚拟机》， 发现第一遍读“运行时数据区”相关内容的时候，只关注了最简单的概念部分，对于其中的细节部分没有深入探究，觉得那些东西太底层了，没啥用。<br>
+其实他们背后的原理，和我们平时运行进程时的各种报错息息相关。<br>
+另外如果能理解运行时数据区，也能够对“代码究竟是如何运行的”有更深的理解。</p>
+<p><strong>看来经典书籍要多读多总结，是有道理的。</strong><br>
+于是在阅读这个章节时，针对每个结构，思考了非常多的问题，提出了很多QA，方便进行深度的思考和学习。</p>
  <div class="toc">
-
 <!-- toc -->
-
 <ul>
 <li><a href="#jvm-quan-ju-jie-gou">jvm全局结构</a></li>
-<li><a href="#java-dui">java堆</a><ul>
+<li><a href="#java-dui">java堆</a>
+<ul>
 <li><a href="#q-dui-shi-xian-cheng-zhi-jian-gong-yong-de-dan-zhe-yang-hui-dao-zhi-pin-fan-fa-sheng-chong-tu-shi-fou-yao-kao-lu-bing-fa-wen-ti-zen-me-ban">Q: 堆是线程之间共用的，但这样会导致频繁发生冲突，是否要考虑并发问题？怎么办？</a></li>
 <li><a href="#q-dan-shi-ru-guo-qia-qiao-duo-ge-xian-cheng-zai-shi-tu-jing-zheng-tong-yi-ge-tlab-yu-liu-kong-jian-shi-ji-du-zai-shi-tu-kuo-rong-fa-sheng-chong-tu-zen-me-ban">Q: 但是如果恰巧多个线程在试图竞争同一个TLAB预留空间时（即都在试图扩容），发生冲突怎么办？</a></li>
 <li><a href="#q-fen-pei-de-shi-hou-zai-tlab-qu-yu-li-zen-me-zhi-dao-fang-zai-na-ge-wei-zhi-ni">Q: 分配的时候，在TLAB区域里，怎么知道放在哪个位置呢？</a></li>
 </ul>
 </li>
-<li><a href="#cheng-xu-ji-shu-qi">程序计数器</a><ul>
+<li><a href="#cheng-xu-ji-shu-qi">程序计数器</a>
+<ul>
 <li><a href="#q-pc-ji-shu-qi-shi-zheng-ge-jvm-gong-you-de-ma">Q:PC计数器是整个jvm共有的吗？</a></li>
 <li><a href="#q-pc-ji-shu-qi-you-sha-yong-na-ru-guo-mei-you-pc-ji-cun-qi-ni-wo-bu-shi-ye-neng-yi-tiao-tiao-zhi-xing-yu-dao-return-zhi-ling-fan-hui-dui-ying-di-zhi-ji-ke-xu-yao-pc-ji-cun-qi-zuo-sha">Q:PC计数器有啥用？ 那如果没有PC寄存器呢？ 我不是也能一条条执行，遇到return指令，返回对应地址即可，需要PC寄存器做啥？</a></li>
 <li><a href="#q-wei-shi-me-native-fang-fa-de-cheng-xu-ji-shu-qi-wei-0-undefine-ru-guo-fa-sheng-xian-cheng-qie-huan-zen-me-ban">Q:为什么native方法的程序计数器为0（undefine）？如果发生线程切换，怎么办？</a></li>
@@ -265,19 +268,23 @@
 <li><a href="#q-na-me-zen-me-zhi-dao-shi-ji-de-zi-jie-ma-wei-zhi">Q: 那么怎么知道实际的字节码位置？</a></li>
 </ul>
 </li>
-<li><a href="#xu-ni-ji-zhan-qu-yu">虚拟机栈区域</a><ul>
-<li><a href="#xian-cheng-zhan-zheng">线程栈帧</a><ul>
+<li><a href="#xu-ni-ji-zhan-qu-yu">虚拟机栈区域</a>
+<ul>
+<li><a href="#xian-cheng-zhan-zheng">线程栈帧</a>
+<ul>
 <li><a href="#q-shi-me-shi-zhan-zheng">Q： 什么是栈帧？</a></li>
 <li><a href="#q-zhan-zheng-li-bao-han-shi-me">Q： 栈帧里包含什么？</a></li>
 <li><a href="#q-zhan-zheng-de-da-xiao-shi-me-shi-hou-que-ding">Q: 栈帧的大小什么时候确定？</a></li>
 </ul>
 </li>
-<li><a href="#cao-zuo-shu-zhan">操作数栈</a><ul>
+<li><a href="#cao-zuo-shu-zhan">操作数栈</a>
+<ul>
 <li><a href="#q-shi-me-shi-cao-zuo-shu-zhan">Q： 什么是操作数栈</a></li>
 <li><a href="#q-wei-shi-me-yi-ding-yao-you-cao-zuo-shu-zhan">Q: 为什么一定要有操作数栈？</a></li>
 </ul>
 </li>
-<li><a href="#ju-bu-bian-liang-biao">局部变量表</a><ul>
+<li><a href="#ju-bu-bian-liang-biao">局部变量表</a>
+<ul>
 <li><a href="#q-shi-me-shi-ju-bu-bian-liang-biao">Q: 什么是局部变量表？</a></li>
 <li><a href="#q-ju-bu-bian-liang-de-cao-you-shi-shi-me">Q: 局部变量的槽又是什么？</a></li>
 <li><a href="#q-ju-bu-bian-liang-biao-li-de-returnaddress-he-zhan-zheng-li-de-fan-hui-di-zhi-returnaddress-you-sha-qu-bie">Q: 局部变量表里的returnAddress和栈帧里的返回地址returnAddress有啥区别？</a></li>
@@ -287,11 +294,13 @@
 <li><a href="#q-zhan-zheng-zhi-jian-ke-neng-cun-zai-gong-xiang-bian-liang-biao-de-qing-kuang-ma">Q: 栈帧之间可能存在共享变量表的情况吗？</a></li>
 </ul>
 </li>
-<li><a href="#dong-tai-lian-jie">动态链接</a><ul>
+<li><a href="#dong-tai-lian-jie">动态链接</a>
+<ul>
 <li><a href="#q-zhan-zheng-li-de-dong-tai-lian-jie-you-shi-sha">Q : 栈帧里的动态链接又是啥？</a></li>
 </ul>
 </li>
-<li><a href="#fan-hui-di-zhi">返回地址</a><ul>
+<li><a href="#fan-hui-di-zhi">返回地址</a>
+<ul>
 <li><a href="#q-ji-ran-you-pc-ji-cun-qi-zhan-zheng-li-de-fan-hui-di-zhi-de-zuo-yong-shi-shi-me">Q: 既然有PC寄存器，栈帧里的返回地址的作用是什么？</a></li>
 <li><a href="#q-zhan-zheng-zhong-de-fang-fa-tui-chu-shi-hui-hong-fa-na-xie-dong-zuo">Q: 栈帧中的方法退出时，会触发哪些动作？</a></li>
 <li><a href="#q-zhan-zheng-chu-liao-shang-mian-ti-dao-de-ji-ge-huan-you-qi-ta-de-xin-xi-ma">Q: 栈帧除了上面提到的几个，还有其他的信息吗？</a></li>
@@ -299,7 +308,8 @@
 </li>
 </ul>
 </li>
-<li><a href="#fang-fa-qu">方法区</a><ul>
+<li><a href="#fang-fa-qu">方法区</a>
+<ul>
 <li><a href="#q-fang-fa-qu-li-cun-de-shi-class-zi-jie-ma-ma">Q: 方法区里存的是class字节码吗？</a></li>
 <li><a href="#q-yuan-kong-jian-yu-yong-jiu-dai-dao-di-shi-zen-me-hui-shi">Q: 元空间与永久代到底是怎么回事？</a></li>
 <li><a href="#q-wei-shi-me-yao-ti-huan-yong-jiu-dai">Q: 为什么要替换永久代</a></li>
@@ -308,40 +318,57 @@
 <li><a href="#zui-hou-de-gan-xiang">最后的感想</a></li>
 </ul>
 <!-- tocstop -->
-
 </div> 
-
 <p>[toc]</p>
 <hr>
-<h1><span id="jvm-quan-ju-jie-gou">jvm全局结构</span><a href="#jvm-quan-ju-jie-gou" class="header-anchor">#</a></h1><p>首先是一张经典的jvm运行时内存区域划分的图，我自己画了一张：</p>
+<h1><span id="jvm-quan-ju-jie-gou">jvm全局结构</span><a href="#jvm-quan-ju-jie-gou" class="header-anchor">#</a></h1>
+<p>首先是一张经典的jvm运行时内存区域划分的图，我自己画了一张：</p>
 <p><img src="/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1653815416671.png" alt="1653815416671"></p>
 <hr>
-<p>Q: 存在多个线程时，刚才提到的5个区域是怎么分布的？<br>A:<br>每个线程，都有自己独立的虚拟机栈、独立的程序计数器PC。</p>
+<p>Q: 存在多个线程时，刚才提到的5个区域是怎么分布的？<br>
+A:<br>
+每个线程，都有自己独立的虚拟机栈、独立的程序计数器PC。</p>
 <p>而方法区和堆是线程们共用的。</p>
 <hr>
-<h1><span id="java-dui">java堆</span><a href="#java-dui" class="header-anchor">#</a></h1><p>java堆的内容比较多，这里不探究对象分配的原理，后面会补充新的文章。这里只讨论堆的一些其他细节问题。</p>
+<h1><span id="java-dui">java堆</span><a href="#java-dui" class="header-anchor">#</a></h1>
+<p>java堆的内容比较多，这里不探究对象分配的原理，后面会补充新的文章。这里只讨论堆的一些其他细节问题。</p>
 <hr>
-<h2><span id="q-dui-shi-xian-cheng-zhi-jian-gong-yong-de-dan-zhe-yang-hui-dao-zhi-pin-fan-fa-sheng-chong-tu-shi-fou-yao-kao-lu-bing-fa-wen-ti-zen-me-ban">Q: 堆是线程之间共用的，但这样会导致频繁发生冲突，是否要考虑并发问题？怎么办？</span><a href="#q-dui-shi-xian-cheng-zhi-jian-gong-yong-de-dan-zhe-yang-hui-dao-zhi-pin-fan-fa-sheng-chong-tu-shi-fou-yao-kao-lu-bing-fa-wen-ti-zen-me-ban" class="header-anchor">#</a></h2><p>A:<br>线程分配堆空间时，会先根据TLAB进行独立分配。</p>
+<h2><span id="q-dui-shi-xian-cheng-zhi-jian-gong-yong-de-dan-zhe-yang-hui-dao-zhi-pin-fan-fa-sheng-chong-tu-shi-fou-yao-kao-lu-bing-fa-wen-ti-zen-me-ban">Q: 堆是线程之间共用的，但这样会导致频繁发生冲突，是否要考虑并发问题？怎么办？</span><a href="#q-dui-shi-xian-cheng-zhi-jian-gong-yong-de-dan-zhe-yang-hui-dao-zhi-pin-fan-fa-sheng-chong-tu-shi-fou-yao-kao-lu-bing-fa-wen-ti-zen-me-ban" class="header-anchor">#</a></h2>
+<p>A:<br>
+线程分配堆空间时，会先根据TLAB进行独立分配。</p>
 <blockquote>
 <blockquote>
-<p>TLAB ——Thread Local Allocation Buffer， 中文名为线程本地分配缓冲区。<br>启用了 TLAB 之后(-XX:+UseTLAB, 默认是开启的)，JVM 会针对每一个线程在 Java 堆中预留一个内存区域。<br>一旦某个区域确定划分给某个线程，之后<strong>该线程需要分配内存的时候，会优先在这片区域中申请</strong>。这个区域针对分配内存这个动作而言是该线程私有的，因此在分配的时候不用进行加锁等保护性的操作</p>
+<p>TLAB ——Thread Local Allocation Buffer， 中文名为线程本地分配缓冲区。<br>
+启用了 TLAB 之后(-XX:+UseTLAB, 默认是开启的)，JVM 会针对每一个线程在 Java 堆中预留一个内存区域。<br>
+一旦某个区域确定划分给某个线程，之后<strong>该线程需要分配内存的时候，会优先在这片区域中申请</strong>。这个区域针对分配内存这个动作而言是该线程私有的，因此在分配的时候不用进行加锁等保护性的操作</p>
 </blockquote>
 </blockquote>
 <hr>
-<h2><span id="q-dan-shi-ru-guo-qia-qiao-duo-ge-xian-cheng-zai-shi-tu-jing-zheng-tong-yi-ge-tlab-yu-liu-kong-jian-shi-ji-du-zai-shi-tu-kuo-rong-fa-sheng-chong-tu-zen-me-ban">Q: 但是如果恰巧多个线程在试图竞争同一个TLAB预留空间时（即都在试图扩容），发生冲突怎么办？</span><a href="#q-dan-shi-ru-guo-qia-qiao-duo-ge-xian-cheng-zai-shi-tu-jing-zheng-tong-yi-ge-tlab-yu-liu-kong-jian-shi-ji-du-zai-shi-tu-kuo-rong-fa-sheng-chong-tu-zen-me-ban" class="header-anchor">#</a></h2><p>A:<br>在预留这个动作发生的时候，需要进行加锁或者采用** CAS（compareAndSet) **等操作进行保护，避免多个线程预留同一个区域</p>
+<h2><span id="q-dan-shi-ru-guo-qia-qiao-duo-ge-xian-cheng-zai-shi-tu-jing-zheng-tong-yi-ge-tlab-yu-liu-kong-jian-shi-ji-du-zai-shi-tu-kuo-rong-fa-sheng-chong-tu-zen-me-ban">Q: 但是如果恰巧多个线程在试图竞争同一个TLAB预留空间时（即都在试图扩容），发生冲突怎么办？</span><a href="#q-dan-shi-ru-guo-qia-qiao-duo-ge-xian-cheng-zai-shi-tu-jing-zheng-tong-yi-ge-tlab-yu-liu-kong-jian-shi-ji-du-zai-shi-tu-kuo-rong-fa-sheng-chong-tu-zen-me-ban" class="header-anchor">#</a></h2>
+<p>A:<br>
+在预留这个动作发生的时候，需要进行加锁或者采用** CAS（compareAndSet) **等操作进行保护，避免多个线程预留同一个区域</p>
 <hr>
-<h2><span id="q-fen-pei-de-shi-hou-zai-tlab-qu-yu-li-zen-me-zhi-dao-fang-zai-na-ge-wei-zhi-ni">Q: 分配的时候，在TLAB区域里，怎么知道放在哪个位置呢？</span><a href="#q-fen-pei-de-shi-hou-zai-tlab-qu-yu-li-zen-me-zhi-dao-fang-zai-na-ge-wei-zhi-ni" class="header-anchor">#</a></h2><p>A:<br>具体的分配内存有两种情况（和垃圾回收机制有关）</p>
+<h2><span id="q-fen-pei-de-shi-hou-zai-tlab-qu-yu-li-zen-me-zhi-dao-fang-zai-na-ge-wei-zhi-ni">Q: 分配的时候，在TLAB区域里，怎么知道放在哪个位置呢？</span><a href="#q-fen-pei-de-shi-hou-zai-tlab-qu-yu-li-zen-me-zhi-dao-fang-zai-na-ge-wei-zhi-ni" class="header-anchor">#</a></h2>
+<p>A:<br>
+具体的分配内存有两种情况（和垃圾回收机制有关）</p>
 <ol>
 <li>第一种情况是内存空间绝对规整。（对应使用回收-整理/复制算法的垃圾回收区）</li>
 <li>第二种情况是内存空间是不连续的。（对应使用回收-清除算法的垃圾回收区）</li>
 </ol>
 <p>对于内存绝对规整的情况相对简单一些，虚拟机只需要在被占用的内存和可用空间之间移动指针即可，这种方式被称为指针碰撞。</p>
 <p>对于内存不规整的情况稍微复杂一点，这时候虚拟机需要维护一个列表，来记录哪些内存是可用的。分配内存的时候需要找到一个可用的内存空间，然后在列表上记录下已被分配，这种方式成为空闲列表。</p>
-<h1><span id="cheng-xu-ji-shu-qi">程序计数器</span><a href="#cheng-xu-ji-shu-qi" class="header-anchor">#</a></h1><h2><span id="q-pc-ji-shu-qi-shi-zheng-ge-jvm-gong-you-de-ma">Q:PC计数器是整个jvm共有的吗？</span><a href="#q-pc-ji-shu-qi-shi-zheng-ge-jvm-gong-you-de-ma" class="header-anchor">#</a></h2><p>A:<br>不是的，是每个线程各自有一个， 而且是java自己定义的线程PC， 和CPU里的PC寄存器不同。</p>
+<h1><span id="cheng-xu-ji-shu-qi">程序计数器</span><a href="#cheng-xu-ji-shu-qi" class="header-anchor">#</a></h1>
+<h2><span id="q-pc-ji-shu-qi-shi-zheng-ge-jvm-gong-you-de-ma">Q:PC计数器是整个jvm共有的吗？</span><a href="#q-pc-ji-shu-qi-shi-zheng-ge-jvm-gong-you-de-ma" class="header-anchor">#</a></h2>
+<p>A:<br>
+不是的，是每个线程各自有一个， 而且是java自己定义的线程PC， 和CPU里的PC寄存器不同。</p>
 <hr>
-<h2><span id="q-pc-ji-shu-qi-you-sha-yong-na-ru-guo-mei-you-pc-ji-cun-qi-ni-wo-bu-shi-ye-neng-yi-tiao-tiao-zhi-xing-yu-dao-return-zhi-ling-fan-hui-dui-ying-di-zhi-ji-ke-xu-yao-pc-ji-cun-qi-zuo-sha">Q:PC计数器有啥用？ 那如果没有PC寄存器呢？ 我不是也能一条条执行，遇到return指令，返回对应地址即可，需要PC寄存器做啥？</span><a href="#q-pc-ji-shu-qi-you-sha-yong-na-ru-guo-mei-you-pc-ji-cun-qi-ni-wo-bu-shi-ye-neng-yi-tiao-tiao-zhi-xing-yu-dao-return-zhi-ling-fan-hui-dui-ying-di-zhi-ji-ke-xu-yao-pc-ji-cun-qi-zuo-sha" class="header-anchor">#</a></h2><p>A: PC寄存器的作用在于多线程切换的时候，能找到每个线程执行的位置，所以它是线程私有的一个寄存器，知道当前运行到哪了。如果没有，一旦随机切换就不知道咋办了。你总需要一个地方存储这个线程当前执行情况，但又要保持独立性，所以不可能存到其他线程的空间里。</p>
+<h2><span id="q-pc-ji-shu-qi-you-sha-yong-na-ru-guo-mei-you-pc-ji-cun-qi-ni-wo-bu-shi-ye-neng-yi-tiao-tiao-zhi-xing-yu-dao-return-zhi-ling-fan-hui-dui-ying-di-zhi-ji-ke-xu-yao-pc-ji-cun-qi-zuo-sha">Q:PC计数器有啥用？ 那如果没有PC寄存器呢？ 我不是也能一条条执行，遇到return指令，返回对应地址即可，需要PC寄存器做啥？</span><a href="#q-pc-ji-shu-qi-you-sha-yong-na-ru-guo-mei-you-pc-ji-cun-qi-ni-wo-bu-shi-ye-neng-yi-tiao-tiao-zhi-xing-yu-dao-return-zhi-ling-fan-hui-dui-ying-di-zhi-ji-ke-xu-yao-pc-ji-cun-qi-zuo-sha" class="header-anchor">#</a></h2>
+<p>A: PC寄存器的作用在于多线程切换的时候，能找到每个线程执行的位置，所以它是线程私有的一个寄存器，知道当前运行到哪了。如果没有，一旦随机切换就不知道咋办了。你总需要一个地方存储这个线程当前执行情况，但又要保持独立性，所以不可能存到其他线程的空间里。</p>
 <hr>
-<h2><span id="q-wei-shi-me-native-fang-fa-de-cheng-xu-ji-shu-qi-wei-0-undefine-ru-guo-fa-sheng-xian-cheng-qie-huan-zen-me-ban">Q:为什么native方法的程序计数器为0（undefine）？如果发生线程切换，怎么办？</span><a href="#q-wei-shi-me-native-fang-fa-de-cheng-xu-ji-shu-qi-wei-0-undefine-ru-guo-fa-sheng-xian-cheng-qie-huan-zen-me-ban" class="header-anchor">#</a></h2><p>A:<br>注意，jvm内存结构里的PC计数器是jvm自己定义的“字节码指令”执行寄存器。<br>对于native方法，并不在字节码的范围，不指向方法区里的任何指令位置。</p>
+<h2><span id="q-wei-shi-me-native-fang-fa-de-cheng-xu-ji-shu-qi-wei-0-undefine-ru-guo-fa-sheng-xian-cheng-qie-huan-zen-me-ban">Q:为什么native方法的程序计数器为0（undefine）？如果发生线程切换，怎么办？</span><a href="#q-wei-shi-me-native-fang-fa-de-cheng-xu-ji-shu-qi-wei-0-undefine-ru-guo-fa-sheng-xian-cheng-qie-huan-zen-me-ban" class="header-anchor">#</a></h2>
+<p>A:<br>
+注意，jvm内存结构里的PC计数器是jvm自己定义的“字节码指令”执行寄存器。<br>
+对于native方法，并不在字节码的范围，不指向方法区里的任何指令位置。</p>
 <p>因此native方法其实不是由jvm管理的，如果线程切换，他执行到哪边，取决于OS的底层机器码计数器实现。</p>
 <blockquote>
 <blockquote>
@@ -349,13 +376,22 @@
 </blockquote>
 </blockquote>
 <hr>
-<h2><span id="q-pc-ji-shu-qi-li-cun-de-dao-di-shi-sha-shi-zhi-ling-di-zhi-ma">Q: PC计数器里存的到底是啥？是指令地址吗？</span><a href="#q-pc-ji-shu-qi-li-cun-de-dao-di-shi-sha-shi-zhi-ling-di-zhi-ma" class="header-anchor">#</a></h2><p>A:<br>错误！ 存的不是地址，而是这个方法的字节码偏移。例如0、1、5、6这种。<br><img src="/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800419071211329.png" alt="image.png"></p>
+<h2><span id="q-pc-ji-shu-qi-li-cun-de-dao-di-shi-sha-shi-zhi-ling-di-zhi-ma">Q: PC计数器里存的到底是啥？是指令地址吗？</span><a href="#q-pc-ji-shu-qi-li-cun-de-dao-di-shi-sha-shi-zhi-ling-di-zhi-ma" class="header-anchor">#</a></h2>
+<p>A:<br>
+错误！ 存的不是地址，而是这个方法的字节码偏移。例如0、1、5、6这种。<br>
+<img src="/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800419071211329.png" alt="image.png"></p>
 <hr>
-<h2><span id="q-na-me-zen-me-zhi-dao-shi-ji-de-zi-jie-ma-wei-zhi">Q: 那么怎么知道实际的字节码位置？</span><a href="#q-na-me-zen-me-zhi-dao-shi-ji-de-zi-jie-ma-wei-zhi" class="header-anchor">#</a></h2><p>A: 这个就要结合下文提到的栈帧中的动态链接，来联合计算实际字节码位置了。</p>
-<h1><span id="xu-ni-ji-zhan-qu-yu">虚拟机栈区域</span><a href="#xu-ni-ji-zhan-qu-yu" class="header-anchor">#</a></h1><hr>
-<h2><span id="xian-cheng-zhan-zheng">线程栈帧</span><a href="#xian-cheng-zhan-zheng" class="header-anchor">#</a></h2><h3><span id="q-shi-me-shi-zhan-zheng">Q： 什么是栈帧？</span><a href="#q-shi-me-shi-zhan-zheng" class="header-anchor">#</a></h3><p>A： 每个线程有一个自己的栈帧，然后运行到每个方法时，每个方法中都会可以理解为是摄影里的一帧。<br><img src="/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800601102172178.png" alt="image.png"></p>
+<h2><span id="q-na-me-zen-me-zhi-dao-shi-ji-de-zi-jie-ma-wei-zhi">Q: 那么怎么知道实际的字节码位置？</span><a href="#q-na-me-zen-me-zhi-dao-shi-ji-de-zi-jie-ma-wei-zhi" class="header-anchor">#</a></h2>
+<p>A: 这个就要结合下文提到的栈帧中的动态链接，来联合计算实际字节码位置了。</p>
+<h1><span id="xu-ni-ji-zhan-qu-yu">虚拟机栈区域</span><a href="#xu-ni-ji-zhan-qu-yu" class="header-anchor">#</a></h1>
 <hr>
-<h3><span id="q-zhan-zheng-li-bao-han-shi-me">Q： 栈帧里包含什么？</span><a href="#q-zhan-zheng-li-bao-han-shi-me" class="header-anchor">#</a></h3><p>A：</p>
+<h2><span id="xian-cheng-zhan-zheng">线程栈帧</span><a href="#xian-cheng-zhan-zheng" class="header-anchor">#</a></h2>
+<h3><span id="q-shi-me-shi-zhan-zheng">Q： 什么是栈帧？</span><a href="#q-shi-me-shi-zhan-zheng" class="header-anchor">#</a></h3>
+<p>A： 每个线程有一个自己的栈帧，然后运行到每个方法时，每个方法中都会可以理解为是摄影里的一帧。<br>
+<img src="/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800601102172178.png" alt="image.png"></p>
+<hr>
+<h3><span id="q-zhan-zheng-li-bao-han-shi-me">Q： 栈帧里包含什么？</span><a href="#q-zhan-zheng-li-bao-han-shi-me" class="header-anchor">#</a></h3>
+<p>A：</p>
 <ul>
 <li>局部变量表</li>
 <li>操作数栈</li>
@@ -364,56 +400,104 @@
 </ul>
 <p>其实与上面这4样配合的，还有个上文提到的“程序计数器”，才共同实现了jvm指令的执行。</p>
 <hr>
-<h3><span id="q-zhan-zheng-de-da-xiao-shi-me-shi-hou-que-ding">Q: 栈帧的大小什么时候确定？</span><a href="#q-zhan-zheng-de-da-xiao-shi-me-shi-hou-que-ding" class="header-anchor">#</a></h3><p>A：<br>在编译程序代码的时候.<br>注意， 图例提到的栈大小，并不是指线程堆栈的最大深度，<br>而是指“操作数栈”的最大深度。（注意这个深度存在类文件字节码中对应方法的属性表中）<br><img src="/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800735895914907.png" alt="image.png"></p>
+<h3><span id="q-zhan-zheng-de-da-xiao-shi-me-shi-hou-que-ding">Q: 栈帧的大小什么时候确定？</span><a href="#q-zhan-zheng-de-da-xiao-shi-me-shi-hou-que-ding" class="header-anchor">#</a></h3>
+<p>A：<br>
+在编译程序代码的时候.<br>
+注意， 图例提到的栈大小，并不是指线程堆栈的最大深度，<br>
+而是指“操作数栈”的最大深度。（注意这个深度存在类文件字节码中对应方法的属性表中）<br>
+<img src="/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800735895914907.png" alt="image.png"></p>
 <p>即jvm能够通过分析代码中可能存在多少个变量以及计算空间，来确定局部变量表和最大操作数栈的一个深度。</p>
-<h2><span id="cao-zuo-shu-zhan">操作数栈</span><a href="#cao-zuo-shu-zhan" class="header-anchor">#</a></h2><h3><span id="q-shi-me-shi-cao-zuo-shu-zhan">Q： 什么是操作数栈</span><a href="#q-shi-me-shi-cao-zuo-shu-zhan" class="header-anchor">#</a></h3><p>A：<br>可以理解为jvm做计算时，需要一个临时的寄存器，把需要计算的数据或者传方法的参数放到栈中，然后做计算。<br><img src="/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800699980785954.png" alt="image.png"></p>
+<h2><span id="cao-zuo-shu-zhan">操作数栈</span><a href="#cao-zuo-shu-zhan" class="header-anchor">#</a></h2>
+<h3><span id="q-shi-me-shi-cao-zuo-shu-zhan">Q： 什么是操作数栈</span><a href="#q-shi-me-shi-cao-zuo-shu-zhan" class="header-anchor">#</a></h3>
+<p>A：<br>
+可以理解为jvm做计算时，需要一个临时的寄存器，把需要计算的数据或者传方法的参数放到栈中，然后做计算。<br>
+<img src="/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800699980785954.png" alt="image.png"></p>
 <hr>
-<h3><span id="q-wei-shi-me-yi-ding-yao-you-cao-zuo-shu-zhan">Q: 为什么一定要有操作数栈？</span><a href="#q-wei-shi-me-yi-ding-yao-you-cao-zuo-shu-zhan" class="header-anchor">#</a></h3><p>如果要做a+b,我直接从变量表上取a的值和b的值，加起来不就好了？<br>A:<br>那我如果是 a + b<em>c呢，  这个b</em>c的值放哪里？<br>如果是a+b*(c+d)呢？<br>这时候如果你学习过数据结构里栈的应用 ，就会知道 模拟一个计算器，往往需要一个栈。<br>而操作数栈就是这个作用。<br>当你学习jvm指令时，就会看到有专门的指令就是取栈顶或者把值推送到栈顶的指令。<br>这样做加法的时候，也就不用关心变量的地址了，只要你把栈顶的值存好，我直接拿去加就行。</p>
+<h3><span id="q-wei-shi-me-yi-ding-yao-you-cao-zuo-shu-zhan">Q: 为什么一定要有操作数栈？</span><a href="#q-wei-shi-me-yi-ding-yao-you-cao-zuo-shu-zhan" class="header-anchor">#</a></h3>
+<p>如果要做a+b,我直接从变量表上取a的值和b的值，加起来不就好了？<br>
+A:<br>
+那我如果是 a + b<em>c呢，  这个b</em>c的值放哪里？<br>
+如果是a+b*(c+d)呢？<br>
+这时候如果你学习过数据结构里栈的应用 ，就会知道 模拟一个计算器，往往需要一个栈。<br>
+而操作数栈就是这个作用。<br>
+当你学习jvm指令时，就会看到有专门的指令就是取栈顶或者把值推送到栈顶的指令。<br>
+这样做加法的时候，也就不用关心变量的地址了，只要你把栈顶的值存好，我直接拿去加就行。</p>
 <hr>
-<h2><span id="ju-bu-bian-liang-biao">局部变量表</span><a href="#ju-bu-bian-liang-biao" class="header-anchor">#</a></h2><h3><span id="q-shi-me-shi-ju-bu-bian-liang-biao">Q: 什么是局部变量表？</span><a href="#q-shi-me-shi-ju-bu-bian-liang-biao" class="header-anchor">#</a></h3><p>A：<br>每个线程所在栈帧都会有一个自己的局部变量表，里面存储方法中使用到的局部变量。<br><img src="/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800897811439190.png" alt="image.png"></p>
+<h2><span id="ju-bu-bian-liang-biao">局部变量表</span><a href="#ju-bu-bian-liang-biao" class="header-anchor">#</a></h2>
+<h3><span id="q-shi-me-shi-ju-bu-bian-liang-biao">Q: 什么是局部变量表？</span><a href="#q-shi-me-shi-ju-bu-bian-liang-biao" class="header-anchor">#</a></h3>
+<p>A：<br>
+每个线程所在栈帧都会有一个自己的局部变量表，里面存储方法中使用到的局部变量。<br>
+<img src="/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800897811439190.png" alt="image.png"></p>
 <hr>
-<h3><span id="q-ju-bu-bian-liang-de-cao-you-shi-shi-me">Q: 局部变量的槽又是什么？</span><a href="#q-ju-bu-bian-liang-de-cao-you-shi-shi-me" class="header-anchor">#</a></h3><p>A:</p>
+<h3><span id="q-ju-bu-bian-liang-de-cao-you-shi-shi-me">Q: 局部变量的槽又是什么？</span><a href="#q-ju-bu-bian-liang-de-cao-you-shi-shi-me" class="header-anchor">#</a></h3>
+<p>A:</p>
 <ul>
 <li>returnAddress类型是为字节码指令jsr、jsr_w和ret服务的，它指向了一条字节码指令的地址。</li>
 <li>局部变量表的容量以变量槽（Slot）为最小单位，32位虚拟机中一个Slot可以存放一个32位以内的数据类型（boolean、byte、char、short、int、float、reference和returnAddress八种）</li>
-<li>slot的长度可以随着处理器、操作系统的不同而变化， 不是绝对的32位。<br>jvm概念中说的是”slot一定能存放下1个boolean\byte\int\引用地址\返回地址returnAddress“等不包括long在内的内容。</li>
+<li>slot的长度可以随着处理器、操作系统的不同而变化， 不是绝对的32位。<br>
+jvm概念中说的是”slot一定能存放下1个boolean\byte\int\引用地址\返回地址returnAddress“等不包括long在内的内容。</li>
 <li>如果要访问long，需要做2次局部变量slot的读取，读取n和n+1，不允许单独访问，如果有问题会在字节码校验中报错。</li>
 </ul>
 <hr>
-<h3><span id="q-ju-bu-bian-liang-biao-li-de-returnaddress-he-zhan-zheng-li-de-fan-hui-di-zhi-returnaddress-you-sha-qu-bie">Q: 局部变量表里的returnAddress和栈帧里的返回地址returnAddress有啥区别？</span><a href="#q-ju-bu-bian-liang-biao-li-de-returnaddress-he-zhan-zheng-li-de-fan-hui-di-zhi-returnaddress-you-sha-qu-bie" class="header-anchor">#</a></h3><p>A:<br>局部变量表里的的returnAddress，是老版本jvm用于处理异常跳转的（jsr\jsr_w\ret指令，新版本基本都用code里的异常表来代替），而栈帧里的返回地址，是返回到上一层栈帧的代码调用位置，更新PC计数器用的。</p>
+<h3><span id="q-ju-bu-bian-liang-biao-li-de-returnaddress-he-zhan-zheng-li-de-fan-hui-di-zhi-returnaddress-you-sha-qu-bie">Q: 局部变量表里的returnAddress和栈帧里的返回地址returnAddress有啥区别？</span><a href="#q-ju-bu-bian-liang-biao-li-de-returnaddress-he-zhan-zheng-li-de-fan-hui-di-zhi-returnaddress-you-sha-qu-bie" class="header-anchor">#</a></h3>
+<p>A:<br>
+局部变量表里的的returnAddress，是老版本jvm用于处理异常跳转的（jsr\jsr_w\ret指令，新版本基本都用code里的异常表来代替），而栈帧里的返回地址，是返回到上一层栈帧的代码调用位置，更新PC计数器用的。</p>
 <hr>
-<h3><span id="q-ju-bu-bian-liang-biao-de-slot-ke-yi-bei-fu-gai-ma-zhe-ge-she-ji-you-shi-me-hao-chu">Q: 局部变量表的slot可以被覆盖吗？这个设计有什么好处</span><a href="#q-ju-bu-bian-liang-biao-de-slot-ke-yi-bei-fu-gai-ma-zhe-ge-she-ji-you-shi-me-hao-chu" class="header-anchor">#</a></h3><p>A:</p>
+<h3><span id="q-ju-bu-bian-liang-biao-de-slot-ke-yi-bei-fu-gai-ma-zhe-ge-she-ji-you-shi-me-hao-chu">Q: 局部变量表的slot可以被覆盖吗？这个设计有什么好处</span><a href="#q-ju-bu-bian-liang-biao-de-slot-ke-yi-bei-fu-gai-ma-zhe-ge-she-ji-you-shi-me-hao-chu" class="header-anchor">#</a></h3>
+<p>A:</p>
 <ul>
 <li>可以减少局部变量表的空间，通过分析每个局部变量的使用生命周期，在某变量不再被使用后，让其他变量可以覆盖这个槽的位置。</li>
 <li>另一方面，覆盖的机制，可以将一些局部变量上已经不使用的大对象解除引用，例如对一些大的变量做=null的操作，那么可以尽早进行垃圾回收（因为栈帧的局部变量表里的每个slot都是一个gcRoot）</li>
 </ul>
 <hr>
-<h3><span id="q-she-zhi-null-zhi-jiu-yi-ding-hui-fu-gai-slot-ma">Q: 设置null值，就一定会覆盖slot吗？</span><a href="#q-she-zhi-null-zhi-jiu-yi-ding-hui-fu-gai-slot-ma" class="header-anchor">#</a></h3><p>A:<br>不一定，有时候JIT编译优化，可能会处理掉这个无用的=null的操作，且能正确处理slot中已经不被使用的变量。<br>按照书里的说法，正好有大对象，然后还停留在局部变量表里的概率是比较低的。不建议那么做了</p>
+<h3><span id="q-she-zhi-null-zhi-jiu-yi-ding-hui-fu-gai-slot-ma">Q: 设置null值，就一定会覆盖slot吗？</span><a href="#q-she-zhi-null-zhi-jiu-yi-ding-hui-fu-gai-slot-ma" class="header-anchor">#</a></h3>
+<p>A:<br>
+不一定，有时候JIT编译优化，可能会处理掉这个无用的=null的操作，且能正确处理slot中已经不被使用的变量。<br>
+按照书里的说法，正好有大对象，然后还停留在局部变量表里的概率是比较低的。不建议那么做了</p>
 <hr>
-<h3><span id="q-wei-shi-me-java-zhong-ju-bu-bian-liang-mei-you-mo-ren-chu-shi">Q:为什么java中局部变量没有默认初始？</span><a href="#q-wei-shi-me-java-zhong-ju-bu-bian-liang-mei-you-mo-ren-chu-shi" class="header-anchor">#</a></h3><p>A:<br>我的理解，局部变量在局部变量表中，而局部变量表是运行时生成的， 而非在堆上生成，因此不会有堆对象创建时的那个默认值赋值操作。 即jvm定义上， 就是局部变量没有初始化前的’准备‘这个阶段的，也就不存在默认赋值的指令行为。</p>
+<h3><span id="q-wei-shi-me-java-zhong-ju-bu-bian-liang-mei-you-mo-ren-chu-shi">Q:为什么java中局部变量没有默认初始？</span><a href="#q-wei-shi-me-java-zhong-ju-bu-bian-liang-mei-you-mo-ren-chu-shi" class="header-anchor">#</a></h3>
+<p>A:<br>
+我的理解，局部变量在局部变量表中，而局部变量表是运行时生成的， 而非在堆上生成，因此不会有堆对象创建时的那个默认值赋值操作。 即jvm定义上， 就是局部变量没有初始化前的’准备‘这个阶段的，也就不存在默认赋值的指令行为。</p>
 <p>如果硬要说为什么，如果每个局部变量都复制，肯定会影响执行效率，因此不如不赋值。，所以必须通过赋值指令在运行时给他赋值。（没找到很好的解释，有更好理解的可以帮忙回答一下，其实就是）</p>
 <p>另外如果每个局部变量都有，那可能指令数量就会变多，因为你需要放入很多赋值指令？</p>
 <p>阅读JMM内存模型时的另一个解释：</p>
 <blockquote>
 <blockquote>
-<p>对于未同步或未正确同步的多线程程序，JMM只提供最小安全性.<br>线程执行时读取到的值，要么是之前某个线程写入的值，要么是默认值（0，Null，False），JMM保证线程读操作读取到的值不会无中生有（Out Of Thin Air）的冒出来<br>对于全局变量（类对象成员），必须有默认初始化，为了满足多线程环境下的最小安全性。<br>但对于局部变量，不存在被多线程使用，因此一定后面可以拼接一个指令，所以不需要默认初始化的动作。</p>
+<p>对于未同步或未正确同步的多线程程序，JMM只提供最小安全性.<br>
+线程执行时读取到的值，要么是之前某个线程写入的值，要么是默认值（0，Null，False），JMM保证线程读操作读取到的值不会无中生有（Out Of Thin Air）的冒出来<br>
+对于全局变量（类对象成员），必须有默认初始化，为了满足多线程环境下的最小安全性。<br>
+但对于局部变量，不存在被多线程使用，因此一定后面可以拼接一个指令，所以不需要默认初始化的动作。</p>
 </blockquote>
 </blockquote>
 <hr>
-<h3><span id="q-zhan-zheng-zhi-jian-ke-neng-cun-zai-gong-xiang-bian-liang-biao-de-qing-kuang-ma">Q: 栈帧之间可能存在共享变量表的情况吗？</span><a href="#q-zhan-zheng-zhi-jian-ke-neng-cun-zai-gong-xiang-bian-liang-biao-de-qing-kuang-ma" class="header-anchor">#</a></h3><p>即执行多次方法，一个栈上有多个栈帧，每个栈帧都有各自的局部变量表和操作数栈，然后上下层之间共享</p>
-<p>A:<br>可能存在。即上下两个栈帧之间， 可能有操作数栈可以直接操作另一个栈帧局部变量的情况。这样可以避免额外的参数复制传递。<br>什么时候触发？不清楚</p>
+<h3><span id="q-zhan-zheng-zhi-jian-ke-neng-cun-zai-gong-xiang-bian-liang-biao-de-qing-kuang-ma">Q: 栈帧之间可能存在共享变量表的情况吗？</span><a href="#q-zhan-zheng-zhi-jian-ke-neng-cun-zai-gong-xiang-bian-liang-biao-de-qing-kuang-ma" class="header-anchor">#</a></h3>
+<p>即执行多次方法，一个栈上有多个栈帧，每个栈帧都有各自的局部变量表和操作数栈，然后上下层之间共享</p>
+<p>A:<br>
+可能存在。即上下两个栈帧之间， 可能有操作数栈可以直接操作另一个栈帧局部变量的情况。这样可以避免额外的参数复制传递。<br>
+什么时候触发？不清楚</p>
 <hr>
-<h2><span id="dong-tai-lian-jie">动态链接</span><a href="#dong-tai-lian-jie" class="header-anchor">#</a></h2><h3><span id="q-zhan-zheng-li-de-dong-tai-lian-jie-you-shi-sha">Q : 栈帧里的动态链接又是啥？</span><a href="#q-zhan-zheng-li-de-dong-tai-lian-jie-you-shi-sha" class="header-anchor">#</a></h3><p>A:<br>首先明确一点， 每一个栈帧，不一定是”动态”链接，但一定会有一个指向常量池中方法的引用。</p>
+<h2><span id="dong-tai-lian-jie">动态链接</span><a href="#dong-tai-lian-jie" class="header-anchor">#</a></h2>
+<h3><span id="q-zhan-zheng-li-de-dong-tai-lian-jie-you-shi-sha">Q : 栈帧里的动态链接又是啥？</span><a href="#q-zhan-zheng-li-de-dong-tai-lian-jie-you-shi-sha" class="header-anchor">#</a></h3>
+<p>A:<br>
+首先明确一点， 每一个栈帧，不一定是”动态”链接，但一定会有一个指向常量池中方法的引用。</p>
 <p>为什么栈帧里需要存这个指向方法的引用？</p>
 <p>首先，当你进入一个方法，准备生成一个栈帧，放到线程上时，你需要知道你这个代码执行的是什么代码，才能进行后面的操作。</p>
-<p>如果是构造方法、final方法，则会编译器进行静态链接。<br>如果是虚方法，则会进行动态链接，运行期只是从类对象中，拿到了一个符号引用，</p>
-<p>但是这个引用指向哪个方法？则通过下面的过程进行定位和寻找，把符号引用转成实际方法的直接引用。<br><img src="/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800987016832820.png" alt="image.png"><br>因此要提供一个引用，指向常量池里的方法。指向后，就能知道程序位置。<br>然后<strong>字节码实际引用位置 + PC计数器偏移</strong>，就能知道当前线程执行到哪个方法的哪一步指令上了。</p>
+<p>如果是构造方法、final方法，则会编译器进行静态链接。<br>
+如果是虚方法，则会进行动态链接，运行期只是从类对象中，拿到了一个符号引用，</p>
+<p>但是这个引用指向哪个方法？则通过下面的过程进行定位和寻找，把符号引用转成实际方法的直接引用。<br>
+<img src="/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800987016832820.png" alt="image.png"><br>
+因此要提供一个引用，指向常量池里的方法。指向后，就能知道程序位置。<br>
+然后<strong>字节码实际引用位置 + PC计数器偏移</strong>，就能知道当前线程执行到哪个方法的哪一步指令上了。</p>
 <p>（关于动态链接这个名称的由来，是因为“动态分派”的存在，你这个方法位置是不确定的，和实际对象+方法名有关， 所以称为动态链接。）</p>
 <hr>
-<h2><span id="fan-hui-di-zhi">返回地址</span><a href="#fan-hui-di-zhi" class="header-anchor">#</a></h2><h3><span id="q-ji-ran-you-pc-ji-cun-qi-zhan-zheng-li-de-fan-hui-di-zhi-de-zuo-yong-shi-shi-me">Q: 既然有PC寄存器，栈帧里的返回地址的作用是什么？</span><a href="#q-ji-ran-you-pc-ji-cun-qi-zhan-zheng-li-de-fan-hui-di-zhi-de-zuo-yong-shi-shi-me" class="header-anchor">#</a></h3><p>A:<br>方法A调用方法B的时候，PC寄存器会跟着移动到B方法去。当B执行完后，要能返回A继续执行，就需要A当时执行到的那条指令的地址。所以，在B的栈帧中保存A当时的指令地址（当时PC寄存器的值），当B执行完后，根据此返回地址跳回A。通过返回地址，从而知道当前线程的上一级应该从PC的第几行偏移开始。</p>
+<h2><span id="fan-hui-di-zhi">返回地址</span><a href="#fan-hui-di-zhi" class="header-anchor">#</a></h2>
+<h3><span id="q-ji-ran-you-pc-ji-cun-qi-zhan-zheng-li-de-fan-hui-di-zhi-de-zuo-yong-shi-shi-me">Q: 既然有PC寄存器，栈帧里的返回地址的作用是什么？</span><a href="#q-ji-ran-you-pc-ji-cun-qi-zhan-zheng-li-de-fan-hui-di-zhi-de-zuo-yong-shi-shi-me" class="header-anchor">#</a></h3>
+<p>A:<br>
+方法A调用方法B的时候，PC寄存器会跟着移动到B方法去。当B执行完后，要能返回A继续执行，就需要A当时执行到的那条指令的地址。所以，在B的栈帧中保存A当时的指令地址（当时PC寄存器的值），当B执行完后，根据此返回地址跳回A。通过返回地址，从而知道当前线程的上一级应该从PC的第几行偏移开始。</p>
 <p>另外除了正常通过ret指令退出，还可能是出现异常时，如果没有在异常表里被捕捉并处理，也会通过异常完成出口， 使用返回地址返回到上一层。</p>
 <hr>
-<h3><span id="q-zhan-zheng-zhong-de-fang-fa-tui-chu-shi-hui-hong-fa-na-xie-dong-zuo">Q: 栈帧中的方法退出时，会触发哪些动作？</span><a href="#q-zhan-zheng-zhong-de-fang-fa-tui-chu-shi-hui-hong-fa-na-xie-dong-zuo" class="header-anchor">#</a></h3><p>A:</p>
+<h3><span id="q-zhan-zheng-zhong-de-fang-fa-tui-chu-shi-hui-hong-fa-na-xie-dong-zuo">Q: 栈帧中的方法退出时，会触发哪些动作？</span><a href="#q-zhan-zheng-zhong-de-fang-fa-tui-chu-shi-hui-hong-fa-na-xie-dong-zuo" class="header-anchor">#</a></h3>
+<p>A:</p>
 <ol>
 <li>当前栈帧出栈</li>
 <li>恢复上层方法的局部变量表和操作数栈</li>
@@ -421,29 +505,48 @@
 <li>调整这个线程栈的PC计数器，改成returnAddress对应的那个指令位置地址，然后继续往下调用执行。</li>
 </ol>
 <hr>
-<h3><span id="q-zhan-zheng-chu-liao-shang-mian-ti-dao-de-ji-ge-huan-you-qi-ta-de-xin-xi-ma">Q: 栈帧除了上面提到的几个，还有其他的信息吗？</span><a href="#q-zhan-zheng-chu-liao-shang-mian-ti-dao-de-ji-ge-huan-you-qi-ta-de-xin-xi-ma" class="header-anchor">#</a></h3><p>A:<br>有些支持调试的虚拟机，可能会补充很多调试相关的信息。</p>
-<h1><span id="fang-fa-qu">方法区</span><a href="#fang-fa-qu" class="header-anchor">#</a></h1><h2><span id="q-fang-fa-qu-li-cun-de-shi-class-zi-jie-ma-ma">Q: 方法区里存的是class字节码吗？</span><a href="#q-fang-fa-qu-li-cun-de-shi-class-zi-jie-ma-ma" class="header-anchor">#</a></h2><p>A:<br>不是。经过类的加载、链接、初始化之后， class字节码对于进程来说就没用了。<br>存了以下内容：</p>
+<h3><span id="q-zhan-zheng-chu-liao-shang-mian-ti-dao-de-ji-ge-huan-you-qi-ta-de-xin-xi-ma">Q: 栈帧除了上面提到的几个，还有其他的信息吗？</span><a href="#q-zhan-zheng-chu-liao-shang-mian-ti-dao-de-ji-ge-huan-you-qi-ta-de-xin-xi-ma" class="header-anchor">#</a></h3>
+<p>A:<br>
+有些支持调试的虚拟机，可能会补充很多调试相关的信息。</p>
+<h1><span id="fang-fa-qu">方法区</span><a href="#fang-fa-qu" class="header-anchor">#</a></h1>
+<h2><span id="q-fang-fa-qu-li-cun-de-shi-class-zi-jie-ma-ma">Q: 方法区里存的是class字节码吗？</span><a href="#q-fang-fa-qu-li-cun-de-shi-class-zi-jie-ma-ma" class="header-anchor">#</a></h2>
+<p>A:<br>
+不是。经过类的加载、链接、初始化之后， class字节码对于进程来说就没用了。<br>
+存了以下内容：</p>
 <ul>
 <li>每个类的类型信息：类名、父类类名、修饰符、接口</li>
 <li>字段信息field（域信息）：字段名、字段类型、字段修饰符</li>
-<li>方法信息，包括方法名、类型、参数、修饰符、字节码、一场表<br>如下：</li>
+<li>方法信息，包括方法名、类型、参数、修饰符、字节码、一场表<br>
+如下：</li>
 <li>类的静态变量</li>
-<li>常量池，存储常量<br>注意，符号引用、类引用、实际类名等信息等都是放在常量池中的。</li>
+<li>常量池，存储常量<br>
+注意，符号引用、类引用、实际类名等信息等都是放在常量池中的。</li>
 </ul>
 <hr>
-<h2><span id="q-yuan-kong-jian-yu-yong-jiu-dai-dao-di-shi-zen-me-hui-shi">Q:  元空间与永久代到底是怎么回事？</span><a href="#q-yuan-kong-jian-yu-yong-jiu-dai-dao-di-shi-zen-me-hui-shi" class="header-anchor">#</a></h2><p>A:<br>方法区和“PermGen space”又有着本质的区别。<br><strong>前者是 JVM 的规范，而后者则是 JVM 规范的一种实现</strong><br>并且只有 HotSpot 才有 “PermGen space”，而对于其他类型的虚拟机，如 JRockit（Oracle）、J9（IBM） 并没有“PermGen space”。</p>
-<p><strong>元空间与永久代之间最大的区别在于：元空间并不在虚拟机中，而是使用本地内存。因此，默认情况下，元空间的大小仅受本地内存限制，但可以通过以下参数来指定元空间的大小</strong><br>-XX:MetaspaceSize和-XX:MaxMetaspaceSize</p>
+<h2><span id="q-yuan-kong-jian-yu-yong-jiu-dai-dao-di-shi-zen-me-hui-shi">Q:  元空间与永久代到底是怎么回事？</span><a href="#q-yuan-kong-jian-yu-yong-jiu-dai-dao-di-shi-zen-me-hui-shi" class="header-anchor">#</a></h2>
+<p>A:<br>
+方法区和“PermGen space”又有着本质的区别。<br>
+<strong>前者是 JVM 的规范，而后者则是 JVM 规范的一种实现</strong><br>
+并且只有 HotSpot 才有 “PermGen space”，而对于其他类型的虚拟机，如 JRockit（Oracle）、J9（IBM） 并没有“PermGen space”。</p>
+<p><strong>元空间与永久代之间最大的区别在于：元空间并不在虚拟机中，而是使用本地内存。因此，默认情况下，元空间的大小仅受本地内存限制，但可以通过以下参数来指定元空间的大小</strong><br>
+-XX:MetaspaceSize和-XX:MaxMetaspaceSize</p>
 <hr>
-<h2><span id="q-wei-shi-me-yao-ti-huan-yong-jiu-dai">Q: 为什么要替换永久代</span><a href="#q-wei-shi-me-yao-ti-huan-yong-jiu-dai" class="header-anchor">#</a></h2><p>A:<br>替换永久代的其他原因：</p>
+<h2><span id="q-wei-shi-me-yao-ti-huan-yong-jiu-dai">Q: 为什么要替换永久代</span><a href="#q-wei-shi-me-yao-ti-huan-yong-jiu-dai" class="header-anchor">#</a></h2>
+<p>A:<br>
+替换永久代的其他原因：</p>
 <ol>
 <li>字符串存在永久代中，容易出现性能问题和内存溢出。</li>
 <li>类及方法的信息等比较难确定其大小，因此对于永久代的大小指定比较困难，太小容易出现永久代溢出，太大则容易导致老年代溢出。</li>
 <li>永久代会为 GC 带来不必要的复杂度，并且回收效率偏低。</li>
 </ol>
 <hr>
-<h1><span id="zui-hou-de-gan-xiang">最后的感想</span><a href="#zui-hou-de-gan-xiang" class="header-anchor">#</a></h1><p>好累，终于写完了，感觉能看到最后的人不会太多，但一通详细地分析和解决中间发现的问题，还是收获了不少。</p>
+<h1><span id="zui-hou-de-gan-xiang">最后的感想</span><a href="#zui-hou-de-gan-xiang" class="header-anchor">#</a></h1>
+<p>好累，终于写完了，感觉能看到最后的人不会太多，但一通详细地分析和解决中间发现的问题，还是收获了不少。</p>
 <p>关于jvm运行时数据区，最重要的不是去死记硬背，而是试图在脑中构建一个指令运行的逻辑流程。</p>
-<p>且对于很多没有学习过计算机底层原理（例如CSAPP这本书） 的人来说， 是很难接触到计算机是如何执行机器码指令的。<br>而java虚拟机栈可以更好理解 指令是如何运行的（虽然这不是机器码，而是jvm字节码）。<br>但是通过运行时数据区的各种行为和概念， 我们可以快速对应到java中常见的各种操作。<br>这对于很多入门时直奔删减改查的同学来说， 是不可多得的学习底层的机会。</p>
+<p>且对于很多没有学习过计算机底层原理（例如CSAPP这本书） 的人来说， 是很难接触到计算机是如何执行机器码指令的。<br>
+而java虚拟机栈可以更好理解 指令是如何运行的（虽然这不是机器码，而是jvm字节码）。<br>
+但是通过运行时数据区的各种行为和概念， 我们可以快速对应到java中常见的各种操作。<br>
+这对于很多入门时直奔删减改查的同学来说， 是不可多得的学习底层的机会。</p>
 
     </div>
 
@@ -561,7 +664,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-count">24</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
