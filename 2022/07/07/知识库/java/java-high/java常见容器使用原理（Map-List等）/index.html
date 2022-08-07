@@ -21,19 +21,21 @@
     var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="[toc]     ArrayList CopyOnWriteArrayList 原理  为什么需要写时复制？ 如何避免多线程修改的冲突？ 如何保证更新后，数组引用的变动能及时对外呈现？   HashMap核心原理  hashMap完整的put过程 hashMap的扩容过程，java7和8扩容的区别 为什么java8要改成尾插法？ 虽然解决了死循环问题， 但java8的hashMap仍然是线程不">
+  <meta name="description" content="[toc]     ArrayList原理 CopyOnWriteArrayList 原理  为什么需要写时复制？ 如何避免多线程修改的冲突？ 如何保证更新后，数组引用的变动能及时对外呈现？   HashMap核心原理  hashMap完整的put过程 hashMap的扩容过程，java7和8扩容的区别 为什么java8要改成尾插法？ 虽然解决了死循环问题， 但java8的hashMap仍然是线">
 <meta property="og:type" content="article">
 <meta property="og:title" content="java常见容器使用原理（Map\List等)">
 <meta property="og:url" content="http://breakdawncoder.com/2022/07/07/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/index.html">
 <meta property="og:site_name" content="冲破黎明前的黑暗">
-<meta property="og:description" content="[toc]     ArrayList CopyOnWriteArrayList 原理  为什么需要写时复制？ 如何避免多线程修改的冲突？ 如何保证更新后，数组引用的变动能及时对外呈现？   HashMap核心原理  hashMap完整的put过程 hashMap的扩容过程，java7和8扩容的区别 为什么java8要改成尾插法？ 虽然解决了死循环问题， 但java8的hashMap仍然是线程不">
+<meta property="og:description" content="[toc]     ArrayList原理 CopyOnWriteArrayList 原理  为什么需要写时复制？ 如何避免多线程修改的冲突？ 如何保证更新后，数组引用的变动能及时对外呈现？   HashMap核心原理  hashMap完整的put过程 hashMap的扩容过程，java7和8扩容的区别 为什么java8要改成尾插法？ 虽然解决了死循环问题， 但java8的hashMap仍然是线">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://breakdawncoder.com/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/c0f46fd3dbc58ac475051f1102dd4c43f80fc8e0.png">
 <meta property="og:image" content="http://breakdawncoder.com/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/395ae953519c9a0a9cba440644a6d8dd4999db66.png">
 <meta property="og:image" content="http://breakdawncoder.com/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/11f8400ec134b045dae9118f28877a284924b1c3.png">
 <meta property="og:image" content="http://breakdawncoder.com/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/61d85897f346fb06cb884b84.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/1659369632360.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/1659795490061.png">
 <meta property="article:published_time" content="2022-07-07T15:29:15.000Z">
-<meta property="article:modified_time" content="2022-07-07T15:46:25.837Z">
+<meta property="article:modified_time" content="2022-08-06T14:18:45.963Z">
 <meta property="article:author" content="breakDawn">
 <meta property="article:tag" content="java,深入理解jvm">
 <meta name="twitter:card" content="summary">
@@ -184,10 +186,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-07-07 23:29:15 / 修改时间：23:46:25" itemprop="dateCreated datePublished" datetime="2022-07-07T23:29:15+08:00">2022-07-07</time>
+              <time title="创建时间：2022-07-07 23:29:15" itemprop="dateCreated datePublished" datetime="2022-07-07T23:29:15+08:00">2022-07-07</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-06 22:18:45" itemprop="dateModified" datetime="2022-08-06T22:18:45+08:00">2022-08-06</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -239,7 +247,7 @@
  <div class="toc">
 <!-- toc -->
 <ul>
-<li><a href="#arraylist">ArrayList</a></li>
+<li><a href="#arraylist-yuan-li">ArrayList原理</a></li>
 <li><a href="#copyonwritearraylist-yuan-li">CopyOnWriteArrayList 原理</a>
 <ul>
 <li><a href="#wei-shi-me-xu-yao-xie-shi-fu-zhi">为什么需要写时复制？</a></li>
@@ -257,11 +265,31 @@
 <li><a href="#kuo-rong-hou-capacity-kuo-rong-duo-shao-bei-ni">扩容后，capacity扩容多少倍呢？</a></li>
 </ul>
 </li>
-<li><a href="#concurrenthashmap-he-xin-yuan-li">ConcurrentHashMap 核心原理</a></li>
+<li><a href="#concurrenthashmap-he-xin-yuan-li">ConcurrentHashMap 核心原理</a>
+<ul>
+<li><a href="#jdk6-7-zhong-de-shi-xian-yuan-li">JDK6-7中的实现原理</a>
+<ul>
+<li><a href="#chu-shi-hua-map">初始化map</a>
+<ul>
+<li><a href="#chu-shi-hua-segment-shu-zu-tong-guo-concurrencylevel-he-ssize">初始化segment数组（通过concurrencyLevel和ssize）</a></li>
+<li><a href="#chu-shi-hua-segmentshift-duan-pian-yi-liang-he-segmentmask-duan-yan-ma">初始化segmentShift段偏移量和segmentMask段掩码</a></li>
+<li><a href="#chu-shi-hua-mei-ge-segment">初始化每个segment</a></li>
+</ul>
+</li>
+<li><a href="#ding-wei-segment">定位Segment</a></li>
+<li><a href="#get-cao-zuo">get操作</a></li>
+<li><a href="#put-cao-zuo">put操作</a></li>
+<li><a href="#size-cao-zuo">size操作</a></li>
+</ul>
+</li>
+<li><a href="#jdk8-de-gai-zao-sheng-ji-chong-yao">JDK8的改造升级（重要）</a></li>
+</ul>
+</li>
+<li><a href="#concurrentlinkedqueue-he-xin-yuan-li">ConcurrentLinkedQueue核心原理</a></li>
 </ul>
 <!-- tocstop -->
 </div> 
-<h1><span id="arraylist">ArrayList</span><a href="#arraylist" class="header-anchor">#</a></h1>
+<h1><span id="arraylist-yuan-li">ArrayList原理</span><a href="#arraylist-yuan-li" class="header-anchor">#</a></h1>
 <p>Q: 讲一下啊arrayList的扩容原理？<br>
 A:<br>
 比较简单，算出新容量后，直接Arrays.copy拷贝到新数组，搞定<br>
@@ -346,8 +374,92 @@ A线程扩容到那一半， 还处在遍历链表做头插法搬移的过程时
 <p>A:<br>
 哈希表每次扩容是两倍</p>
 <h1><span id="concurrenthashmap-he-xin-yuan-li">ConcurrentHashMap 核心原理</span><a href="#concurrenthashmap-he-xin-yuan-li" class="header-anchor">#</a></h1>
+<p>CHM结构</p>
+<p>每个concurrentHashMap里有一个segment数组</p>
+<p>每个segment里有HashEntry数组</p>
+<p>每个hashEntry可以演变为链表或者红黑树</p>
+<p><img src="/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/1659369632360.png" alt="1659369632360"></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_18300037/article/details/123795776">https://blog.csdn.net/qq_18300037/article/details/123795776</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/every__day/article/details/114293107">https://blog.csdn.net/every__day/article/details/114293107</a></p>
+<h2><span id="jdk6-7-zhong-de-shi-xian-yuan-li">JDK6-7中的实现原理</span><a href="#jdk6-7-zhong-de-shi-xian-yuan-li" class="header-anchor">#</a></h2>
+<h3><span id="chu-shi-hua-map">初始化map</span><a href="#chu-shi-hua-map" class="header-anchor">#</a></h3>
+<h4><span id="chu-shi-hua-segment-shu-zu-tong-guo-concurrencylevel-he-ssize">初始化segment数组（通过concurrencyLevel和ssize）</span><a href="#chu-shi-hua-segment-shu-zu-tong-guo-concurrencylevel-he-ssize" class="header-anchor">#</a></h4>
+<p>sszie即segment size，是seg数组的大小</p>
+<p>ssize一定是2的N次方，且一定是 大于等于concurrencyLevel的最小值</p>
+<p>sszie的最大值为65535</p>
+<p>ssize的默认值是16</p>
+<h4><span id="chu-shi-hua-segmentshift-duan-pian-yi-liang-he-segmentmask-duan-yan-ma">初始化segmentShift段偏移量和segmentMask段掩码</span><a href="#chu-shi-hua-segmentshift-duan-pian-yi-liang-he-segmentmask-duan-yan-ma" class="header-anchor">#</a></h4>
+<p>这2个变量用于后面定位segment的散列算法使用</p>
+<p>sshift  是 ssize的2的次方数</p>
+<p>segmentShift  = 32 - sshift   默认等于32-4=28</p>
+<p>segmentMask =  ssize -1  默认等于15</p>
+<h4><span id="chu-shi-hua-mei-ge-segment">初始化每个segment</span><a href="#chu-shi-hua-mei-ge-segment" class="header-anchor">#</a></h4>
+<p>每个segment里有一个entry数组</p>
+<p>这个数组的大小cap也是2的N次方，  且大于等于 initialCapacity(就是你传的初始容量值) / ssize 即<strong>平均每段数量</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">this.segments[i] = new Segment&lt;K,V&gt;(cap, loadFactor);</span><br></pre></td></tr></table></figure>
+<p>loadFactor默认0.75</p>
+<p>initialCapatity默认值为16</p>
+<h3><span id="ding-wei-segment">定位Segment</span><a href="#ding-wei-segment" class="header-anchor">#</a></h3>
+<p>对于一个key ，先是获取hashcode， 然后对hashcode进行变种算法再散列</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">hash</span><span class="params">(<span class="type">int</span> h)</span> &#123;</span><br><span class="line">        h += (h &lt;&lt; <span class="number">15</span>) ^ <span class="number">0xffffcd7d</span>;</span><br><span class="line">        h ^= (h &gt;&gt;&gt; <span class="number">10</span>);</span><br><span class="line">        h += (h &lt;&lt; <span class="number">3</span>);</span><br><span class="line">        h ^= (h &gt;&gt;&gt; <span class="number">6</span>);</span><br><span class="line">        h += (h &lt;&lt; <span class="number">2</span>) + (h &lt;&lt; <span class="number">14</span>);</span><br><span class="line">        <span class="keyword">return</span> h ^ (h &gt;&gt;&gt; <span class="number">16</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这个算法能保证各位都能利用上，尽可能均匀， 相比hashmap里单纯和高16位做异或不同。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> segments[(hash &gt;&gt;&gt; segmentShift) &amp; segmentMask];</span><br></pre></td></tr></table></figure>
+<p>可以看出</p>
+<p>segmentShift的作用是让hash通过右移动，只保留符合ssize的2进制位数长度</p>
+<p>顺便通过和segmentMask进行&amp;操作，剔除其他的位</p>
+<p>总目的就是为了让32位的hash偏移后保持在ssize的范围内</p>
+<p>按默认值而言，即   (hash&gt;&gt;&gt;28) &amp; 15</p>
+<h3><span id="get-cao-zuo">get操作</span><a href="#get-cao-zuo" class="header-anchor">#</a></h3>
+<p>先按照上文进行哈希， 获取segment后再进行get操作</p>
+<p>整个过程都不需要加锁！</p>
+<p>除非读到的值时空的，才会加锁重读确认（可能是被修改过了）</p>
+<p>获取segment这个操作中，涉及的数组count、存储HashEntry的value，都涉及成了volatile，保持可见性。</p>
+<h3><span id="put-cao-zuo">put操作</span><a href="#put-cao-zuo" class="header-anchor">#</a></h3>
+<p>put操作处理共享变量（例如count等）是一定会加锁的。</p>
+<p>区别在于扩容时，只对某一个segment扩容，不会影响其他的segment</p>
+<p>扩容时会先创建容量两倍的数组，重新放入后在修改引用。</p>
+<p>CHM是插入前先判断，再选择是否扩容</p>
+<p>而hashMap是插入后判断，再选择是否扩容</p>
+<h3><span id="size-cao-zuo">size操作</span><a href="#size-cao-zuo" class="header-anchor">#</a></h3>
+<p>size自然是要把所有segment里的size进行相加</p>
+<p>但是for循环相加可能会有前面的segment被修改，导致size变化，但如果加锁又太耗时间</p>
+<p>因此引入了modCount，如果统计完成过程中发现modCount变化，则会加锁的方式重新统计。</p>
+<h2><span id="jdk8-de-gai-zao-sheng-ji-chong-yao">JDK8的改造升级（重要）</span><a href="#jdk8-de-gai-zao-sheng-ji-chong-yao" class="header-anchor">#</a></h2>
+<p>在`JDK8中，它进行了以下重要改进：</p>
+<ol>
+<li>
+<p>取消分段锁机制<code>（Segment）</code>，进一步降低冲突概率; 使用桶的概念。</p>
+<p>其内部虽然仍然有 <code>Segment</code> 定义，但仅仅是为了保证序列化时的兼容性而已，不再有任何结构 上的用处。</p>
+<p>因为不再使用 <code>Segment</code>，初始化操作大大简化，修改为 <code>lazy-load</code> 形式，这样可以有效避免 初始开销</p>
+</li>
+<li>
+<p>size()方法做了优化，表达范围变大。原来<code>map</code>原有的<code>size</code>方法最大只能表达2的31次方减一，现在额外提供<code>mappingCount</code>方法，最大表示为2的63次方减一</p>
+</li>
+<li>
+<p>使用 <code>Unsafe</code>、<code>LongAdder</code> 之类底层手段，进行极端情况的优化。使用 <code>CAS</code> 等操作，在特定场景进行无锁并发操作。 即get使用volatile读， 而put则使用cas进行并发put。</p>
+</li>
+<li>
+<p>类似hashMap引入红黑树解构，同一个哈希槽元素个数超过一定的阙值后，单链表转化成红黑树;</p>
+</li>
+<li>
+<p>支持多线程并发扩容，大大提升扩容速度。</p>
+</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zguoshuaiiii/article/details/78495332">(4条消息) java8中concurrentHashmap的改进_庄国帅哥的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_40277163/article/details/122957808">(1条消息) JDK 8 ConcurrentHashMap_黄泥川水猴子的博客-CSDN博客_concurrenthashmap jdk8</a></p>
+<h1><span id="concurrentlinkedqueue-he-xin-yuan-li">ConcurrentLinkedQueue核心原理</span><a href="#concurrentlinkedqueue-he-xin-yuan-li" class="header-anchor">#</a></h1>
+<p>核心是使用CAS而不是锁来处理链式队列。</p>
+<p>比较容易想到的是每次用cas来处理next指针的跟新以及tail指针的指向</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">offer</span><span class="params">(E e)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (e == <span class="literal">null</span>)</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NullPointerException</span>();</span><br><span class="line">                Node&lt;E&gt; n = <span class="keyword">new</span> <span class="title class_">Node</span>&lt;E&gt;(e);</span><br><span class="line">                <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">                        Node&lt;E&gt; t = tail;</span><br><span class="line">                        <span class="keyword">if</span> (t.casNext(<span class="literal">null</span>, n) &amp;&amp; casTail(t, n)) &#123;</span><br><span class="line">                                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>但是缺点在于及时没有并发，也要频繁cas更新tail节点。</p>
+<p>实际上只需要用到tail节点的时候再去定位即可。</p>
+<p>所以设置了一个HOPS值</p>
+<p>当tail节点和实际尾节点的距离大于等于HOPS值，才去定位并cas更新tail节点，否则只更新next指针。</p>
+<p><img src="/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/1659795490061.png" alt="1659795490061"></p>
+<p>完整代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">offer</span><span class="params">(E e)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (e == <span class="literal">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NullPointerException</span>();</span><br><span class="line">        <span class="comment">// 入队前，创建一个入队节点</span></span><br><span class="line">        Node&lt;E&gt; n = <span class="keyword">new</span> <span class="title class_">Node</span>&lt;E&gt;(e);</span><br><span class="line">        retry:</span><br><span class="line">        <span class="comment">// 死循环，入队不成功反复入队。</span></span><br><span class="line">        <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">            <span class="comment">// 创建一个指向tail节点的引用</span></span><br><span class="line">            Node&lt;E&gt; t = tail;</span><br><span class="line">            <span class="comment">// p用来表示队列的尾节点，默认情况下等于tail节点。</span></span><br><span class="line">            Node&lt;E&gt; p = t;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">hops</span> <span class="operator">=</span> <span class="number">0</span>; ; hops++) &#123;</span><br><span class="line">            <span class="comment">// 获得p节点的下一个节点。</span></span><br><span class="line">                Node&lt;E&gt; next = succ(p);</span><br><span class="line">    		<span class="comment">// next节点不为空，说明p不是尾节点，需要更新p后在将它指向next节点</span></span><br><span class="line">                <span class="keyword">if</span> (next != <span class="literal">null</span>) &#123;</span><br><span class="line">                    <span class="comment">// 循环了两次及其以上，并且当前节点还是不等于尾节点</span></span><br><span class="line">                    <span class="comment">// 需要退出2层for循环，重新定位tail节点了</span></span><br><span class="line">                    <span class="keyword">if</span> (hops &gt; HOPS &amp;&amp; t != tail)</span><br><span class="line">                        <span class="keyword">continue</span> retry; </span><br><span class="line">                    p = next;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 如果p是尾节点，则设置p节点的next节点为入队节点。</span></span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (p.casNext(<span class="literal">null</span>, n)) &#123;</span><br><span class="line">                    <span class="comment">/*如果tail节点有大于等于1个next节点，则将入队节点设置成tail节点，</span></span><br><span class="line"><span class="comment">                      更新失败了也没关系，因为失败了表示有其他线程成功更新了tail节点*/</span></span><br><span class="line"><span class="keyword">if</span> (hops &gt;= HOPS)</span><br><span class="line">                        casTail(t, n); <span class="comment">// 更新tail节点，允许失败</span></span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// p有next节点,表示p的next节点是尾节点，则重新设置p节点</span></span><br><span class="line">                <span class="keyword">else</span> &#123;</span><br><span class="line">                    p = succ(p);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>代价是距离越长，入队时定位队尾的时间越长。</p>
+<p>但是效率总体上提升了， 因为通过增加对volatile变量的读操作来减少对volatile变量的写操作。</p>
 
     </div>
 
@@ -449,7 +561,7 @@ A线程扩容到那一半， 还处在遍历链表做头插法搬移的过程时
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">ArrayList</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">CopyOnWriteArrayList 原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">为什么需要写时复制？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">如何避免多线程修改的冲突？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">如何保证更新后，数组引用的变动能及时对外呈现？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">HashMap核心原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">hashMap完整的put过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">hashMap的扩容过程，java7和8扩容的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">为什么java8要改成尾插法？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.4.</span> <span class="nav-text">虽然解决了死循环问题， 但java8的hashMap仍然是线程不安全的，为什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.5.</span> <span class="nav-text">具体到底满足什么情况，才会resize扩容呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.6.</span> <span class="nav-text">扩容后，capacity扩容多少倍呢？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">ConcurrentHashMap 核心原理</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">ArrayList原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">CopyOnWriteArrayList 原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">为什么需要写时复制？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">如何避免多线程修改的冲突？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">如何保证更新后，数组引用的变动能及时对外呈现？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">HashMap核心原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">hashMap完整的put过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">hashMap的扩容过程，java7和8扩容的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">为什么java8要改成尾插法？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.4.</span> <span class="nav-text">虽然解决了死循环问题， 但java8的hashMap仍然是线程不安全的，为什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.5.</span> <span class="nav-text">具体到底满足什么情况，才会resize扩容呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.6.</span> <span class="nav-text">扩容后，capacity扩容多少倍呢？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">ConcurrentHashMap 核心原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">JDK6-7中的实现原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.1.1.</span> <span class="nav-text">初始化map</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">4.1.1.1.</span> <span class="nav-text">初始化segment数组（通过concurrencyLevel和ssize）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">4.1.1.2.</span> <span class="nav-text">初始化segmentShift段偏移量和segmentMask段掩码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">4.1.1.3.</span> <span class="nav-text">初始化每个segment</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.1.2.</span> <span class="nav-text">定位Segment</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.1.3.</span> <span class="nav-text">get操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.1.4.</span> <span class="nav-text">put操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.1.5.</span> <span class="nav-text">size操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.2.</span> <span class="nav-text">JDK8的改造升级（重要）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">ConcurrentLinkedQueue核心原理</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -465,7 +577,7 @@ A线程扩容到那一半， 还处在遍历链表做头插法搬移的过程时
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-count">26</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
