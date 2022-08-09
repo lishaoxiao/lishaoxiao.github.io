@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Executor线程池应用详解  corePoolSize和maximumPoolSize参数有什么区别？ keepalive参数是干嘛的？ 核心线程可以被回收吗？（线程池没有被回收的情况下） 核心线程数设置多少，怎么考虑？ 线程池有哪三种队列策略？ 线程池队列已满且maxinumPoolSize已满时，有哪些拒绝策略？ 线程池为什么需要阻塞队列？ 五种常见的Executor自带线程池  n">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java线程池高级应用和原理分析">
+<meta property="og:url" content="http://breakdawncoder.com/2022/08/10/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="冲破黎明前的黑暗">
+<meta property="og:description" content="Executor线程池应用详解  corePoolSize和maximumPoolSize参数有什么区别？ keepalive参数是干嘛的？ 核心线程可以被回收吗？（线程池没有被回收的情况下） 核心线程数设置多少，怎么考虑？ 线程池有哪三种队列策略？ 线程池队列已满且maxinumPoolSize已满时，有哪些拒绝策略？ 线程池为什么需要阻塞队列？ 五种常见的Executor自带线程池  n">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/1619147438780044960.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/1636361412728070823-1660063481962.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/1636361429766064686-1660063481975.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/1636361436926002588-1660063481980.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/1636361445964033773-1660063481982.png">
+<meta property="article:published_time" content="2022-08-09T16:35:00.000Z">
+<meta property="article:modified_time" content="2022-08-09T16:48:32.137Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="java,并发编程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/1619147438780044960.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/2022/08/10/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Java线程池高级应用和原理分析 | 冲破黎明前的黑暗</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">冲破黎明前的黑暗</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/10/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="冲破黎明前的黑暗">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java线程池高级应用和原理分析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-10 00:35:00 / 修改时间：00:48:32" itemprop="dateCreated datePublished" datetime="2022-08-10T00:35:00+08:00">2022-08-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">java高级原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/10/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/10/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#executor-xian-cheng-chi-ying-yong-xiang-jie">Executor线程池应用详解</a>
+<ul>
+<li><a href="#corepoolsize-he-maximumpoolsize-can-shu-you-shi-me-qu-bie">corePoolSize和maximumPoolSize参数有什么区别？</a></li>
+<li><a href="#keepalive-can-shu-shi-gan-ma-de">keepalive参数是干嘛的？</a></li>
+<li><a href="#he-xin-xian-cheng-ke-yi-bei-hui-shou-ma-xian-cheng-chi-mei-you-bei-hui-shou-de-qing-kuang-xia">核心线程可以被回收吗？（线程池没有被回收的情况下）</a></li>
+<li><a href="#he-xin-xian-cheng-shu-she-zhi-duo-shao-zen-me-kao-lu">核心线程数设置多少，怎么考虑？</a></li>
+<li><a href="#xian-cheng-chi-you-na-san-chong-dui-lie-ce-lue">线程池有哪三种队列策略？</a></li>
+<li><a href="#xian-cheng-chi-dui-lie-yi-man-qie-maxinumpoolsize-yi-man-shi-you-na-xie-ju-jue-ce-lue">线程池队列已满且maxinumPoolSize已满时，有哪些拒绝策略？</a></li>
+<li><a href="#xian-cheng-chi-wei-shi-me-xu-yao-zu-sai-dui-lie">线程池为什么需要阻塞队列？</a></li>
+<li><a href="#wu-chong-chang-jian-de-executor-zi-dai-xian-cheng-chi">五种常见的Executor自带线程池</a>
+<ul>
+<li><a href="#newcachedthreadpool-huan-cun-xian-cheng-chi">newCachedThreadPool： 缓存线程池</a></li>
+<li><a href="#newfixedthreadpool-ding-chang-xian-cheng-chi">newFixedThreadPool ：定长线程池</a></li>
+<li><a href="#newscheduledthreadpool-ding-shi-qi-xian-cheng-chi">newScheduledThreadPool :定时器线程池</a></li>
+<li><a href="#newsinglethreadexecutor-dan-xian-cheng-chi">newSingleThreadExecutor : 单线程池</a></li>
+<li><a href="#newworkstealingpool-ji-cheng-zi-forkjoinpool-gong-zuo-mi-qu-xian-cheng-chi">newWorkStealingPool（继承自ForkJoinPool ）： 工作密取线程池</a></li>
+</ul>
+</li>
+<li><a href="#submit-he-execute-fang-fa-qu-bie-shi-shi-me">submit和execute方法区别是什么？</a>
+<ul>
+<li><a href="#xian-cheng-chi-zhong-shutdown-shutdownnow-awaittermination-de-qu-bie">线程池中， shutdown、 shutdownNow、awaitTermination的区别？</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#forkjoin-xian-cheng-chi">ForkJoin线程池</a>
+<ul>
+<li><a href="#forkjoin-he-xin-gai-nian">forkJoin核心概念</a></li>
+<li><a href="#forkjoin-zhong-ge-ge-xian-cheng-shi-ru-he-huo-qu-na-xie-xiao-ren-wu-de-ni">forkJoin中各个线程是如何获取那些小任务的呢？</a></li>
+<li><a href="#fork-shi-ju-ti-fa-sheng-liao-shi-me">fork时具体发生了什么？</a></li>
+<li><a href="#join-shi-shi-me-han-yi-shi-me-shi-hou-zuo-de">join是什么含义？什么时候做的？</a></li>
+<li><a href="#join-zhe-ge-zu-sai-guo-cheng-shi-zen-me-zuo-de-ru-guo-ba-xian-cheng-gua-qi-na-zhe-ge-xian-cheng-qi-bu-shi-wu-fa-gong-zuo-liao">join这个阻塞过程是怎么做的？如果把线程挂起，那这个线程岂不是无法工作了？</a></li>
+<li><a href="#forkjoin-cun-fang-ren-wu-de-shi-hou-zen-me-bao-zheng-bu-hui-chu-xian-bing-fa-wen-ti-bi-ru-tong-shi-wang-dui-wei-cha-ru-de-hua">forkJoin存放任务的时候，怎么保证不会出现并发问题？比如同时往队尾插入的话</a></li>
+<li><a href="#forkjoin-ying-yong-zai-na">forkJoin应用在哪？</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="executor-xian-cheng-chi-ying-yong-xiang-jie">Executor线程池应用详解</span><a href="#executor-xian-cheng-chi-ying-yong-xiang-jie" class="header-anchor">#</a></h1>
+<h2><span id="corepoolsize-he-maximumpoolsize-can-shu-you-shi-me-qu-bie">corePoolSize和maximumPoolSize参数有什么区别？</span><a href="#corepoolsize-he-maximumpoolsize-can-shu-you-shi-me-qu-bie" class="header-anchor">#</a></h2>
+<p>A：<br>
+当提交新线程到池中时</p>
+<ul>
+<li>如果当前线程数 &lt; corePoolSize，则会创建新线程</li>
+<li>如果当前线程数=corePoolSize，则新线程被塞进一个队列中等待。</li>
+<li>如果队列也被塞满了，那么又会开始新建线程来运行任务，避免任务阻塞或者丢弃</li>
+<li>如果队列满了的情况下， 线程总数超过了maxinumPoolSize，那么就抛异常或者阻塞（取决于队列性质）。</li>
+</ul>
+<hr>
+<ul>
+<li>调用prestartCoreThread()可提前开启一个空闲的核心线程</li>
+<li>调用prestartAllCoreThreads()，可提前创建corePoolSize个核心线程。</li>
+</ul>
+<hr>
+<h2><span id="keepalive-can-shu-shi-gan-ma-de">keepalive参数是干嘛的？</span><a href="#keepalive-can-shu-shi-gan-ma-de" class="header-anchor">#</a></h2>
+<p>A：当线程数量在corePoolSize到maxinumPoolSize之间时， 如果有线程已跑完，且空闲时间超过keepalive时，则会被清除（注意只限于corePoolSize到maxinumPoolsize之间的线程）</p>
+<hr>
+<h2><span id="he-xin-xian-cheng-ke-yi-bei-hui-shou-ma-xian-cheng-chi-mei-you-bei-hui-shou-de-qing-kuang-xia">核心线程可以被回收吗？（线程池没有被回收的情况下）</span><a href="#he-xin-xian-cheng-ke-yi-bei-hui-shou-ma-xian-cheng-chi-mei-you-bei-hui-shou-de-qing-kuang-xia" class="header-anchor">#</a></h2>
+<p>A:<br>
+ThreadPoolExecutor有个allowCoreThreadTimeOut(boolean value)方法，可以设置是否在超期后做回收</p>
+<hr>
+<h2><span id="he-xin-xian-cheng-shu-she-zhi-duo-shao-zen-me-kao-lu">核心线程数设置多少，怎么考虑？</span><a href="#he-xin-xian-cheng-shu-she-zhi-duo-shao-zen-me-kao-lu" class="header-anchor">#</a></h2>
+<p>A:<br>
+io密集型， 可以设置多一点， 因为多一个线程，他可能也没太占cpu，都是在等待IO。<br>
+如果是计算密集型，则要设置少一点，别把cpu搞满载了。</p>
+<p>有超线程技术的话， 一般可以设置成2倍CPU数量的线程数</p>
+<blockquote>
+<blockquote>
+<p>超线程技术把多线程处理器内部的两个逻辑内核模拟成两个物理芯片，让单个处理器就能使用线程级的并行计算，进而兼容多线程操作系统和软件。超线程技术充分利用空闲CPU资源，在相同时间内完成更多工作</p>
+</blockquote>
+</blockquote>
+<hr>
+<h2><span id="xian-cheng-chi-you-na-san-chong-dui-lie-ce-lue">线程池有哪三种队列策略？</span><a href="#xian-cheng-chi-you-na-san-chong-dui-lie-ce-lue" class="header-anchor">#</a></h2>
+<p>A：</p>
+<ol>
+<li>握手队列<br>
+相当于不排队的队列。可能造成线程数量无限增长直到超过maxinumPoolSize（相当于corePoolSize没什么用了，只以maxinumPoolSize做上限）</li>
+<li>无界队列<br>
+队列队长无限，即线程数量达到corePoolSize时，后面的线程只会在队列中等待。（相当于maxinumPoolSize没什么用了）<br>
+缺陷： 可能造成队列无限增长以至于OOM</li>
+<li>有界队列</li>
+</ol>
+<hr>
+<h2><span id="xian-cheng-chi-dui-lie-yi-man-qie-maxinumpoolsize-yi-man-shi-you-na-xie-ju-jue-ce-lue">线程池队列已满且maxinumPoolSize已满时，有哪些拒绝策略？</span><a href="#xian-cheng-chi-dui-lie-yi-man-qie-maxinumpoolsize-yi-man-shi-you-na-xie-ju-jue-ce-lue" class="header-anchor">#</a></h2>
+<p>A：</p>
+<ul>
+<li>AbortPolicy 默认策略：直接抛出RejectedExecutionException异常</li>
+<li>DiscardPolicy 丢弃策略： 直接丢了，什么错误也不报</li>
+<li>DiscardOldestPolicy 丢弃队头策略： 即把最先入队的人从队头扔出去，再尝试让该任务进入队尾（队头任务内心：不公平。。。。）</li>
+<li>CallerRunsPolicy 调用者处理策略： 交给调用者所在线程自己去跑任务（即谁调用的submit或者execute，他就自己去跑） <strong>注意这个策略会用的比较多</strong></li>
+<li>也可以用实现自定义新的RejectedExecutionHandler</li>
+</ul>
+<hr>
+<h2><span id="xian-cheng-chi-wei-shi-me-xu-yao-zu-sai-dui-lie">线程池为什么需要阻塞队列？</span><a href="#xian-cheng-chi-wei-shi-me-xu-yao-zu-sai-dui-lie" class="header-anchor">#</a></h2>
+<p>A:<br>
+线程池创建线程需要获取mainlock这个全局锁，影响并发效率，阻塞队列可以很好的缓冲。避免大量线程获取这个创建锁。</p>
+<hr>
+<h2><span id="wu-chong-chang-jian-de-executor-zi-dai-xian-cheng-chi">五种常见的Executor自带线程池</span><a href="#wu-chong-chang-jian-de-executor-zi-dai-xian-cheng-chi" class="header-anchor">#</a></h2>
+<p>有以下五种Executor提供的线程池，注意记忆一下他们的用途，就能理解内部的原理了。</p>
+<ul>
+<li>
+<h3><span id="newcachedthreadpool-huan-cun-xian-cheng-chi">newCachedThreadPool： 缓存线程池</span><a href="#newcachedthreadpool-huan-cun-xian-cheng-chi" class="header-anchor">#</a></h3>
+<p>corePoolSize=0, maxinumPoolSize=+∞，队列长度=0 ，<br>
+因此线程数量会在corePoolSize到maxinumPoolSize之间一直灵活缓存和变动， 且不存在队列等待的情况，一来任务我就创建，用完了会释放。<br>
+<img src="/images/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/1619147438780044960.png" alt="image.png"></p>
+</li>
+<li>
+<h3><span id="newfixedthreadpool-ding-chang-xian-cheng-chi">newFixedThreadPool ：定长线程池</span><a href="#newfixedthreadpool-ding-chang-xian-cheng-chi" class="header-anchor">#</a></h3>
+<p>corePoolSize= maxinumPoolSize=构造参数值， 队列长度=+∞。<br>
+因此不存在线程不够时扩充的情况</p>
+</li>
+<li>
+<h3><span id="newscheduledthreadpool-ding-shi-qi-xian-cheng-chi">newScheduledThreadPool :定时器线程池</span><a href="#newscheduledthreadpool-ding-shi-qi-xian-cheng-chi" class="header-anchor">#</a></h3>
+<p>提交定时任务用的，构造参数里会带定时器的间隔和单位。 其他和FixedThreadPool相同，属于定长线程池。</p>
+</li>
+<li>
+<h3><span id="newsinglethreadexecutor-dan-xian-cheng-chi">newSingleThreadExecutor : 单线程池</span><a href="#newsinglethreadexecutor-dan-xian-cheng-chi" class="header-anchor">#</a></h3>
+<p>corePoolSize=maxinumPoolSize=1， 队列长度=+∞<br>
+只会跑一个任务， 所以其他的任务都会在队列中等待，因此会严格按照FIFO执行</p>
+</li>
+<li>
+<h3><span id="newworkstealingpool-ji-cheng-zi-forkjoinpool-gong-zuo-mi-qu-xian-cheng-chi">newWorkStealingPool（继承自ForkJoinPool ）： 工作密取线程池</span><a href="#newworkstealingpool-ji-cheng-zi-forkjoinpool-gong-zuo-mi-qu-xian-cheng-chi" class="header-anchor">#</a></h3>
+</li>
+</ul>
+<p>如果你的任务执行时间很长，并且里面的任务运行并行跑的，那么他会把你的线程任务再细分到其他的线程来分治。这种特点在于可以在任务队列的两头取任务</p>
+<hr>
+<h2><span id="submit-he-execute-fang-fa-qu-bie-shi-shi-me">submit和execute方法区别是什么？</span><a href="#submit-he-execute-fang-fa-qu-bie-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>execute只能接收Runnable类型的任务，而submit除了Runnable，还能接收Callable（Callable类型任务支持返回值）</li>
+<li>execute方法返回void，  submit方法返回FutureTask。</li>
+<li>异常方面， submit方法因为返回了futureTask对象，而当进行future.get()时，会把线程中的异常抛出，因此调用者可以方便地处理异常。（如果是execute，只能用内部捕捉或者设置catchHandler）</li>
+</ul>
+<hr>
+<h3><span id="xian-cheng-chi-zhong-shutdown-shutdownnow-awaittermination-de-qu-bie">线程池中， shutdown、 shutdownNow、awaitTermination的区别？</span><a href="#xian-cheng-chi-zhong-shutdown-shutdownnow-awaittermination-de-qu-bie" class="header-anchor">#</a></h3>
+<p>A：</p>
+<ul>
+<li>shutdown: 停止接收新任务，等待所有池中已存在任务完成（ <em><strong>包括等待队列中的线程</strong></em> ）。异步方法，即调用后马上返回。</li>
+<li>shutdownNow: 停止接收新任务，并 <em><strong>停止所有正执行的task</strong></em>，返回还在队列中的task列表 。</li>
+<li>awaitTermination： <em><strong>仅仅是一个判断方法</strong></em>，判断当前线程池任务是否全部结束。一般用在shutdown后面，因为shutdown是异步方法，你需要知道什么时候才真正结束。</li>
+</ul>
+<h1><span id="forkjoin-xian-cheng-chi">ForkJoin线程池</span><a href="#forkjoin-xian-cheng-chi" class="header-anchor">#</a></h1>
+<h2><span id="forkjoin-he-xin-gai-nian">forkJoin核心概念</span><a href="#forkjoin-he-xin-gai-nian" class="header-anchor">#</a></h2>
+<p>ForkJoin线程池在常规的java书籍里还是提到比较少的，毕竟是java8引入的产物。</p>
+<p>首先这里简单解释一下forkJoin的运作原理， 本质上有点像归并计算。</p>
+<ol>
+<li>他会将提交大任务按照一定规则拆解（fork）成多个小任务</li>
+<li>当任务小到一定程度时，就会执行计算</li>
+<li>执行完成时会和其他的小任务进行合并（join）， 逐步将所有小结果合成一个大结果。<br>
+<img src="/images/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/1636361412728070823-1660063481962.png" alt="image.png"></li>
+</ol>
+<p>可以看这个forkJoinTask的实现伪代码，即如果想使用forkJoin并发执行任务，需要自己把任务继承RecursiveTask，作为forkJoin池的submit对象：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ForkJoinTask</span> <span class="keyword">extends</span> <span class="title class_">RecursiveTask</span>&lt;任务参数&gt; &#123;</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="title function_">ReckonTask</span><span class="params">(任务参数)</span> &#123;</span><br><span class="line"></span><br><span class="line">	&#125; </span><br><span class="line"> </span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="keyword">protected</span> File <span class="title function_">compute</span><span class="params">()</span> &#123;</span><br><span class="line">		<span class="keyword">if</span>(根据任务参数判断任务是否足够小) &#123;</span><br><span class="line">        计算，返回</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      	 拆分成子任务<span class="number">1</span>和子任务<span class="number">2</span> </span><br><span class="line">        任务<span class="number">1.</span>fork();</span><br><span class="line">        任务<span class="number">2.</span>fork();</span><br><span class="line">        结果<span class="number">1</span> = 任务<span class="number">1.</span>join();</span><br><span class="line">        结果<span class="number">2</span> = 任务<span class="number">2.</span>join();</span><br><span class="line">        返回结果<span class="number">1</span>+结果<span class="number">2</span>；</span><br><span class="line">      &#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后实际上整个forkjoin的细节非常多，这里我通过给自己提好几个问题，来逐步理解forkJoin的原理，</p>
+<hr>
+<h2><span id="forkjoin-zhong-ge-ge-xian-cheng-shi-ru-he-huo-qu-na-xie-xiao-ren-wu-de-ni">forkJoin中各个线程是如何获取那些小任务的呢？</span><a href="#forkjoin-zhong-ge-ge-xian-cheng-shi-ru-he-huo-qu-na-xie-xiao-ren-wu-de-ni" class="header-anchor">#</a></h2>
+<p>A:<br>
+他是通过工作密取的方式获取。（java并发那本书里提到过工作密取workSteal，原来是用在这了）</p>
+<ul>
+<li>假设我们给forkJoin设置3个工作线程，那么就会有3个工作队列， 注意，这个队列是双端队列。</li>
+<li>每当执行任务时，如果不满足小任务的条件，他会fork出2个子任务，并push进自己的工作队列中。</li>
+<li>每个工作线程不断取自己队头的任务执行。</li>
+<li>关键点：如果自己队列里没有数据，则会从其他队列的队尾取数据。</li>
+</ul>
+<hr>
+<h2><span id="fork-shi-ju-ti-fa-sheng-liao-shi-me">fork时具体发生了什么？</span><a href="#fork-shi-ju-ti-fa-sheng-liao-shi-me" class="header-anchor">#</a></h2>
+<p>A:<br>
+是一个异步的操作， 就是向当前线程队列中添加这个fork出来任务，能放进去的话就返回，不会等待。<br>
+注意，默认fork出的任务是先默认给自己的。 当自己做不完时，才可能被别人取走！<br>
+<img src="/images/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/1636361429766064686-1660063481975.png" alt="image.png"></p>
+<hr>
+<h2><span id="join-shi-shi-me-han-yi-shi-me-shi-hou-zuo-de">join是什么含义？什么时候做的？</span><a href="#join-shi-shi-me-han-yi-shi-me-shi-hou-zuo-de" class="header-anchor">#</a></h2>
+<p>A:<br>
+见实现forkJoin任务接口时的代码：<br>
+<img src="/images/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/1636361436926002588-1660063481980.png" alt="image.png"></p>
+<p>可以看到时每次fork完之后， 通过join，来获取子task的结果，获取到之后，再合并计算，返回结果。</p>
+<hr>
+<h2><span id="join-zhe-ge-zu-sai-guo-cheng-shi-zen-me-zuo-de-ru-guo-ba-xian-cheng-gua-qi-na-zhe-ge-xian-cheng-qi-bu-shi-wu-fa-gong-zuo-liao">join这个阻塞过程是怎么做的？如果把线程挂起，那这个线程岂不是无法工作了？</span><a href="#join-zhe-ge-zu-sai-guo-cheng-shi-zen-me-zuo-de-ru-guo-ba-xian-cheng-gua-qi-na-zhe-ge-xian-cheng-qi-bu-shi-wu-fa-gong-zuo-liao" class="header-anchor">#</a></h2>
+<p>A:</p>
+<p>首先，之前fork时，新的子任务已经被放入队列了。<br>
+每个子任务都有一个任务状态。<br>
+当调用该子任务的join时， 会循环判断他的状态</p>
+<p>如果这个子任务状态未完成， 则从自身队列或其他人的队列中取出新的任务执行，因此进入了下一层的exec()操作。<br>
+如果发现子任务状态更新为了完成（这个更新动作可能是自己线程完成的，也可能是别的线程完成的，反正这个任务的状态实现了同步和可见）， 则将结果返回给上层。<br>
+因此join的本质是一个递归的过程， 任务没完成的话，他就取其他任务继续递归往下执行。</p>
+<p>更详细的可以看这个链接<a target="_blank" rel="noopener" href="https://www.cnblogs.com/yougewe/p/14943418.html">fork+join过程详细解读</a></p>
+<hr>
+<h2><span id="forkjoin-cun-fang-ren-wu-de-shi-hou-zen-me-bao-zheng-bu-hui-chu-xian-bing-fa-wen-ti-bi-ru-tong-shi-wang-dui-wei-cha-ru-de-hua">forkJoin存放任务的时候，怎么保证不会出现并发问题？比如同时往队尾插入的话</span><a href="#forkjoin-cun-fang-ren-wu-de-shi-hou-zen-me-bao-zheng-bu-hui-chu-xian-bing-fa-wen-ti-bi-ru-tong-shi-wang-dui-wei-cha-ru-de-hua" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>n个工作线程是通过数组存放的（即有一个工作线程数组）</li>
+<li>sun.misc.Unsafe操作类直接基于操作系统控制层在硬件层面上进行原子操作，它是ForkJoinPool高效性能的一大保证，类似的编程思路还体现在java.util.concurrent包中相当规模的类功能实现中。<br>
+<img src="/images/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/1636361445964033773-1660063481982.png" alt="image.png"></li>
+</ul>
+<hr>
+<h2><span id="forkjoin-ying-yong-zai-na">forkJoin应用在哪？</span><a href="#forkjoin-ying-yong-zai-na" class="header-anchor">#</a></h2>
+<p>A:<br>
+java8 stream的parallel并发功能就是基于forkJoin做的， parallelStream实现的forkJoin拆解任务和执行任务的接口， 默认用机器所有CPU数量的forkJoin线程池。<br>
+如果需要限制线程数量，可以用<br>
+new forkJoin(线程数).submit(()-&gt;(list.stream().parallel().map()…)); 即可</p>
+<p>关于java8和forkJoin究竟是如何配合的，可以看这个链接：<br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/Dorae/p/7779246.html">源码级别学习java8并行流执行原理</a><br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/Dorae/p/7779246.html">https://www.cnblogs.com/Dorae/p/7779246.html</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/2022/08/10/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/" title="Java线程池高级应用和原理分析">http://breakdawncoder.com/2022/08/10/知识库/java/java-high/Java线程池高级应用和原理分析/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag"># java,并发编程</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/08/07/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC305%E5%9C%BA%E5%91%A8%E8%B5%9B-264%E5%90%8D-22%E5%88%86%E9%92%9F4%E9%A2%98/" rel="prev" title="第305场周赛-264名-22分钟4题">
+      <i class="fa fa-chevron-left"></i> 第305场周赛-264名-22分钟4题
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">Executor线程池应用详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">corePoolSize和maximumPoolSize参数有什么区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">keepalive参数是干嘛的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">核心线程可以被回收吗？（线程池没有被回收的情况下）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.4.</span> <span class="nav-text">核心线程数设置多少，怎么考虑？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.5.</span> <span class="nav-text">线程池有哪三种队列策略？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.6.</span> <span class="nav-text">线程池队列已满且maxinumPoolSize已满时，有哪些拒绝策略？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.7.</span> <span class="nav-text">线程池为什么需要阻塞队列？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.8.</span> <span class="nav-text">五种常见的Executor自带线程池</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.8.1.</span> <span class="nav-text">newCachedThreadPool： 缓存线程池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.8.2.</span> <span class="nav-text">newFixedThreadPool ：定长线程池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.8.3.</span> <span class="nav-text">newScheduledThreadPool :定时器线程池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.8.4.</span> <span class="nav-text">newSingleThreadExecutor : 单线程池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.8.5.</span> <span class="nav-text">newWorkStealingPool（继承自ForkJoinPool ）： 工作密取线程池</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.9.</span> <span class="nav-text">submit和execute方法区别是什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.9.1.</span> <span class="nav-text">线程池中， shutdown、 shutdownNow、awaitTermination的区别？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">ForkJoin线程池</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">forkJoin核心概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">forkJoin中各个线程是如何获取那些小任务的呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">fork时具体发生了什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.4.</span> <span class="nav-text">join是什么含义？什么时候做的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.5.</span> <span class="nav-text">join这个阻塞过程是怎么做的？如果把线程挂起，那这个线程岂不是无法工作了？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.6.</span> <span class="nav-text">forkJoin存放任务的时候，怎么保证不会出现并发问题？比如同时往队尾插入的话</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.7.</span> <span class="nav-text">forkJoin应用在哪？</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/182319148" title="Genshin-UID → 182319148"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
