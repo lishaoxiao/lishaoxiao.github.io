@@ -23,7 +23,7 @@
 
   <meta name="description" content="Executor线程池应用详解  corePoolSize和maximumPoolSize参数有什么区别？ keepalive参数是干嘛的？ 核心线程可以被回收吗？（线程池没有被回收的情况下） 核心线程数设置多少，怎么考虑？ 线程池有哪三种队列策略？ 线程池队列已满且maxinumPoolSize已满时，有哪些拒绝策略？ 线程池为什么需要阻塞队列？ 五种常见的Executor自带线程池  n">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java线程池高级应用和原理分析">
+<meta property="og:title" content="Java线程高级应用和原理分析">
 <meta property="og:url" content="http://breakdawncoder.com/2022/08/10/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/index.html">
 <meta property="og:site_name" content="冲破黎明前的黑暗">
 <meta property="og:description" content="Executor线程池应用详解  corePoolSize和maximumPoolSize参数有什么区别？ keepalive参数是干嘛的？ 核心线程可以被回收吗？（线程池没有被回收的情况下） 核心线程数设置多少，怎么考虑？ 线程池有哪三种队列策略？ 线程池队列已满且maxinumPoolSize已满时，有哪些拒绝策略？ 线程池为什么需要阻塞队列？ 五种常见的Executor自带线程池  n">
@@ -33,8 +33,9 @@
 <meta property="og:image" content="http://breakdawncoder.com/images/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/1636361429766064686-1660063481975.png">
 <meta property="og:image" content="http://breakdawncoder.com/images/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/1636361436926002588-1660063481980.png">
 <meta property="og:image" content="http://breakdawncoder.com/images/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/1636361445964033773-1660063481982.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/20210718230858556.png">
 <meta property="article:published_time" content="2022-08-09T16:35:00.000Z">
-<meta property="article:modified_time" content="2022-08-09T16:48:32.137Z">
+<meta property="article:modified_time" content="2022-08-10T15:56:19.090Z">
 <meta property="article:author" content="breakDawn">
 <meta property="article:tag" content="java,并发编程">
 <meta name="twitter:card" content="summary">
@@ -53,7 +54,7 @@
   };
 </script>
 
-  <title>Java线程池高级应用和原理分析 | 冲破黎明前的黑暗</title>
+  <title>Java线程高级应用和原理分析 | 冲破黎明前的黑暗</title>
   
 
 
@@ -176,7 +177,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Java线程池高级应用和原理分析
+          Java线程高级应用和原理分析
         </h1>
 
         <div class="post-meta">
@@ -187,7 +188,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2022-08-10 00:35:00 / 修改时间：00:48:32" itemprop="dateCreated datePublished" datetime="2022-08-10T00:35:00+08:00">2022-08-10</time>
+              <time title="创建时间：2022-08-10 00:35:00 / 修改时间：23:56:19" itemprop="dateCreated datePublished" datetime="2022-08-10T00:35:00+08:00">2022-08-10</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -276,6 +277,13 @@
 <li><a href="#join-zhe-ge-zu-sai-guo-cheng-shi-zen-me-zuo-de-ru-guo-ba-xian-cheng-gua-qi-na-zhe-ge-xian-cheng-qi-bu-shi-wu-fa-gong-zuo-liao">join这个阻塞过程是怎么做的？如果把线程挂起，那这个线程岂不是无法工作了？</a></li>
 <li><a href="#forkjoin-cun-fang-ren-wu-de-shi-hou-zen-me-bao-zheng-bu-hui-chu-xian-bing-fa-wen-ti-bi-ru-tong-shi-wang-dui-wei-cha-ru-de-hua">forkJoin存放任务的时候，怎么保证不会出现并发问题？比如同时往队尾插入的话</a></li>
 <li><a href="#forkjoin-ying-yong-zai-na">forkJoin应用在哪？</a></li>
+</ul>
+</li>
+<li><a href="#theadlocal-he-xin-yuan-li">TheadLocal核心原理</a>
+<ul>
+<li><a href="#threadlocal-de-chang-jian-shi-yong-chang-jing">ThreadLocal的常见使用场景？</a></li>
+<li><a href="#threadlocal-he-synchronized-guan-jian-zi-de-qu-bie">ThreadLocal和Synchronized关键字的区别？</a></li>
+<li><a href="#theadlocal-zai-mei-ge-xian-cheng-zhong-shi-yi-shi-me-xing-shi-cun-chu-de-yuan-li-shi-shi-me">TheadLocal在每个线程中是以什么形式存储的？ 原理是什么</a></li>
 </ul>
 </li>
 </ul>
@@ -447,6 +455,45 @@ new forkJoin(线程数).submit(()-&gt;(list.stream().parallel().map()…)); 即�
 <p>关于java8和forkJoin究竟是如何配合的，可以看这个链接：<br>
 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/Dorae/p/7779246.html">源码级别学习java8并行流执行原理</a><br>
 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/Dorae/p/7779246.html">https://www.cnblogs.com/Dorae/p/7779246.html</a></p>
+<h1><span id="theadlocal-he-xin-yuan-li">TheadLocal核心原理</span><a href="#theadlocal-he-xin-yuan-li" class="header-anchor">#</a></h1>
+<hr>
+<h2><span id="threadlocal-de-chang-jian-shi-yong-chang-jing">ThreadLocal的常见使用场景？</span><a href="#threadlocal-de-chang-jian-shi-yong-chang-jing" class="header-anchor">#</a></h2>
+<p>每个线程中需要维护1个不同的副本， 但这个副本可能是某一个时刻一起塞入每个线程的， 只不过之后该副本的变化 不再受其他线程的影响。</p>
+<p>常见场景有连接器管理模块connectorManager， 每个线程持有的connect变量是单独使用的，不会互相影响或者需要加锁。原因就是将其作为副本放入每个线程，当线程启动连接或者关闭时，不影响其他线程里的getConnect方法。</p>
+<hr>
+<h2><span id="threadlocal-he-synchronized-guan-jian-zi-de-qu-bie">ThreadLocal和Synchronized关键字的区别？</span><a href="#threadlocal-he-synchronized-guan-jian-zi-de-qu-bie" class="header-anchor">#</a></h2>
+<p>A：<br>
+Synchronized是用时间的消耗，来换取数据同步以及互不冲突<br>
+ThreadLocal则是用空间的消耗，来换取数据之间互不冲突（不涉及同步）</p>
+<hr>
+<h2><span id="theadlocal-zai-mei-ge-xian-cheng-zhong-shi-yi-shi-me-xing-shi-cun-chu-de-yuan-li-shi-shi-me">TheadLocal在每个线程中是以什么形式存储的？ 原理是什么</span><a href="#theadlocal-zai-mei-ge-xian-cheng-zhong-shi-yi-shi-me-xing-shi-cun-chu-de-yuan-li-shi-shi-me" class="header-anchor">#</a></h2>
+<p>这篇文章讲解ThreadLocal源码讲解的蛮好的：<br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/dolphin0520/p/3920407.html">Java并发编程：深入剖析</a></p>
+<p>看完后用我自己的话总结一下就是：</p>
+<ol>
+<li>
+<p>在某个线程中调用 某threadlocal.set(value)时， 其实就是在该线程中新建了1个threalocalMap， 然后把threadLocal作为键，value作为值，放进本线程的threalocalMap中。</p>
+</li>
+<li>
+<p>当在线程中调用threadlocal.get()的时候，就是从线程的threadLocalMap中获取这个threadLocal对应的值<br>
+如果get不到，则可以通过自定义initValue方法生成一个threadLocal的默认值</p>
+</li>
+</ol>
+<p>见如下图所示：<br>
+<img src="/images/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/20210718230858556.png" alt="在这里插入图片描述"></p>
+<hr>
+<p>下面这个代码会报什么错？（例子改编自上面链接的文章）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    ThreadLocal&lt;String&gt; stringLocal = <span class="keyword">new</span> <span class="title class_">ThreadLocal</span>&lt;String&gt;();</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="type">Test</span> <span class="variable">test</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Test</span>();</span><br><span class="line">         </span><br><span class="line">        System.out.println(test.getString());</span><br><span class="line"> </span><br><span class="line">        <span class="type">Thread</span> <span class="variable">thread1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>()&#123;</span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">                System.out.println(stringLocal.get());</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125;;</span><br><span class="line">        thread1.start();</span><br><span class="line">        thread1.join();</span><br><span class="line">		stringLocal.set(<span class="string">&quot;thread0&quot;</span>)</span><br><span class="line">        System.out.println(test.getString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在Thread1中，会报空指针， 因为调用get之前没有做过set， 此时做get会报错。<br>
+一种方式改成这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Thread</span> <span class="variable">thread1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>()&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">    	stringLocal.set(<span class="string">&quot;thread1&quot;</span>)</span><br><span class="line">        System.out.println(stringLocal.get());</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>另一种是给stringLocal设置默认值，这种一般用于能直接根据线程推导出初始值的情况：<br>
+ThreadLocal<string> stringLocal = new ThreadLocal<string>(){;<br>
+protected String initialValue() {<br>
+return xxx;<br>
+};<br>
+};</string></string></p>
+<p>正确set之后， 答案就会返回thread0和thread1， 且后续怎么set，两边都不会互相影响各自的threadLocal，<strong>虽然看起来是都用的是同一个Test里的成员。</strong></p>
 
     </div>
 
@@ -462,7 +509,7 @@ new forkJoin(线程数).submit(()-&gt;(list.stream().parallel().map()…)); 即�
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://breakdawncoder.com/2022/08/10/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/" title="Java线程池高级应用和原理分析">http://breakdawncoder.com/2022/08/10/知识库/java/java-high/Java线程池高级应用和原理分析/</a>
+    <a href="http://breakdawncoder.com/2022/08/10/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/" title="Java线程高级应用和原理分析">http://breakdawncoder.com/2022/08/10/知识库/java/java-high/Java线程池高级应用和原理分析/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -485,7 +532,10 @@ new forkJoin(线程数).submit(()-&gt;(list.stream().parallel().map()…)); 即�
     <a href="/2022/08/07/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC305%E5%9C%BA%E5%91%A8%E8%B5%9B-264%E5%90%8D-22%E5%88%86%E9%92%9F4%E9%A2%98/" rel="prev" title="第305场周赛-264名-22分钟4题">
       <i class="fa fa-chevron-left"></i> 第305场周赛-264名-22分钟4题
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2022/08/10/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%9F%BA%E7%A1%80%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" rel="next" title="java基础数据类型">
+      java基础数据类型 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -545,7 +595,7 @@ new forkJoin(线程数).submit(()-&gt;(list.stream().parallel().map()…)); 即�
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">Executor线程池应用详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">corePoolSize和maximumPoolSize参数有什么区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">keepalive参数是干嘛的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">核心线程可以被回收吗？（线程池没有被回收的情况下）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.4.</span> <span class="nav-text">核心线程数设置多少，怎么考虑？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.5.</span> <span class="nav-text">线程池有哪三种队列策略？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.6.</span> <span class="nav-text">线程池队列已满且maxinumPoolSize已满时，有哪些拒绝策略？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.7.</span> <span class="nav-text">线程池为什么需要阻塞队列？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.8.</span> <span class="nav-text">五种常见的Executor自带线程池</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.8.1.</span> <span class="nav-text">newCachedThreadPool： 缓存线程池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.8.2.</span> <span class="nav-text">newFixedThreadPool ：定长线程池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.8.3.</span> <span class="nav-text">newScheduledThreadPool :定时器线程池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.8.4.</span> <span class="nav-text">newSingleThreadExecutor : 单线程池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.8.5.</span> <span class="nav-text">newWorkStealingPool（继承自ForkJoinPool ）： 工作密取线程池</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.9.</span> <span class="nav-text">submit和execute方法区别是什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.9.1.</span> <span class="nav-text">线程池中， shutdown、 shutdownNow、awaitTermination的区别？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">ForkJoin线程池</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">forkJoin核心概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">forkJoin中各个线程是如何获取那些小任务的呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">fork时具体发生了什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.4.</span> <span class="nav-text">join是什么含义？什么时候做的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.5.</span> <span class="nav-text">join这个阻塞过程是怎么做的？如果把线程挂起，那这个线程岂不是无法工作了？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.6.</span> <span class="nav-text">forkJoin存放任务的时候，怎么保证不会出现并发问题？比如同时往队尾插入的话</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.7.</span> <span class="nav-text">forkJoin应用在哪？</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">Executor线程池应用详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">corePoolSize和maximumPoolSize参数有什么区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">keepalive参数是干嘛的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">核心线程可以被回收吗？（线程池没有被回收的情况下）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.4.</span> <span class="nav-text">核心线程数设置多少，怎么考虑？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.5.</span> <span class="nav-text">线程池有哪三种队列策略？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.6.</span> <span class="nav-text">线程池队列已满且maxinumPoolSize已满时，有哪些拒绝策略？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.7.</span> <span class="nav-text">线程池为什么需要阻塞队列？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.8.</span> <span class="nav-text">五种常见的Executor自带线程池</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.8.1.</span> <span class="nav-text">newCachedThreadPool： 缓存线程池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.8.2.</span> <span class="nav-text">newFixedThreadPool ：定长线程池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.8.3.</span> <span class="nav-text">newScheduledThreadPool :定时器线程池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.8.4.</span> <span class="nav-text">newSingleThreadExecutor : 单线程池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.8.5.</span> <span class="nav-text">newWorkStealingPool（继承自ForkJoinPool ）： 工作密取线程池</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.9.</span> <span class="nav-text">submit和execute方法区别是什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.9.1.</span> <span class="nav-text">线程池中， shutdown、 shutdownNow、awaitTermination的区别？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">ForkJoin线程池</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">forkJoin核心概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">forkJoin中各个线程是如何获取那些小任务的呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">fork时具体发生了什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.4.</span> <span class="nav-text">join是什么含义？什么时候做的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.5.</span> <span class="nav-text">join这个阻塞过程是怎么做的？如果把线程挂起，那这个线程岂不是无法工作了？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.6.</span> <span class="nav-text">forkJoin存放任务的时候，怎么保证不会出现并发问题？比如同时往队尾插入的话</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.7.</span> <span class="nav-text">forkJoin应用在哪？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">TheadLocal核心原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">ThreadLocal的常见使用场景？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">ThreadLocal和Synchronized关键字的区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">TheadLocal在每个线程中是以什么形式存储的？ 原理是什么</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -561,18 +611,18 @@ new forkJoin(线程数).submit(()-&gt;(list.stream().parallel().map()…)); 即�
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-count">31</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-count">14</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
