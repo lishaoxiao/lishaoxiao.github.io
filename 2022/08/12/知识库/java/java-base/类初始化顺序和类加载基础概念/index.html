@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Java类的加载顺序  Q： 什么时候会进行静态变量的赋值和静态代码块的执行？ Q：初始化某个子类时，也会对父类做静态初始化吗？顺序呢？ Q： 为什么父类的method不会被子类的method重写？ Q： 为什么第一个输出的是e而不是a？ Q： 没有在子类的构造器中调用super()时，也会进行父类对象的实例化吗？ Q： 构造方法、成员显示赋值、非静态代码块（即输出c和h的那2句）的顺序是什">
+<meta property="og:type" content="article">
+<meta property="og:title" content="类初始化顺序和类加载基础概念">
+<meta property="og:url" content="http://breakdawncoder.com/2022/08/12/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/%E7%B1%BB%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/index.html">
+<meta property="og:site_name" content="冲破黎明前的黑暗">
+<meta property="og:description" content="Java类的加载顺序  Q： 什么时候会进行静态变量的赋值和静态代码块的执行？ Q：初始化某个子类时，也会对父类做静态初始化吗？顺序呢？ Q： 为什么父类的method不会被子类的method重写？ Q： 为什么第一个输出的是e而不是a？ Q： 没有在子类的构造器中调用super()时，也会进行父类对象的实例化吗？ Q： 构造方法、成员显示赋值、非静态代码块（即输出c和h的那2句）的顺序是什">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E7%B1%BB%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/image(142).png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E7%B1%BB%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/image(143).png">
+<meta property="article:published_time" content="2022-08-11T16:13:51.000Z">
+<meta property="article:modified_time" content="2022-08-11T16:16:33.254Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="java,java基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/%E7%B1%BB%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/image(142).png">
+
+<link rel="canonical" href="http://breakdawncoder.com/2022/08/12/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/%E7%B1%BB%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>类初始化顺序和类加载基础概念 | 冲破黎明前的黑暗</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">冲破黎明前的黑暗</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/12/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/%E7%B1%BB%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="冲破黎明前的黑暗">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          类初始化顺序和类加载基础概念
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-12 00:13:51 / 修改时间：00:16:33" itemprop="dateCreated datePublished" datetime="2022-08-12T00:13:51+08:00">2022-08-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/12/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/%E7%B1%BB%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/12/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/%E7%B1%BB%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#java-lei-de-jia-zai-shun-xu">Java类的加载顺序</a>
+<ul>
+<li><a href="#q-shi-me-shi-hou-hui-jin-xing-jing-tai-bian-liang-de-fu-zhi-he-jing-tai-dai-ma-kuai-de-zhi-xing">Q： 什么时候会进行静态变量的赋值和静态代码块的执行？</a></li>
+<li><a href="#q-chu-shi-hua-mou-ge-zi-lei-shi-ye-hui-dui-fu-lei-zuo-jing-tai-chu-shi-hua-ma-shun-xu-ni">Q：初始化某个子类时，也会对父类做静态初始化吗？顺序呢？</a></li>
+<li><a href="#q-wei-shi-me-fu-lei-de-method-bu-hui-bei-zi-lei-de-method-chong-xie">Q： 为什么父类的method不会被子类的method重写？</a></li>
+<li><a href="#q-wei-shi-me-di-yi-ge-shu-chu-de-shi-e-er-bu-shi-a">Q： 为什么第一个输出的是e而不是a？</a></li>
+<li><a href="#q-mei-you-zai-zi-lei-de-gou-zao-qi-zhong-diao-yong-super-shi-ye-hui-jin-xing-fu-lei-dui-xiang-de-shi-li-hua-ma">Q： 没有在子类的构造器中调用super()时，也会进行父类对象的实例化吗？</a></li>
+<li><a href="#q-gou-zao-fang-fa-cheng-yuan-xian-shi-fu-zhi-fei-jing-tai-dai-ma-kuai-ji-shu-chu-c-he-h-de-na-2-ju-de-shun-xu-shi-shi-me">Q： 构造方法、成员显示赋值、非静态代码块（即输出c和h的那2句）的顺序是什么？</a></li>
+<li><a href="#q-wei-shi-me-animal-shi-li-hua-shi-i-test-zhong-shu-chu-de-shi-i-er-bu-shi-d">Q： 为什么Animal实例化时， i=test()中输出的是i而不是d？</a></li>
+<li><a href="#q-tong-shang-ti-ru-guo-test-fang-fa-du-shi-private-huo-zhe-final-shu-xing-na-me-shang-ti-de-qing-kuang-hui-you-bian-hua-ma">Q： 同上题， 如果test方法都是private或者final属性， 那么上题的情况会有变化吗？？</a></li>
+</ul>
+</li>
+<li><a href="#lei-jia-zai-guo-cheng">类加载过程</a>
+<ul>
+<li><a href="#q-lei-jia-zai-de-3-ge-bi-jing-jie-duan-shi">Q：类加载的3个必经阶段是：</a></li>
+</ul>
+</li>
+<li><a href="#bei-dong-yin-yong-zhong-he-lei-jing-tai-chu-shi-hua-de-guan-xi">被动引用中和类静态初始化的关系</a>
+<ul>
+<li><a href="#q-new-mou-ge-lei-de-shu-zu-shi-hui-yin-fa-lei-chu-shi-hua-ma">Q：new某个类的数组时，会引发类初始化吗？</a></li>
+<li><a href="#q-yin-yong-lei-de-final-jing-tai-zi-duan-hui-yin-fa-lei-chu-shi-hua-ma">Q：引用类的final静态字段，会引发类初始化吗？</a></li>
+<li><a href="#q-zi-lei-yin-yong-liao-fu-lei-de-jing-tai-cheng-yuan-ci-shi-zi-lei-hui-zuo-lei-chu-shi-hua-ma">Q：子类引用了父类的静态成员，此时子类会做类初始化嘛？</a></li>
+</ul>
+</li>
+<li><a href="#lei-jia-zai-qi">类加载器</a>
+<ul>
+<li><a href="#shuang-qin-wei-pai">双亲委派</a></li>
+<li><a href="#q-java-zhong-shi-fou-lei-he-jie-kou-de-bao-ming-he-ming-zi-xiang-tong-na-me-jiu-yi-ding-shi-tong-yi-ge-lei-huo-zhe-jie-kou">Q：java中， 是否类和接口的包名和名字相同， 那么就一定是同一个类或者接口？</a></li>
+<li><a href="#q-jiang-yi-xia-classloader-yuan-li-yi-ji-ying-yong-chang-jing">Q: 讲一下ClassLoader原理， 以及应用场景</a></li>
+<li><a href="#q-ru-guo-zai-ni-xiang-mu-zhong-jian-yi-ge-java-lang-string-de-lei-na-xi-tong-zhong-yong-de-string-lei-shi-ni-ding-yi-de-string-lei-huan-shi-yuan-sheng-api-zhong-de-string-lei">Q:如果在你项目中建一个java.lang.String的类，那系统中用的String类是你定义的String类，还是原生api中的String类？</a></li>
+<li><a href="#q-wei-shi-me-yao-yong-shuang-qin-wei-tuo-you-shi-me-hao-chu">Q ： 为什么要用双亲委托，有什么好处？</a></li>
+<li><a href="#q-na-wo-ru-guo-zhen-de-you-xu-qiu-bu-xiang-yong-shuang-qin-de-ji-zhi-ni">Q: 那我如果真的有需求， 不想用双亲的机制呢？</a></li>
+<li><a href="#q-shu-zu-lei-shi-zen-me-zuo-jia-zai-de">Q: 数组类是怎么做加载的？</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<hr>
+<p>很多时候提到类加载，大家总是没法马上回忆起顺序，这篇文章会用一个例子为你把类加载的诸多问题一次性澄清。</p>
+<h1><span id="java-lei-de-jia-zai-shun-xu">Java类的加载顺序</span><a href="#java-lei-de-jia-zai-shun-xu" class="header-anchor">#</a></h1>
+<p>引用1个网上的经典例子，并做稍许改动，以便大家更好地理解。<br>
+原例子引用自：<a target="_blank" rel="noopener" href="https://blog.csdn.net/zfx2013/article/details/89453482">https://blog.csdn.net/zfx2013/article/details/89453482</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Animal</span> &#123;</span><br><span class="line">     <span class="keyword">private</span> <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> test();</span><br><span class="line">     <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">int</span> j ?= method();</span><br><span class="line">     <span class="keyword">static</span> &#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;a&quot;</span>);</span><br><span class="line">     &#125;</span><br><span class="line">     Animal()&#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;b&quot;</span>);</span><br><span class="line">     &#125;</span><br><span class="line">     &#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;c&quot;</span>);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">test</span><span class="params">()</span>&#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;d&quot;</span>);</span><br><span class="line">          <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">method</span><span class="params">()</span>&#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;e&quot;</span>);</span><br><span class="line">          <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Dog</span> <span class="keyword">extends</span> <span class="title class_">Animal</span>&#123;</span><br><span class="line">     &#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;h&quot;</span>);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">private</span> <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> test();</span><br><span class="line">     <span class="keyword">static</span> &#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;f&quot;</span>);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">int</span> j ?= method();</span><br><span class="line"></span><br><span class="line">     Dog()&#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;g&quot;</span>);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">test</span><span class="params">()</span>&#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;i&quot;</span>);</span><br><span class="line">          <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">method</span><span class="params">()</span>&#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;j&quot;</span>);</span><br><span class="line">          <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">          <span class="type">Dog</span> <span class="variable">dog</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Dog</span>();</span><br><span class="line">          System.out.println();</span><br><span class="line">          <span class="type">Dog</span> <span class="variable">dog1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Dog</span>();</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>执行这段main程序，会输出什么？<br>
+答案是<br>
+eafjicbhig<br>
+icbhig</p>
+<p>为了方便大家一个个细节去理解， 我换一种方式去提问。</p>
+<h2><span id="q-shi-me-shi-hou-hui-jin-xing-jing-tai-bian-liang-de-fu-zhi-he-jing-tai-dai-ma-kuai-de-zhi-xing">Q： 什么时候会进行静态变量的赋值和静态代码块的执行？</span><a href="#q-shi-me-shi-hou-hui-jin-xing-jing-tai-bian-liang-de-fu-zhi-he-jing-tai-dai-ma-kuai-de-zhi-xing" class="header-anchor">#</a></h2>
+<p>A：?</p>
+<ul>
+<li>第一次创建某个类或者某个类的子类的实例</li>
+<li>访问类的静态变量、调用类的静态方法</li>
+<li>使用反射方法forName</li>
+<li>调用主类的main方法(本例子的第一次静态初始化其实属于这个情况，调用了Dog的main方法）<br>
+注： 类初始化只会进行一次， 上面任何一种情况触发后，之后都不会再引起类初始化操作。</li>
+</ul>
+<hr>
+<h2><span id="q-chu-shi-hua-mou-ge-zi-lei-shi-ye-hui-dui-fu-lei-zuo-jing-tai-chu-shi-hua-ma-shun-xu-ni">Q：初始化某个子类时，也会对父类做静态初始化吗？顺序呢？</span><a href="#q-chu-shi-hua-mou-ge-zi-lei-shi-ye-hui-dui-fu-lei-zuo-jing-tai-chu-shi-hua-ma-shun-xu-ni" class="header-anchor">#</a></h2>
+<p>A：如果父类之前没有被静态初始化过，那就会进行， 且顺序是先父类再子类。 后面的非静态成员初始化也是如此。<br>
+所以会先输出eafj。</p>
+<hr>
+<h2><span id="q-wei-shi-me-fu-lei-de-method-bu-hui-bei-zi-lei-de-method-chong-xie">Q： 为什么父类的method不会被子类的method重写？</span><a href="#q-wei-shi-me-fu-lei-de-method-bu-hui-bei-zi-lei-de-method-chong-xie" class="header-anchor">#</a></h2>
+<p>A： 静态方法是类方法，不会被子类重写。毕竟类方法调用时，是必定带上类名的。</p>
+<hr>
+<h2><span id="q-wei-shi-me-di-yi-ge-shu-chu-de-shi-e-er-bu-shi-a">Q： 为什么第一个输出的是e而不是a？</span><a href="#q-wei-shi-me-di-yi-ge-shu-chu-de-shi-e-er-bu-shi-a" class="header-anchor">#</a></h2>
+<p>A： 因为类变量的显示赋值代码和静态代码块代码按照从上到下的顺序执行。<br>
+Animal的静态初始化过程中，method的调用在static代码块之前，所以先输出e再输出a。<br>
+而Dog的静态初始化过程中，method的调用在static代码块之后，因此先输出f，再输出j</p>
+<hr>
+<h2><span id="q-mei-you-zai-zi-lei-de-gou-zao-qi-zhong-diao-yong-super-shi-ye-hui-jin-xing-fu-lei-dui-xiang-de-shi-li-hua-ma">Q： 没有在子类的构造器中调用super()时，也会进行父类对象的实例化吗？</span><a href="#q-mei-you-zai-zi-lei-de-gou-zao-qi-zhong-diao-yong-super-shi-ye-hui-jin-xing-fu-lei-dui-xiang-de-shi-li-hua-ma" class="header-anchor">#</a></h2>
+<p>A： 会的。会自动调用父类的默认构造器。 ?super()主要是用于需要调用父类的特殊构造器的情况。<br>
+因此会先进行Animal的对象实例化，再进行Dog的对象实例化</p>
+<hr>
+<h2><span id="q-gou-zao-fang-fa-cheng-yuan-xian-shi-fu-zhi-fei-jing-tai-dai-ma-kuai-ji-shu-chu-c-he-h-de-na-2-ju-de-shun-xu-shi-shi-me">Q： 构造方法、成员显示赋值、非静态代码块（即输出c和h的那2句）的顺序是什么？</span><a href="#q-gou-zao-fang-fa-cheng-yuan-xian-shi-fu-zhi-fei-jing-tai-dai-ma-kuai-ji-shu-chu-c-he-h-de-na-2-ju-de-shun-xu-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A：?</p>
+<ol>
+<li>成员显示赋值、非静态代码块（按定义顺序）</li>
+<li>构造方法<br>
+因此Animal的实例化过程输出icb（如果对输出i有疑问，见下面一题）<br>
+接着进行Dog的实例化，输出hig</li>
+</ol>
+<hr>
+<h2><span id="q-wei-shi-me-animal-shi-li-hua-shi-i-test-zhong-shu-chu-de-shi-i-er-bu-shi-d">Q： 为什么Animal实例化时， i=test()中输出的是i而不是d？</span><a href="#q-wei-shi-me-animal-shi-li-hua-shi-i-test-zhong-shu-chu-de-shi-i-er-bu-shi-d" class="header-anchor">#</a></h2>
+<p>A:因为你真正创建的是Dog子类，Dog子类中的test()方法由于签名和父类test方法一致，因此test方法被重写了。?<br>
+此时即使在父类中调用，也还是用使用子类Dog的方法。除非你new的是Animal。</p>
+<hr>
+<h2><span id="q-tong-shang-ti-ru-guo-test-fang-fa-du-shi-private-huo-zhe-final-shu-xing-na-me-shang-ti-de-qing-kuang-hui-you-bian-hua-ma">Q： 同上题， 如果test方法都是private或者final属性， 那么上题的情况会有变化吗？？</span><a href="#q-tong-shang-ti-ru-guo-test-fang-fa-du-shi-private-huo-zhe-final-shu-xing-na-me-shang-ti-de-qing-kuang-hui-you-bian-hua-ma" class="header-anchor">#</a></h2>
+<p>A: ?<br>
+因为private和final方法是不能被子类重写的。<br>
+所以Animal实例化时，i=test输出d。</p>
+<hr>
+<p>总结一下顺序：</p>
+<ol>
+<li>父类静态变量显式赋值、父类静态代码块（按定义顺序）</li>
+<li>子类静态变量显式赋值、子类静态代码块（按定义顺序）</li>
+<li>父类非静态变量显式赋值（父类实例成员变量）、父类非静态代码块（按定义顺序）</li>
+<li>父类构造函数</li>
+<li>子类非静态变量（子类实例成员变量）、子类非静态代码块（按定义顺序）</li>
+<li>子类构造函数。</li>
+</ol>
+<h1><span id="lei-jia-zai-guo-cheng">类加载过程</span><a href="#lei-jia-zai-guo-cheng" class="header-anchor">#</a></h1>
+<h2><span id="q-lei-jia-zai-de-3-ge-bi-jing-jie-duan-shi">Q：类加载的3个必经阶段是：</span><a href="#q-lei-jia-zai-de-3-ge-bi-jing-jie-duan-shi" class="header-anchor">#</a></h2>
+<p>A：</p>
+<ol>
+<li>加载（类加载器读取二进制字节流，生成java类对象）</li>
+<li>链接（验证，分配静态域初始零值）</li>
+<li>初始化（前面的题目讲的其实就是初始化时的顺序）<br>
+更详细的如下：<br>
+<img src="/images/%E7%B1%BB%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/image(142).png" alt="image.png"></li>
+</ol>
+<h1><span id="bei-dong-yin-yong-zhong-he-lei-jing-tai-chu-shi-hua-de-guan-xi">被动引用中和类静态初始化的关系</span><a href="#bei-dong-yin-yong-zhong-he-lei-jing-tai-chu-shi-hua-de-guan-xi" class="header-anchor">#</a></h1>
+<h2><span id="q-new-mou-ge-lei-de-shu-zu-shi-hui-yin-fa-lei-chu-shi-hua-ma">Q：new某个类的数组时，会引发类初始化吗？</span><a href="#q-new-mou-ge-lei-de-shu-zu-shi-hui-yin-fa-lei-chu-shi-hua-ma" class="header-anchor">#</a></h2>
+<p>像下面输出什么</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">     <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">A</span>&#123;</span><br><span class="line">          <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">          <span class="keyword">static</span>&#123;</span><br><span class="line">               System.out.println(<span class="string">&quot;initA&quot;</span>);</span><br><span class="line">          &#125;</span><br><span class="line">     &#125;</span><br><span class="line">    ?</span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">          A[] as = <span class="keyword">new</span> <span class="title class_">A</span>[<span class="number">5</span>];</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>A：?<br>
+new数组时，不会引发类初始化。<br>
+什么都不输出。</p>
+<hr>
+<h2><span id="q-yin-yong-lei-de-final-jing-tai-zi-duan-hui-yin-fa-lei-chu-shi-hua-ma">Q：引用类的final静态字段，会引发类初始化吗？</span><a href="#q-yin-yong-lei-de-final-jing-tai-zi-duan-hui-yin-fa-lei-chu-shi-hua-ma" class="header-anchor">#</a></h2>
+<p>像下面输出什么?</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">     <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">A</span>&#123;</span><br><span class="line">          <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">          <span class="keyword">static</span>&#123;</span><br><span class="line">               System.out.println(<span class="string">&quot;initA&quot;</span>);</span><br><span class="line">          &#125;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;A.a=&quot;</span> + A.a);</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>A： 不会引发。<br>
+不会输出initA。 去掉final就会引发了。<br>
+（注意这里必须是基本类型常量， 如果是引用类型产量，则会引发类初始化）</p>
+<hr>
+<h2><span id="q-zi-lei-yin-yong-liao-fu-lei-de-jing-tai-cheng-yuan-ci-shi-zi-lei-hui-zuo-lei-chu-shi-hua-ma">Q：子类引用了父类的静态成员，此时子类会做类初始化嘛？</span><a href="#q-zi-lei-yin-yong-liao-fu-lei-de-jing-tai-cheng-yuan-ci-shi-zi-lei-hui-zuo-lei-chu-shi-hua-ma" class="header-anchor">#</a></h2>
+<p>如下会输出什么</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">     <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">A</span>&#123;</span><br><span class="line">          <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">          <span class="keyword">static</span>&#123;</span><br><span class="line">               System.out.println(<span class="string">&quot;initA&quot;</span>);</span><br><span class="line">          &#125;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">B</span> <span class="keyword">extends</span> <span class="title class_">A</span>&#123;</span><br><span class="line">          <span class="keyword">static</span> &#123;</span><br><span class="line">               System.out.println(<span class="string">&quot;initB&quot;</span>);</span><br><span class="line">          &#125;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;B.a=&quot;</span> + B.a);</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>A：?<br>
+子类不会初始化。<br>
+打印initA,却不会打印initB。</p>
+<h1><span id="lei-jia-zai-qi">类加载器</span><a href="#lei-jia-zai-qi" class="header-anchor">#</a></h1>
+<h2><span id="shuang-qin-wei-pai">双亲委派</span><a href="#shuang-qin-wei-pai" class="header-anchor">#</a></h2>
+<hr>
+<p>类加载时的双亲委派模型，不知道能怎么出题。。。反正就记得优先去父类加载器中看类是否能加载。<br>
+就贴个图吧<br>
+<img src="/images/%E7%B1%BB%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/image(143).png" alt="image.png"></p>
+<hr>
+<p>注意，上面的图有问题。<br>
+Bootsrap不是ClassLoader的子类，他是C++编写的。<br>
+而ExtClassLoader和AppClassLoader都是继承自ClassLoader的</p>
+<h2><span id="q-java-zhong-shi-fou-lei-he-jie-kou-de-bao-ming-he-ming-zi-xiang-tong-na-me-jiu-yi-ding-shi-tong-yi-ge-lei-huo-zhe-jie-kou">Q：java中， 是否类和接口的包名和名字相同， 那么就一定是同一个类或者接口？</span><a href="#q-java-zhong-shi-fou-lei-he-jie-kou-de-bao-ming-he-ming-zi-xiang-tong-na-me-jiu-yi-ding-shi-tong-yi-ge-lei-huo-zhe-jie-kou" class="header-anchor">#</a></h2>
+<p>A：<br>
+错误。<br>
+1个jvm中， 类和接口的唯一性由 <em><strong>二进制名称以及它的定义类加载器</strong></em> 共同决定。<br>
+因此2个不同的加载器加载出来相同的类或接口时， 实际上是不同的。</p>
+<hr>
+<h2><span id="q-jiang-yi-xia-classloader-yuan-li-yi-ji-ying-yong-chang-jing">Q: 讲一下ClassLoader原理， 以及应用场景</span><a href="#q-jiang-yi-xia-classloader-yuan-li-yi-ji-ying-yong-chang-jing" class="header-anchor">#</a></h2>
+<p>loaderClass  双亲加载实现（这里会体现先去父亲找，再自己）<br>
+findClass  如何根据名字，生成1个class（内部需要借助defineClass）<br>
+defineClass  通过这个方法生成1个class类</p>
+<p>例如需要根据类目，从某个远端网络加载获取这个类， 而且获取过来的时候还是加密的，需要在findClass里对byte数组做解密并加载。</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zzti_erlie/article/details/82757435">https://blog.csdn.net/zzti_erlie/article/details/82757435</a></p>
+<hr>
+<h2><span id="q-ru-guo-zai-ni-xiang-mu-zhong-jian-yi-ge-java-lang-string-de-lei-na-xi-tong-zhong-yong-de-string-lei-shi-ni-ding-yi-de-string-lei-huan-shi-yuan-sheng-api-zhong-de-string-lei">Q:如果在你项目中建一个java.lang.String的类，那系统中用的String类是你定义的String类，还是原生api中的String类？</span><a href="#q-ru-guo-zai-ni-xiang-mu-zhong-jian-yi-ge-java-lang-string-de-lei-na-xi-tong-zhong-yong-de-string-lei-shi-ni-ding-yi-de-string-lei-huan-shi-yuan-sheng-api-zhong-de-string-lei" class="header-anchor">#</a></h2>
+<p>A:<br>
+用的原生api中的string， 因为双亲委派机制。</p>
+<hr>
+<h2><span id="q-wei-shi-me-yao-yong-shuang-qin-wei-tuo-you-shi-me-hao-chu">Q ： 为什么要用双亲委托，有什么好处？</span><a href="#q-wei-shi-me-yao-yong-shuang-qin-wei-tuo-you-shi-me-hao-chu" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>对于任意一个类，都需要由加载它的&quot;类加载器和这个类本身&quot;来一同确立其在Java虚拟机中的唯一性。那么双亲委派可以保证顺序加载的特性。</li>
+<li>核心类的安全。Object类如果不使用双亲委派原则的话，那么A创建的Object对象就可能和B创建的Object是不一样的。不使用双亲委派原则无法保证一些java核心类库的唯一性</li>
+<li>例如类java.lang.Object，它存放在rt.jar中，无论哪个类加载器要加载这个类，最终都会委派给启动类加载器进行加载，因此Object类在程序的各种类加载器环境中都是同一个类。相反，如果用户自己写了一个名为java.lang.Object的类，并放在程序的Classpath中，那系统中将会出现多个不同的Object类，java类型体系中最基础的行为也无法保证，应用程序也会变得一片混乱。</li>
+</ul>
+<hr>
+<h2><span id="q-na-wo-ru-guo-zhen-de-you-xu-qiu-bu-xiang-yong-shuang-qin-de-ji-zhi-ni">Q: 那我如果真的有需求， 不想用双亲的机制呢？</span><a href="#q-na-wo-ru-guo-zhen-de-you-xu-qiu-bu-xiang-yong-shuang-qin-de-ji-zhi-ni" class="header-anchor">#</a></h2>
+<p>A:<br>
+按照上 面说的， 自己重写类加载的loaderClass就行了， 不走双亲机制的那块代码。</p>
+<hr>
+<h2><span id="q-shu-zu-lei-shi-zen-me-zuo-jia-zai-de">Q: 数组类是怎么做加载的？</span><a href="#q-shu-zu-lei-shi-zen-me-zuo-jia-zai-de" class="header-anchor">#</a></h2>
+<p>A:<br>
+数组类是由AppClassLoader加载的。<br>
+数组类打印className时，前面会有个[Lxx类<br>
+二维数组就是[[Lxxx类<br>
+数组类的父类型是Object</p>
+<p>注意此时加载的是数组类，而数组类里面的对象是不会做自动加载的<br>
+因此xx类的静态代码并不会被直接调用</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/2022/08/12/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/%E7%B1%BB%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" title="类初始化顺序和类加载基础概念">http://breakdawncoder.com/2022/08/12/知识库/java/java-base/类初始化顺序和类加载基础概念/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java-java%E5%9F%BA%E7%A1%80/" rel="tag"># java,java基础</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/08/12/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" rel="prev" title="类和接口基本概念">
+      <i class="fa fa-chevron-left"></i> 类和接口基本概念
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">Java类的加载顺序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">Q： 什么时候会进行静态变量的赋值和静态代码块的执行？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">Q：初始化某个子类时，也会对父类做静态初始化吗？顺序呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">Q： 为什么父类的method不会被子类的method重写？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.4.</span> <span class="nav-text">Q： 为什么第一个输出的是e而不是a？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.5.</span> <span class="nav-text">Q： 没有在子类的构造器中调用super()时，也会进行父类对象的实例化吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.6.</span> <span class="nav-text">Q： 构造方法、成员显示赋值、非静态代码块（即输出c和h的那2句）的顺序是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.7.</span> <span class="nav-text">Q： 为什么Animal实例化时， i&#x3D;test()中输出的是i而不是d？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.8.</span> <span class="nav-text">Q： 同上题， 如果test方法都是private或者final属性， 那么上题的情况会有变化吗？？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">类加载过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">Q：类加载的3个必经阶段是：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">被动引用中和类静态初始化的关系</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">Q：new某个类的数组时，会引发类初始化吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">Q：引用类的final静态字段，会引发类初始化吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">Q：子类引用了父类的静态成员，此时子类会做类初始化嘛？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">类加载器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">双亲委派</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.2.</span> <span class="nav-text">Q：java中， 是否类和接口的包名和名字相同， 那么就一定是同一个类或者接口？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.3.</span> <span class="nav-text">Q: 讲一下ClassLoader原理， 以及应用场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.4.</span> <span class="nav-text">Q:如果在你项目中建一个java.lang.String的类，那系统中用的String类是你定义的String类，还是原生api中的String类？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.5.</span> <span class="nav-text">Q ： 为什么要用双亲委托，有什么好处？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.6.</span> <span class="nav-text">Q: 那我如果真的有需求， 不想用双亲的机制呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.7.</span> <span class="nav-text">Q: 数组类是怎么做加载的？</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/182319148" title="Genshin-UID → 182319148"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
