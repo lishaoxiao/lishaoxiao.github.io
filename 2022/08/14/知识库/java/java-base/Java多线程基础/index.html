@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Thread类基础  Q： Thread的deprecated过期方法是哪3个？作用是啥 Q： 废弃stop的原因是啥？ Q： stop的替代方法是什么？ Q： suspend&#x2F;resume的废弃原因是什么？ Q： 上题的suspend和resume可以怎么替换，来解决死锁问题？ Q： 下面这例子为什么会运行异常，抛出IllegalMonitorStateException错误？ Q: 为什">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java多线程基础">
+<meta property="og:url" content="http://breakdawncoder.com/2022/08/14/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="冲破黎明前的黑暗">
+<meta property="og:description" content="Thread类基础  Q： Thread的deprecated过期方法是哪3个？作用是啥 Q： 废弃stop的原因是啥？ Q： stop的替代方法是什么？ Q： suspend&#x2F;resume的废弃原因是什么？ Q： 上题的suspend和resume可以怎么替换，来解决死锁问题？ Q： 下面这例子为什么会运行异常，抛出IllegalMonitorStateException错误？ Q: 为什">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147310174077755.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147342840021209.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147354886034832.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/0904c96f81872d9d57deb7cc7cf5e9afb0601039.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/799b48eaf23750316d096f97237b0cca42e2332f.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/3ad4a174c3b5b160dc51501502f57c2fe62cdcb5.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147372933056462.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147404856001732.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147422534053370.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147438780044960.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147455707018197.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147466151081835.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147483889080721.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147498561059637.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147507452005732.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147517593022275.png">
+<meta property="article:published_time" content="2022-08-14T15:41:55.000Z">
+<meta property="article:modified_time" content="2022-08-14T15:48:05.496Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="java,java基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147310174077755.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/2022/08/14/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Java多线程基础 | 冲破黎明前的黑暗</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">冲破黎明前的黑暗</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/14/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="冲破黎明前的黑暗">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java多线程基础
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-14 23:41:55 / 修改时间：23:48:05" itemprop="dateCreated datePublished" datetime="2022-08-14T23:41:55+08:00">2022-08-14</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/14/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/14/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#thread-lei-ji-chu">Thread类基础</a>
+<ul>
+<li><a href="#q-thread-de-deprecated-guo-qi-fang-fa-shi-na-3-ge-zuo-yong-shi-sha">Q： Thread的deprecated过期方法是哪3个？作用是啥</a></li>
+<li><a href="#q-fei-qi-stop-de-yuan-yin-shi-sha">Q： 废弃stop的原因是啥？</a></li>
+<li><a href="#q-stop-de-ti-dai-fang-fa-shi-shi-me">Q： stop的替代方法是什么？</a></li>
+<li><a href="#q-suspend-resume-de-fei-qi-yuan-yin-shi-shi-me">Q： suspend/resume的废弃原因是什么？</a></li>
+<li><a href="#q-shang-ti-de-suspend-he-resume-ke-yi-zen-me-ti-huan-lai-jie-jue-si-suo-wen-ti">Q： 上题的suspend和resume可以怎么替换，来解决死锁问题？</a></li>
+<li><a href="#q-xia-mian-zhe-li-zi-wei-shi-me-hui-yun-xing-yi-chang-pao-chu-illegalmonitorstateexception-cuo-wu">Q： 下面这例子为什么会运行异常，抛出IllegalMonitorStateException错误？</a></li>
+<li><a href="#q-wei-shi-me-wait-bi-xu-chi-you-suo-de-shi-hou-cai-neng-diao-yong">Q: 为什么wait必须持有锁的时候才能调用？</a></li>
+<li><a href="#q-thread-sleep-he-object-wait-de-qu-bie">Q： Thread.sleep()和Object.wait()的区别</a></li>
+<li><a href="#q-ru-guo-you-3-ge-xian-cheng-tong-shi-qiang-zhan-liao-zhe-ge-suo-qie-du-zai-wait-wo-xi-wang-zhi-notify-huan-xing-mou-ge-xian-cheng-zen-me-ban">Q: 如果有3个线程同时抢占了这个锁且都在wait，我希望只notify唤醒某个线程，怎么办？</a></li>
+<li><a href="#q-locksupport-xiang-bi-notify-wait-you-shi-me-you-dian">Q: LockSupport相比notify/wait有什么优点？</a></li>
+<li><a href="#q-runnable-jie-kou-he-callable-de-qu-bie">Q：Runnable接口和Callable的区别。</a></li>
+<li><a href="#q-thread-alive-biao-shi-xian-cheng-dang-qian-shi-fou-chu-yu-huo-yue-ke-yong-zhuang-tai-thread-start-hou-shi-fou-alive-yi-ding-fan-hui-true">Q：thread.alive()表示线程当前是否处于活跃/可用状态。thread.start()后，是否alive()一定返回true？</a></li>
+<li><a href="#q-xian-cheng-a-ru-xia-ba-xian-cheng-a-zuo-wei-gou-zao-can-shu-chuan-gei-xian-cheng-b-ci-shi-dui-b-xian-cheng-da-yin-this-isalive-hui-xian-shi-shi-me">Q: 线程A如下，把线程A作为构造参数，传给线程B，此时对B线程打印this.isAlive会显示什么？：</a></li>
+<li><a href="#q-ba-futuretask-fang-jin-thread-zhong-bing-start-hou-hui-zheng-chang-zhi-xing-callable-li-de-nei-rong-ma">Q：把FutureTask放进Thread中，并start后，会正常执行callable里的内容吗？</a></li>
+</ul>
+</li>
+<li><a href="#synchronized-guan-jian-zi">synchronized关键字</a>
+<ul>
+<li><a href="#q-diao-yong-xia-mian-de-f-shi-hui-chu-xian-si-suo-ma">Q： 调用下面的f()时，会出现死锁吗？</a></li>
+<li><a href="#q-2-ge-xian-cheng-tong-shi-diao-yong-f1-he-f2-hui-chan-sheng-tong-bu-ma">Q:2个线程同时调用f1和f2会产生同步吗？</a></li>
+</ul>
+</li>
+<li><a href="#qi-ta-de-tong-bu-gong-ju">其他的同步工具</a>
+<ul>
+<li><a href="#countdownlatch">CountDownLatch</a>
+<ul>
+<li><a href="#q-countdownlatch-de-nei-bu-ji-shu-zhi-neng-bei-chong-zhi-ma">Q： countDownLatch的内部计数值能被重置吗？</a></li>
+</ul>
+</li>
+<li><a href="#futuretask">FutureTask</a>
+<ul>
+<li><a href="#q-diao-yong-futruetask-get-shi-zhe-ge-shi-zu-sai-fang-fa-ma-ru-guo-shi-zu-sai-shi-me-shi-hou-hui-jie-shu">Q：调用futrueTask.get()时，这个是阻塞方法吗？如果是阻塞，什么时候会结束？</a></li>
+</ul>
+</li>
+<li><a href="#semaphore">Semaphore</a>
+<ul>
+<li><a href="#xin-hao-liang-gai-nian">信号量概念</a></li>
+<li><a href="#q-xin-hao-liang-zhong-gong-ping-mo-shi-he-fei-gong-ping-mo-shi-de-qu-bie-xia-mian-she-cheng-true-jiu-shi-gong-ping-mo-shi">Q： 信号量中，公平模式和非公平模式的区别？下面设成true就是公平模式</a></li>
+</ul>
+</li>
+<li><a href="#cyclicbarrier-zha-lan">CyclicBarrier （栅栏）</a></li>
+<li><a href="#exchanger-jiao-huan-zha-lan">Exchanger （交换栅栏）</a></li>
+<li><a href="#yuan-zi-lei-atomicxxx">原子类AtomicXXX</a>
+<ul>
+<li><a href="#q-xia-mian-shu-chu-shi-me-kao-cha-getandadd-de-yong-fa">Q：下面输出什么？（考察getAndAdd的用法）</a></li>
+<li><a href="#q-atomicreference-he-atomicinteger-de-qu-bie">Q：AtomicReference和AtomicInteger的区别？</a></li>
+<li><a href="#java-zhong-yi-shi-xian-de-quan-bu-yuan-zi-lei">java中已实现的全部原子类：</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#xian-cheng-chi">线程池</a>
+<ul>
+<li><a href="#q-threadpoolexecutor-xian-cheng-chi-gou-zao-can-shu-zhong-corepoolsize-he-maximumpoolsize-you-shi-me-qu-bie">Q: ThreadPoolExecutor线程池构造参数中，corePoolSize和maximumPoolSize有什么区别？</a></li>
+<li><a href="#q-xian-cheng-chi-de-keepalive-can-shu-shi-gan-ma-de">Q： 线程池的keepalive参数是干嘛的？</a></li>
+<li><a href="#q-he-xin-xian-cheng-ke-yi-bei-hui-shou-ma-xian-cheng-chi-mei-you-bei-hui-shou-de-qing-kuang-xia">Q: 核心线程可以被回收吗？（线程池没有被回收的情况下）</a></li>
+<li><a href="#q-na-zhe-ge-xian-cheng-shu-she-zhi-duo-shao-ni-shi-zen-me-kao-lu-de-ni">Q: 那这个线程数设置多少，你是怎么考虑的呢？</a></li>
+<li><a href="#q-xian-cheng-chi-you-na-san-chong-dui-lie-ce-lue">Q： 线程池有哪三种队列策略？</a></li>
+<li><a href="#q-xian-cheng-chi-dui-lie-yi-man-qie-maxinumpoolsize-yi-man-shi-you-na-xie-ju-jue-ce-lue">Q： 线程池队列已满且maxinumPoolSize已满时，有哪些拒绝策略？</a></li>
+<li><a href="#q-xian-cheng-chi-wei-shi-me-xu-yao-zu-sai-dui-lie">Q: 线程池为什么需要阻塞队列？</a></li>
+<li><a href="#q-you-yi-xia-wu-chong-executor-ti-gong-de-xian-cheng-chi-zhu-yi-ji-yi-yi-xia-ta-men-de-yong-tu-jiu-neng-li-jie-nei-bu-de-yuan-li-liao">Q：有以下五种Executor提供的线程池，注意记忆一下他们的用途，就能理解内部的原理了。</a></li>
+<li><a href="#q-submit-he-execute-de-qu-bie-shi-shi-me">Q： submit和execute的区别是什么？</a></li>
+<li><a href="#q-xian-cheng-chi-zhong-shutdown-shutdownnow-awaittermination-de-qu-bie">Q：线程池中， shutdown、 shutdownNow、awaitTermination的区别？</a></li>
+</ul>
+</li>
+<li><a href="#thread-zhuang-tai-zhuan-huan">Thread状态转换</a>
+<ul>
+<li><a href="#q-xian-cheng-de-6-chong-zhuang-tai-shi">Q： 线程的6种状态是：</a></li>
+<li><a href="#q-java-xian-cheng-shi-me-shi-hou-hui-jin-ru-zu-sai-ke-neng-an-duo-xuan-ti-kao">Q： java线程什么时候会进入阻塞（可能按多选题考）：</a></li>
+</ul>
+</li>
+<li><a href="#volatile">Volatile</a>
+<ul>
+<li><a href="#q-bu-yong-volatile-xiu-shi-cheng-yuan-bian-liang-shi-wei-shi-me-qi-ta-xian-cheng-hui-wu-fa-li-ji-kan-dao-gai-bian">Q： 不用volatile修饰成员变量时， 为什么其他线程会无法立即看到改变？</a></li>
+<li><a href="#q-yong-liao-volatile-shi-bu-shi-jiu-ke-yi-bu-yong-jia-suo-la">Q： 用了volatile是不是就可以不用加锁啦？</a></li>
+<li><a href="#q-zhan-shi-yi-duan-java-bing-fa-bian-cheng-shi-zhan-shu-li-de-yi-ge-jing-dian-li-zi-wei-shi-me-xia-mian-zhe-ge-li-zi-ke-neng-hui-si-xun-huan-huo-zhe-shu-chu-0">Q:展示一段《Java并发编程实战》书里的一个经典例子，为什么下面这个例子可能会死循环，或者输出0？</a></li>
+<li><a href="#q-volatile-bian-liang-ru-guo-ding-yi-de-tai-duo-hui-fa-sheng-shi-me">Q: volatile变量如果定义的太多会发生什么？</a></li>
+</ul>
+</li>
+<li><a href="#xian-cheng-qun-zu">线程群组</a>
+<ul>
+<li><a href="#q-zai-xian-cheng-a-zhong-chuang-jian-xian-cheng-b-ta-men-shu-yu-tong-yi-ge-xian-cheng-zu-ma">Q：在线程A中创建线程B， 他们属于同一个线程组吗</a></li>
+<li><a href="#q-na-wo-gai-cheng-gou-zao-guan-xi-shang-de-fu-zi-guan-xi-xia-mian-shu-chu-shi-me">Q： 那我改成构造关系上的父子关系，下面输出什么？</a></li>
+<li><a href="#q-ru-guo-wo-rang-zi-ji-zuo-set-bu-zhuo-qi-de-cao-zuo-ni-na-xia-mian-zhe-ge-shu-chu-shi-me">Q：如果我让自己做set捕捉器的操作呢？那下面这个输出什么？</a></li>
+<li><a href="#xiu-gai-yi-xia-zhi-qian-de-zong-jie-yi-xia-xian-cheng-de-shi-ji-yi-chang-pao-chu-pan-duan-luo-ji">修改一下之前的总结一下线程的实际异常抛出判断逻辑：</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="thread-lei-ji-chu">Thread类基础</span><a href="#thread-lei-ji-chu" class="header-anchor">#</a></h1>
+<h2><span id="q-thread-de-deprecated-guo-qi-fang-fa-shi-na-3-ge-zuo-yong-shi-sha">Q： Thread的deprecated过期方法是哪3个？作用是啥</span><a href="#q-thread-de-deprecated-guo-qi-fang-fa-shi-na-3-ge-zuo-yong-shi-sha" class="header-anchor">#</a></h2>
+<p>A：</p>
+<ul>
+<li>stop()， 终止线程的执行。</li>
+<li>suspend()， 暂停线程执行。</li>
+<li>resume()， 恢复线程执行。</li>
+</ul>
+<hr>
+<h2><span id="q-fei-qi-stop-de-yuan-yin-shi-sha">Q： 废弃stop的原因是啥？</span><a href="#q-fei-qi-stop-de-yuan-yin-shi-sha" class="header-anchor">#</a></h2>
+<p>A：<br>
+调用stop时，会直接终止线程并释放线程上已锁定的锁，线程内部无法感知，<em><strong>并且不会做线程内的catch操作</strong></em>！<br>
+即线程内部不会处理stop后的烂摊子。如果其他线程等在等着上面的锁去取数据， 那么拿到的可能是1个半成品。<br>
+变成题目的话应该是下面这样，问会输出什么？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;start&quot;</span>);</span><br><span class="line">        <span class="type">Thread</span> <span class="variable">thread</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyThread</span>();</span><br><span class="line">        thread.start();</span><br><span class="line">        Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">        thread.stop();</span><br><span class="line">        <span class="comment">// thread.interrupt();</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyThread</span> <span class="keyword">extends</span> <span class="title class_">Thread</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;run&quot;</span>);</span><br><span class="line">            Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="comment">//处理烂摊子,清理资源</span></span><br><span class="line">            System.out.println(<span class="string">&quot;clear resource!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>答案是输出 start和run，但是不会输出clear resource</p>
+<hr>
+<h2><span id="q-stop-de-ti-dai-fang-fa-shi-shi-me">Q： stop的替代方法是什么？</span><a href="#q-stop-de-ti-dai-fang-fa-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A： interrupt()。<br>
+调用thread.interrupt()终止时，  不会直接释放锁，可通过调用interrupt()或者捕捉sleep产生的中断异常，来判断是否被终止，并处理烂摊子。<br>
+上题把thread.stop()改成thread.interrupt()，在Thread.sleep()过程中就会抛出interrupException（注意，InterrupExcetpion是sleep抛出的）<br>
+因此就会输出clear resource。<br>
+如果没有做sleep操作， 可以用isInterrupted()来判断自己这个线程是否被终止了，来做清理。<br>
+另外注意一下interrupt和isInterrupted的区别：<br>
+<img src="/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147310174077755.png" alt="image.png"></p>
+<hr>
+<h2><span id="q-suspend-resume-de-fei-qi-yuan-yin-shi-shi-me">Q： suspend/resume的废弃原因是什么？</span><a href="#q-suspend-resume-de-fei-qi-yuan-yin-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A： ：调用suspend不会释放锁。<br>
+如果线程A暂停后，他的resume是由线程B来调用的，但是线程B又依赖A里的某个锁，那么就死锁了。<br>
+例如下面这个例子，就要知道会引发死锁：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">Object</span> <span class="variable">lockObject</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Object</span>();</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;start&quot;</span>);</span><br><span class="line">        <span class="type">Thread</span> <span class="variable">thread</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyThread</span>();</span><br><span class="line">        thread.start();</span><br><span class="line">        Thread.sleep(<span class="number">1000</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;主线程试图占用lockObject锁资源&quot;</span>);</span><br><span class="line">        <span class="keyword">synchronized</span> (Test.lockObject) &#123;</span><br><span class="line">            <span class="comment">// 用Test.lockObject做一些事</span></span><br><span class="line">            System.out.println(<span class="string">&quot;做一些事&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;恢复&quot;</span>);</span><br><span class="line">        thread.resume();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyThread</span> <span class="keyword">extends</span> <span class="title class_">Thread</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (Test.lockObject) &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;占用Test.lockObject&quot;</span>);</span><br><span class="line">                suspend();</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(<span class="string">&quot;MyThread释放TestlockObject锁资源&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span> (Exception e)&#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>答案输出<br>
+<img src="/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147342840021209.png" alt="image.png"></p>
+<p>MyThread内部暂停后，外部的main因为没法拿到锁，所以无法执行后面的resume操作。</p>
+<hr>
+<h2><span id="q-shang-ti-de-suspend-he-resume-ke-yi-zen-me-ti-huan-lai-jie-jue-si-suo-wen-ti">Q： 上题的suspend和resume可以怎么替换，来解决死锁问题？</span><a href="#q-shang-ti-de-suspend-he-resume-ke-yi-zen-me-ti-huan-lai-jie-jue-si-suo-wen-ti" class="header-anchor">#</a></h2>
+<p>A： 可以用wait和noitfy来处理（不过尽量不要这样设计，一般都是用run内部带1个while循环的）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">Object</span> <span class="variable">lockObject</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Object</span>(); <span class="comment">//拿来做临时锁对象</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">Thread</span> <span class="variable">thread</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyThread</span>();</span><br><span class="line">        thread.start();</span><br><span class="line">        Thread.sleep(<span class="number">1000</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;主线程试图占用lockObject锁资源&quot;</span>);</span><br><span class="line">        <span class="keyword">synchronized</span> (Test.lockObject) &#123;</span><br><span class="line">            <span class="comment">// 用Test.lockObject做一些事</span></span><br><span class="line">            System.out.println(<span class="string">&quot;做一些事&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;恢复&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">synchronized</span> (Test.lockObject) &#123;</span><br><span class="line">            Test.lockObject.notify();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyThread</span> <span class="keyword">extends</span> <span class="title class_">Thread</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (Test.lockObject) &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;占用Test.lockObject&quot;</span>);</span><br><span class="line">                Test.lockObject.wait();</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(<span class="string">&quot;MyThread释放TestlockObject锁资源&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span> (Exception e)&#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>如此执行，结果正常：<br>
+<img src="/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147354886034832.png" alt="image.png"></p>
+<hr>
+<h2><span id="q-xia-mian-zhe-li-zi-wei-shi-me-hui-yun-xing-yi-chang-pao-chu-illegalmonitorstateexception-cuo-wu">Q： 下面这例子为什么会运行异常，抛出IllegalMonitorStateException错误？</span><a href="#q-xia-mian-zhe-li-zi-wei-shi-me-hui-yun-xing-yi-chang-pao-chu-illegalmonitorstateexception-cuo-wu" class="header-anchor">#</a></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">    <span class="type">Thread</span> <span class="variable">thread</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyThread</span>();</span><br><span class="line">    thread.start();</span><br><span class="line">    thread.notify();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>A： notify和wait的使用前提是必须持有这个对象的锁， 即main代码块 需要先持有thread对象的锁，才能使用notify去唤醒（wait同理）。<br>
+改成下面就行了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Thread</span> <span class="variable">thread</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyThread</span>();</span><br><span class="line">thread.start();</span><br><span class="line"><span class="keyword">synchronized</span> (thread) &#123;</span><br><span class="line">    thread.notify();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2><span id="q-wei-shi-me-wait-bi-xu-chi-you-suo-de-shi-hou-cai-neng-diao-yong">Q: 为什么wait必须持有锁的时候才能调用？</span><a href="#q-wei-shi-me-wait-bi-xu-chi-you-suo-de-shi-hou-cai-neng-diao-yong" class="header-anchor">#</a></h2>
+<p>A:<br>
+因为wait和notify是组合使用的。</p>
+<ul>
+<li>一般是到了一定条件例如缺少资源、缺乏某个前置动作时，才会进入wait。</li>
+<li>这时候生产资源的那个线程生产了新资源后，就会调用notify方法，告诉另一个线程，我做好了，你可以动身了。</li>
+<li>但如果我们不先加同步块， 就可能导致 wait之前的判断条件有问题，即先判断缺资源， 然后切到另一个线程 做了资源生产并notify， 这时候再wait已经没有意义了, 永远收不到notify。  ”即如果不在同步块中，则wait的判断条件或者wait时机可能是有问题的！“<br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/set-cookie/p/8686218.html">为什么WAIT必须在同步块中</a></li>
+</ul>
+<hr>
+<h2><span id="q-thread-sleep-he-object-wait-de-qu-bie">Q： Thread.sleep()和Object.wait()的区别</span><a href="#q-thread-sleep-he-object-wait-de-qu-bie" class="header-anchor">#</a></h2>
+<p>A：<br>
+sleep不会释放对象锁， 而wait会释放对象锁。</p>
+<hr>
+<h2><span id="q-ru-guo-you-3-ge-xian-cheng-tong-shi-qiang-zhan-liao-zhe-ge-suo-qie-du-zai-wait-wo-xi-wang-zhi-notify-huan-xing-mou-ge-xian-cheng-zen-me-ban">Q: 如果有3个线程同时抢占了这个锁且都在wait，我希望只notify唤醒某个线程，怎么办？</span><a href="#q-ru-guo-you-3-ge-xian-cheng-tong-shi-qiang-zhan-liao-zhe-ge-suo-qie-du-zai-wait-wo-xi-wang-zhi-notify-huan-xing-mou-ge-xian-cheng-zen-me-ban" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ol>
+<li>使用LockSupport,  可以unPark指定的线程。<br>
+<img src="/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/0904c96f81872d9d57deb7cc7cf5e9afb0601039.png" alt="0904c96f81872d9d57deb7cc7cf5e9afb0601039"></li>
+<li>使用Lock + Condition 实现唤醒指定的部分线程。即锁是同一个，但是可以针对锁生成的特定condition做唤醒<br>
+<img src="/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/799b48eaf23750316d096f97237b0cca42e2332f.png" alt="799b48eaf23750316d096f97237b0cca42e2332f"><br>
+<img src="/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/3ad4a174c3b5b160dc51501502f57c2fe62cdcb5.png" alt="3ad4a174c3b5b160dc51501502f57c2fe62cdcb5"></li>
+</ol>
+<hr>
+<h2><span id="q-locksupport-xiang-bi-notify-wait-you-shi-me-you-dian">Q: LockSupport相比notify/wait有什么优点？</span><a href="#q-locksupport-xiang-bi-notify-wait-you-shi-me-you-dian" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ol>
+<li>LockSupport不需要在同步代码块里 。所以线程间也不需要维护一个共享的同步对象了，实现了线程间的解耦。</li>
+<li>unpark函数可以先于park调用，所以不需要担心线程间的执行的先后顺序。</li>
+</ol>
+<hr>
+<h2><span id="q-runnable-jie-kou-he-callable-de-qu-bie">Q：Runnable接口和Callable的区别。</span><a href="#q-runnable-jie-kou-he-callable-de-qu-bie" class="header-anchor">#</a></h2>
+<p>A： Callable可以和Futrue配合，并且启动线程时用的时call，能够拿到线程结束后的返回值，call方法还能抛出异常。</p>
+<hr>
+<h2><span id="q-thread-alive-biao-shi-xian-cheng-dang-qian-shi-fou-chu-yu-huo-yue-ke-yong-zhuang-tai-thread-start-hou-shi-fou-alive-yi-ding-fan-hui-true">Q：thread.alive()表示线程当前是否处于活跃/可用状态。thread.start()后，是否alive()一定返回true？</span><a href="#q-thread-alive-biao-shi-xian-cheng-dang-qian-shi-fou-chu-yu-huo-yue-ke-yong-zhuang-tai-thread-start-hou-shi-fou-alive-yi-ding-fan-hui-true" class="header-anchor">#</a></h2>
+<p>活跃状态： 线程已经启动且尚未终止。线程处于正在运行或准备开始运行的状态，就认为线程是“存活的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">TestThread</span> <span class="variable">tt</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TestThread</span>();</span><br><span class="line">        System.out.println(<span class="string">&quot;Begin == &quot;</span> + tt.isAlive());</span><br><span class="line">        tt.start();</span><br><span class="line">        System.out.println(<span class="string">&quot;end == &quot;</span> + tt.isAlive());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>A:<br>
+不一定，有可能在打印时，线程已经运行结束了，或者start后，还未真正启动起来（就是还没进入到run中）</p>
+<hr>
+<h2><span id="q-xian-cheng-a-ru-xia-ba-xian-cheng-a-zuo-wei-gou-zao-can-shu-chuan-gei-xian-cheng-b-ci-shi-dui-b-xian-cheng-da-yin-this-isalive-hui-xian-shi-shi-me">Q: 线程A如下，把线程A作为构造参数，传给线程B，此时对B线程打印this.isAlive会显示什么？：</span><a href="#q-xian-cheng-a-ru-xia-ba-xian-cheng-a-zuo-wei-gou-zao-can-shu-chuan-gei-xian-cheng-b-ci-shi-dui-b-xian-cheng-da-yin-this-isalive-hui-xian-shi-shi-me" class="header-anchor">#</a></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">A</span> <span class="keyword">extends</span> <span class="title class_">Thread</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;this.isAlive()=&quot;</span> + <span class="built_in">this</span>.isAlive());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">A</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">A</span>();</span><br><span class="line"><span class="type">Thread</span> <span class="variable">b</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(a);</span><br><span class="line">b.start()</span><br></pre></td></tr></table></figure>
+<p>A：<br>
+此时会打印false!<br>
+<img src="/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147372933056462.png" alt="image.png"></p>
+<p>因为把a作为构造参数传入b中， b执行start时， 实际上是在B线程中去调用了 A对象的run方法，而不是启用了A线程。<br>
+如果改成</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">A</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">A</span>();</span><br><span class="line">a.start()</span><br></pre></td></tr></table></figure>
+<p>那么就会打印true了</p>
+<hr>
+<h2><span id="q-ba-futuretask-fang-jin-thread-zhong-bing-start-hou-hui-zheng-chang-zhi-xing-callable-li-de-nei-rong-ma">Q：把FutureTask放进Thread中，并start后，会正常执行callable里的内容吗？</span><a href="#q-ba-futuretask-fang-jin-thread-zhong-bing-start-hou-hui-zheng-chang-zhi-xing-callable-li-de-nei-rong-ma" class="header-anchor">#</a></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    Callable&lt;Integer&gt; callable = () -&gt; &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;call 100&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">100</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">    </span><br><span class="line">    FutureTask&lt;Integer&gt; task = <span class="keyword">new</span> <span class="title class_">FutureTask</span>&lt;&gt;(callable);</span><br><span class="line">    <span class="type">Thread</span> <span class="variable">thread</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(task);</span><br><span class="line">    thread.start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>A：<br>
+能正常打印</p>
+<h1><span id="synchronized-guan-jian-zi">synchronized关键字</span><a href="#synchronized-guan-jian-zi" class="header-anchor">#</a></h1>
+<ul>
+<li>即可作为方法的修饰符，也可以作为代码块的修饰符</li>
+<li>注意修饰方法时，并不是这个方法上有锁， 而是调用该方法时，需要取该方法所在对象上的锁。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>&#123;</span><br><span class="line">     synchroized <span class="title function_">f</span><span class="params">()</span>&#123;</span><br><span class="line">     &#125;   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>即调用这个f()， 并不是说f同一时刻只能进入一次，而是说进入f时，需要取到A上的锁。</p>
+<hr>
+<h2><span id="q-diao-yong-xia-mian-de-f-shi-hui-chu-xian-si-suo-ma">Q： 调用下面的f()时，会出现死锁吗？</span><a href="#q-diao-yong-xia-mian-de-f-shi-hui-chu-xian-si-suo-ma" class="header-anchor">#</a></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>&#123;</span><br><span class="line">     synchroized <span class="title function_">f</span><span class="params">()</span>&#123;</span><br><span class="line">        t()</span><br><span class="line">     &#125;</span><br><span class="line">    </span><br><span class="line">     synchroized <span class="title function_">t</span><span class="params">()</span>&#123;</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>A：不会。<br>
+1个线程内， 可以重复进入1个对象的synchroized 块。</p>
+<ul>
+<li>
+<p>原理：<br>
+当线程请求自己的锁时。JVM会记下锁的持有者，并且给这个锁计数为1。<br>
+如果该线程再次请求自己的锁，则可以再次进入，计数为2.<br>
+退出时计数-1.<br>
+直到全部退出时才会释放锁。</p>
+</li>
+<li>
+<p>目的是为了避免死锁。万一 1个对象在sync方法中调用另一个sync方法，如果是非重入的，就可能导致自己把自己锁住了。</p>
+</li>
+</ul>
+<blockquote>
+<blockquote>
+<p>sync和JUC-Lock都是可重入锁，原理类似。</p>
+</blockquote>
+</blockquote>
+<hr>
+<h2><span id="q-2-ge-xian-cheng-tong-shi-diao-yong-f1-he-f2-hui-chan-sheng-tong-bu-ma">Q:2个线程同时调用f1和f2会产生同步吗？</span><a href="#q-2-ge-xian-cheng-tong-shi-diao-yong-f1-he-f2-hui-chan-sheng-tong-bu-ma" class="header-anchor">#</a></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">f1</span><span class="params">()</span>&#123;&#125;;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">f2</span><span class="params">()</span>&#123;&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>A:<br>
+不会产生同步。二者不是1个锁。<br>
+f1是类锁，等同于synchronized(A.class)<br>
+f2是对象锁。</p>
+<h1><span id="qi-ta-de-tong-bu-gong-ju">其他的同步工具</span><a href="#qi-ta-de-tong-bu-gong-ju" class="header-anchor">#</a></h1>
+<h2><span id="countdownlatch">CountDownLatch</span><a href="#countdownlatch" class="header-anchor">#</a></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="type">CountDownLatch</span> <span class="variable">latch</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CountDownLatch</span>(<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+<p>2是计数器初始值。<br>
+然后执行latch.await()时， 就会阻塞，直到其他线程中把这个latch进行latch.countDown()，并且计数器降低至0。</p>
+<ul>
+<li>和join的区别：<br>
+join阻塞时，是只等待单个线程的完成<br>
+而CountDownLatch可能是为了等待多个线程</li>
+</ul>
+<hr>
+<h3><span id="q-countdownlatch-de-nei-bu-ji-shu-zhi-neng-bei-chong-zhi-ma">Q： countDownLatch的内部计数值能被重置吗？</span><a href="#q-countdownlatch-de-nei-bu-ji-shu-zhi-neng-bei-chong-zhi-ma" class="header-anchor">#</a></h3>
+<p>A：<br>
+不能重置了。如果要重新计数必须重新new一个。毕竟他的类名就叫DownLatch</p>
+<h2><span id="futuretask">FutureTask</span><a href="#futuretask" class="header-anchor">#</a></h2>
+<p>可以理解为一个支持有返回值的线程<br>
+FutureTask&lt;Integer&gt; task = new FutureTask&lt;&gt;(runable);<br>
+当调用task.get()时，就能能达到线程里的返回值</p>
+<hr>
+<h3><span id="q-diao-yong-futruetask-get-shi-zhe-ge-shi-zu-sai-fang-fa-ma-ru-guo-shi-zu-sai-shi-me-shi-hou-hui-jie-shu">Q：调用futrueTask.get()时，这个是阻塞方法吗？如果是阻塞，什么时候会结束？</span><a href="#q-diao-yong-futruetask-get-shi-zhe-ge-shi-zu-sai-fang-fa-ma-ru-guo-shi-zu-sai-shi-me-shi-hou-hui-jie-shu" class="header-anchor">#</a></h3>
+<p>A：<br>
+是阻塞方法。</p>
+<ol>
+<li>线程跑完并返回结果</li>
+<li>阻塞时间达到futrueTask.get(xxx)里设定的xxx时间</li>
+<li>线程出现异常InterruptedException或者ExecutionException</li>
+<li>线程被取消，抛出CancellationException</li>
+</ol>
+<h2><span id="semaphore">Semaphore</span><a href="#semaphore" class="header-anchor">#</a></h2>
+<h3><span id="xin-hao-liang-gai-nian">信号量概念</span><a href="#xin-hao-liang-gai-nian" class="header-anchor">#</a></h3>
+<p>就是操作系统里常见的那个概念，java实现，用于各线程间进行资源协调。<br>
+用Semaphore(permits)构造一个包含permits个资源的信号量<br>
+然后某线程做了消费动作， 则执行semaphore.acquire()，则会消费一个资源<br>
+如果某线程做了生产动作，则执行semaphore.release()，则会释放一个资源（即新增一个资源）<br>
+更详细的信号量方法说明：<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/hanchao5272/article/details/79780045">https://blog.csdn.net/hanchao5272/article/details/79780045</a></p>
+<hr>
+<h3><span id="q-xin-hao-liang-zhong-gong-ping-mo-shi-he-fei-gong-ping-mo-shi-de-qu-bie-xia-mian-she-cheng-true-jiu-shi-gong-ping-mo-shi">Q： 信号量中，公平模式和非公平模式的区别？下面设成true就是公平模式</span><a href="#q-xin-hao-liang-zhong-gong-ping-mo-shi-he-fei-gong-ping-mo-shi-de-qu-bie-xia-mian-she-cheng-true-jiu-shi-gong-ping-mo-shi" class="header-anchor">#</a></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//new Semaphore(permits,fair):初始化许可证数量和是否公平模式的构造函数</span></span><br><span class="line">semaphore = <span class="keyword">new</span> <span class="title class_">Semaphore</span>(<span class="number">5</span>, <span class="literal">true</span>);</span><br></pre></td></tr></table></figure>
+<p>A：<br>
+其实就是使用哪种公平锁还是非公平锁。<br>
+<img src="/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147404856001732.png" alt="image.png"></p>
+<p>Java并发中的NonfairSync（非公平）和fairSync（公平）主要区别为：</p>
+<ul>
+<li>如果当前线程不是锁的占有者,则NonfairSync并不判断是否有等待队列,直接使用compareAndSwap去进行锁的占用,即谁正好抢到，就给谁用！</li>
+<li>如果当前线程不是锁的占有者,则FairSync则会判断当前是否有等待队列,如果有则将自己加到等待队列尾，即严格的先到先得！</li>
+</ul>
+<h2><span id="cyclicbarrier-zha-lan">CyclicBarrier （栅栏）</span><a href="#cyclicbarrier-zha-lan" class="header-anchor">#</a></h2>
+<p>栅栏，一般是在线程中去调用的<br>
+它的构造需要指定1个线程数量，和栅栏被破坏前要执行的操作<br>
+每当有1个线程调用barrier.await()，就会进入阻塞，同时barrier里的线程计数-1。<br>
+当线程计数为0时，  调用栅栏里指定的那个操作后，然后破坏栅栏， 所有被阻塞在await上的线程继续往下走。</p>
+<h2><span id="exchanger-jiao-huan-zha-lan">Exchanger  （交换栅栏）</span><a href="#exchanger-jiao-huan-zha-lan" class="header-anchor">#</a></h2>
+<p>我理解为两方栅栏，用于交换数据。<br>
+简单说就是一个线程在完成一定的事务后，想与另一个线程交换数据<br>
+则第一个先拿出数据的线程会一直等待第二个线程，直到第二个线程拿着数据到来时才能彼此交换对应数据</p>
+<h2><span id="yuan-zi-lei-atomicxxx">原子类AtomicXXX</span><a href="#yuan-zi-lei-atomicxxx" class="header-anchor">#</a></h2>
+<p>就是内部已实现了原子同步机制</p>
+<h3><span id="q-xia-mian-shu-chu-shi-me-kao-cha-getandadd-de-yong-fa">Q：下面输出什么？（考察getAndAdd的用法）</span><a href="#q-xia-mian-shu-chu-shi-me-kao-cha-getandadd-de-yong-fa" class="header-anchor">#</a></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">AtomicInteger</span> <span class="variable">num</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AtomicInteger</span>(<span class="number">1</span>);</span><br><span class="line">System.out.println(num.getAndAdd(<span class="number">1</span>));</span><br><span class="line">System.out.println(num.get());</span><br></pre></td></tr></table></figure>
+<p>A：<br>
+输出1、2<br>
+顾名思义， getAndAdd(),那么就是先get，再加， 类似于num++。<br>
+如果是addAndGet()，那么就是++num</p>
+<hr>
+<h3><span id="q-atomicreference-he-atomicinteger-de-qu-bie">Q：AtomicReference和AtomicInteger的区别？</span><a href="#q-atomicreference-he-atomicinteger-de-qu-bie" class="header-anchor">#</a></h3>
+<p>A：<br>
+AtomicInteger是对整数的封装，而AtomicReference则对应普通的对象引用。也就是它可以保证你在修改对象引用时的线程安全性。<br>
+即可能会有多个线程修改atomicReference里包含的引用。</p>
+<ul>
+<li>经典用法：<br>
+boolean exchanged = atomicStringReference.compareAndSet(initialReference, newReference)<br>
+就是经典的CAS同步法<br>
+compreAndSet它会将将引用与预期值（引用）进行比较，如果它们相等，则在AtomicReference对象内设置一个新的引用。类似于一个非负责的自旋锁。</li>
+</ul>
+<hr>
+<ul>
+<li>AtomicReferenceArray是原子数组， 可以进行一些原子的数组操作例如 set(index, value)，</li>
+</ul>
+<hr>
+<h3><span id="java-zhong-yi-shi-xian-de-quan-bu-yuan-zi-lei">java中已实现的全部原子类：</span><a href="#java-zhong-yi-shi-xian-de-quan-bu-yuan-zi-lei" class="header-anchor">#</a></h3>
+<p><img src="/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147422534053370.png" alt="image.png"></p>
+<p>注意，没有float，没有short和byte。</p>
+<hr>
+<h1><span id="xian-cheng-chi">线程池</span><a href="#xian-cheng-chi" class="header-anchor">#</a></h1>
+<hr>
+<h2><span id="q-threadpoolexecutor-xian-cheng-chi-gou-zao-can-shu-zhong-corepoolsize-he-maximumpoolsize-you-shi-me-qu-bie">Q: ThreadPoolExecutor线程池构造参数中，corePoolSize和maximumPoolSize有什么区别？</span><a href="#q-threadpoolexecutor-xian-cheng-chi-gou-zao-can-shu-zhong-corepoolsize-he-maximumpoolsize-you-shi-me-qu-bie" class="header-anchor">#</a></h2>
+<p>A：<br>
+当提交新线程到池中时</p>
+<ul>
+<li>如果当前线程数 &lt; corePoolSize，则会创建新线程</li>
+<li>如果当前线程数=corePoolSize，则新线程被塞进一个队列中等待。</li>
+<li>如果队列也被塞满了，那么又会开始新建线程来运行任务，避免任务阻塞或者丢弃</li>
+<li>如果队列满了的情况下， 线程总数超过了maxinumPoolSize，那么就抛异常或者阻塞（取决于队列性质）。</li>
+</ul>
+<hr>
+<ul>
+<li>调用prestartCoreThread()可提前开启一个空闲的核心线程</li>
+<li>调用prestartAllCoreThreads()，可提前创建corePoolSize个核心线程。</li>
+</ul>
+<hr>
+<h2><span id="q-xian-cheng-chi-de-keepalive-can-shu-shi-gan-ma-de">Q： 线程池的keepalive参数是干嘛的？</span><a href="#q-xian-cheng-chi-de-keepalive-can-shu-shi-gan-ma-de" class="header-anchor">#</a></h2>
+<p>A：当线程数量在corePoolSize到maxinumPoolSize之间时， 如果有线程已跑完，且空闲时间超过keepalive时，则会被清除（注意只限于corePoolSize到maxinumPoolsize之间的线程）</p>
+<hr>
+<h2><span id="q-he-xin-xian-cheng-ke-yi-bei-hui-shou-ma-xian-cheng-chi-mei-you-bei-hui-shou-de-qing-kuang-xia">Q: 核心线程可以被回收吗？（线程池没有被回收的情况下）</span><a href="#q-he-xin-xian-cheng-ke-yi-bei-hui-shou-ma-xian-cheng-chi-mei-you-bei-hui-shou-de-qing-kuang-xia" class="header-anchor">#</a></h2>
+<p>A:<br>
+ThreadPoolExecutor有个allowCoreThreadTimeOut(boolean value)方法，可以设置是否在超期后做回收</p>
+<hr>
+<h2><span id="q-na-zhe-ge-xian-cheng-shu-she-zhi-duo-shao-ni-shi-zen-me-kao-lu-de-ni">Q: 那这个线程数设置多少，你是怎么考虑的呢？</span><a href="#q-na-zhe-ge-xian-cheng-shu-she-zhi-duo-shao-ni-shi-zen-me-kao-lu-de-ni" class="header-anchor">#</a></h2>
+<p>A:<br>
+io密集型， 可以设置多一点， 因为多一个线程，他可能也没太占cpu，都是在等待IO。<br>
+如果是计算密集型，则要设置少一点，别把cpu搞满载了。</p>
+<p>有超线程技术的话， 一般可以设置成2倍CPU数量的线程数</p>
+<blockquote>
+<blockquote>
+<p>超线程技术把多线程处理器内部的两个逻辑内核模拟成两个物理芯片，让单个处理器就能使用线程级的并行计算，进而兼容多线程操作系统和软件。超线程技术充分利用空闲CPU资源，在相同时间内完成更多工作</p>
+</blockquote>
+</blockquote>
+<hr>
+<h2><span id="q-xian-cheng-chi-you-na-san-chong-dui-lie-ce-lue">Q： 线程池有哪三种队列策略？</span><a href="#q-xian-cheng-chi-you-na-san-chong-dui-lie-ce-lue" class="header-anchor">#</a></h2>
+<p>A：</p>
+<ol>
+<li>握手队列<br>
+相当于不排队的队列。可能造成线程数量无限增长直到超过maxinumPoolSize（相当于corePoolSize没什么用了，只以maxinumPoolSize做上限）</li>
+<li>无界队列<br>
+队列队长无限，即线程数量达到corePoolSize时，后面的线程只会在队列中等待。（相当于maxinumPoolSize没什么用了）<br>
+缺陷： 可能造成队列无限增长以至于OOM</li>
+<li>有界队列</li>
+</ol>
+<hr>
+<h2><span id="q-xian-cheng-chi-dui-lie-yi-man-qie-maxinumpoolsize-yi-man-shi-you-na-xie-ju-jue-ce-lue">Q： 线程池队列已满且maxinumPoolSize已满时，有哪些拒绝策略？</span><a href="#q-xian-cheng-chi-dui-lie-yi-man-qie-maxinumpoolsize-yi-man-shi-you-na-xie-ju-jue-ce-lue" class="header-anchor">#</a></h2>
+<p>A：</p>
+<ul>
+<li>AbortPolicy 默认策略：直接抛出RejectedExecutionException异常</li>
+<li>DiscardPolicy 丢弃策略： 直接丢了，什么错误也不报</li>
+<li>DiscardOldestPolicy 丢弃队头策略： 即把最先入队的人从队头扔出去，再尝试让该任务进入队尾（队头任务内心：不公平。。。。）</li>
+<li>CallerRunsPolicy 调用者处理策略： 交给调用者所在线程自己去跑任务（即谁调用的submit或者execute，他就自己去跑） <strong>注意这个策略会用的比较多</strong></li>
+<li>也可以用实现自定义新的RejectedExecutionHandler</li>
+</ul>
+<hr>
+<h2><span id="q-xian-cheng-chi-wei-shi-me-xu-yao-zu-sai-dui-lie">Q:  线程池为什么需要阻塞队列？</span><a href="#q-xian-cheng-chi-wei-shi-me-xu-yao-zu-sai-dui-lie" class="header-anchor">#</a></h2>
+<p>A:<br>
+线程池创建线程需要获取mainlock这个全局锁，影响并发效率，阻塞队列可以很好的缓冲。避免大量线程获取这个创建锁。</p>
+<hr>
+<h2><span id="q-you-yi-xia-wu-chong-executor-ti-gong-de-xian-cheng-chi-zhu-yi-ji-yi-yi-xia-ta-men-de-yong-tu-jiu-neng-li-jie-nei-bu-de-yuan-li-liao">Q：有以下五种Executor提供的线程池，注意记忆一下他们的用途，就能理解内部的原理了。</span><a href="#q-you-yi-xia-wu-chong-executor-ti-gong-de-xian-cheng-chi-zhu-yi-ji-yi-yi-xia-ta-men-de-yong-tu-jiu-neng-li-jie-nei-bu-de-yuan-li-liao" class="header-anchor">#</a></h2>
+<ul>
+<li>
+<p>newCachedThreadPool： 缓存线程池<br>
+corePoolSize=0, maxinumPoolSize=+∞，队列长度=0 ，<br>
+因此线程数量会在corePoolSize到maxinumPoolSize之间一直灵活缓存和变动， 且不存在队列等待的情况，一来任务我就创建，用完了会释放。<br>
+<img src="/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147438780044960.png" alt="image.png"></p>
+</li>
+<li>
+<p>newFixedThreadPool ：定长线程池<br>
+corePoolSize= maxinumPoolSize=构造参数值， 队列长度=+∞。<br>
+因此不存在线程不够时扩充的情况</p>
+</li>
+<li>
+<p>newScheduledThreadPool :定时器线程池<br>
+提交定时任务用的，构造参数里会带定时器的间隔和单位。 其他和FixedThreadPool相同，属于定长线程池。</p>
+</li>
+<li>
+<p>newSingleThreadExecutor : 单线程池<br>
+corePoolSize=maxinumPoolSize=1， 队列长度=+∞<br>
+只会跑一个任务， 所以其他的任务都会在队列中等待，因此会严格按照FIFO执行</p>
+</li>
+<li>
+<p>newWorkStealingPool（继承自ForkJoinPool ）： 并行线程池<br>
+如果你的任务执行时间很长，并且里面的任务运行并行跑的，那么他会把你的线程任务再细分到其他的线程来分治。<br>
+ForkJoinPool介绍：<a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_37542889/article/details/92640903">https://blog.csdn.net/m0_37542889/article/details/92640903</a></p>
+</li>
+</ul>
+<p>A：</p>
+<hr>
+<h2><span id="q-submit-he-execute-de-qu-bie-shi-shi-me">Q： submit和execute的区别是什么？</span><a href="#q-submit-he-execute-de-qu-bie-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>execute只能接收Runnable类型的任务，而submit除了Runnable，还能接收Callable（Callable类型任务支持返回值）</li>
+<li>execute方法返回void，  submit方法返回FutureTask。</li>
+<li>异常方面， submit方法因为返回了futureTask对象，而当进行future.get()时，会把线程中的异常抛出，因此调用者可以方便地处理异常。（如果是execute，只能用内部捕捉或者设置catchHandler）</li>
+</ul>
+<hr>
+<h2><span id="q-xian-cheng-chi-zhong-shutdown-shutdownnow-awaittermination-de-qu-bie">Q：线程池中， shutdown、 shutdownNow、awaitTermination的区别？</span><a href="#q-xian-cheng-chi-zhong-shutdown-shutdownnow-awaittermination-de-qu-bie" class="header-anchor">#</a></h2>
+<p>A：</p>
+<ul>
+<li>shutdown: 停止接收新任务，等待所有池中已存在任务完成（ <em><strong>包括等待队列中的线程</strong></em> ）。异步方法，即调用后马上返回。</li>
+<li>shutdownNow: 停止接收新任务，并 <em><strong>停止所有正执行的task</strong></em>，返回还在队列中的task列表 。</li>
+<li>awaitTermination： <em><strong>仅仅是一个判断方法</strong></em>，判断当前线程池任务是否全部结束。一般用在shutdown后面，因为shutdown是异步方法，你需要知道什么时候才真正结束。</li>
+</ul>
+<hr>
+<h1><span id="thread-zhuang-tai-zhuan-huan">Thread状态转换</span><a href="#thread-zhuang-tai-zhuan-huan" class="header-anchor">#</a></h1>
+<h2><span id="q-xian-cheng-de-6-chong-zhuang-tai-shi">Q： 线程的6种状态是：</span><a href="#q-xian-cheng-de-6-chong-zhuang-tai-shi" class="header-anchor">#</a></h2>
+<p>A：</p>
+<ul>
+<li>New： 新建了线程，但是还没调用start</li>
+<li>RUNNABLE： 运行， 就绪状态包括在运行态中</li>
+<li>BLOCKED： 阻塞，一般是因为想拿锁拿不到</li>
+<li>WAITING： 等待，一般是wait或者join之后</li>
+<li>TIMED_WAITING: 定时等待，即固定时间后可返回，一般是调用sleep或者wait(时间)的。</li>
+<li>TERMINATED： 终止状态。</li>
+</ul>
+<hr>
+<p>欣赏一幅好图，能了解调用哪些方法会进入哪些状态。<br>
+<img src="/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147455707018197.png" alt="image.png"></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_22771739/article/details/82529874">原图链接</a></p>
+<h2><span id="q-java-xian-cheng-shi-me-shi-hou-hui-jin-ru-zu-sai-ke-neng-an-duo-xuan-ti-kao">Q： java线程什么时候会进入阻塞（可能按多选题考）：</span><a href="#q-java-xian-cheng-shi-me-shi-hou-hui-jin-ru-zu-sai-ke-neng-an-duo-xuan-ti-kao" class="header-anchor">#</a></h2>
+<p>A：</p>
+<ul>
+<li>sleep</li>
+<li>wati()挂起，  等待获得别的线程发送的Notify（）消息</li>
+<li>等待IO</li>
+<li>等待锁</li>
+</ul>
+<h1><span id="volatile">Volatile</span><a href="#volatile" class="header-anchor">#</a></h1>
+<p>用volatile修饰成员变量时， 一旦有线程修改了变量，其他线程可立即看到改变。</p>
+<hr>
+<h2><span id="q-bu-yong-volatile-xiu-shi-cheng-yuan-bian-liang-shi-wei-shi-me-qi-ta-xian-cheng-hui-wu-fa-li-ji-kan-dao-gai-bian">Q： 不用volatile修饰成员变量时， 为什么其他线程会无法立即看到改变？</span><a href="#q-bu-yong-volatile-xiu-shi-cheng-yuan-bian-liang-shi-wei-shi-me-qi-ta-xian-cheng-hui-wu-fa-li-ji-kan-dao-gai-bian" class="header-anchor">#</a></h2>
+<p>A：<br>
+线程可以把变量保存在本地内存（比如机器的寄存器）中，而不是直接在主存中进行读写。<br>
+这就可能造成一个线程在主存中修改了一个变量的值，而另外一个线程还继续使用它在寄存器中的变量值。</p>
+<hr>
+<h2><span id="q-yong-liao-volatile-shi-bu-shi-jiu-ke-yi-bu-yong-jia-suo-la">Q： 用了volatile是不是就可以不用加锁啦？</span><a href="#q-yong-liao-volatile-shi-bu-shi-jiu-ke-yi-bu-yong-jia-suo-la" class="header-anchor">#</a></h2>
+<p>A： 不行。</p>
+<ul>
+<li>锁并不是只保证1个变量的互斥， 有时候是要保证几个成员在连续变化时，让其他线程无法干扰、读取。</li>
+<li>而volatile保证1个变量可变， 保证不了几个变量同时变化时的原子性。</li>
+</ul>
+<hr>
+<h2><span id="q-zhan-shi-yi-duan-java-bing-fa-bian-cheng-shi-zhan-shu-li-de-yi-ge-jing-dian-li-zi-wei-shi-me-xia-mian-zhe-ge-li-zi-ke-neng-hui-si-xun-huan-huo-zhe-shu-chu-0">Q:展示一段《Java并发编程实战》书里的一个经典例子，为什么下面这个例子可能会死循环，或者输出0？</span><a href="#q-zhan-shi-yi-duan-java-bing-fa-bian-cheng-shi-zhan-shu-li-de-yi-ge-jing-dian-li-zi-wei-shi-me-xia-mian-zhe-ge-li-zi-ke-neng-hui-si-xun-huan-huo-zhe-shu-chu-0" class="header-anchor">#</a></h2>
+<p><img src="/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147466151081835.png" alt="image.png"></p>
+<p>A:<br>
+首先理解一下java重排序，可以看一下这篇博文：<br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/coshaho/p/8093944.html">https://www.cnblogs.com/coshaho/p/8093944.html</a></p>
+<p>然后分析后面那2个奇怪的情况是怎么发生的。</p>
+<ul>
+<li>永远不输出：<br>
+经过程序的指令排序，出现了这种情况：</li>
+</ul>
+<ol>
+<li>ReaderThread在while里读取ready值， 此时是false， 于是存入了ReaderThread的寄存器。</li>
+<li>主线程修改ready和number。</li>
+<li>ReaderThread没有感知到ready的修改（对于ReaderThread线程，感知不到相关的指令，来让他更新ready寄存器的值），因此进入死循环。</li>
+</ol>
+<ul>
+<li>输出0<br>
+经过程序的指令排序，出现了这种情况：<br>
+1）主线程设置ready为true<br>
+2）ReaderThread在while里读取ready值，是true，于是退出while循环</li>
+</ul>
+<ol start="3">
+<li>ReaderThread读取到number值， 此时number还是初始化的值为0，于是输出0</li>
+<li>主线程这时候才修改number=42，此时ReaderThread已经结束了！</li>
+</ol>
+<p>上面这个问题，可以用volatile或者加锁。当你加了锁时， 如果变量被写了，会有指令去更新另一个寄存器的值，因此就可见了。</p>
+<hr>
+<h2><span id="q-volatile-bian-liang-ru-guo-ding-yi-de-tai-duo-hui-fa-sheng-shi-me">Q: volatile变量如果定义的太多会发生什么？</span><a href="#q-volatile-bian-liang-ru-guo-ding-yi-de-tai-duo-hui-fa-sheng-shi-me" class="header-anchor">#</a></h2>
+<p>A:<br>
+volatile有嗅探机制，如果定义过多，可能会引发总线风暴，导致性能下降。</p>
+<hr>
+<h1><span id="xian-cheng-qun-zu">线程群组</span><a href="#xian-cheng-qun-zu" class="header-anchor">#</a></h1>
+<p>为了方便管理一批线程，我们使用ThreadGroup来表示线程组，通过它对一批线程进行分类管理<br>
+使用方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Thread</span> <span class="variable">group</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadGroup</span>(<span class="string">&quot;group&quot;</span>);</span><br><span class="line"><span class="type">Thread</span> <span class="variable">thread</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(gourp, ()-&gt;&#123;..&#125;);</span><br></pre></td></tr></table></figure>
+<p>即thread除了Thread(Runable)这个构造方法外，还有个Thread(ThreadGroup, Runnable)构造方法</p>
+<hr>
+<h2><span id="q-zai-xian-cheng-a-zhong-chuang-jian-xian-cheng-b-ta-men-shu-yu-tong-yi-ge-xian-cheng-zu-ma">Q：在线程A中创建线程B， 他们属于同一个线程组吗</span><a href="#q-zai-xian-cheng-a-zhong-chuang-jian-xian-cheng-b-ta-men-shu-yu-tong-yi-ge-xian-cheng-zu-ma" class="header-anchor">#</a></h2>
+<p>A：<br>
+是的</p>
+<hr>
+<p>线程组的一大作用是对同一个组线程进行统一的异常捕捉处理，避免每次新建线程时都要重新去setUncaghtExceptionHandler。即线程组自身可以实现一个uncaughtException方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ThreadGroup</span> <span class="variable">group</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadGroup</span>(<span class="string">&quot;group&quot;</span>) &#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">uncaughtException</span><span class="params">(Thread thread, Throwable throwable)</span> &#123;</span><br><span class="line">		System.out.println(thread.getName() + throwable.getMessage());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>线程如果抛出异常，且没有在线程内部被捕捉，那么此时线程异常的处理顺序是什么？<br>
+相信很多人都看过下面这段话，好多讲线程组的博客里都这样写：<br>
+（1）首先看看当前线程组（ThreadGroup）有没有父类的线程组，如果有，则使用父类的UncaughtException()方法。<br>
+（2）如果没有，就看线程是不是调用setUncaughtExceptionHandler()方法建立Thread.setUncaughtExceptionHandler实例。如果建立，直接使用它的UncaughtException()方法处理异常。<br>
+（3）如果上述都不成立就看这个异常是不是ThreadDead实例，如果是，什么都不做，如果不是，输出堆栈追踪信息（printStackTrace）。</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>来源：<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_43073128/article/details/90597006">https://blog.csdn.net/qq_43073128/article/details/90597006</a><br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_43073128/article/details/88280469">https://blog.csdn.net/qq_43073128/article/details/88280469</a></p>
+</blockquote>
+</blockquote>
+</blockquote>
+<hr>
+<p>好，别急着记，先看一下下面的题目，问输出什么：<br>
+Q:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 父类线程组</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">GroupFather</span> <span class="keyword">extends</span> <span class="title class_">ThreadGroup</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">GroupFather</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(name);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">uncaughtException</span><span class="params">(Thread thread, Throwable throwable)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;groupFather=&quot;</span> + throwable.getMessage());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="comment">// 子类线程组</span></span><br><span class="line">    <span class="type">GroupFather</span> <span class="variable">groupSon</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">GroupFather</span>(<span class="string">&quot;groupSon&quot;</span>) &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">uncaughtException</span><span class="params">(Thread thread, Throwable throwable)</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;groupSon=&quot;</span> + throwable.getMessage());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="type">Thread</span> <span class="variable">thread1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(groupSon, ()-&gt;&#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;我异常了&quot;</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">    thread1.start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>A：<br>
+一看（1），那是不是应该输出groupFather?<br>
+错错错，输出的是groupSon这句话在很多地方能看到，但没有去实践过看过源码的人就会这句话被误导。<br>
+实际上父线程组不是指类继承关系上的线程组，而是指下面这样的：<br>
+<img src="/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147483889080721.png" alt="image.png"></p>
+<p>即指的是构造关系的有父子关系。<br>
+如果子类的threadGroup没有去实现uncaughtException方法，那么就会去构造参数里指定的父线程组去调用方法。</p>
+<hr>
+<h2><span id="q-na-wo-gai-cheng-gou-zao-guan-xi-shang-de-fu-zi-guan-xi-xia-mian-shu-chu-shi-me">Q： 那我改成构造关系上的父子关系，下面输出什么？</span><a href="#q-na-wo-gai-cheng-gou-zao-guan-xi-shang-de-fu-zi-guan-xi-xia-mian-shu-chu-shi-me" class="header-anchor">#</a></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="comment">// 父线程组</span></span><br><span class="line">    <span class="type">ThreadGroup</span> <span class="variable">groupFather</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadGroup</span>(<span class="string">&quot;groupFather&quot;</span>) &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">uncaughtException</span><span class="params">(Thread thread, Throwable throwable)</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;groupFather=&quot;</span> + throwable.getMessage());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 子线程组,把groupFather作为parent参数</span></span><br><span class="line">    <span class="type">ThreadGroup</span> <span class="variable">groupSon</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadGroup</span>(groupFather, <span class="string">&quot;groupSon&quot;</span>) &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">uncaughtException</span><span class="params">(Thread thread, Throwable throwable)</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;groupSon=&quot;</span> + throwable.getMessage());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="type">Thread</span> <span class="variable">thread1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(groupSon, ()-&gt;&#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;我异常了&quot;</span>);</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    thread1.start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>A：<br>
+答案输出<br>
+<img src="/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147498561059637.png" alt="image.png"></p>
+<p>即只要子线程组有实现过，则会用子线程组里的方法，而不是直接去找的父线程组！</p>
+<hr>
+<h2><span id="q-ru-guo-wo-rang-zi-ji-zuo-set-bu-zhuo-qi-de-cao-zuo-ni-na-xia-mian-zhe-ge-shu-chu-shi-me">Q：如果我让自己做set捕捉器的操作呢？那下面这个输出什么？</span><a href="#q-ru-guo-wo-rang-zi-ji-zuo-set-bu-zhuo-qi-de-cao-zuo-ni-na-xia-mian-zhe-ge-shu-chu-shi-me" class="header-anchor">#</a></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="comment">// 父线程组</span></span><br><span class="line">    <span class="type">ThreadGroup</span> <span class="variable">group</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadGroup</span>(<span class="string">&quot;group&quot;</span>) &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">uncaughtException</span><span class="params">(Thread thread, Throwable throwable)</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;group=&quot;</span> + throwable.getMessage());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 建一个线程，在线程组内</span></span><br><span class="line">    <span class="type">Thread</span> <span class="variable">thread1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(group, () -&gt; &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;我异常了&quot;</span>);</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 自己设置setUncaughtExceptionHandler方法</span></span><br><span class="line">    thread1.setUncaughtExceptionHandler((t, e) -&gt; &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;no gourp:&quot;</span> + e.getMessage());</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    thread1.start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>A:<br>
+看之前的结论里，似乎是应该输出线程组的异常？<br>
+但是结果却输出的是：<br>
+<img src="/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147507452005732.png" alt="image.png"></p>
+<p>也就是说，如果线程对自己特地执行过setUncaughtExceptionHandler，那么有优先对自己设置过的UncaughtExceptionHandler做处理。</p>
+<p>那难道第（2）点这个是错的吗？确实错了，实际上第二点应该指的是全局Thread的默认捕捉器，注意是全局的<br>
+实际上那段话出自ThreadGroup里uncaughtException的源码：<br>
+<img src="/images/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/1619147517593022275.png" alt="image.png"></p>
+<p>这里就解释了之前的那三点，但是该代码中没考虑线程自身设置了捕捉器</p>
+<hr>
+<h2><span id="xiu-gai-yi-xia-zhi-qian-de-zong-jie-yi-xia-xian-cheng-de-shi-ji-yi-chang-pao-chu-pan-duan-luo-ji">修改一下之前的总结一下线程的实际异常抛出判断逻辑：</span><a href="#xiu-gai-yi-xia-zhi-qian-de-zong-jie-yi-xia-xian-cheng-de-shi-ji-yi-chang-pao-chu-pan-duan-luo-ji" class="header-anchor">#</a></h2>
+<ol>
+<li>如果线程自身有进行过setUncaughtExceptionHandler,则使用自己设置的按个。</li>
+<li>如果没设置过，则看一下没有线程组。并按照以下逻辑判断:<br>
+如果线程组有覆写过uncaughtException，则用覆写过的uncaughtException<br>
+如果线程组没有覆写过，则去找父线程组（注意是构造体上的概念）的uncaughtException方法。</li>
+<li>如果线程组以及父类都没覆写过uncaughtException， 则判断是否用Thread.setDefaultUncaughtExceptionHandler(xxx)去设置全局的默认捕捉器，有的话则用全局默认</li>
+<li>如果不是ThreadDeath线程， 则只打印堆栈。</li>
+<li>如果是ThreadDeath线程，那么就什么也不处理。</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/2022/08/14/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/" title="Java多线程基础">http://breakdawncoder.com/2022/08/14/知识库/java/java-base/Java多线程基础/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java-java%E5%9F%BA%E7%A1%80/" rel="tag"># java,java基础</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/08/14/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/Java%E5%8F%8D%E5%B0%84/" rel="prev" title="Java反射">
+      <i class="fa fa-chevron-left"></i> Java反射
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/08/14/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/Java-IO%E5%9F%BA%E7%A1%80/" rel="next" title="Java-IO基础">
+      Java-IO基础 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">Thread类基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">Q： Thread的deprecated过期方法是哪3个？作用是啥</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">Q： 废弃stop的原因是啥？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">Q： stop的替代方法是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.4.</span> <span class="nav-text">Q： suspend&#x2F;resume的废弃原因是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.5.</span> <span class="nav-text">Q： 上题的suspend和resume可以怎么替换，来解决死锁问题？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.6.</span> <span class="nav-text">Q： 下面这例子为什么会运行异常，抛出IllegalMonitorStateException错误？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.7.</span> <span class="nav-text">Q: 为什么wait必须持有锁的时候才能调用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.8.</span> <span class="nav-text">Q： Thread.sleep()和Object.wait()的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.9.</span> <span class="nav-text">Q: 如果有3个线程同时抢占了这个锁且都在wait，我希望只notify唤醒某个线程，怎么办？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.10.</span> <span class="nav-text">Q: LockSupport相比notify&#x2F;wait有什么优点？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.11.</span> <span class="nav-text">Q：Runnable接口和Callable的区别。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.12.</span> <span class="nav-text">Q：thread.alive()表示线程当前是否处于活跃&#x2F;可用状态。thread.start()后，是否alive()一定返回true？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.13.</span> <span class="nav-text">Q: 线程A如下，把线程A作为构造参数，传给线程B，此时对B线程打印this.isAlive会显示什么？：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.14.</span> <span class="nav-text">Q：把FutureTask放进Thread中，并start后，会正常执行callable里的内容吗？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">synchronized关键字</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">Q： 调用下面的f()时，会出现死锁吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">Q:2个线程同时调用f1和f2会产生同步吗？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">其他的同步工具</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">CountDownLatch</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.1.1.</span> <span class="nav-text">Q： countDownLatch的内部计数值能被重置吗？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">FutureTask</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.2.1.</span> <span class="nav-text">Q：调用futrueTask.get()时，这个是阻塞方法吗？如果是阻塞，什么时候会结束？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">Semaphore</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.3.1.</span> <span class="nav-text">信号量概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.3.2.</span> <span class="nav-text">Q： 信号量中，公平模式和非公平模式的区别？下面设成true就是公平模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.4.</span> <span class="nav-text">CyclicBarrier （栅栏）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.5.</span> <span class="nav-text">Exchanger  （交换栅栏）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.6.</span> <span class="nav-text">原子类AtomicXXX</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.6.1.</span> <span class="nav-text">Q：下面输出什么？（考察getAndAdd的用法）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.6.2.</span> <span class="nav-text">Q：AtomicReference和AtomicInteger的区别？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.6.3.</span> <span class="nav-text">java中已实现的全部原子类：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">线程池</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">Q: ThreadPoolExecutor线程池构造参数中，corePoolSize和maximumPoolSize有什么区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.2.</span> <span class="nav-text">Q： 线程池的keepalive参数是干嘛的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.3.</span> <span class="nav-text">Q: 核心线程可以被回收吗？（线程池没有被回收的情况下）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.4.</span> <span class="nav-text">Q: 那这个线程数设置多少，你是怎么考虑的呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.5.</span> <span class="nav-text">Q： 线程池有哪三种队列策略？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.6.</span> <span class="nav-text">Q： 线程池队列已满且maxinumPoolSize已满时，有哪些拒绝策略？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.7.</span> <span class="nav-text">Q:  线程池为什么需要阻塞队列？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.8.</span> <span class="nav-text">Q：有以下五种Executor提供的线程池，注意记忆一下他们的用途，就能理解内部的原理了。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.9.</span> <span class="nav-text">Q： submit和execute的区别是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.10.</span> <span class="nav-text">Q：线程池中， shutdown、 shutdownNow、awaitTermination的区别？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">Thread状态转换</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.1.</span> <span class="nav-text">Q： 线程的6种状态是：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.2.</span> <span class="nav-text">Q： java线程什么时候会进入阻塞（可能按多选题考）：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">Volatile</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.1.</span> <span class="nav-text">Q： 不用volatile修饰成员变量时， 为什么其他线程会无法立即看到改变？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.2.</span> <span class="nav-text">Q： 用了volatile是不是就可以不用加锁啦？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.3.</span> <span class="nav-text">Q:展示一段《Java并发编程实战》书里的一个经典例子，为什么下面这个例子可能会死循环，或者输出0？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.4.</span> <span class="nav-text">Q: volatile变量如果定义的太多会发生什么？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">线程群组</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">7.1.</span> <span class="nav-text">Q：在线程A中创建线程B， 他们属于同一个线程组吗</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">7.2.</span> <span class="nav-text">Q： 那我改成构造关系上的父子关系，下面输出什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">7.3.</span> <span class="nav-text">Q：如果我让自己做set捕捉器的操作呢？那下面这个输出什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">7.4.</span> <span class="nav-text">修改一下之前的总结一下线程的实际异常抛出判断逻辑：</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/182319148" title="Genshin-UID → 182319148"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
