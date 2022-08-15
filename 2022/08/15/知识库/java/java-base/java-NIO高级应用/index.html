@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Q： NIO和标准IO有什么区别？   JavaNIO核心3组件：  1. Channels 通道  Q： 通道Channel对象能同时做读写操作吗？ Q： 通道支持异步读写吗 Q： 通道的读写是否必须要依赖缓冲区buffer？ Q: 有哪几种常用的NIO Channel Q: fileChannal为什么不支持非阻塞？   2. Buffer缓冲区  buffer特点详解 Q： buffe">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java-NIO">
+<meta property="og:url" content="http://breakdawncoder.com/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/index.html">
+<meta property="og:site_name" content="冲破黎明前的黑暗">
+<meta property="og:description" content="Q： NIO和标准IO有什么区别？   JavaNIO核心3组件：  1. Channels 通道  Q： 通道Channel对象能同时做读写操作吗？ Q： 通道支持异步读写吗 Q： 通道的读写是否必须要依赖缓冲区buffer？ Q: 有哪几种常用的NIO Channel Q: fileChannal为什么不支持非阻塞？   2. Buffer缓冲区  buffer特点详解 Q： buffe">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/5cc26d4b5a39246b56d13836560f8f46b428f838.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/7faf1b8a996ad366bd46621cbb6207c4afa1a375.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/27b39bd04044d506452c7404849d4ecee57fc3eb.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/a881a6f6fe6a8395391678a5982d6620de0193b7.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/ec184550662e4d8604d9538a21bab5ea0c04bf2c.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/398cc1e5fdaa0abf90cd8e577fd826ade07c3ecf.png">
+<meta property="article:published_time" content="2022-08-15T15:44:16.000Z">
+<meta property="article:modified_time" content="2022-08-15T15:50:52.637Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="java,java基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/5cc26d4b5a39246b56d13836560f8f46b428f838.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java-NIO | 冲破黎明前的黑暗</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">冲破黎明前的黑暗</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="冲破黎明前的黑暗">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java-NIO
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-15 23:44:16 / 修改时间：23:50:52" itemprop="dateCreated datePublished" datetime="2022-08-15T23:44:16+08:00">2022-08-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">java高级应用</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#q-nio-he-biao-zhun-io-you-shi-me-qu-bie">Q： NIO和标准IO有什么区别？</a></li>
+</ul>
+<ul>
+<li><a href="#javanio-he-xin-3-zu-jian">JavaNIO核心3组件：</a>
+<ul>
+<li><a href="#1-channels-tong-dao">1. Channels 通道</a>
+<ul>
+<li><a href="#q-tong-dao-channel-dui-xiang-neng-tong-shi-zuo-du-xie-cao-zuo-ma">Q： 通道Channel对象能同时做读写操作吗？</a></li>
+<li><a href="#q-tong-dao-zhi-chi-yi-bu-du-xie-ma">Q： 通道支持异步读写吗</a></li>
+<li><a href="#q-tong-dao-de-du-xie-shi-fou-bi-xu-yao-yi-lai-huan-chong-qu-buffer">Q： 通道的读写是否必须要依赖缓冲区buffer？</a></li>
+<li><a href="#q-you-na-ji-chong-chang-yong-de-nio-channel">Q: 有哪几种常用的NIO Channel</a></li>
+<li><a href="#q-filechannal-wei-shi-me-bu-zhi-chi-fei-zu-sai">Q: fileChannal为什么不支持非阻塞？</a></li>
+</ul>
+</li>
+<li><a href="#2-buffer-huan-chong-qu">2. Buffer缓冲区</a>
+<ul>
+<li><a href="#buffer-te-dian-xiang-jie">buffer特点详解</a></li>
+<li><a href="#q-buffer-diao-yong-flip-fang-fa-cong-xie-mo-shi-qie-huan-dao-du-mo-shi-shi-position-hui-bian-cheng-duo-shao">Q： buffer调用flip()方法从写模式切换到读模式时，position会变成多少？</a></li>
+<li><a href="#q-buffer-yong-you-1-ge-limit-shu-xing-zhi-dao-shi-zuo-shi-me-de-ma">Q: buffer拥有1个limit属性。知道是做什么的吗？</a></li>
+<li><a href="#q-dang-buffer-cong-xie-mo-shi-qie-huan-dao-du-mo-shi-shi-limit-wei-duo-shao">Q： 当buffer从写模式切换到读模式时，limit为多少？</a></li>
+<li><a href="#q-xiang-buf-huan-chong-qu-xie-shu-ju-de-fang-shi-you-na-xie">Q： 向buf缓冲区写数据的方式有哪些？</a></li>
+<li><a href="#q-shou-dong-xiu-gai-dang-qian-huan-chong-qu-de-postion-de-fang-fa-you-na-xie">Q: 手动修改当前缓冲区的postion的方法有哪些?</a></li>
+<li><a href="#q-1-ge-channel-guan-dao-zhi-chi-duo-ge-buffer-ma">Q：1个channel管道支持多个buffer吗？</a></li>
+<li><a href="#q-buffer-de-warp-slice-duplicate-fen-bie-shi-zuo-shi-me-de">Q: Buffer的Warp、slice、duplicate分别是做什么的？</a></li>
+</ul>
+</li>
+<li><a href="#selector">Selector</a>
+<ul>
+<li><a href="#q-zai-nio-zhong-selector-de-hao-chu-shi-shi-me">Q： 在NIO中Selector的好处是什么？</a></li>
+<li><a href="#q-selector-zhi-chi-zhu-ce-na-chong-lei-xing-de-tong-dao">Q： Selector支持注册哪种类型的通道？</a></li>
+<li><a href="#q-selector-zhu-ce-shi-zhi-chi-jian-ting-na-ji-chong-shi-jian-dui-ying-de-chang-liang-shi-shi-me-a-zui-bu-xi-huan-ji-yi-zhe-chong-dong-xi-liao">Q： Selector注册时，支持监听哪几种事件，对应的常量是什么？（啊最不喜欢记忆这种东西了…）</a></li>
+<li><a href="#q-selector-wei-hu-de-selectionkey-ji-he-gong-you-na-ji-chong">Q： Selector维护的SelectionKey集合共有哪几种？</a></li>
+<li><a href="#q-zhu-ce-zhi-hou-ru-he-shi-yong-selector-dui-zhun-bei-jiu-xu-de-tong-dao-zuo-chu-li">Q:注册之后， 如何使用selector对准备就绪的通道做处理：</a></li>
+<li><a href="#q-select-fang-fa-qi-shi-shi-zu-sai-fang-fa-ji-diao-yong-shi-hui-jin-ru-deng-dai-zhi-dao-ba-suo-you-tong-dao-du-lun-xun-wan-bi-ru-guo-xi-wang-ti-qian-jie-shu-select-you-na-xie-fang-fa">Q：select()方法其实是阻塞方法，即调用时会进入等待，直到把所有通道都轮询完毕。如果希望提前结束select()，有哪些方法？</a></li>
+<li><a href="#q-zhi-qian-shuo-nio-shi-fei-zu-sai-io-dan-wei-shi-me-shang-mian-que-shuo-select-fang-fa-shi-zu-sai-de">Q:之前说NIO是非阻塞IO，但为什么上面却说select()方法是阻塞的？</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#nio-jin-jie">NIO进阶</a>
+<ul>
+<li><a href="#q-duo-xian-cheng-du-xie-tong-yi-wen-jian-shi-ru-he-jia-suo-bao-zheng-xian-cheng-an-quan">Q： 多线程读写同一文件时，如何加锁保证线程安全？</a></li>
+<li><a href="#q-ru-guo-xu-yao-du-1-ge-te-da-wen-jian-ke-yi-shi-yong-shi-me-huan-chong-qu">Q： 如果需要读1个特大文件，可以使用什么缓冲区？</a></li>
+<li><a href="#q-nio-zhong-bytebuffer-gai-ru-he-gen-ju-zheng-que-de-bian-ma-zhuan-wei-dui-ying-de-charbuffer">Q：NIO中ByteBuffer， 该如何根据正确的编码，转为对应的CharBuffer</a></li>
+<li><a href="#q-nio-bei-hou-de-shi-xian-yuan-li-shi-shi-me">Q: NIO背后的实现原理是什么？</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h2><span id="q-nio-he-biao-zhun-io-you-shi-me-qu-bie">Q： NIO和标准IO有什么区别？</span><a href="#q-nio-he-biao-zhun-io-you-shi-me-qu-bie" class="header-anchor">#</a></h2>
+<p>A：</p>
+<p>标准IO， 基于字节流和字符流进行操作，阻塞IO。<br>
+NIO基于通道channel和缓冲区Buffer进行操作，支持非阻塞IO，提供选择器</p>
+<hr>
+<h1><span id="javanio-he-xin-3-zu-jian">JavaNIO核心3组件：</span><a href="#javanio-he-xin-3-zu-jian" class="header-anchor">#</a></h1>
+<h2><span id="1-channels-tong-dao">1. Channels 通道</span><a href="#1-channels-tong-dao" class="header-anchor">#</a></h2>
+<h3><span id="q-tong-dao-channel-dui-xiang-neng-tong-shi-zuo-du-xie-cao-zuo-ma">Q： 通道Channel对象能同时做读写操作吗？</span><a href="#q-tong-dao-channel-dui-xiang-neng-tong-shi-zuo-du-xie-cao-zuo-ma" class="header-anchor">#</a></h3>
+<p>还是说需要像标准IO那样，需要同时创建input和output对象才能做读写操作？</p>
+<p>A：<br>
+通道Channel是双向的， 既可以从channel中读数据，也可以写数据。<br>
+可以看到既能调用read也能调用write，且需要依赖缓冲区buffer。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">FileChannel</span> <span class="variable">fileChannel</span> <span class="operator">=</span> FileChannel.open(<span class="keyword">new</span> <span class="title class_">File</span>(<span class="string">&quot;a.txt&quot;</span>).toPath());</span><br><span class="line">   <span class="type">ByteBuffer</span> <span class="variable">buf</span> <span class="operator">=</span> ByteBuffer.allocate(<span class="number">1024</span>);</span><br><span class="line">    fileChannel.read(buf);</span><br><span class="line">    fileChannel.write(buf);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>注意上图上，fileChannel.read(buf)是将a.txt里的数据读到buf， 即a.txt-&gt;buf</li>
+<li>fileChannel.write(buf)是将buf里的数据写入到a.txt中， 即buf-&gt;a.txt，不要搞反啦！</li>
+<li>通道和缓冲区的关系如下图：<br>
+<img src="/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/5cc26d4b5a39246b56d13836560f8f46b428f838.png" alt="5cc26d4b5a39246b56d13836560f8f46b428f838"></li>
+</ul>
+<hr>
+<h3><span id="q-tong-dao-zhi-chi-yi-bu-du-xie-ma">Q： 通道支持异步读写吗</span><a href="#q-tong-dao-zhi-chi-yi-bu-du-xie-ma" class="header-anchor">#</a></h3>
+<p>A: 支持。</p>
+<hr>
+<h3><span id="q-tong-dao-de-du-xie-shi-fou-bi-xu-yao-yi-lai-huan-chong-qu-buffer">Q： 通道的读写是否必须要依赖缓冲区buffer？</span><a href="#q-tong-dao-de-du-xie-shi-fou-bi-xu-yao-yi-lai-huan-chong-qu-buffer" class="header-anchor">#</a></h3>
+<p>A： 一般都是依赖buffer的。 但也支持2个管道之间的传输，即管道之间直接读写。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">String[] arr=<span class="keyword">new</span> <span class="title class_">String</span>[]&#123;<span class="string">&quot;a.txt&quot;</span>,<span class="string">&quot;b.txt&quot;</span>&#125;;</span><br><span class="line">FileChannel in=<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(arr[<span class="number">0</span>]).getChannel();</span><br><span class="line"><span class="type">FileChannel</span> <span class="variable">out</span> <span class="operator">=</span><span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(arr[<span class="number">1</span>]).getChannel();</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 将a.txt中的数据直接写进b.txt中，相当于文件拷贝</span></span><br><span class="line">in.transferTo(<span class="number">0</span>, in.size(), out);</span><br></pre></td></tr></table></figure>
+<hr>
+<h3><span id="q-you-na-ji-chong-chang-yong-de-nio-channel">Q: 有哪几种常用的NIO Channel</span><a href="#q-you-na-ji-chong-chang-yong-de-nio-channel" class="header-anchor">#</a></h3>
+<p>A:</p>
+<ul>
+<li>FileChannel<br>
+Java NIO中的FileChannel是一个连接到文件的通道。可以通过文件通道读写文件。<br>
+FileChannel无法设置为非阻塞模式，它总是运行在阻塞模式下<br>
+创建方式</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">RandomAccessFile</span>    <span class="variable">file</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RandomAccessFile</span>(<span class="string">&quot;D:/aa.txt&quot;</span>);</span><br><span class="line"><span class="type">FileChannel</span>    <span class="variable">fileChannel</span> <span class="operator">=</span> file.getChannel();</span><br></pre></td></tr></table></figure>
+<ul>
+<li>SocketChannel<br>
+Java NIO中的SocketChannel是一个连接到TCP网络套接字的通道。<br>
+支持非阻塞模式socketChannel.configureBlocking(false)。<br>
+可以通过以下2种方式创建SocketChannel：<br>
+打开一个SocketChannel并连接到互联网上的某台服务器。<br>
+一个新连接到达ServerSocketChannel时，会创建一个SocketChannel<br>
+创建方式：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">SocketChannel</span> <span class="variable">socketChannel</span> <span class="operator">=</span> SocketChannel.open();</span><br><span class="line">socketChannel.connect(<span class="keyword">new</span> <span class="title class_">InetSocketAddress</span>(<span class="string">&quot;192.168.1.100&quot;</span>,<span class="number">80</span>));</span><br></pre></td></tr></table></figure>
+<ul>
+<li>ServerSocketChannel<br>
+Java NIO中的 ServerSocketChannel 是一个可以监听新进来的TCP连接的通道, 就像标准IO中的ServerSocket一样。ServerSocketChannel类在 java.nio.channels包中。<br>
+SocketChannel和ServerSocketChannel的区别： 前者用于客户端，后者用于服务端<br>
+创建方式：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ServerSocketChannel</span> <span class="variable">serverSocketChannel</span> <span class="operator">=</span> ServerSocketChannel.open();</span><br><span class="line">serverSocketChannel.socket.bind(<span class="keyword">new</span> <span class="title class_">InetSocketAddress</span>(<span class="number">80</span>));</span><br><span class="line">serverSocketChannel.configureBlocking(<span class="literal">false</span>);</span><br><span class="line"><span class="keyword">while</span>(<span class="literal">true</span>)&#123;</span><br><span class="line">    <span class="type">SocketChannel</span> <span class="variable">socketChannel</span> <span class="operator">=</span> serverSocketChannel.accept();</span><br><span class="line">    <span class="keyword">if</span>(socketChannle != <span class="literal">null</span>)</span><br><span class="line">        doSomething...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h3><span id="q-filechannal-wei-shi-me-bu-zhi-chi-fei-zu-sai">Q: fileChannal为什么不支持非阻塞？</span><a href="#q-filechannal-wei-shi-me-bu-zhi-chi-fei-zu-sai" class="header-anchor">#</a></h3>
+<p>A：</p>
+<ul>
+<li>UNIX不支持文件的非阻塞I / O,请参见 Non-blocking I/O with regular files.由于Java应该(至少尝试)在所有平台上提供相同的行为,所以FileChannel不会实现SelectableChannel.</li>
+<li>阻塞与非阻塞发生在进程与进程之间的通信，一般文件的读写操作只会发生在进程内部，不存在外部进程的传输。<br>
+即使存在进程间的传输，文件依旧需要通过网络通信，把内容转成数据流传输，这点的传输和Socket通信是相同的，所以没必要再造一个API出来</li>
+</ul>
+<h2><span id="2-buffer-huan-chong-qu">2. Buffer缓冲区</span><a href="#2-buffer-huan-chong-qu" class="header-anchor">#</a></h2>
+<h3><span id="buffer-te-dian-xiang-jie">buffer特点详解</span><a href="#buffer-te-dian-xiang-jie" class="header-anchor">#</a></h3>
+<ul>
+<li>我们真正要把数据拿到或者要写数据， 实际上都是通过buffer进行操作的。<br>
+文件 &lt;-&gt; buffer &lt;-&gt; 数据</li>
+<li>buffer是1个即可读也可写的缓冲区，拥有读写2种模式。</li>
+<li>buffer的capacity属性限定了每个buffer的最大容量,下面的1024就是capacity。<br>
+ByteBuffer buf = ByteBuffer.allocate(1024);</li>
+<li>buffer拥有1个position属性，表示当前的读写位置。</li>
+<li>往buffer中写数据时，position就会增加。</li>
+<li>position最大值为capacity-1</li>
+<li>把fileChannel对应文件里的数据 写入到buffer，叫做写模式</li>
+<li>写之后，调用flip，让buffer的postion置0，此时相当于准备读取buffer里的数据（即调用buffer.get()拿数据）<br>
+（这个模式的叫法个人也觉得不太好，很容易绕，你可以就记忆成： flip就是从写模式转成读模式！）</li>
+</ul>
+<hr>
+<h3><span id="q-buffer-diao-yong-flip-fang-fa-cong-xie-mo-shi-qie-huan-dao-du-mo-shi-shi-position-hui-bian-cheng-duo-shao">Q： buffer调用flip()方法从写模式切换到读模式时，position会变成多少？</span><a href="#q-buffer-diao-yong-flip-fang-fa-cong-xie-mo-shi-qie-huan-dao-du-mo-shi-shi-position-hui-bian-cheng-duo-shao" class="header-anchor">#</a></h3>
+<p>A： 变为0。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ByteBuffer</span> <span class="variable">buf</span> <span class="operator">=</span> ByteBuffer.allocate(<span class="number">1024</span>);</span><br><span class="line">    <span class="comment">// 数据读到buf中,并返回数量，每次最多读1024个</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">byteRead</span> <span class="operator">=</span> fileChannel.read(buf);</span><br><span class="line">    <span class="comment">// 输出byteRead的数量，最多为1024</span></span><br><span class="line">    System.out.println(<span class="string">&quot;position=&quot;</span> + buf.position()+<span class="string">&quot;, byteRead=&quot;</span> + byteRead);</span><br><span class="line">    </span><br><span class="line">    buf.flip();</span><br><span class="line">    <span class="comment">// 切换到读模式了，输出0</span></span><br><span class="line">    System.out.println(<span class="string">&quot;position=&quot;</span> + buf.position());</span><br></pre></td></tr></table></figure>
+<hr>
+<h3><span id="q-buffer-yong-you-1-ge-limit-shu-xing-zhi-dao-shi-zuo-shi-me-de-ma">Q: buffer拥有1个limit属性。知道是做什么的吗？</span><a href="#q-buffer-yong-you-1-ge-limit-shu-xing-zhi-dao-shi-zuo-shi-me-de-ma" class="header-anchor">#</a></h3>
+<p>A:<br>
+写模式下，buffer的limit就是buffer的capacity，即最大容量</p>
+<hr>
+<h3><span id="q-dang-buffer-cong-xie-mo-shi-qie-huan-dao-du-mo-shi-shi-limit-wei-duo-shao">Q： 当buffer从写模式切换到读模式时，limit为多少？</span><a href="#q-dang-buffer-cong-xie-mo-shi-qie-huan-dao-du-mo-shi-shi-limit-wei-duo-shao" class="header-anchor">#</a></h3>
+<p>A： 每次切换前都要调用flip()，切换后，limit为写模式中的position。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">byteRead</span> <span class="operator">=</span> fileChannel.read(buf);</span><br><span class="line">      <span class="comment">// 输出1024</span></span><br><span class="line">      System.out.println(<span class="string">&quot;limit=&quot;</span> + buf.limit() + <span class="string">&quot;,postion=&quot;</span> + buf.position());</span><br><span class="line">      System.out.println(<span class="string">&quot;切换到读模式&quot;</span>);</span><br><span class="line">      buf.flip();</span><br><span class="line">      <span class="comment">// 输出byteRead数量</span></span><br><span class="line">      System.out.println(<span class="string">&quot;limit=&quot;</span> + buf.limit());</span><br></pre></td></tr></table></figure>
+<p>结果如下<br>
+<img src="/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/7faf1b8a996ad366bd46621cbb6207c4afa1a375.png" alt="7faf1b8a996ad366bd46621cbb6207c4afa1a375"></p>
+<hr>
+<h3><span id="q-xiang-buf-huan-chong-qu-xie-shu-ju-de-fang-shi-you-na-xie">Q： 向buf缓冲区写数据的方式有哪些？</span><a href="#q-xiang-buf-huan-chong-qu-xie-shu-ju-de-fang-shi-you-na-xie" class="header-anchor">#</a></h3>
+<p>A：</p>
+<ul>
+<li>int byteRead = fileChannel.read(buf);<br>
+从通道中读数据到buf中， 即相当于向buf缓冲区中写数据。</li>
+<li>buf.putChar(‘a’);<br>
+手动向buf中写入字符a， postion加1。</li>
+</ul>
+<hr>
+<h3><span id="q-shou-dong-xiu-gai-dang-qian-huan-chong-qu-de-postion-de-fang-fa-you-na-xie">Q: 手动修改当前缓冲区的postion的方法有哪些?</span><a href="#q-shou-dong-xiu-gai-dang-qian-huan-chong-qu-de-postion-de-fang-fa-you-na-xie" class="header-anchor">#</a></h3>
+<p>A:<br>
+rewind() 将postion设置为0<br>
+mark() 可以标记1个特定的位置， 相当于打标记， 在一顿操作后，可通过reset()回到之前mark()的位置（就像你需要mark我的这几篇博文一样！）</p>
+<hr>
+<h3><span id="q-1-ge-channel-guan-dao-zhi-chi-duo-ge-buffer-ma">Q：1个channel管道支持多个buffer吗？</span><a href="#q-1-ge-channel-guan-dao-zhi-chi-duo-ge-buffer-ma" class="header-anchor">#</a></h3>
+<p>A： 支持。 通道的write和read方法都支持传入1个buffer数组，会按照顺序做读写操作。<br>
+<img src="/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/27b39bd04044d506452c7404849d4ecee57fc3eb.png" alt="27b39bd04044d506452c7404849d4ecee57fc3eb"></p>
+<hr>
+<p>Q: 讲一下buffer的种类<br>
+A:<br>
+Buffer的种类：<br>
+<img src="/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/a881a6f6fe6a8395391678a5982d6620de0193b7.png" alt="a881a6f6fe6a8395391678a5982d6620de0193b7"></p>
+<p>大部分都是java基础类型产生的buffer，  除了mappedByteBuffer比较特别。</p>
+<hr>
+<h3><span id="q-buffer-de-warp-slice-duplicate-fen-bie-shi-zuo-shi-me-de">Q: Buffer的Warp、slice、duplicate分别是做什么的？</span><a href="#q-buffer-de-warp-slice-duplicate-fen-bie-shi-zuo-shi-me-de" class="header-anchor">#</a></h3>
+<p>A:</p>
+<ul>
+<li>
+<p>warp:<br>
+根据一个byte[]来生成一个固定的ByteBuffer时，使用ByteBuffer.wrap()非法的合适。他会直接基于byte[]数组生成一个新的buffer，值也保持一致。</p>
+</li>
+<li>
+<p>slice：<br>
+得到切片后的数组。</p>
+</li>
+<li>
+<p>duplicate：<br>
+调用duplicate方法返回的Buffer对象就是复制了一份原始缓冲区，复制了position、limit、capacity这些属性</p>
+</li>
+</ul>
+<blockquote>
+<blockquote>
+<p>注意！！！！！！<br>
+以上warp\slice\duplicte生成的缓冲区get和put所操作的数组还是与原始缓冲区一样的<br>
+所以对复制后的缓冲区进行修改也会修改原始的缓冲区，反之亦然<br>
+因此duplicte、slice一般是用于操作一下poistion\limit等处理，但是原内容不会去变他，否则就会引起原缓冲器的修改。</p>
+</blockquote>
+</blockquote>
+<h2><span id="selector">Selector</span><a href="#selector" class="header-anchor">#</a></h2>
+<p>selector可用来在线程中关联多个通道，并进行事件监听。<br>
+<img src="/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/ec184550662e4d8604d9538a21bab5ea0c04bf2c.png" alt="ec184550662e4d8604d9538a21bab5ea0c04bf2c"></p>
+<hr>
+<h3><span id="q-zai-nio-zhong-selector-de-hao-chu-shi-shi-me">Q： 在NIO中Selector的好处是什么？</span><a href="#q-zai-nio-zhong-selector-de-hao-chu-shi-shi-me" class="header-anchor">#</a></h3>
+<p>A：</p>
+<p>可以用更少的线程来管理各个通道。<br>
+减少线程上下文切换的资源开销。</p>
+<hr>
+<h3><span id="q-selector-zhi-chi-zhu-ce-na-chong-lei-xing-de-tong-dao">Q： Selector支持注册哪种类型的通道？</span><a href="#q-selector-zhi-chi-zhu-ce-na-chong-lei-xing-de-tong-dao" class="header-anchor">#</a></h3>
+<p>A：<br>
+支持非阻塞的通道。<br>
+通道要在注册前调用 channel.configureBlocking(false) 设置为非阻塞。<br>
+例如FileChannel就没办法注册，他注定是阻塞的。<br>
+而socketChannel就可以支持非阻塞。</p>
+<hr>
+<h3><span id="q-selector-zhu-ce-shi-zhi-chi-jian-ting-na-ji-chong-shi-jian-dui-ying-de-chang-liang-shi-shi-me-a-zui-bu-xi-huan-ji-yi-zhe-chong-dong-xi-liao">Q： Selector注册时，支持监听哪几种事件，对应的常量是什么？（啊最不喜欢记忆这种东西了…）</span><a href="#q-selector-zhu-ce-shi-zhi-chi-jian-ting-na-ji-chong-shi-jian-dui-ying-de-chang-liang-shi-shi-me-a-zui-bu-xi-huan-ji-yi-zhe-chong-dong-xi-liao" class="header-anchor">#</a></h3>
+<p>A：<br>
+共有4种可监听事件</p>
+<ul>
+<li>Connect 成功连接到1个服务器，对应常量SelectionKey.OP_CONNECT</li>
+<li>Accept 准备好接收新进入的连接， 对应常量SelectionKey.OP_ACCEPT</li>
+<li>Read, 有数据可读，对应常量SelectionKey.OP_READ</li>
+<li>Write 接收到往里写的数据， 对应常量SelectionKey.OP_WRITE<br>
+如果希望对该通道监听多种事件，可以用&quot;|&quot;位或操作符把常量连接起来。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> <span class="type">int</span> <span class="variable">interestingSet</span> <span class="operator">=</span> Selectionkey.OP_READ | Selectionkey.OP_WRITE;</span><br><span class="line"><span class="type">Selectionkey</span> <span class="variable">key</span> <span class="operator">=</span> channel.register(selector,interestingSet)</span><br></pre></td></tr></table></figure>
+<p>SelectionKey键表示了一个特定的通道对象和一个特定的选择器对象之间的注册关系</p>
+<hr>
+<h3><span id="q-selector-wei-hu-de-selectionkey-ji-he-gong-you-na-ji-chong">Q： Selector维护的SelectionKey集合共有哪几种？</span><a href="#q-selector-wei-hu-de-selectionkey-ji-he-gong-you-na-ji-chong" class="header-anchor">#</a></h3>
+<p>A：<br>
+共有三种。</p>
+<ol>
+<li>
+<p>已注册的所有键的集合(Registered key set)<br>
+所有与选择器关联的通道所生成的键的集合称为已经注册的键的集合。并不是所有注册过的键都仍然有效。这个集合通过keys()方法返回，并且可能是空的。这个已注册的键的集合不是可以直接修改的；试图这么做的话将引发java.lang.UnsupportedOperationException。</p>
+</li>
+<li>
+<p>已选择的键的集合(Selected key set)<br>
+已注册的键的集合的子集。这个集合的每个成员都是相关的通道被选择器(在前一个选择操作中)判断为已经准备好的，并且包含于键的interest集合中的操作。这个集合通过selectedKeys()方法返回(并有可能是空的)。<br>
+不要将已选择的键的集合与ready集合弄混了。这是一个键的集合，每个键都关联一个已经准备好至少一种操作的通道。每个键都有一个内嵌的ready集合，指示了所关联的通道已经准备好的操作。键可以直接从这个集合中移除，但不能添加。试图向已选择的键的集合中添加元素将抛出java.lang.UnsupportedOperationException。</p>
+</li>
+<li>
+<p>已取消的键的集合(Cancelled key set)<br>
+已注册的键的集合的子集，这个集合包含了cancel()方法被调用过的键(这个键已经被无效化)，但它们还没有被注销。这个集合是选择器对象的私有成员，因而无法直接访问。</p>
+</li>
+</ol>
+<hr>
+<h3><span id="q-zhu-ce-zhi-hou-ru-he-shi-yong-selector-dui-zhun-bei-jiu-xu-de-tong-dao-zuo-chu-li">Q:注册之后， 如何使用selector对准备就绪的通道做处理：</span><a href="#q-zhu-ce-zhi-hou-ru-he-shi-yong-selector-dui-zhun-bei-jiu-xu-de-tong-dao-zuo-chu-li" class="header-anchor">#</a></h3>
+<p>A：</p>
+<ol>
+<li>调用select()方法获取已就绪的通道，返回的int值表示有多少通道已经就绪</li>
+<li>从selector中获取selectedkeys</li>
+<li>遍历selectedkeys</li>
+<li>查看各SelectionKey中 是否有事件就绪了。</li>
+<li>如果有事件就绪，从key中获取对应对应管道。做对应处理</li>
+<li>类似如下，一般都会启1个线程来run这个selector监听的处理</li>
+</ol>
+<hr>
+<h3><span id="q-select-fang-fa-qi-shi-shi-zu-sai-fang-fa-ji-diao-yong-shi-hui-jin-ru-deng-dai-zhi-dao-ba-suo-you-tong-dao-du-lun-xun-wan-bi-ru-guo-xi-wang-ti-qian-jie-shu-select-you-na-xie-fang-fa">Q：select()方法其实是阻塞方法，即调用时会进入等待，直到把所有通道都轮询完毕。如果希望提前结束select()，有哪些方法？</span><a href="#q-select-fang-fa-qi-shi-shi-zu-sai-fang-fa-ji-diao-yong-shi-hui-jin-ru-deng-dai-zhi-dao-ba-suo-you-tong-dao-du-lun-xun-wan-bi-ru-guo-xi-wang-ti-qian-jie-shu-select-you-na-xie-fang-fa" class="header-anchor">#</a></h3>
+<p>A：<br>
+有2个办法：<br>
+wakeup()， 调用后，select（）方法立刻返回。<br>
+close()， 直接关闭selector。</p>
+<hr>
+<h3><span id="q-zhi-qian-shuo-nio-shi-fei-zu-sai-io-dan-wei-shi-me-shang-mian-que-shuo-select-fang-fa-shi-zu-sai-de">Q:之前说NIO是非阻塞IO，但为什么上面却说select()方法是阻塞的？</span><a href="#q-zhi-qian-shuo-nio-shi-fei-zu-sai-io-dan-wei-shi-me-shang-mian-que-shuo-select-fang-fa-shi-zu-sai-de" class="header-anchor">#</a></h3>
+<p>A:<br>
+其实NIO的非阻塞，指的是IO不阻塞，即我们不会卡在read()处，我们会用selector去查询就绪状态，如果状态ok就。<br>
+而查询操作是需要时间，因此select()必须要把所有通道都检查一遍才能告诉结果，因此select这个查询操作是阻塞的。</p>
+<hr>
+<h1><span id="nio-jin-jie">NIO进阶</span><a href="#nio-jin-jie" class="header-anchor">#</a></h1>
+<h2><span id="q-duo-xian-cheng-du-xie-tong-yi-wen-jian-shi-ru-he-jia-suo-bao-zheng-xian-cheng-an-quan">Q： 多线程读写同一文件时，如何加锁保证线程安全？</span><a href="#q-duo-xian-cheng-du-xie-tong-yi-wen-jian-shi-ru-he-jia-suo-bao-zheng-xian-cheng-an-quan" class="header-anchor">#</a></h2>
+<p>A：<br>
+使用FileChannel的加锁功能。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">RandomAccessFile</span> <span class="variable">randFile</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RandomAccessFile</span>(target, <span class="string">&quot;rw&quot;</span>);</span><br><span class="line"><span class="type">FileChannel</span>  <span class="variable">channel</span> <span class="operator">=</span> randFile.getChannel();</span><br><span class="line"><span class="comment">// pos和siz决定加锁区域， shared指定是否是共享锁</span></span><br><span class="line"><span class="type">FileLock</span> <span class="variable">fileLock</span> <span class="operator">=</span> channel.lock(pos , size , shared);</span><br><span class="line"><span class="keyword">if</span> (fileLock!=<span class="literal">null</span>) &#123;</span><br><span class="line">	<span class="keyword">do</span>();</span><br><span class="line">   <span class="comment">// 这里简化了，实际上应该用try-catch</span></span><br><span class="line">	fileLock.release();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2><span id="q-ru-guo-xu-yao-du-1-ge-te-da-wen-jian-ke-yi-shi-yong-shi-me-huan-chong-qu">Q： 如果需要读1个特大文件，可以使用什么缓冲区？</span><a href="#q-ru-guo-xu-yao-du-1-ge-te-da-wen-jian-ke-yi-shi-yong-shi-me-huan-chong-qu" class="header-anchor">#</a></h2>
+<p>A：<br>
+使用MappedByteBuffer。<br>
+这个缓冲区可以把大文件理解成1个byte数组来访问（但实际上并没有加载这么大的byte数组，实际内容放在内存+虚存中）。<br>
+主要通过FileChannel.map（模式，起始位置，区域）来生成1个MappedByteBuffer。<br>
+然后可以用put和get去处理对应位置的byte。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">length</span> <span class="operator">=</span> <span class="number">0x8FFFFFF</span>;<span class="comment">//一个byte占1B，所以共向文件中存128M的数据</span></span><br><span class="line"><span class="keyword">try</span> (<span class="type">FileChannel</span> <span class="variable">channel</span> <span class="operator">=</span> FileChannel.open(Paths.get(<span class="string">&quot;src/c.txt&quot;</span>),</span><br><span class="line">		StandardOpenOption.READ, StandardOpenOption.WRITE);) &#123;</span><br><span class="line">	<span class="type">MappedByteBuffer</span> <span class="variable">mapBuffer</span> <span class="operator">=</span> channel.map(FileChannel.MapMode.READ_WRITE, <span class="number">0</span>, length);</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;length;i++) &#123;</span><br><span class="line">		mapBuffer.put((<span class="type">byte</span>)<span class="number">0</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> length/<span class="number">2</span>;i&lt;length/<span class="number">2</span>+<span class="number">4</span>;i++) &#123;</span><br><span class="line">		<span class="comment">//像数组一样访问</span></span><br><span class="line">		System.out.println(mapBuffer.get(i));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>MapMode的三种模式：</p>
+<ul>
+<li>MapMode.READ_ONLY（只读）： 试图修改得到的缓冲区将导致抛出 ReadOnlyBufferException。</li>
+<li>MapMode.READ_WRITE（读/写）： 对得到的缓冲区的更改会写入文件，需要调用fore()方法</li>
+<li>MapMode.PRIVATE（专用）： 可读可写,但是修改的内容不会写入文件,只是buffer自身的改变。</li>
+</ul>
+<hr>
+<h2><span id="q-nio-zhong-bytebuffer-gai-ru-he-gen-ju-zheng-que-de-bian-ma-zhuan-wei-dui-ying-de-charbuffer">Q：NIO中ByteBuffer， 该如何根据正确的编码，转为对应的CharBuffer</span><a href="#q-nio-zhong-bytebuffer-gai-ru-he-gen-ju-zheng-que-de-bian-ma-zhuan-wei-dui-ying-de-charbuffer" class="header-anchor">#</a></h2>
+<p>A：<br>
+利用Charset的decode功能。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ByteBuffer</span> <span class="variable">byteBuffer</span> <span class="operator">=</span> ...;</span><br><span class="line"><span class="type">Charset</span> <span class="variable">charset</span> <span class="operator">=</span> Charset.forName(<span class="string">&quot;UTF-8&quot;</span>);</span><br><span class="line"><span class="type">CharBuffer</span> <span class="variable">charBuffer</span> <span class="operator">=</span> charset.decode(byteBuffer);</span><br><span class="line">如果是CharBuffer转ByteBuffer， 就用charset.encode。</span><br></pre></td></tr></table></figure>
+<hr>
+<h2><span id="q-nio-bei-hou-de-shi-xian-yuan-li-shi-shi-me">Q: NIO背后的实现原理是什么？</span><a href="#q-nio-bei-hou-de-shi-xian-yuan-li-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A: 使用了linux的epoll机制<br>
+NIO和epoll的对应关系见<a target="_blank" rel="noopener" href="https://blog.csdn.net/xing317521/article/details/105054661/">浅谈NIO和Epoll的实现原理</a><br>
+epoll原理见<a target="_blank" rel="noopener" href="http://doc.minidown.cn/ejxpkz/">epoll原理</a></p>
+<hr>
+<p><img src="/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/398cc1e5fdaa0abf90cd8e577fd826ade07c3ecf.png" alt="398cc1e5fdaa0abf90cd8e577fd826ade07c3ecf"></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" title="java-NIO">http://breakdawncoder.com/2022/08/15/知识库/java/java-base/java-NIO高级应用/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java-java%E5%9F%BA%E7%A1%80/" rel="tag"># java,java基础</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-Socket%E5%BA%94%E7%94%A8/" rel="prev" title="java-Socket应用">
+      <i class="fa fa-chevron-left"></i> java-Socket应用
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/JDK%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E5%BA%94%E7%94%A8/" rel="next" title="JDK基础工具应用">
+      JDK基础工具应用 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">Q： NIO和标准IO有什么区别？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number"></span> <span class="nav-text">JavaNIO核心3组件：</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">1. Channels 通道</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">Q： 通道Channel对象能同时做读写操作吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">Q： 通道支持异步读写吗</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">Q： 通道的读写是否必须要依赖缓冲区buffer？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.4.</span> <span class="nav-text">Q: 有哪几种常用的NIO Channel</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.5.</span> <span class="nav-text">Q: fileChannal为什么不支持非阻塞？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">2. Buffer缓冲区</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">buffer特点详解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">Q： buffer调用flip()方法从写模式切换到读模式时，position会变成多少？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">Q: buffer拥有1个limit属性。知道是做什么的吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.4.</span> <span class="nav-text">Q： 当buffer从写模式切换到读模式时，limit为多少？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.5.</span> <span class="nav-text">Q： 向buf缓冲区写数据的方式有哪些？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.6.</span> <span class="nav-text">Q: 手动修改当前缓冲区的postion的方法有哪些?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.7.</span> <span class="nav-text">Q：1个channel管道支持多个buffer吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.8.</span> <span class="nav-text">Q: Buffer的Warp、slice、duplicate分别是做什么的？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">Selector</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">Q： 在NIO中Selector的好处是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">Q： Selector支持注册哪种类型的通道？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">Q： Selector注册时，支持监听哪几种事件，对应的常量是什么？（啊最不喜欢记忆这种东西了…）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.4.</span> <span class="nav-text">Q： Selector维护的SelectionKey集合共有哪几种？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.5.</span> <span class="nav-text">Q:注册之后， 如何使用selector对准备就绪的通道做处理：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.6.</span> <span class="nav-text">Q：select()方法其实是阻塞方法，即调用时会进入等待，直到把所有通道都轮询完毕。如果希望提前结束select()，有哪些方法？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.7.</span> <span class="nav-text">Q:之前说NIO是非阻塞IO，但为什么上面却说select()方法是阻塞的？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number"></span> <span class="nav-text">NIO进阶</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">Q： 多线程读写同一文件时，如何加锁保证线程安全？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">Q： 如果需要读1个特大文件，可以使用什么缓冲区？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">Q：NIO中ByteBuffer， 该如何根据正确的编码，转为对应的CharBuffer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">Q: NIO背后的实现原理是什么？</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

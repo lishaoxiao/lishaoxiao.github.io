@@ -21,16 +21,16 @@
     var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="22年8月刷题日记# [toc]     2022-07-30 2022-07-29 2022-08-01 2022-08-03 2022-08-04 2022-08-05 2022-08-07 2022-08-08 2022-08-09 2022-08-10 2022-08-11 2022-08-12 2022-08-13      2022-07-30# 1175. 质数排列 - 力扣（Lee">
+  <meta name="description" content="22年8月刷题日记# [toc]     2022-07-30 2022-07-29 2022-08-01 2022-08-03 2022-08-04 2022-08-05 2022-08-07 2022-08-08 2022-08-09 2022-08-10 2022-08-11 2022-08-12 2022-08-13 2022-08-15      2022-07-30# 1175. 质数">
 <meta property="og:type" content="article">
 <meta property="og:title" content="22年8月刷题日记">
 <meta property="og:url" content="http://breakdawncoder.com/2022/07/29/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/22%E5%B9%B48%E6%9C%88/index.html">
 <meta property="og:site_name" content="冲破黎明前的黑暗">
-<meta property="og:description" content="22年8月刷题日记# [toc]     2022-07-30 2022-07-29 2022-08-01 2022-08-03 2022-08-04 2022-08-05 2022-08-07 2022-08-08 2022-08-09 2022-08-10 2022-08-11 2022-08-12 2022-08-13      2022-07-30# 1175. 质数排列 - 力扣（Lee">
+<meta property="og:description" content="22年8月刷题日记# [toc]     2022-07-30 2022-07-29 2022-08-01 2022-08-03 2022-08-04 2022-08-05 2022-08-07 2022-08-08 2022-08-09 2022-08-10 2022-08-11 2022-08-12 2022-08-13 2022-08-15      2022-07-30# 1175. 质数">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://breakdawncoder.com/images/22%E5%B9%B48%E6%9C%88/1660233587305.png">
 <meta property="article:published_time" content="2022-07-29T14:12:42.000Z">
-<meta property="article:modified_time" content="2022-08-13T16:24:58.689Z">
+<meta property="article:modified_time" content="2022-08-15T15:40:44.780Z">
 <meta property="article:author" content="breakDawn">
 <meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
@@ -189,7 +189,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-14 00:24:58" itemprop="dateModified" datetime="2022-08-14T00:24:58+08:00">2022-08-14</time>
+                <time title="修改时间：2022-08-15 23:40:44" itemprop="dateModified" datetime="2022-08-15T23:40:44+08:00">2022-08-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -255,6 +255,7 @@
 <li><a href="#2022-08-11">2022-08-11</a></li>
 <li><a href="#2022-08-12">2022-08-12</a></li>
 <li><a href="#2022-08-13">2022-08-13</a></li>
+<li><a href="#2022-08-15">2022-08-15</a></li>
 </ul>
 <!-- tocstop -->
 </div> 
@@ -459,6 +460,36 @@
 <p>每次求出左边的最大值</p>
 <p>然后看一下自己当前位置往左边遍历时，选取那个左边位置作为一块，能否满足要求，能满足要求则就看判断当前最大分割块即可</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (左边最大值 小于 我当前位置从右往左遍历时的最小值， 说明可以分割)&#123;</span><br><span class="line">    dp[当前位置] = Math.max(dp[左边界-<span class="number">1</span>] + <span class="number">1</span>  , dp[当前位置]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1><span id="2022-08-15">2022-08-15</span><a href="#2022-08-15" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/design-circular-deque/">641. 设计循环双端队列 - 力扣（LeetCode）</a></p>
+<p>循环双端队列，其实关键在于循环队列的定义，双端的话很容易处理的。</p>
+<p>这题肯定是要用数组来做比较有意义</p>
+<p>循环队列数组概念硬记忆：</p>
+<ul>
+<li>front指向已存储的队头元素， rear指向已存储的队尾元素的下一个位置（即空位置）</li>
+</ul>
+<ul>
+<li>队满： (Q.rear+1)%M = Q.front，  即队尾的下一个位置已经有了</li>
+<li>队空： Q.front = Q.rear    即队头存储的是一个空的</li>
+<li>队长： (rear-front+M)%M</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/gou-jian-cheng-ji-shu-zu-lcof/">剑指 Offer 66. 构建乘积数组 - 力扣（LeetCode）</a></p>
+<p>很简单， 直接计算左边前缀乘积， 计算右边前缀乘积即可</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/smallest-integer-divisible-by-k/comments/">1015. 可被 K 整除的最小整数 - 力扣（LeetCode）</a></p>
+<ul>
+<li>
+<p>数字末尾是1的情况下，肯定不能被2和5整除</p>
+</li>
+<li>
+<p>通过公式推导：</p>
+<blockquote>
+<blockquote></blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">设n=p*K+q</span><br><span class="line">则n*<span class="number">10</span>+<span class="number">1</span>= <span class="number">10</span>*p*K + q*<span class="number">10</span>+<span class="number">1</span>;</span><br><span class="line">对两边都取k取余</span><br><span class="line">有(n*<span class="number">10</span>+<span class="number">1</span>)%K=(<span class="number">10</span>*p*K+q*<span class="number">10</span>+<span class="number">1</span>)%K</span><br><span class="line">又因为n%k=q</span><br><span class="line">则右边(<span class="number">10</span>*p*K+q*<span class="number">10</span>+<span class="number">1</span>)%K = (q*<span class="number">10</span>+<span class="number">1</span>)%K = (n%k*<span class="number">10</span> + <span class="number">1</span>) %K</span><br><span class="line">推断出：(n*<span class="number">10</span>+<span class="number">1</span>)%K = ((n%K)*<span class="number">10</span>+<span class="number">1</span>)%K</span><br><span class="line">因此(n*<span class="number">10</span>+<span class="number">1</span>)如果能被k整除，等同于 (n%k)*<span class="number">10</span>+<span class="number">1</span>被k整除</span><br><span class="line">所以只要n做增加时先取余即可</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+</ul>
+<p>不含2和5的质因子的数必定在K之内有解，直接用其mod循环即可，避免了大数之间的除法</p>
 
     </div>
 
@@ -560,7 +591,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">22年8月刷题日记</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">2022-07-30</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">2022-07-29</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">2022-08-01</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">2022-08-03</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">2022-08-04</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">2022-08-05</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">8.</span> <span class="nav-text">2022-08-07</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">9.</span> <span class="nav-text">2022-08-08</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">10.</span> <span class="nav-text">2022-08-09</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">11.</span> <span class="nav-text">2022-08-10</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">12.</span> <span class="nav-text">2022-08-11</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">13.</span> <span class="nav-text">2022-08-12</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">14.</span> <span class="nav-text">2022-08-13</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">22年8月刷题日记</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">2022-07-30</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">2022-07-29</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">2022-08-01</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">2022-08-03</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">2022-08-04</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">2022-08-05</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">8.</span> <span class="nav-text">2022-08-07</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">9.</span> <span class="nav-text">2022-08-08</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">10.</span> <span class="nav-text">2022-08-09</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">11.</span> <span class="nav-text">2022-08-10</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">12.</span> <span class="nav-text">2022-08-11</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">13.</span> <span class="nav-text">2022-08-12</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">14.</span> <span class="nav-text">2022-08-13</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">15.</span> <span class="nav-text">2022-08-15</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -576,14 +607,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-count">46</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">17</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">

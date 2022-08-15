@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Java安全类库常见问题  Q：有几种方式可以启动安全管理器？ Q：如果我不设置安全管理器，直接跑System.getProperty，会报权限错误吗？ Q: 隐式启动中，如果只配了-Djava.security.manager ，但没有配-Djava.security.policy， 那么上面的文件以及系统配置是都允许读，还是都不允许读？ Q：如果我之前有隐式启动，此时new了一个新的Se">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java安全管理器应用">
+<meta property="og:url" content="http://breakdawncoder.com/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/index.html">
+<meta property="og:site_name" content="冲破黎明前的黑暗">
+<meta property="og:description" content="Java安全类库常见问题  Q：有几种方式可以启动安全管理器？ Q：如果我不设置安全管理器，直接跑System.getProperty，会报权限错误吗？ Q: 隐式启动中，如果只配了-Djava.security.manager ，但没有配-Djava.security.policy， 那么上面的文件以及系统配置是都允许读，还是都不允许读？ Q：如果我之前有隐式启动，此时new了一个新的Se">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/492830d481c84ff56c99dec832d0939d6616b824.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/9fe292ac9397f17154eb131f2b7ac65ae6bbfa7a.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/5ef1de92e4ef3956fc00c8830f82479b77213629.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/eb6b0119d97e6e30fd93f610fde5a8e5dc4ecd6b.png">
+<meta property="article:published_time" content="2022-08-15T15:44:16.000Z">
+<meta property="article:modified_time" content="2022-08-15T15:57:37.159Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="java,java基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/492830d481c84ff56c99dec832d0939d6616b824.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java安全管理器应用 | 冲破黎明前的黑暗</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">冲破黎明前的黑暗</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="冲破黎明前的黑暗">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java安全管理器应用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-15 23:44:16 / 修改时间：23:57:37" itemprop="dateCreated datePublished" datetime="2022-08-15T23:44:16+08:00">2022-08-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">java高级应用</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#java-an-quan-lei-ku-chang-jian-wen-ti">Java安全类库常见问题</a>
+<ul>
+<li><a href="#q-you-ji-chong-fang-shi-ke-yi-qi-dong-an-quan-guan-li-qi">Q：有几种方式可以启动安全管理器？</a></li>
+<li><a href="#q-ru-guo-wo-bu-she-zhi-an-quan-guan-li-qi-zhi-jie-pao-system-getproperty-hui-bao-quan-xian-cuo-wu-ma">Q：如果我不设置安全管理器，直接跑System.getProperty，会报权限错误吗？</a></li>
+<li><a href="#q-yin-shi-qi-dong-zhong-ru-guo-zhi-pei-liao-djava-security-manager-dan-mei-you-pei-djava-security-policy-na-me-shang-mian-de-wen-jian-yi-ji-xi-tong-pei-zhi-shi-du-yun-xu-du-huan-shi-du-bu-yun-xu-du">Q: 隐式启动中，如果只配了-Djava.security.manager ，但没有配-Djava.security.policy， 那么上面的文件以及系统配置是都允许读，还是都不允许读？</a></li>
+<li><a href="#q-ru-guo-wo-zhi-qian-you-yin-shi-qi-dong-ci-shi-new-liao-yi-ge-xin-de-securitymanager-fang-jin-qu-ci-shi-shi-fou-huan-you-gai-shu-xing-de-read-quan-xian">Q：如果我之前有隐式启动，此时new了一个新的SecurityManager放进去，此时是否还有该属性的read权限？</a></li>
+<li><a href="#chang-jian-de-java-an-quan-quan-xian">常见的java 安全权限</a></li>
+<li><a href="#q-xiang-xi-jiang-jiang-an-quan-guan-li-qi-de-ying-yong-chang-jing">Q： 详细讲讲安全管理器的应用场景？</a></li>
+<li><a href="#q-shang-mian-zhe-ge-li-zi-zhong-ru-guo-e-yi-diao-yong-zhe-zi-ji-zai-an-quan-guan-li-qi-zhong-zeng-jia-zhe-chong-quan-xian-de-chu-li-zen-me-ban">Q： 上面这个例子中， 如果恶意调用者自己在安全管理器中增加这种权限的处理怎么办？</a></li>
+<li><a href="#q-jia-she-mou-fu-wu-shi-xian-liao-yi-ge-zi-ding-yi-classloader-zhi-chi-cong-wang-luo-huo-qu-xin-ren-ke-hu-chuan-lai-de-jar-bao-bing-zai-zi-ji-de-fu-wu-zhong-zhi-xing-na-me-ying-gai-ru-he-fang-zhi-jia-zai-bu-ke-xin-de-jar-bao-ni">Q： 假设某服务实现了一个自定义classLoader， 支持从网络获取信任客户传来的jar包并在自己的服务中执行， 那么应该如何防止加载不可信的jar包呢？</a></li>
+<li><a href="#q-bu-jia-yan-zhi-de-ha-xi-kou-ling-ha-xi-you-shi-me-que-xian">Q：不加盐值的哈希口令哈希有什么缺陷？</a></li>
+<li><a href="#q-dui-kou-ling-zuo-ha-xi-jia-yan-zhi-shi-you-shi-me-yao-qiu">Q：对口令做哈希加盐值时有什么要求？</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="java-an-quan-lei-ku-chang-jian-wen-ti">Java安全类库常见问题</span><a href="#java-an-quan-lei-ku-chang-jian-wen-ti" class="header-anchor">#</a></h1>
+<h2><span id="q-you-ji-chong-fang-shi-ke-yi-qi-dong-an-quan-guan-li-qi">Q：有几种方式可以启动安全管理器？</span><a href="#q-you-ji-chong-fang-shi-ke-yi-qi-dong-an-quan-guan-li-qi" class="header-anchor">#</a></h2>
+<p>A：两种方式<br>
+隐式启动： 启动命令里加-Djava.security.manager， 即可开启安全管理器。<br>
+显示启动： 代码里自己new一个SecurityManager或者继承一个新子类， 然后用System.setSecurityManager(xxxSecurityManager)来设置</p>
+<hr>
+<p>看以下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SecurityManagerTest</span> &#123;    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> FileNotFoundException &#123;    </span><br><span class="line">    System.out.println(System.getProperty(<span class="string">&quot;file.encoding&quot;</span>));  </span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2><span id="q-ru-guo-wo-bu-she-zhi-an-quan-guan-li-qi-zhi-jie-pao-system-getproperty-hui-bao-quan-xian-cuo-wu-ma">Q：如果我不设置安全管理器，直接跑System.getProperty，会报权限错误吗？</span><a href="#q-ru-guo-wo-bu-she-zhi-an-quan-guan-li-qi-zhi-jie-pao-system-getproperty-hui-bao-quan-xian-cuo-wu-ma" class="header-anchor">#</a></h2>
+<p>A：<br>
+不会报错误。 如果隐式和显示启动都没做，那么System里的SecurityManager就是null，那么就不会进行检查。<br>
+可以看下System.getProperty里的源码：<br>
+<img src="/images/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/492830d481c84ff56c99dec832d0939d6616b824.png" alt="492830d481c84ff56c99dec832d0939d6616b824"></p>
+<hr>
+<h2><span id="q-yin-shi-qi-dong-zhong-ru-guo-zhi-pei-liao-djava-security-manager-dan-mei-you-pei-djava-security-policy-na-me-shang-mian-de-wen-jian-yi-ji-xi-tong-pei-zhi-shi-du-yun-xu-du-huan-shi-du-bu-yun-xu-du">Q: 隐式启动中，如果只配了-Djava.security.manager ，但没有配-Djava.security.policy， 那么上面的文件以及系统配置是都允许读，还是都不允许读？</span><a href="#q-yin-shi-qi-dong-zhong-ru-guo-zhi-pei-liao-djava-security-manager-dan-mei-you-pei-djava-security-policy-na-me-shang-mian-de-wen-jian-yi-ji-xi-tong-pei-zhi-shi-du-yun-xu-du-huan-shi-du-bu-yun-xu-du" class="header-anchor">#</a></h2>
+<p>A：<br>
+都不允许读。 即开启后，不在policy允许范围内的，都默认不允许读。</p>
+<hr>
+<ul>
+<li>
+<p>如果要允许读文件以及读file.encoding那个系统配置， 需要加上-Djava.security.policy=xxx.policy ， 指明policy文件。</p>
+</li>
+<li>
+<p>文件里大概长这样<br>
+<img src="/images/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/9fe292ac9397f17154eb131f2b7ac65ae6bbfa7a.png" alt="9fe292ac9397f17154eb131f2b7ac65ae6bbfa7a"><br>
+注意policy是拼在-Djava.security.manager的后面<br>
+<img src="/images/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/5ef1de92e4ef3956fc00c8830f82479b77213629.png" alt="5ef1de92e4ef3956fc00c8830f82479b77213629"></p>
+</li>
+</ul>
+<hr>
+<p>显示启动，就是自己new一个SecurityManager，并set进去。</p>
+<h2><span id="q-ru-guo-wo-zhi-qian-you-yin-shi-qi-dong-ci-shi-new-liao-yi-ge-xin-de-securitymanager-fang-jin-qu-ci-shi-shi-fou-huan-you-gai-shu-xing-de-read-quan-xian">Q：如果我之前有隐式启动，此时new了一个新的SecurityManager放进去，此时是否还有该属性的read权限？</span><a href="#q-ru-guo-wo-zhi-qian-you-yin-shi-qi-dong-ci-shi-new-liao-yi-ge-xin-de-securitymanager-fang-jin-qu-ci-shi-shi-fou-huan-you-gai-shu-xing-de-read-quan-xian" class="header-anchor">#</a></h2>
+<p><img src="/images/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/eb6b0119d97e6e30fd93f610fde5a8e5dc4ecd6b.png" alt="eb6b0119d97e6e30fd93f610fde5a8e5dc4ecd6b"></p>
+<p>A：没有了，之前由启动参数配进去的安全管理器已经被你覆盖掉了</p>
+<p>对于隐式启动和显示启动， 都是默认没有任何可用权限！</p>
+<p>都是白名单机制， 无黑名单机制。</p>
+<hr>
+<h2><span id="chang-jian-de-java-an-quan-quan-xian">常见的java 安全权限</span><a href="#chang-jian-de-java-an-quan-quan-xian" class="header-anchor">#</a></h2>
+<p>都是能从名字就知道什么作用的，瞄一眼有个印象就行，大概知道java里这些功能可能都会有权限。</p>
+<ul>
+<li>
+<p>java.security.AllPermission 所有权限的集合</p>
+</li>
+<li>
+<p>java.util.PropertyPermission 系统/环境属性权限<br>
+就是System.getProperty(<a target="_blank" rel="noopener" href="http://xxx.xxx.xxx">xxx.xxx.xxx</a>)的权限</p>
+</li>
+<li>
+<p>java.lang.RuntimePermission 运行时权限<br>
+这个安卓用的很多，</p>
+</li>
+<li>
+<p>java.net.SocketPermission Socket权限</p>
+</li>
+<li>
+<p>java.io.FilePermission 文件权限,包括读写,删除,执行</p>
+</li>
+<li>
+<p>java.io.SerializablePermission 序列化权限</p>
+</li>
+<li>
+<p>java.lang.reflect.ReflectPermission 反射权限</p>
+</li>
+<li>
+<p>java.security.UnresolvedPermission 未解析的权限</p>
+</li>
+<li>
+<p>java.net.NetPermission 网络权限</p>
+</li>
+<li>
+<p>java.awt.AWTPermission AWT权限</p>
+</li>
+<li>
+<p>java.sql.SQLPermission 数据库sql权限</p>
+</li>
+<li>
+<p>java.security.SecurityPermission 安全控制方面的权限</p>
+</li>
+<li>
+<p>java.util.logging.LoggingPermission 日志控制权限</p>
+</li>
+<li>
+<p>javax.net.ssl.SSLPermission 安全连接权限</p>
+</li>
+<li>
+<p>javax.security.auth.AuthPermission 认证权限</p>
+</li>
+<li>
+<p>javax.sound.sampled.AudioPermission 音频系统资源的访问权限</p>
+</li>
+</ul>
+<hr>
+<p>关于上面的permission权限，有一个重要的应用，就是在ClassLoader中。<br>
+如果JVM开启了SecurityManager，  ClasserLoader就会在加载类的时候调用Policy.getPermissions来获取代码权限集， 并将代码来源和权限集封装到保护域。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyClassLoader</span> <span class="keyword">extends</span> <span class="title class_">URLClassLoader</span> &#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	protect PermissionCollection <span class="title function_">getPermissions</span><span class="params">(CodeSource cs)</span> &#123;</span><br><span class="line">		<span class="type">PermissionCollection</span> <span class="variable">pc</span> <span class="operator">=</span> <span class="built_in">super</span>.getPermissions(cs);</span><br><span class="line">		<span class="comment">// 添加权限</span></span><br><span class="line">		pc.add(<span class="keyword">new</span> <span class="title class_">XXXPersion</span>());</span><br><span class="line">		<span class="keyword">return</span> pc;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2><span id="q-xiang-xi-jiang-jiang-an-quan-guan-li-qi-de-ying-yong-chang-jing">Q： 详细讲讲安全管理器的应用场景？</span><a href="#q-xiang-xi-jiang-jiang-an-quan-guan-li-qi-de-ying-yong-chang-jing" class="header-anchor">#</a></h2>
+<p>A：</p>
+<ul>
+<li>如果你是某个平台开发者，提供了某个SDK给其他人使用， 这里面涉及了某个文件读取或者文件写入操作。<br>
+但是你只希望他用这个sdk去操作平台下特定目录的文件，而不是去动其他的位置（比如根目录之类的）<br>
+于是你就可以给sdk代码封装上一层权限， 在这个代码块中只能读特定目录（就像上面的filePermission）</li>
+<li>或者你通过的公开类中有个高危方法deleteXXX， 你希望拥有管理员权限的人才能调用，其他人不能调用， 于是可以在高危方法中加一层权限， 下面的例子来自安全编码规范， removeEncryt就是高危方法， 调用前会检查一下是否具有这个自定义的权限类型</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SensitiveHash</span> &#123;</span><br><span class="line">	<span class="keyword">void</span> <span class="title function_">removeEntry</span><span class="params">(Object key)</span> &#123;</span><br><span class="line">		check(<span class="string">&quot;removeKeyPerssion&quot;</span>);</span><br><span class="line">		ht.remove(key);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">check</span><span class="params">(String dire)</span> &#123;</span><br><span class="line">		<span class="type">SecurityManager</span> <span class="variable">sm</span> <span class="operator">=</span> System.getSecurityManager();</span><br><span class="line">		<span class="keyword">if</span> (sm!=<span class="literal">null</span>) &#123;</span><br><span class="line">			sm.checkSecurityAccess(dire)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2><span id="q-shang-mian-zhe-ge-li-zi-zhong-ru-guo-e-yi-diao-yong-zhe-zi-ji-zai-an-quan-guan-li-qi-zhong-zeng-jia-zhe-chong-quan-xian-de-chu-li-zen-me-ban">Q： 上面这个例子中， 如果恶意调用者自己在安全管理器中增加这种权限的处理怎么办？</span><a href="#q-shang-mian-zhe-ge-li-zi-zhong-ru-guo-e-yi-diao-yong-zhe-zi-ji-zai-an-quan-guan-li-qi-zhong-zeng-jia-zhe-chong-quan-xian-de-chu-li-zen-me-ban" class="header-anchor">#</a></h2>
+<p>A： setSecurityManager方法API也是需要权限的。 作为客户端程序一般没有权限去设置SDK的安全管理器。 java默认的policy配置文件也没有放开这个权限。需要支持在policy里setSecurityManager才行。</p>
+<hr>
+<h2><span id="q-jia-she-mou-fu-wu-shi-xian-liao-yi-ge-zi-ding-yi-classloader-zhi-chi-cong-wang-luo-huo-qu-xin-ren-ke-hu-chuan-lai-de-jar-bao-bing-zai-zi-ji-de-fu-wu-zhong-zhi-xing-na-me-ying-gai-ru-he-fang-zhi-jia-zai-bu-ke-xin-de-jar-bao-ni">Q： 假设某服务实现了一个自定义classLoader， 支持从网络获取信任客户传来的jar包并在自己的服务中执行， 那么应该如何防止加载不可信的jar包呢？</span><a href="#q-jia-she-mou-fu-wu-shi-xian-liao-yi-ge-zi-ding-yi-classloader-zhi-chi-cong-wang-luo-huo-qu-xin-ren-ke-hu-chuan-lai-de-jar-bao-bing-zai-zi-ji-de-fu-wu-zhong-zhi-xing-na-me-ying-gai-ru-he-fang-zhi-jia-zai-bu-ke-xin-de-jar-bao-ni" class="header-anchor">#</a></h2>
+<p>A	：</p>
+<ol>
+<li>取出jar包中的证书资源</li>
+<li>获取服务自身的密钥</li>
+<li>校验证书是否是这些密钥的受信任签名（即我要识别你的这个证书是不是从我这里签发出去的）</li>
+</ol>
+<blockquote>
+<blockquote>
+<p>注意，不要使用URLClassLoaer和java.util.jar里的自动签名校验机制，他只是检查jar包中的签名和公钥是否匹配，这仅仅是完整性校验， 这2者是可以被全部替换的</p>
+</blockquote>
+</blockquote>
+<hr>
+<h2><span id="q-bu-jia-yan-zhi-de-ha-xi-kou-ling-ha-xi-you-shi-me-que-xian">Q：不加盐值的哈希口令哈希有什么缺陷？</span><a href="#q-bu-jia-yan-zhi-de-ha-xi-kou-ling-ha-xi-you-shi-me-que-xian" class="header-anchor">#</a></h2>
+<p>A：</p>
+<p>生日判定，可以快速找到一个口令</p>
+<p>可以利用事先计算好的哈希列表几秒钟破解。</p>
+<hr>
+<h2><span id="q-dui-kou-ling-zuo-ha-xi-jia-yan-zhi-shi-you-shi-me-yao-qiu">Q：对口令做哈希加盐值时有什么要求？</span><a href="#q-dui-kou-ling-zuo-ha-xi-jia-yan-zhi-shi-you-shi-me-yao-qiu" class="header-anchor">#</a></h2>
+<p>A:</p>
+<p>盐值至少应该包含8字节而且必须是由安全随机数产生。( 例如如果问你，sha256+4字节盐值，那肯定就是错误的！）</p>
+<p>应使用强哈希函数，推荐使用SHA-256或者更加安全的哈希函数。</p>
+<p>迭代次数默认推荐10000次，对于性能有特殊要求（比如嵌入式系统）的产品低可迭代1000次。</p>
+<p>对于单向哈希时，其输出长度应该不小于256比特</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/" title="java安全管理器应用">http://breakdawncoder.com/2022/08/15/知识库/java/java-base/java安全管理器应用/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java-java%E5%9F%BA%E7%A1%80/" rel="tag"># java,java基础</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/08/15/%E9%9A%8F%E7%AC%94/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/" rel="prev" title="原神旅游日记">
+      <i class="fa fa-chevron-left"></i> 原神旅游日记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-Socket%E5%BA%94%E7%94%A8/" rel="next" title="java-Socket应用">
+      java-Socket应用 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">Java安全类库常见问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">Q：有几种方式可以启动安全管理器？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">Q：如果我不设置安全管理器，直接跑System.getProperty，会报权限错误吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">Q: 隐式启动中，如果只配了-Djava.security.manager ，但没有配-Djava.security.policy， 那么上面的文件以及系统配置是都允许读，还是都不允许读？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.4.</span> <span class="nav-text">Q：如果我之前有隐式启动，此时new了一个新的SecurityManager放进去，此时是否还有该属性的read权限？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.5.</span> <span class="nav-text">常见的java 安全权限</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.6.</span> <span class="nav-text">Q： 详细讲讲安全管理器的应用场景？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.7.</span> <span class="nav-text">Q： 上面这个例子中， 如果恶意调用者自己在安全管理器中增加这种权限的处理怎么办？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.8.</span> <span class="nav-text">Q： 假设某服务实现了一个自定义classLoader， 支持从网络获取信任客户传来的jar包并在自己的服务中执行， 那么应该如何防止加载不可信的jar包呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.9.</span> <span class="nav-text">Q：不加盐值的哈希口令哈希有什么缺陷？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.10.</span> <span class="nav-text">Q：对口令做哈希加盐值时有什么要求？</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
