@@ -38,11 +38,12 @@
 <meta property="og:image" content="http://breakdawncoder.com/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652882482680209447.png">
 <meta property="og:image" content="http://breakdawncoder.com/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652882580296867154.png">
 <meta property="og:image" content="http://breakdawncoder.com/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652883305646281243.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1660746972644.png">
 <meta property="og:image" content="http://breakdawncoder.com/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652884348846944605.png">
 <meta property="og:image" content="http://breakdawncoder.com/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652885621080294993.png">
 <meta property="og:image" content="http://breakdawncoder.com/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/5d139636e4b065dc2c6b9a50.png">
 <meta property="article:published_time" content="2022-05-30T23:52:57.000Z">
-<meta property="article:modified_time" content="2022-08-09T16:50:49.236Z">
+<meta property="article:modified_time" content="2022-08-17T14:42:08.274Z">
 <meta property="article:author" content="breakDawn">
 <meta property="article:tag" content="java,深入理解jvm">
 <meta name="twitter:card" content="summary">
@@ -196,7 +197,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-10 00:50:49" itemprop="dateModified" datetime="2022-08-10T00:50:49+08:00">2022-08-10</time>
+                <time title="修改时间：2022-08-17 22:42:08" itemprop="dateModified" datetime="2022-08-17T22:42:08+08:00">2022-08-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -243,14 +244,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>4.7k</span>
+              <span>6.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
+              <span>6 分钟</span>
             </span>
 
         </div>
@@ -272,6 +273,9 @@
 <li><a href="#serial-old-he-serial-dan-xian-cheng-shou-ji-qi">Serial Old和Serial（单线程收集器）</a>
 <ul>
 <li><a href="#serial-lei-xing-de-shou-ji-qi-bei-tao-tai-liao-ma-ta-huan-you-you-shi-ma">Serial类型的收集器被淘汰了吗？它还有优势吗？</a></li>
+<li><a href="#q-shi-me-shi-hou-ke-yi-hong-fa-stopworld-an-quan-dian-gc-shi-jian-dian">Q: 什么时候可以触发stopWorld？（安全点,GC时间点）</a></li>
+<li><a href="#4-ge-an-quan-dian-de-she-ji-si-lu-shi-shi-me">4个安全点的设计思路是什么？</a></li>
+<li><a href="#q-he-an-quan-dian-dui-ying-de-an-quan-qu-you-shi-shi-me">Q: 和安全点对应的安全区又是什么？</a></li>
 </ul>
 </li>
 <li><a href="#parold-he-parnew-shou-ji-qi-duo-xian-cheng-shou-ji-qi">ParOld和ParNew收集器（多线程收集器）</a></li>
@@ -308,13 +312,28 @@
 </li>
 </ul>
 </li>
+<li><a href="#hun-he-shi-yong-shou-ji-qi-cms-parnew">混合使用收集器（CMS+parNew)</a>
+<ul>
+<li><a href="#q-fullgc-he-monorgc-fen-bie-fa-sheng-zai-lao-nian-dai-qu-huan-shi-xin-sheng-dai-qu">Q： fullGC和monorGC分别发生在老年代区还是新生代区？</a></li>
+<li><a href="#q-xin-sheng-dui-xiang-shi-me-shi-hou-ke-yi-chang-shi-jin-ru-lao-nian-dai">Q: 新生对象什么时候可以尝试进入老年代？</a></li>
+<li><a href="#q-eden-nian-qing-dai-qu-he-survivor-qu-de-bi-li-wei-shi-me-shi-8-bi-1-bi-1">Q: Eden年轻代区和survivor区的比例为什么是8比1比1</a></li>
+<li><a href="#q-jiang-yi-xia-lao-nian-dai-de-dan-bao-ce-lue-shi-zuo-shi-me-de">Q: 讲一下老年代的担保策略是做什么的？</a></li>
+<li><a href="#xin-sheng-dai-lao-nian-dai-de-jiao-hu-liu-cheng">新生代、老年代的交互流程：</a></li>
+</ul>
+</li>
 <li><a href="#g1-shou-ji-qi-hui-shou-gai-nian-fa-sheng-zhu-duo-bian-ge-mu-qian-zui-xian-jin-shou-ji-qi">G1收集器（回收概念发生诸多变革，目前最先进收集器）</a>
 <ul>
 <li><a href="#g1-xiang-bi-cms-de-chong-da-sheng-ji-dian">G1相比CMS的重大升级点：</a></li>
-<li><a href="#region-zhi-jian-du-yao-tong-guo-bfs-bian-li-ma">region之间都要通过BFS遍历吗？</a></li>
+<li><a href="#g1-li-de-region-zhi-jian-du-yao-tong-guo-bfs-bian-li-ma">G1里的region之间都要通过BFS遍历吗？</a></li>
 </ul>
 </li>
 <li><a href="#wan-zheng-da-tu">完整大图</a></li>
+<li><a href="#qi-ta-wen-ti">其他问题</a>
+<ul>
+<li><a href="#q-fang-fa-qu-li-de-class-dui-xiang-ji-lei-dui-xiang-shi-me-shi-hou-hui-bei-hui-shou">Q： 方法区里的class对象（即类对象）什么时候会被回收？</a></li>
+<li><a href="#q-shi-me-shi-hou-hui-diao-yong-dui-xiang-de-finalized-fang-fa">Q： 什么时候会调用对象的finalized方法</a></li>
+</ul>
+</li>
 </ul>
 <!-- tocstop -->
 </div> 
@@ -336,6 +355,22 @@
 <li>Serial Old收集器会作为CMS的后备预案</li>
 <li>与Parallel Scavenge搭配使用</li>
 </ul>
+<h2><span id="q-shi-me-shi-hou-ke-yi-hong-fa-stopworld-an-quan-dian-gc-shi-jian-dian">Q: 什么时候可以触发stopWorld？（安全点,GC时间点）</span><a href="#q-shi-me-shi-hou-ke-yi-hong-fa-stopworld-an-quan-dian-gc-shi-jian-dian" class="header-anchor">#</a></h2>
+<ul>
+<li>方法返回之前</li>
+<li>调用某个方法之后</li>
+<li>抛出异常的位置</li>
+<li>循环的末尾</li>
+</ul>
+<h2><span id="4-ge-an-quan-dian-de-she-ji-si-lu-shi-shi-me">4个安全点的设计思路是什么？</span><a href="#4-ge-an-quan-dian-de-she-ji-si-lu-shi-shi-me" class="header-anchor">#</a></h2>
+<p>当垃圾收集需要中断用户线程的时候, 不直接对线程操作,而是设置一个标志位.</p>
+<p>各个用户线程执行过程中会轮询这个标志位的状态.</p>
+<p>一旦用户线程轮询到标志位被设置过, 就在最近的安全点主动挂起,所有用户线程都挂起, 垃圾收集真正进行</p>
+<h2><span id="q-he-an-quan-dian-dui-ying-de-an-quan-qu-you-shi-shi-me">Q: 和安全点对应的安全区又是什么？</span><a href="#q-he-an-quan-dian-dui-ying-de-an-quan-qu-you-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A:<br>
+程序可能因为blocked或者sleep，无法到达安全点。<br>
+这是可以设置一个安全区域，这个安全区域对应的代码段，引用关系不会变。JVM检测到程序在安全区域时，可以进行GC。<br>
+程序运行出安全区域时，检测GC没有结束的话，自我中断。</p>
 <h1><span id="parold-he-parnew-shou-ji-qi-duo-xian-cheng-shou-ji-qi">ParOld和ParNew收集器（多线程收集器）</span><a href="#parold-he-parnew-shou-ji-qi-duo-xian-cheng-shou-ji-qi" class="header-anchor">#</a></h1>
 <p><img src="/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652830556269329780.png" alt="image.png"><br>
 Par收集器就是Serial收集器的多线程版本，其他策略则都与serial一致。</p>
@@ -447,6 +482,45 @@ GCRoot的那4种经典对象，瞄一眼就好</p>
 <p>因为并发回收时工作线程还在运行，可能产生大量的对象，导致老年代被填满。<br>
 这时候CMS会触发一个“Concurrent Mod Failure”机制，并紧急替换为SerialOld收集进行stopWorld回收。<br>
 因此，<strong>CMS可能存在临时退化为SerialOld的可能</strong></p>
+<h1><span id="hun-he-shi-yong-shou-ji-qi-cms-parnew">混合使用收集器（CMS+parNew)</span><a href="#hun-he-shi-yong-shou-ji-qi-cms-parnew" class="header-anchor">#</a></h1>
+<p>G1收集器出现之前， 都是老年代和年轻代一起使用， 例如CMS+parNew的组合</p>
+<h2><span id="q-fullgc-he-monorgc-fen-bie-fa-sheng-zai-lao-nian-dai-qu-huan-shi-xin-sheng-dai-qu">Q： fullGC和monorGC分别发生在老年代区还是新生代区？</span><a href="#q-fullgc-he-monorgc-fen-bie-fa-sheng-zai-lao-nian-dai-qu-huan-shi-xin-sheng-dai-qu" class="header-anchor">#</a></h2>
+<p>A:</p>
+<p>fullGC只会发生在老年代区。 会用上CMS那堆很复杂的操作</p>
+<p>相反，minorGC一般发送在新生代区，直接用parNew那种复制算法，很快。</p>
+<h2><span id="q-xin-sheng-dui-xiang-shi-me-shi-hou-ke-yi-chang-shi-jin-ru-lao-nian-dai">Q: 新生对象什么时候可以尝试进入老年代？</span><a href="#q-xin-sheng-dui-xiang-shi-me-shi-hou-ke-yi-chang-shi-jin-ru-lao-nian-dai" class="header-anchor">#</a></h2>
+<ol>
+<li>
+<p>发生minorGC后， E区和survivor区都放不下了</p>
+</li>
+<li>
+<p>在survivor区待的时间过长，gc分代年龄超过阈值</p>
+</li>
+<li>
+<p>该GC分代年龄对象总和大于等于s区的一半</p>
+</li>
+<li>
+<p>新生对象的大小大于某个阈值</p>
+</li>
+</ol>
+<h2><span id="q-eden-nian-qing-dai-qu-he-survivor-qu-de-bi-li-wei-shi-me-shi-8-bi-1-bi-1">Q: Eden年轻代区和survivor区的比例为什么是8比1比1</span><a href="#q-eden-nian-qing-dai-qu-he-survivor-qu-de-bi-li-wei-shi-me-shi-8-bi-1-bi-1" class="header-anchor">#</a></h2>
+<p>A:</p>
+<p>正常预留10%内存空间， 大于90%进行minorGC<br>
+但为了复制算法需要， 得有这10%的复制</p>
+<p>且有-XX:SurvivorRatio=8 这个参数值可以修改</p>
+<h2><span id="q-jiang-yi-xia-lao-nian-dai-de-dan-bao-ce-lue-shi-zuo-shi-me-de">Q:  讲一下老年代的担保策略是做什么的？</span><a href="#q-jiang-yi-xia-lao-nian-dai-de-dan-bao-ce-lue-shi-zuo-shi-me-de" class="header-anchor">#</a></h2>
+<p>用于确认此时到底是做minorGC还是做fullGc。</p>
+<ol>
+<li>在发生Minor GC之前，虚拟机会先检查老年代最大可用的连续空间是否大于新生代所有对象总空间</li>
+<li>如果这个条件成立，那么Minor GC可以确保是安全的。</li>
+<li>如果不成立，则虚拟机会查看HandlePromotionFailure设置值是否允许担保失败。</li>
+<li>如果允许，那么会继续检查老年代最大可用的连续空间是否大于历次晋升到老年代对象的平均大小</li>
+<li>如果大于平均大小，将尝试着进行一次Minor GC，尽管这次Minor GC是有风险的，有可能把老年代搞满（这时候还没有fullGC！）；</li>
+<li>如果小于，或者HandlePromotionFailure设置不允许冒险，那这时也要改为进行一次Full GC即全量GC，而不是minor小gc。</li>
+</ol>
+<p>换言之， 要么选择minorGc，要么选择fullGc， 感觉有风险时，就fullGc。</p>
+<h2><span id="xin-sheng-dai-lao-nian-dai-de-jiao-hu-liu-cheng">新生代、老年代的交互流程：</span><a href="#xin-sheng-dai-lao-nian-dai-de-jiao-hu-liu-cheng" class="header-anchor">#</a></h2>
+<p><img src="/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1660746972644.png" alt="1660746972644"></p>
 <h1><span id="g1-shou-ji-qi-hui-shou-gai-nian-fa-sheng-zhu-duo-bian-ge-mu-qian-zui-xian-jin-shou-ji-qi">G1收集器（回收概念发生诸多变革，目前最先进收集器）</span><a href="#g1-shou-ji-qi-hui-shou-gai-nian-fa-sheng-zhu-duo-bian-ge-mu-qian-zui-xian-jin-shou-ji-qi" class="header-anchor">#</a></h1>
 <p><img src="/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652884348846944605.png" alt="image.png"></p>
 <p>G1收集器，书上感觉并没有讲得特别深，很多概念、区别都没讲好，个人认为是种遗憾，因此我在透彻学习G1之前，我也只能简单写写了。</p>
@@ -464,7 +538,7 @@ GCRoot的那4种经典对象，瞄一眼就好</p>
 <li>G1则是只更新o = null这种删除引用的情况。对于新增的引用，直接认为那个对象不需要杀。<br>
 换句话说，<strong>CMS更严谨，做细致的重新检查。 而G1为了性能，会漏掉一些本该被回收的对象，但是无关大雅，大不了就下次再回收</strong>。</li>
 </ul>
-<h2><span id="region-zhi-jian-du-yao-tong-guo-bfs-bian-li-ma">region之间都要通过BFS遍历吗？</span><a href="#region-zhi-jian-du-yao-tong-guo-bfs-bian-li-ma" class="header-anchor">#</a></h2>
+<h2><span id="g1-li-de-region-zhi-jian-du-yao-tong-guo-bfs-bian-li-ma">G1里的region之间都要通过BFS遍历吗？</span><a href="#g1-li-de-region-zhi-jian-du-yao-tong-guo-bfs-bian-li-ma" class="header-anchor">#</a></h2>
 <p>这个问题，和之前CMS中回收年轻代时， 是否要走一遍全量的老年代是一个道理。</p>
 <p>G1里用的是一个RememberSet来避免全region扫描的。<br>
 每个G1的region都有一个<strong>记忆集(Rset)</strong><br>
@@ -481,12 +555,25 @@ GCRoot的那4种经典对象，瞄一眼就好</p>
 </blockquote>
 <p>这里我就点没看懂，卡表不是老年代对年轻代的引用么，为什么G1里也有？不是用了记忆集吗？不解，等以后有解答了，再来修改这里的内容。</p>
 <hr>
+<p>Q: G1里的minorGc、 majorGc、mixedGc、fullGc的区别？</p>
+<p>A:</p>
+<ul>
+<li>minorGc也就是youngGc。工作流程很简单：线程跑，然后就进行青年代Region的回收，把需要回收的YoungRegion，放入YoungCSet中，在YGC阶段就进行对年轻代CSet中的Region进行回收。因为大部分都是垃圾，且用了复制回收算法，基本只需要较短时间的STW就能完全回收了。 这里不会触发</li>
+<li>MixedGc等于年轻代+部分老年代gc。当老年代垃圾达到一个阀值的时候，会触发，这里就会用到G1里的并发标记、最终标记、筛选回收等操作。但不会针对所有老年代，只筛选需要处理的老年代。</li>
+<li>FullGc，等于整个堆空间的清理。 当新对象进入老年代时空间不足， G1便会触发担保机制，执行一次STW（stopWorld)式的、单线程的Full GC。Full GC会对整堆做标记清除和压缩，最后将只包含纯粹的存活对象。 注意这时候不会用到并发之类的，直接暂停了。</li>
+</ul>
 <h1><span id="wan-zheng-da-tu">完整大图</span><a href="#wan-zheng-da-tu" class="header-anchor">#</a></h1>
 <p>关于垃圾收集，书上倾向于先将一些基本概念或者基本回收思路，再讲发展流程，同时对G1缺少更细致的解释，这就容易混杂起来，导致垃圾收集器的进化那一章节看得很迷。</p>
 <p>后面找到了一本书，叫做《The Garbage Collection Handbook》，已经收藏，有时间的话可以看看，据说对G1做了非常细致的讲解<br>
 <img src="/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652885621080294993.png" alt="image.png"></p>
 <p>最后送上完整大图：<br>
 <img src="/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/5d139636e4b065dc2c6b9a50.png" alt="垃圾收集器大图"></p>
+<h1><span id="qi-ta-wen-ti">其他问题</span><a href="#qi-ta-wen-ti" class="header-anchor">#</a></h1>
+<h2><span id="q-fang-fa-qu-li-de-class-dui-xiang-ji-lei-dui-xiang-shi-me-shi-hou-hui-bei-hui-shou">Q： 方法区里的class对象（即类对象）什么时候会被回收？</span><a href="#q-fang-fa-qu-li-de-class-dui-xiang-ji-lei-dui-xiang-shi-me-shi-hou-hui-bei-hui-shou" class="header-anchor">#</a></h2>
+<p>A： 所有实例都被回收、对应classLoader也被回收、class对象不会再被引用或者反射（这个咋确定？当初书里看到的，没懂）</p>
+<h2><span id="q-shi-me-shi-hou-hui-diao-yong-dui-xiang-de-finalized-fang-fa">Q： 什么时候会调用对象的finalized方法</span><a href="#q-shi-me-shi-hou-hui-diao-yong-dui-xiang-de-finalized-fang-fa" class="header-anchor">#</a></h2>
+<p>A： JVM启动垃圾回收，且该对象要被回收时。</p>
+<p>finalized应该更多是规范吧，很多规范里都要求我们不要自己实现finalized了，毕竟不确定性太大。</p>
 
     </div>
 
@@ -588,7 +675,7 @@ GCRoot的那4种经典对象，瞄一眼就好</p>
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">Serial Old和Serial（单线程收集器）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">Serial类型的收集器被淘汰了吗？它还有优势吗？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">ParOld和ParNew收集器（多线程收集器）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">Parallel Scavenge收集器（对回收时间的优化开端）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">如何理解吞吐量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">Parallel Savenge收集器是如何控制吞吐量的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">代价是什么？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">CMS收集器（Concurrent Mark Sweep, 并发收集概念的重大提出）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">CMS阶段1：初始标记</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.1.1.</span> <span class="nav-text">GCRoot的选取原则是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.1.2.</span> <span class="nav-text">ParNew年轻代收集时，需要遍历CMS老年代的所有GCROOT吗？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.2.</span> <span class="nav-text">CMS阶段2：并发标记</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.2.1.</span> <span class="nav-text">并发标记用了怎样的算法去标记的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.2.2.</span> <span class="nav-text">并发标记时如何记录引用变更？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.2.3.</span> <span class="nav-text">什么是跨代引用？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.2.4.</span> <span class="nav-text">如何避免跨代引用，保障并发标记安全（写屏障</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.3.</span> <span class="nav-text">CMS阶段3：重新标记</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.4.</span> <span class="nav-text">CMS阶段4：并发清除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.4.1.</span> <span class="nav-text">为什么是要用“标记-清除”这么缺点大的方法？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.4.2.</span> <span class="nav-text">CMS如何解决标记-清除后碎片过多，无法放入新对象的情况？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.4.3.</span> <span class="nav-text">并发回收过程中，如果工作线程突然生成大量新垃圾，导致内存不足怎么办？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">G1收集器（回收概念发生诸多变革，目前最先进收集器）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.1.</span> <span class="nav-text">G1相比CMS的重大升级点：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.2.</span> <span class="nav-text">region之间都要通过BFS遍历吗？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">完整大图</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">Serial Old和Serial（单线程收集器）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">Serial类型的收集器被淘汰了吗？它还有优势吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">Q: 什么时候可以触发stopWorld？（安全点,GC时间点）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">4个安全点的设计思路是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.4.</span> <span class="nav-text">Q: 和安全点对应的安全区又是什么？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">ParOld和ParNew收集器（多线程收集器）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">Parallel Scavenge收集器（对回收时间的优化开端）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">如何理解吞吐量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">Parallel Savenge收集器是如何控制吞吐量的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">代价是什么？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">CMS收集器（Concurrent Mark Sweep, 并发收集概念的重大提出）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">CMS阶段1：初始标记</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.1.1.</span> <span class="nav-text">GCRoot的选取原则是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.1.2.</span> <span class="nav-text">ParNew年轻代收集时，需要遍历CMS老年代的所有GCROOT吗？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.2.</span> <span class="nav-text">CMS阶段2：并发标记</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.2.1.</span> <span class="nav-text">并发标记用了怎样的算法去标记的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.2.2.</span> <span class="nav-text">并发标记时如何记录引用变更？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.2.3.</span> <span class="nav-text">什么是跨代引用？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.2.4.</span> <span class="nav-text">如何避免跨代引用，保障并发标记安全（写屏障</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.3.</span> <span class="nav-text">CMS阶段3：重新标记</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.4.</span> <span class="nav-text">CMS阶段4：并发清除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.4.1.</span> <span class="nav-text">为什么是要用“标记-清除”这么缺点大的方法？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.4.2.</span> <span class="nav-text">CMS如何解决标记-清除后碎片过多，无法放入新对象的情况？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.4.3.</span> <span class="nav-text">并发回收过程中，如果工作线程突然生成大量新垃圾，导致内存不足怎么办？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">混合使用收集器（CMS+parNew)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.1.</span> <span class="nav-text">Q： fullGC和monorGC分别发生在老年代区还是新生代区？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.2.</span> <span class="nav-text">Q: 新生对象什么时候可以尝试进入老年代？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.3.</span> <span class="nav-text">Q: Eden年轻代区和survivor区的比例为什么是8比1比1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.4.</span> <span class="nav-text">Q:  讲一下老年代的担保策略是做什么的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.5.</span> <span class="nav-text">新生代、老年代的交互流程：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">G1收集器（回收概念发生诸多变革，目前最先进收集器）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.1.</span> <span class="nav-text">G1相比CMS的重大升级点：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.2.</span> <span class="nav-text">G1里的region之间都要通过BFS遍历吗？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">完整大图</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">8.</span> <span class="nav-text">其他问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">8.1.</span> <span class="nav-text">Q： 方法区里的class对象（即类对象）什么时候会被回收？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">8.2.</span> <span class="nav-text">Q： 什么时候会调用对象的finalized方法</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -604,7 +691,7 @@ GCRoot的那4种经典对象，瞄一眼就好</p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-count">50</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -675,7 +762,7 @@ GCRoot的那4种经典对象，瞄一眼就好</p>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共122.1k字</span>
+  <span class="post-count">博客全站共124.9k字</span>
 </div>
 
         
@@ -729,8 +816,6 @@ GCRoot的那4种经典对象，瞄一眼就好</p>
 <script src="/js/next-boot.js"></script>
 
 
-  <script defer src="/lib/three/three.min.js"></script>
-    <script defer src="/lib/three/three-waves.min.js"></script>
 
 
   
