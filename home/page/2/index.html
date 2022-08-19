@@ -148,6 +148,873 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">java-NIO</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-15 23:44:16 / 修改时间：23:50:52" itemprop="dateCreated datePublished" datetime="2022-08-15T23:44:16+08:00">2022-08-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">java高级应用</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#q-nio-he-biao-zhun-io-you-shi-me-qu-bie">Q： NIO和标准IO有什么区别？</a></li>
+</ul>
+<ul>
+<li><a href="#javanio-he-xin-3-zu-jian">JavaNIO核心3组件：</a>
+<ul>
+<li><a href="#1-channels-tong-dao">1. Channels 通道</a>
+<ul>
+<li><a href="#q-tong-dao-channel-dui-xiang-neng-tong-shi-zuo-du-xie-cao-zuo-ma">Q： 通道Channel对象能同时做读写操作吗？</a></li>
+<li><a href="#q-tong-dao-zhi-chi-yi-bu-du-xie-ma">Q： 通道支持异步读写吗</a></li>
+<li><a href="#q-tong-dao-de-du-xie-shi-fou-bi-xu-yao-yi-lai-huan-chong-qu-buffer">Q： 通道的读写是否必须要依赖缓冲区buffer？</a></li>
+<li><a href="#q-you-na-ji-chong-chang-yong-de-nio-channel">Q: 有哪几种常用的NIO Channel</a></li>
+<li><a href="#q-filechannal-wei-shi-me-bu-zhi-chi-fei-zu-sai">Q: fileChannal为什么不支持非阻塞？</a></li>
+</ul>
+</li>
+<li><a href="#2-buffer-huan-chong-qu">2. Buffer缓冲区</a>
+<ul>
+<li><a href="#buffer-te-dian-xiang-jie">buffer特点详解</a></li>
+<li><a href="#q-buffer-diao-yong-flip-fang-fa-cong-xie-mo-shi-qie-huan-dao-du-mo-shi-shi-position-hui-bian-cheng-duo-shao">Q： buffer调用flip()方法从写模式切换到读模式时，position会变成多少？</a></li>
+<li><a href="#q-buffer-yong-you-1-ge-limit-shu-xing-zhi-dao-shi-zuo-shi-me-de-ma">Q: buffer拥有1个limit属性。知道是做什么的吗？</a></li>
+<li><a href="#q-dang-buffer-cong-xie-mo-shi-qie-huan-dao-du-mo-shi-shi-limit-wei-duo-shao">Q： 当buffer从写模式切换到读模式时，limit为多少？</a></li>
+<li><a href="#q-xiang-buf-huan-chong-qu-xie-shu-ju-de-fang-shi-you-na-xie">Q： 向buf缓冲区写数据的方式有哪些？</a></li>
+<li><a href="#q-shou-dong-xiu-gai-dang-qian-huan-chong-qu-de-postion-de-fang-fa-you-na-xie">Q: 手动修改当前缓冲区的postion的方法有哪些?</a></li>
+<li><a href="#q-1-ge-channel-guan-dao-zhi-chi-duo-ge-buffer-ma">Q：1个channel管道支持多个buffer吗？</a></li>
+<li><a href="#q-buffer-de-warp-slice-duplicate-fen-bie-shi-zuo-shi-me-de">Q: Buffer的Warp、slice、duplicate分别是做什么的？</a></li>
+</ul>
+</li>
+<li><a href="#selector">Selector</a>
+<ul>
+<li><a href="#q-zai-nio-zhong-selector-de-hao-chu-shi-shi-me">Q： 在NIO中Selector的好处是什么？</a></li>
+<li><a href="#q-selector-zhi-chi-zhu-ce-na-chong-lei-xing-de-tong-dao">Q： Selector支持注册哪种类型的通道？</a></li>
+<li><a href="#q-selector-zhu-ce-shi-zhi-chi-jian-ting-na-ji-chong-shi-jian-dui-ying-de-chang-liang-shi-shi-me-a-zui-bu-xi-huan-ji-yi-zhe-chong-dong-xi-liao">Q： Selector注册时，支持监听哪几种事件，对应的常量是什么？（啊最不喜欢记忆这种东西了…）</a></li>
+<li><a href="#q-selector-wei-hu-de-selectionkey-ji-he-gong-you-na-ji-chong">Q： Selector维护的SelectionKey集合共有哪几种？</a></li>
+<li><a href="#q-zhu-ce-zhi-hou-ru-he-shi-yong-selector-dui-zhun-bei-jiu-xu-de-tong-dao-zuo-chu-li">Q:注册之后， 如何使用selector对准备就绪的通道做处理：</a></li>
+<li><a href="#q-select-fang-fa-qi-shi-shi-zu-sai-fang-fa-ji-diao-yong-shi-hui-jin-ru-deng-dai-zhi-dao-ba-suo-you-tong-dao-du-lun-xun-wan-bi-ru-guo-xi-wang-ti-qian-jie-shu-select-you-na-xie-fang-fa">Q：select()方法其实是阻塞方法，即调用时会进入等待，直到把所有通道都轮询完毕。如果希望提前结束select()，有哪些方法？</a></li>
+<li><a href="#q-zhi-qian-shuo-nio-shi-fei-zu-sai-io-dan-wei-shi-me-shang-mian-que-shuo-select-fang-fa-shi-zu-sai-de">Q:之前说NIO是非阻塞IO，但为什么上面却说select()方法是阻塞的？</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#nio-jin-jie">NIO进阶</a>
+<ul>
+<li><a href="#q-duo-xian-cheng-du-xie-tong-yi-wen-jian-shi-ru-he-jia-suo-bao-zheng-xian-cheng-an-quan">Q： 多线程读写同一文件时，如何加锁保证线程安全？</a></li>
+<li><a href="#q-ru-guo-xu-yao-du-1-ge-te-da-wen-jian-ke-yi-shi-yong-shi-me-huan-chong-qu">Q： 如果需要读1个特大文件，可以使用什么缓冲区？</a></li>
+<li><a href="#q-nio-zhong-bytebuffer-gai-ru-he-gen-ju-zheng-que-de-bian-ma-zhuan-wei-dui-ying-de-charbuffer">Q：NIO中ByteBuffer， 该如何根据正确的编码，转为对应的CharBuffer</a></li>
+<li><a href="#q-nio-bei-hou-de-shi-xian-yuan-li-shi-shi-me">Q: NIO背后的实现原理是什么？</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h2><span id="q-nio-he-biao-zhun-io-you-shi-me-qu-bie">Q： NIO和标准IO有什么区别？</span><a href="#q-nio-he-biao-zhun-io-you-shi-me-qu-bie" class="header-anchor">#</a></h2>
+<p>A：</p>
+<p>标准IO， 基于字节流和字符流进行操作，阻塞IO。<br>
+NIO基于通道channel和缓冲区Buffer进行操作，支持非阻塞IO，提供选择器</p>
+<hr>
+<h1><span id="javanio-he-xin-3-zu-jian">JavaNIO核心3组件：</span><a href="#javanio-he-xin-3-zu-jian" class="header-anchor">#</a></h1>
+<h2><span id="1-channels-tong-dao">1. Channels 通道</span><a href="#1-channels-tong-dao" class="header-anchor">#</a></h2>
+<h3><span id="q-tong-dao-channel-dui-xiang-neng-tong-shi-zuo-du-xie-cao-zuo-ma">Q： 通道Channel对象能同时做读写操作吗？</span><a href="#q-tong-dao-channel-dui-xiang-neng-tong-shi-zuo-du-xie-cao-zuo-ma" class="header-anchor">#</a></h3>
+<p>还是说需要像标准IO那样，需要同时创建input和output对象才能做读写操作？</p>
+<p>A：<br>
+通道Channel是双向的， 既可以从channel中读数据，也可以写数据。<br>
+可以看到既能调用read也能调用write，且需要依赖缓冲区buffer。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">FileChannel</span> <span class="variable">fileChannel</span> <span class="operator">=</span> FileChannel.open(<span class="keyword">new</span> <span class="title class_">File</span>(<span class="string">&quot;a.txt&quot;</span>).toPath());</span><br><span class="line">   <span class="type">ByteBuffer</span> <span class="variable">buf</span> <span class="operator">=</span> ByteBuffer.allocate(<span class="number">1024</span>);</span><br><span class="line">    fileChannel.read(buf);</span><br><span class="line">    fileChannel.write(buf);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>注意上图上，fileChannel.read(buf)是将a.txt里的数据读到buf， 即a.txt-&gt;buf</li>
+<li>fileChannel.write(buf)是将buf里的数据写入到a.txt中， 即buf-&gt;a.txt，不要搞反啦！</li>
+<li>通道和缓冲区的关系如下图：<br>
+<img src="/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/5cc26d4b5a39246b56d13836560f8f46b428f838.png" alt="5cc26d4b5a39246b56d13836560f8f46b428f838"></li>
+</ul>
+<hr>
+<h3><span id="q-tong-dao-zhi-chi-yi-bu-du-xie-ma">Q： 通道支持异步读写吗</span><a href="#q-tong-dao-zhi-chi-yi-bu-du-xie-ma" class="header-anchor">#</a></h3>
+<p>A: 支持。</p>
+<hr>
+<h3><span id="q-tong-dao-de-du-xie-shi-fou-bi-xu-yao-yi-lai-huan-chong-qu-buffer">Q： 通道的读写是否必须要依赖缓冲区buffer？</span><a href="#q-tong-dao-de-du-xie-shi-fou-bi-xu-yao-yi-lai-huan-chong-qu-buffer" class="header-anchor">#</a></h3>
+<p>A： 一般都是依赖buffer的。 但也支持2个管道之间的传输，即管道之间直接读写。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">String[] arr=<span class="keyword">new</span> <span class="title class_">String</span>[]&#123;<span class="string">&quot;a.txt&quot;</span>,<span class="string">&quot;b.txt&quot;</span>&#125;;</span><br><span class="line">FileChannel in=<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(arr[<span class="number">0</span>]).getChannel();</span><br><span class="line"><span class="type">FileChannel</span> <span class="variable">out</span> <span class="operator">=</span><span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(arr[<span class="number">1</span>]).getChannel();</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 将a.txt中的数据直接写进b.txt中，相当于文件拷贝</span></span><br><span class="line">in.transferTo(<span class="number">0</span>, in.size(), out);</span><br></pre></td></tr></table></figure>
+<hr>
+<h3><span id="q-you-na-ji-chong-chang-yong-de-nio-channel">Q: 有哪几种常用的NIO Channel</span><a href="#q-you-na-ji-chong-chang-yong-de-nio-channel" class="header-anchor">#</a></h3>
+<p>A:</p>
+<ul>
+<li>FileChannel<br>
+Java NIO中的FileChannel是一个连接到文件的通道。可以通过文件通道读写文件。<br>
+FileChannel无法设置为非阻塞模式，它总是运行在阻塞模式下<br>
+创建方式</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">RandomAccessFile</span>    <span class="variable">file</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RandomAccessFile</span>(<span class="string">&quot;D:/aa.txt&quot;</span>);</span><br><span class="line"><span class="type">FileChannel</span>    <span class="variable">fileChannel</span> <span class="operator">=</span> file.getChannel();</span><br></pre></td></tr></table></figure>
+<ul>
+<li>SocketChannel<br>
+Java NIO中的SocketChannel是一个连接到TCP网络套接字的通道。<br>
+支持非阻塞模式socketChannel.configureBlocking(false)。<br>
+可以通过以下2种方式创建SocketChannel：<br>
+打开一个SocketChannel并连接到互联网上的某台服务器。<br>
+一个新连接到达ServerSocketChannel时，会创建一个SocketChannel<br>
+创建方式：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">SocketChannel</span> <span class="variable">socketChannel</span> <span class="operator">=</span> SocketChannel.open();</span><br><span class="line">socketChannel.connect(<span class="keyword">new</span> <span class="title class_">InetSocketAddress</span>(<span class="string">&quot;192.168.1.100&quot;</span>,<span class="number">80</span>));</span><br></pre></td></tr></table></figure>
+<ul>
+<li>ServerSocketChannel<br>
+Java NIO中的 ServerSocketChannel 是一个可以监听新进来的TCP连接的通道, 就像标准IO中的ServerSocket一样。ServerSocketChannel类在 java.nio.channels包中。<br>
+SocketChannel和ServerSocketChannel的区别： 前者用于客户端，后者用于服务端<br>
+创建方式：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ServerSocketChannel</span> <span class="variable">serverSocketChannel</span> <span class="operator">=</span> ServerSocketChannel.open();</span><br><span class="line">serverSocketChannel.socket.bind(<span class="keyword">new</span> <span class="title class_">InetSocketAddress</span>(<span class="number">80</span>));</span><br><span class="line">serverSocketChannel.configureBlocking(<span class="literal">false</span>);</span><br><span class="line"><span class="keyword">while</span>(<span class="literal">true</span>)&#123;</span><br><span class="line">    <span class="type">SocketChannel</span> <span class="variable">socketChannel</span> <span class="operator">=</span> serverSocketChannel.accept();</span><br><span class="line">    <span class="keyword">if</span>(socketChannle != <span class="literal">null</span>)</span><br><span class="line">        doSomething...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h3><span id="q-filechannal-wei-shi-me-bu-zhi-chi-fei-zu-sai">Q: fileChannal为什么不支持非阻塞？</span><a href="#q-filechannal-wei-shi-me-bu-zhi-chi-fei-zu-sai" class="header-anchor">#</a></h3>
+<p>A：</p>
+<ul>
+<li>UNIX不支持文件的非阻塞I / O,请参见 Non-blocking I/O with regular files.由于Java应该(至少尝试)在所有平台上提供相同的行为,所以FileChannel不会实现SelectableChannel.</li>
+<li>阻塞与非阻塞发生在进程与进程之间的通信，一般文件的读写操作只会发生在进程内部，不存在外部进程的传输。<br>
+即使存在进程间的传输，文件依旧需要通过网络通信，把内容转成数据流传输，这点的传输和Socket通信是相同的，所以没必要再造一个API出来</li>
+</ul>
+<h2><span id="2-buffer-huan-chong-qu">2. Buffer缓冲区</span><a href="#2-buffer-huan-chong-qu" class="header-anchor">#</a></h2>
+<h3><span id="buffer-te-dian-xiang-jie">buffer特点详解</span><a href="#buffer-te-dian-xiang-jie" class="header-anchor">#</a></h3>
+<ul>
+<li>我们真正要把数据拿到或者要写数据， 实际上都是通过buffer进行操作的。<br>
+文件 &lt;-&gt; buffer &lt;-&gt; 数据</li>
+<li>buffer是1个即可读也可写的缓冲区，拥有读写2种模式。</li>
+<li>buffer的capacity属性限定了每个buffer的最大容量,下面的1024就是capacity。<br>
+ByteBuffer buf = ByteBuffer.allocate(1024);</li>
+<li>buffer拥有1个position属性，表示当前的读写位置。</li>
+<li>往buffer中写数据时，position就会增加。</li>
+<li>position最大值为capacity-1</li>
+<li>把fileChannel对应文件里的数据 写入到buffer，叫做写模式</li>
+<li>写之后，调用flip，让buffer的postion置0，此时相当于准备读取buffer里的数据（即调用buffer.get()拿数据）<br>
+（这个模式的叫法个人也觉得不太好，很容易绕，你可以就记忆成： flip就是从写模式转成读模式！）</li>
+</ul>
+<hr>
+<h3><span id="q-buffer-diao-yong-flip-fang-fa-cong-xie-mo-shi-qie-huan-dao-du-mo-shi-shi-position-hui-bian-cheng-duo-shao">Q： buffer调用flip()方法从写模式切换到读模式时，position会变成多少？</span><a href="#q-buffer-diao-yong-flip-fang-fa-cong-xie-mo-shi-qie-huan-dao-du-mo-shi-shi-position-hui-bian-cheng-duo-shao" class="header-anchor">#</a></h3>
+<p>A： 变为0。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ByteBuffer</span> <span class="variable">buf</span> <span class="operator">=</span> ByteBuffer.allocate(<span class="number">1024</span>);</span><br><span class="line">    <span class="comment">// 数据读到buf中,并返回数量，每次最多读1024个</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">byteRead</span> <span class="operator">=</span> fileChannel.read(buf);</span><br><span class="line">    <span class="comment">// 输出byteRead的数量，最多为1024</span></span><br><span class="line">    System.out.println(<span class="string">&quot;position=&quot;</span> + buf.position()+<span class="string">&quot;, byteRead=&quot;</span> + byteRead);</span><br><span class="line">    </span><br><span class="line">    buf.flip();</span><br><span class="line">    <span class="comment">// 切换到读模式了，输出0</span></span><br><span class="line">    System.out.println(<span class="string">&quot;position=&quot;</span> + buf.position());</span><br></pre></td></tr></table></figure>
+<hr>
+<h3><span id="q-buffer-yong-you-1-ge-limit-shu-xing-zhi-dao-shi-zuo-shi-me-de-ma">Q: buffer拥有1个limit属性。知道是做什么的吗？</span><a href="#q-buffer-yong-you-1-ge-limit-shu-xing-zhi-dao-shi-zuo-shi-me-de-ma" class="header-anchor">#</a></h3>
+<p>A:<br>
+写模式下，buffer的limit就是buffer的capacity，即最大容量</p>
+<hr>
+<h3><span id="q-dang-buffer-cong-xie-mo-shi-qie-huan-dao-du-mo-shi-shi-limit-wei-duo-shao">Q： 当buffer从写模式切换到读模式时，limit为多少？</span><a href="#q-dang-buffer-cong-xie-mo-shi-qie-huan-dao-du-mo-shi-shi-limit-wei-duo-shao" class="header-anchor">#</a></h3>
+<p>A： 每次切换前都要调用flip()，切换后，limit为写模式中的position。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">byteRead</span> <span class="operator">=</span> fileChannel.read(buf);</span><br><span class="line">      <span class="comment">// 输出1024</span></span><br><span class="line">      System.out.println(<span class="string">&quot;limit=&quot;</span> + buf.limit() + <span class="string">&quot;,postion=&quot;</span> + buf.position());</span><br><span class="line">      System.out.println(<span class="string">&quot;切换到读模式&quot;</span>);</span><br><span class="line">      buf.flip();</span><br><span class="line">      <span class="comment">// 输出byteRead数量</span></span><br><span class="line">      System.out.println(<span class="string">&quot;limit=&quot;</span> + buf.limit());</span><br></pre></td></tr></table></figure>
+<p>结果如下<br>
+<img src="/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/7faf1b8a996ad366bd46621cbb6207c4afa1a375.png" alt="7faf1b8a996ad366bd46621cbb6207c4afa1a375"></p>
+<hr>
+<h3><span id="q-xiang-buf-huan-chong-qu-xie-shu-ju-de-fang-shi-you-na-xie">Q： 向buf缓冲区写数据的方式有哪些？</span><a href="#q-xiang-buf-huan-chong-qu-xie-shu-ju-de-fang-shi-you-na-xie" class="header-anchor">#</a></h3>
+<p>A：</p>
+<ul>
+<li>int byteRead = fileChannel.read(buf);<br>
+从通道中读数据到buf中， 即相当于向buf缓冲区中写数据。</li>
+<li>buf.putChar(‘a’);<br>
+手动向buf中写入字符a， postion加1。</li>
+</ul>
+<hr>
+<h3><span id="q-shou-dong-xiu-gai-dang-qian-huan-chong-qu-de-postion-de-fang-fa-you-na-xie">Q: 手动修改当前缓冲区的postion的方法有哪些?</span><a href="#q-shou-dong-xiu-gai-dang-qian-huan-chong-qu-de-postion-de-fang-fa-you-na-xie" class="header-anchor">#</a></h3>
+<p>A:<br>
+rewind() 将postion设置为0<br>
+mark() 可以标记1个特定的位置， 相当于打标记， 在一顿操作后，可通过reset()回到之前mark()的位置（就像你需要mark我的这几篇博文一样！）</p>
+<hr>
+<h3><span id="q-1-ge-channel-guan-dao-zhi-chi-duo-ge-buffer-ma">Q：1个channel管道支持多个buffer吗？</span><a href="#q-1-ge-channel-guan-dao-zhi-chi-duo-ge-buffer-ma" class="header-anchor">#</a></h3>
+<p>A： 支持。 通道的write和read方法都支持传入1个buffer数组，会按照顺序做读写操作。<br>
+<img src="/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/27b39bd04044d506452c7404849d4ecee57fc3eb.png" alt="27b39bd04044d506452c7404849d4ecee57fc3eb"></p>
+<hr>
+<p>Q: 讲一下buffer的种类<br>
+A:<br>
+Buffer的种类：<br>
+<img src="/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/a881a6f6fe6a8395391678a5982d6620de0193b7.png" alt="a881a6f6fe6a8395391678a5982d6620de0193b7"></p>
+<p>大部分都是java基础类型产生的buffer，  除了mappedByteBuffer比较特别。</p>
+<hr>
+<h3><span id="q-buffer-de-warp-slice-duplicate-fen-bie-shi-zuo-shi-me-de">Q: Buffer的Warp、slice、duplicate分别是做什么的？</span><a href="#q-buffer-de-warp-slice-duplicate-fen-bie-shi-zuo-shi-me-de" class="header-anchor">#</a></h3>
+<p>A:</p>
+<ul>
+<li>
+<p>warp:<br>
+根据一个byte[]来生成一个固定的ByteBuffer时，使用ByteBuffer.wrap()非法的合适。他会直接基于byte[]数组生成一个新的buffer，值也保持一致。</p>
+</li>
+<li>
+<p>slice：<br>
+得到切片后的数组。</p>
+</li>
+<li>
+<p>duplicate：<br>
+调用duplicate方法返回的Buffer对象就是复制了一份原始缓冲区，复制了position、limit、capacity这些属性</p>
+</li>
+</ul>
+<blockquote>
+<blockquote>
+<p>注意！！！！！！<br>
+以上warp\slice\duplicte生成的缓冲区get和put所操作的数组还是与原始缓冲区一样的<br>
+所以对复制后的缓冲区进行修改也会修改原始的缓冲区，反之亦然<br>
+因此duplicte、slice一般是用于操作一下poistion\limit等处理，但是原内容不会去变他，否则就会引起原缓冲器的修改。</p>
+</blockquote>
+</blockquote>
+<h2><span id="selector">Selector</span><a href="#selector" class="header-anchor">#</a></h2>
+<p>selector可用来在线程中关联多个通道，并进行事件监听。<br>
+<img src="/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/ec184550662e4d8604d9538a21bab5ea0c04bf2c.png" alt="ec184550662e4d8604d9538a21bab5ea0c04bf2c"></p>
+<hr>
+<h3><span id="q-zai-nio-zhong-selector-de-hao-chu-shi-shi-me">Q： 在NIO中Selector的好处是什么？</span><a href="#q-zai-nio-zhong-selector-de-hao-chu-shi-shi-me" class="header-anchor">#</a></h3>
+<p>A：</p>
+<p>可以用更少的线程来管理各个通道。<br>
+减少线程上下文切换的资源开销。</p>
+<hr>
+<h3><span id="q-selector-zhi-chi-zhu-ce-na-chong-lei-xing-de-tong-dao">Q： Selector支持注册哪种类型的通道？</span><a href="#q-selector-zhi-chi-zhu-ce-na-chong-lei-xing-de-tong-dao" class="header-anchor">#</a></h3>
+<p>A：<br>
+支持非阻塞的通道。<br>
+通道要在注册前调用 channel.configureBlocking(false) 设置为非阻塞。<br>
+例如FileChannel就没办法注册，他注定是阻塞的。<br>
+而socketChannel就可以支持非阻塞。</p>
+<hr>
+<h3><span id="q-selector-zhu-ce-shi-zhi-chi-jian-ting-na-ji-chong-shi-jian-dui-ying-de-chang-liang-shi-shi-me-a-zui-bu-xi-huan-ji-yi-zhe-chong-dong-xi-liao">Q： Selector注册时，支持监听哪几种事件，对应的常量是什么？（啊最不喜欢记忆这种东西了…）</span><a href="#q-selector-zhu-ce-shi-zhi-chi-jian-ting-na-ji-chong-shi-jian-dui-ying-de-chang-liang-shi-shi-me-a-zui-bu-xi-huan-ji-yi-zhe-chong-dong-xi-liao" class="header-anchor">#</a></h3>
+<p>A：<br>
+共有4种可监听事件</p>
+<ul>
+<li>Connect 成功连接到1个服务器，对应常量SelectionKey.OP_CONNECT</li>
+<li>Accept 准备好接收新进入的连接， 对应常量SelectionKey.OP_ACCEPT</li>
+<li>Read, 有数据可读，对应常量SelectionKey.OP_READ</li>
+<li>Write 接收到往里写的数据， 对应常量SelectionKey.OP_WRITE<br>
+如果希望对该通道监听多种事件，可以用&quot;|&quot;位或操作符把常量连接起来。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> <span class="type">int</span> <span class="variable">interestingSet</span> <span class="operator">=</span> Selectionkey.OP_READ | Selectionkey.OP_WRITE;</span><br><span class="line"><span class="type">Selectionkey</span> <span class="variable">key</span> <span class="operator">=</span> channel.register(selector,interestingSet)</span><br></pre></td></tr></table></figure>
+<p>SelectionKey键表示了一个特定的通道对象和一个特定的选择器对象之间的注册关系</p>
+<hr>
+<h3><span id="q-selector-wei-hu-de-selectionkey-ji-he-gong-you-na-ji-chong">Q： Selector维护的SelectionKey集合共有哪几种？</span><a href="#q-selector-wei-hu-de-selectionkey-ji-he-gong-you-na-ji-chong" class="header-anchor">#</a></h3>
+<p>A：<br>
+共有三种。</p>
+<ol>
+<li>
+<p>已注册的所有键的集合(Registered key set)<br>
+所有与选择器关联的通道所生成的键的集合称为已经注册的键的集合。并不是所有注册过的键都仍然有效。这个集合通过keys()方法返回，并且可能是空的。这个已注册的键的集合不是可以直接修改的；试图这么做的话将引发java.lang.UnsupportedOperationException。</p>
+</li>
+<li>
+<p>已选择的键的集合(Selected key set)<br>
+已注册的键的集合的子集。这个集合的每个成员都是相关的通道被选择器(在前一个选择操作中)判断为已经准备好的，并且包含于键的interest集合中的操作。这个集合通过selectedKeys()方法返回(并有可能是空的)。<br>
+不要将已选择的键的集合与ready集合弄混了。这是一个键的集合，每个键都关联一个已经准备好至少一种操作的通道。每个键都有一个内嵌的ready集合，指示了所关联的通道已经准备好的操作。键可以直接从这个集合中移除，但不能添加。试图向已选择的键的集合中添加元素将抛出java.lang.UnsupportedOperationException。</p>
+</li>
+<li>
+<p>已取消的键的集合(Cancelled key set)<br>
+已注册的键的集合的子集，这个集合包含了cancel()方法被调用过的键(这个键已经被无效化)，但它们还没有被注销。这个集合是选择器对象的私有成员，因而无法直接访问。</p>
+</li>
+</ol>
+<hr>
+<h3><span id="q-zhu-ce-zhi-hou-ru-he-shi-yong-selector-dui-zhun-bei-jiu-xu-de-tong-dao-zuo-chu-li">Q:注册之后， 如何使用selector对准备就绪的通道做处理：</span><a href="#q-zhu-ce-zhi-hou-ru-he-shi-yong-selector-dui-zhun-bei-jiu-xu-de-tong-dao-zuo-chu-li" class="header-anchor">#</a></h3>
+<p>A：</p>
+<ol>
+<li>调用select()方法获取已就绪的通道，返回的int值表示有多少通道已经就绪</li>
+<li>从selector中获取selectedkeys</li>
+<li>遍历selectedkeys</li>
+<li>查看各SelectionKey中 是否有事件就绪了。</li>
+<li>如果有事件就绪，从key中获取对应对应管道。做对应处理</li>
+<li>类似如下，一般都会启1个线程来run这个selector监听的处理</li>
+</ol>
+<hr>
+<h3><span id="q-select-fang-fa-qi-shi-shi-zu-sai-fang-fa-ji-diao-yong-shi-hui-jin-ru-deng-dai-zhi-dao-ba-suo-you-tong-dao-du-lun-xun-wan-bi-ru-guo-xi-wang-ti-qian-jie-shu-select-you-na-xie-fang-fa">Q：select()方法其实是阻塞方法，即调用时会进入等待，直到把所有通道都轮询完毕。如果希望提前结束select()，有哪些方法？</span><a href="#q-select-fang-fa-qi-shi-shi-zu-sai-fang-fa-ji-diao-yong-shi-hui-jin-ru-deng-dai-zhi-dao-ba-suo-you-tong-dao-du-lun-xun-wan-bi-ru-guo-xi-wang-ti-qian-jie-shu-select-you-na-xie-fang-fa" class="header-anchor">#</a></h3>
+<p>A：<br>
+有2个办法：<br>
+wakeup()， 调用后，select（）方法立刻返回。<br>
+close()， 直接关闭selector。</p>
+<hr>
+<h3><span id="q-zhi-qian-shuo-nio-shi-fei-zu-sai-io-dan-wei-shi-me-shang-mian-que-shuo-select-fang-fa-shi-zu-sai-de">Q:之前说NIO是非阻塞IO，但为什么上面却说select()方法是阻塞的？</span><a href="#q-zhi-qian-shuo-nio-shi-fei-zu-sai-io-dan-wei-shi-me-shang-mian-que-shuo-select-fang-fa-shi-zu-sai-de" class="header-anchor">#</a></h3>
+<p>A:<br>
+其实NIO的非阻塞，指的是IO不阻塞，即我们不会卡在read()处，我们会用selector去查询就绪状态，如果状态ok就。<br>
+而查询操作是需要时间，因此select()必须要把所有通道都检查一遍才能告诉结果，因此select这个查询操作是阻塞的。</p>
+<hr>
+<h1><span id="nio-jin-jie">NIO进阶</span><a href="#nio-jin-jie" class="header-anchor">#</a></h1>
+<h2><span id="q-duo-xian-cheng-du-xie-tong-yi-wen-jian-shi-ru-he-jia-suo-bao-zheng-xian-cheng-an-quan">Q： 多线程读写同一文件时，如何加锁保证线程安全？</span><a href="#q-duo-xian-cheng-du-xie-tong-yi-wen-jian-shi-ru-he-jia-suo-bao-zheng-xian-cheng-an-quan" class="header-anchor">#</a></h2>
+<p>A：<br>
+使用FileChannel的加锁功能。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">RandomAccessFile</span> <span class="variable">randFile</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RandomAccessFile</span>(target, <span class="string">&quot;rw&quot;</span>);</span><br><span class="line"><span class="type">FileChannel</span>  <span class="variable">channel</span> <span class="operator">=</span> randFile.getChannel();</span><br><span class="line"><span class="comment">// pos和siz决定加锁区域， shared指定是否是共享锁</span></span><br><span class="line"><span class="type">FileLock</span> <span class="variable">fileLock</span> <span class="operator">=</span> channel.lock(pos , size , shared);</span><br><span class="line"><span class="keyword">if</span> (fileLock!=<span class="literal">null</span>) &#123;</span><br><span class="line">	<span class="keyword">do</span>();</span><br><span class="line">   <span class="comment">// 这里简化了，实际上应该用try-catch</span></span><br><span class="line">	fileLock.release();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2><span id="q-ru-guo-xu-yao-du-1-ge-te-da-wen-jian-ke-yi-shi-yong-shi-me-huan-chong-qu">Q： 如果需要读1个特大文件，可以使用什么缓冲区？</span><a href="#q-ru-guo-xu-yao-du-1-ge-te-da-wen-jian-ke-yi-shi-yong-shi-me-huan-chong-qu" class="header-anchor">#</a></h2>
+<p>A：<br>
+使用MappedByteBuffer。<br>
+这个缓冲区可以把大文件理解成1个byte数组来访问（但实际上并没有加载这么大的byte数组，实际内容放在内存+虚存中）。<br>
+主要通过FileChannel.map（模式，起始位置，区域）来生成1个MappedByteBuffer。<br>
+然后可以用put和get去处理对应位置的byte。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">length</span> <span class="operator">=</span> <span class="number">0x8FFFFFF</span>;<span class="comment">//一个byte占1B，所以共向文件中存128M的数据</span></span><br><span class="line"><span class="keyword">try</span> (<span class="type">FileChannel</span> <span class="variable">channel</span> <span class="operator">=</span> FileChannel.open(Paths.get(<span class="string">&quot;src/c.txt&quot;</span>),</span><br><span class="line">		StandardOpenOption.READ, StandardOpenOption.WRITE);) &#123;</span><br><span class="line">	<span class="type">MappedByteBuffer</span> <span class="variable">mapBuffer</span> <span class="operator">=</span> channel.map(FileChannel.MapMode.READ_WRITE, <span class="number">0</span>, length);</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;length;i++) &#123;</span><br><span class="line">		mapBuffer.put((<span class="type">byte</span>)<span class="number">0</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> length/<span class="number">2</span>;i&lt;length/<span class="number">2</span>+<span class="number">4</span>;i++) &#123;</span><br><span class="line">		<span class="comment">//像数组一样访问</span></span><br><span class="line">		System.out.println(mapBuffer.get(i));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>MapMode的三种模式：</p>
+<ul>
+<li>MapMode.READ_ONLY（只读）： 试图修改得到的缓冲区将导致抛出 ReadOnlyBufferException。</li>
+<li>MapMode.READ_WRITE（读/写）： 对得到的缓冲区的更改会写入文件，需要调用fore()方法</li>
+<li>MapMode.PRIVATE（专用）： 可读可写,但是修改的内容不会写入文件,只是buffer自身的改变。</li>
+</ul>
+<hr>
+<h2><span id="q-nio-zhong-bytebuffer-gai-ru-he-gen-ju-zheng-que-de-bian-ma-zhuan-wei-dui-ying-de-charbuffer">Q：NIO中ByteBuffer， 该如何根据正确的编码，转为对应的CharBuffer</span><a href="#q-nio-zhong-bytebuffer-gai-ru-he-gen-ju-zheng-que-de-bian-ma-zhuan-wei-dui-ying-de-charbuffer" class="header-anchor">#</a></h2>
+<p>A：<br>
+利用Charset的decode功能。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ByteBuffer</span> <span class="variable">byteBuffer</span> <span class="operator">=</span> ...;</span><br><span class="line"><span class="type">Charset</span> <span class="variable">charset</span> <span class="operator">=</span> Charset.forName(<span class="string">&quot;UTF-8&quot;</span>);</span><br><span class="line"><span class="type">CharBuffer</span> <span class="variable">charBuffer</span> <span class="operator">=</span> charset.decode(byteBuffer);</span><br><span class="line">如果是CharBuffer转ByteBuffer， 就用charset.encode。</span><br></pre></td></tr></table></figure>
+<hr>
+<h2><span id="q-nio-bei-hou-de-shi-xian-yuan-li-shi-shi-me">Q: NIO背后的实现原理是什么？</span><a href="#q-nio-bei-hou-de-shi-xian-yuan-li-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A: 使用了linux的epoll机制<br>
+NIO和epoll的对应关系见<a target="_blank" rel="noopener" href="https://blog.csdn.net/xing317521/article/details/105054661/">浅谈NIO和Epoll的实现原理</a><br>
+epoll原理见<a target="_blank" rel="noopener" href="http://doc.minidown.cn/ejxpkz/">epoll原理</a></p>
+<hr>
+<p><img src="/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/398cc1e5fdaa0abf90cd8e577fd826ade07c3ecf.png" alt="398cc1e5fdaa0abf90cd8e577fd826ade07c3ecf"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-Socket%E5%BA%94%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-Socket%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">java-Socket应用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-15 23:44:16 / 修改时间：23:54:43" itemprop="dateCreated datePublished" datetime="2022-08-15T23:44:16+08:00">2022-08-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">java高级应用</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-Socket%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-Socket%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#fu-wu-duan">服务端</a>
+<ul>
+<li><a href="#fu-wu-duan-kai-qi-guo-cheng">服务端开启过程</a></li>
+<li><a href="#q-server-duan-ru-he-you-xiao-pan-duan-client-xiao-xi-chuan-shu-wan-bi">Q：server端如何有效判断client消息传输完毕？</a></li>
+<li><a href="#q-ru-he-bi-mian-shang-mian-yong-while-xun-huan-chu-li-yi-ge-qing-qiu-chu-li-shi-yong-shi-jiao-jiu-ying-xiang-liao-qi-ta-qing-qiu-de-chu-li">Q：如何避免上面用while循环处理一个请求处理时用时较久，影响了其他请求的处理?</a></li>
+<li><a href="#serversocket-xuan-xiang">ServerSocket选项</a></li>
+</ul>
+</li>
+<li><a href="#ke-hu-duan">客户端</a>
+<ul>
+<li><a href="#q-ke-hu-duan-jin-xing-shu-chu-liu-shu-chu-shi-ru-guo-zhi-xing-liao-outputstream-close-hou-huan-xu-yao-zhi-xing-socket-close-ma">Q: 客户端进行输出流输出时，如果执行了outputStream.close()后， 还需要执行socket.close()吗？</a></li>
+</ul>
+</li>
+<li><a href="#udp">UDP</a>
+<ul>
+<li><a href="#q-ru-guo-yao-zuo-udp-tong-xin-na-me-yao-yong-shi-me-socket">Q：如果要做UDP通信， 那么要用什么socket？</a></li>
+<li><a href="#q-datagramsocket-he-java-zhong-pu-tong-serversocket-huo-zhe-socket-ke-hu-duan-de-qu-bie">Q: DatagramSocket和java中普通ServerSocket或者 Socket客户端的区别？</a></li>
+<li><a href="#q-multicastsocket-shi-shi-me">Q： MulticastSocket是什么？</a></li>
+<li><a href="#q-shang-mian-de-socketa-hui-fa-song-gei-zi-ji-ma">Q: 上面的socketA会发送给自己吗？</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="fu-wu-duan">服务端</span><a href="#fu-wu-duan" class="header-anchor">#</a></h1>
+<h2><span id="fu-wu-duan-kai-qi-guo-cheng">服务端开启过程</span><a href="#fu-wu-duan-kai-qi-guo-cheng" class="header-anchor">#</a></h2>
+<p>用accept开启一个Socket</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ServerSocket</span> <span class="variable">server</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ServerSocket</span>(port);</span><br><span class="line"><span class="type">Socket</span> <span class="variable">socket</span> <span class="operator">=</span> server.accept();</span><br></pre></td></tr></table></figure>
+<p>调用后会进入阻塞。</p>
+<ul>
+<li>用socket.getInputStream()， 得到一个socket输入流， 进行read时，就是从客户端那边读取发来的数据</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">InputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> socket.getInputStream();</span><br><span class="line"><span class="keyword">while</span>(len = inputStream.read(bytes))!=-<span class="number">1</span>) &#123;</span><br><span class="line">	<span class="comment">//注意指定编码格式，发送方和接收方需要统一</span></span><br><span class="line">	sb.append(<span class="keyword">new</span> <span class="title class_">String</span>(bytes, <span class="number">0</span>, len, <span class="string">&quot;UTF-8&quot;</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>如果server端要返回数据，就再从socket对象里get输出流，往输出流写东西，就会传到客户端那边了。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">OuputStream</span> <span class="variable">outputStream</span> <span class="operator">=</span> socket.getOuputStream();</span><br><span class="line">outputStream.write(<span class="string">&quot;hahah, this is response&quot;</span>.getBytes(<span class="string">&quot;UTF-8&quot;</span>))</span><br></pre></td></tr></table></figure>
+<hr>
+<h2><span id="q-server-duan-ru-he-you-xiao-pan-duan-client-xiao-xi-chuan-shu-wan-bi">Q：server端如何有效判断client消息传输完毕？</span><a href="#q-server-duan-ru-he-you-xiao-pan-duan-client-xiao-xi-chuan-shu-wan-bi" class="header-anchor">#</a></h2>
+<p>A：</p>
+<ul>
+<li>客户端不再发送时，那边会调用socket.shutdownOutput(),  对方的read()方法就会返回-1.<br>
+*建议使用长度+类型+数据的协议传输方式， 这样服务端可以明确直到自己这一次这要读多少字节以及是什么样的消息， 减少做消息结束判断导致的异常问题。</li>
+</ul>
+<hr>
+<h2><span id="q-ru-he-bi-mian-shang-mian-yong-while-xun-huan-chu-li-yi-ge-qing-qiu-chu-li-shi-yong-shi-jiao-jiu-ying-xiang-liao-qi-ta-qing-qiu-de-chu-li">Q：如何避免上面用while循环处理一个请求处理时用时较久，影响了其他请求的处理?</span><a href="#q-ru-he-bi-mian-shang-mian-yong-while-xun-huan-chu-li-yi-ge-qing-qiu-chu-li-shi-yong-shi-jiao-jiu-ying-xiang-liao-qi-ta-qing-qiu-de-chu-li" class="header-anchor">#</a></h2>
+<p>A:<br>
+每当accept 返回1个socket之后， 把这个socket放进一个线程中，交给线程池去处理。</p>
+<hr>
+<h2><span id="serversocket-xuan-xiang">ServerSocket选项</span><a href="#serversocket-xuan-xiang" class="header-anchor">#</a></h2>
+<ol>
+<li>SO_TIMEOUT  accept的超时时间</li>
+<li>SO_REUSEADDR   是否支持复用端口<br>
+即另一个serverSocket还没有close的时候， 新的serverSocket能否重用那个端口。</li>
+<li>SO_RCVBUF 缓冲区大小<br>
+收到到特定缓存的大小才会从inputStream中返回。</li>
+</ol>
+<ul>
+<li>设置方式：serverScoket.setSoXXX(…)</li>
+</ul>
+<hr>
+<h1><span id="ke-hu-duan">客户端</span><a href="#ke-hu-duan" class="header-anchor">#</a></h1>
+<h2><span id="q-ke-hu-duan-jin-xing-shu-chu-liu-shu-chu-shi-ru-guo-zhi-xing-liao-outputstream-close-hou-huan-xu-yao-zhi-xing-socket-close-ma">Q: 客户端进行输出流输出时，如果执行了outputStream.close()后， 还需要执行socket.close()吗？</span><a href="#q-ke-hu-duan-jin-xing-shu-chu-liu-shu-chu-shi-ru-guo-zhi-xing-liao-outputstream-close-hou-huan-xu-yao-zhi-xing-socket-close-ma" class="header-anchor">#</a></h2>
+<p>A：<br>
+不需要。对于同一个socket， 如果关闭了输出流比如pw.close()， 则与该输出流关联的socket也会关闭， 所以一般不需要关闭输出流。  当关闭socket的时候， 输出流也会同时关闭。<br>
+因此如果执行了以下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从socket中拿到inputStream和outputStream</span></span><br><span class="line">...</span><br><span class="line">outputStream.close()</span><br><span class="line">inputStream.read();</span><br><span class="line">inputStream.close();</span><br></pre></td></tr></table></figure>
+<p>这时候inputStream.read()的就会报错， 因为socket已经被关闭了。</p>
+<h1><span id="udp">UDP</span><a href="#udp" class="header-anchor">#</a></h1>
+<h2><span id="q-ru-guo-yao-zuo-udp-tong-xin-na-me-yao-yong-shi-me-socket">Q：如果要做UDP通信， 那么要用什么socket？</span><a href="#q-ru-guo-yao-zuo-udp-tong-xin-na-me-yao-yong-shi-me-socket" class="header-anchor">#</a></h2>
+<p>A: DatagramSocket</p>
+<hr>
+<h2><span id="q-datagramsocket-he-java-zhong-pu-tong-serversocket-huo-zhe-socket-ke-hu-duan-de-qu-bie">Q: DatagramSocket和java中普通ServerSocket或者 Socket客户端的区别？</span><a href="#q-datagramsocket-he-java-zhong-pu-tong-serversocket-huo-zhe-socket-ke-hu-duan-de-qu-bie" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>TCP的socket建立时， 需要先指定对端口的op和端口， 并用输出流去输出数据</li>
+<li>而java中的UDP客户端建立时， 不需要在socket里指定ip和端口， 而是将ip+端口放在datagramPacket包里去指定。(所以一个socket可以用来发送好几份不同目的组的UDP包）</li>
+<li>另一个区别是， tcp两边用流来传输数据， 而UDP用datagramPacket来传递数据</li>
+</ul>
+<hr>
+<h2><span id="q-multicastsocket-shi-shi-me">Q： MulticastSocket是什么？</span><a href="#q-multicastsocket-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A：<br>
+多点广播的socket实现， 也是用DatagramPacket来传输数据。<br>
+类似于一个客户端可以把数据包发给号借给目的端。<br>
+multicastSocket.joinGroup(多播ip)<br>
+则这个socket会加入到这个多播组中。<br>
+举例：</p>
+<blockquote>
+<blockquote>
+<p>假设环境中有4个MulticastSocket,  分别为socketA、socketB、socketC、socketD。<br>
+socketA、socketB、socketC都通过joinGroup方法，加入到了224.0.0.1这个多播组中<br>
+那么当socketA发送了某个DatagramPacket时，会只发送给B和C， 不会发送给D。</p>
+</blockquote>
+</blockquote>
+<hr>
+<h2><span id="q-shang-mian-de-socketa-hui-fa-song-gei-zi-ji-ma">Q: 上面的socketA会发送给自己吗？</span><a href="#q-shang-mian-de-socketa-hui-fa-song-gei-zi-ji-ma" class="header-anchor">#</a></h2>
+<p>A:<br>
+默认会的。</p>
+<p>发送给自己的话， 那就是设置了环回。<br>
+如果执行过 multicastSocket.setLoopbackMode(true)，那就是禁止环回机制。<br>
+注意：默认是开启的。</p>
+<hr>
+<p>参考资料：<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/a78270528/article/details/80318571%EF%BC%88%E8%BF%99%E7%AF%87%E5%86%99%E5%BE%97%E5%BE%88%E6%A3%92%EF%BC%89">https://blog.csdn.net/a78270528/article/details/80318571（这篇写得很棒）</a><br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/woshisap/article/details/6597413">https://blog.csdn.net/woshisap/article/details/6597413</a><br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_44618862/article/details/98480120">https://blog.csdn.net/weixin_44618862/article/details/98480120</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">java安全管理器应用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-15 23:44:16 / 修改时间：23:57:37" itemprop="dateCreated datePublished" datetime="2022-08-15T23:44:16+08:00">2022-08-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">java高级应用</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#java-an-quan-lei-ku-chang-jian-wen-ti">Java安全类库常见问题</a>
+<ul>
+<li><a href="#q-you-ji-chong-fang-shi-ke-yi-qi-dong-an-quan-guan-li-qi">Q：有几种方式可以启动安全管理器？</a></li>
+<li><a href="#q-ru-guo-wo-bu-she-zhi-an-quan-guan-li-qi-zhi-jie-pao-system-getproperty-hui-bao-quan-xian-cuo-wu-ma">Q：如果我不设置安全管理器，直接跑System.getProperty，会报权限错误吗？</a></li>
+<li><a href="#q-yin-shi-qi-dong-zhong-ru-guo-zhi-pei-liao-djava-security-manager-dan-mei-you-pei-djava-security-policy-na-me-shang-mian-de-wen-jian-yi-ji-xi-tong-pei-zhi-shi-du-yun-xu-du-huan-shi-du-bu-yun-xu-du">Q: 隐式启动中，如果只配了-Djava.security.manager ，但没有配-Djava.security.policy， 那么上面的文件以及系统配置是都允许读，还是都不允许读？</a></li>
+<li><a href="#q-ru-guo-wo-zhi-qian-you-yin-shi-qi-dong-ci-shi-new-liao-yi-ge-xin-de-securitymanager-fang-jin-qu-ci-shi-shi-fou-huan-you-gai-shu-xing-de-read-quan-xian">Q：如果我之前有隐式启动，此时new了一个新的SecurityManager放进去，此时是否还有该属性的read权限？</a></li>
+<li><a href="#chang-jian-de-java-an-quan-quan-xian">常见的java 安全权限</a></li>
+<li><a href="#q-xiang-xi-jiang-jiang-an-quan-guan-li-qi-de-ying-yong-chang-jing">Q： 详细讲讲安全管理器的应用场景？</a></li>
+<li><a href="#q-shang-mian-zhe-ge-li-zi-zhong-ru-guo-e-yi-diao-yong-zhe-zi-ji-zai-an-quan-guan-li-qi-zhong-zeng-jia-zhe-chong-quan-xian-de-chu-li-zen-me-ban">Q： 上面这个例子中， 如果恶意调用者自己在安全管理器中增加这种权限的处理怎么办？</a></li>
+<li><a href="#q-jia-she-mou-fu-wu-shi-xian-liao-yi-ge-zi-ding-yi-classloader-zhi-chi-cong-wang-luo-huo-qu-xin-ren-ke-hu-chuan-lai-de-jar-bao-bing-zai-zi-ji-de-fu-wu-zhong-zhi-xing-na-me-ying-gai-ru-he-fang-zhi-jia-zai-bu-ke-xin-de-jar-bao-ni">Q： 假设某服务实现了一个自定义classLoader， 支持从网络获取信任客户传来的jar包并在自己的服务中执行， 那么应该如何防止加载不可信的jar包呢？</a></li>
+<li><a href="#q-bu-jia-yan-zhi-de-ha-xi-kou-ling-ha-xi-you-shi-me-que-xian">Q：不加盐值的哈希口令哈希有什么缺陷？</a></li>
+<li><a href="#q-dui-kou-ling-zuo-ha-xi-jia-yan-zhi-shi-you-shi-me-yao-qiu">Q：对口令做哈希加盐值时有什么要求？</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="java-an-quan-lei-ku-chang-jian-wen-ti">Java安全类库常见问题</span><a href="#java-an-quan-lei-ku-chang-jian-wen-ti" class="header-anchor">#</a></h1>
+<h2><span id="q-you-ji-chong-fang-shi-ke-yi-qi-dong-an-quan-guan-li-qi">Q：有几种方式可以启动安全管理器？</span><a href="#q-you-ji-chong-fang-shi-ke-yi-qi-dong-an-quan-guan-li-qi" class="header-anchor">#</a></h2>
+<p>A：两种方式<br>
+隐式启动： 启动命令里加-Djava.security.manager， 即可开启安全管理器。<br>
+显示启动： 代码里自己new一个SecurityManager或者继承一个新子类， 然后用System.setSecurityManager(xxxSecurityManager)来设置</p>
+<hr>
+<p>看以下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SecurityManagerTest</span> &#123;    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> FileNotFoundException &#123;    </span><br><span class="line">    System.out.println(System.getProperty(<span class="string">&quot;file.encoding&quot;</span>));  </span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2><span id="q-ru-guo-wo-bu-she-zhi-an-quan-guan-li-qi-zhi-jie-pao-system-getproperty-hui-bao-quan-xian-cuo-wu-ma">Q：如果我不设置安全管理器，直接跑System.getProperty，会报权限错误吗？</span><a href="#q-ru-guo-wo-bu-she-zhi-an-quan-guan-li-qi-zhi-jie-pao-system-getproperty-hui-bao-quan-xian-cuo-wu-ma" class="header-anchor">#</a></h2>
+<p>A：<br>
+不会报错误。 如果隐式和显示启动都没做，那么System里的SecurityManager就是null，那么就不会进行检查。<br>
+可以看下System.getProperty里的源码：<br>
+<img src="/images/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/492830d481c84ff56c99dec832d0939d6616b824.png" alt="492830d481c84ff56c99dec832d0939d6616b824"></p>
+<hr>
+<h2><span id="q-yin-shi-qi-dong-zhong-ru-guo-zhi-pei-liao-djava-security-manager-dan-mei-you-pei-djava-security-policy-na-me-shang-mian-de-wen-jian-yi-ji-xi-tong-pei-zhi-shi-du-yun-xu-du-huan-shi-du-bu-yun-xu-du">Q: 隐式启动中，如果只配了-Djava.security.manager ，但没有配-Djava.security.policy， 那么上面的文件以及系统配置是都允许读，还是都不允许读？</span><a href="#q-yin-shi-qi-dong-zhong-ru-guo-zhi-pei-liao-djava-security-manager-dan-mei-you-pei-djava-security-policy-na-me-shang-mian-de-wen-jian-yi-ji-xi-tong-pei-zhi-shi-du-yun-xu-du-huan-shi-du-bu-yun-xu-du" class="header-anchor">#</a></h2>
+<p>A：<br>
+都不允许读。 即开启后，不在policy允许范围内的，都默认不允许读。</p>
+<hr>
+<ul>
+<li>
+<p>如果要允许读文件以及读file.encoding那个系统配置， 需要加上-Djava.security.policy=xxx.policy ， 指明policy文件。</p>
+</li>
+<li>
+<p>文件里大概长这样<br>
+<img src="/images/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/9fe292ac9397f17154eb131f2b7ac65ae6bbfa7a.png" alt="9fe292ac9397f17154eb131f2b7ac65ae6bbfa7a"><br>
+注意policy是拼在-Djava.security.manager的后面<br>
+<img src="/images/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/5ef1de92e4ef3956fc00c8830f82479b77213629.png" alt="5ef1de92e4ef3956fc00c8830f82479b77213629"></p>
+</li>
+</ul>
+<hr>
+<p>显示启动，就是自己new一个SecurityManager，并set进去。</p>
+<h2><span id="q-ru-guo-wo-zhi-qian-you-yin-shi-qi-dong-ci-shi-new-liao-yi-ge-xin-de-securitymanager-fang-jin-qu-ci-shi-shi-fou-huan-you-gai-shu-xing-de-read-quan-xian">Q：如果我之前有隐式启动，此时new了一个新的SecurityManager放进去，此时是否还有该属性的read权限？</span><a href="#q-ru-guo-wo-zhi-qian-you-yin-shi-qi-dong-ci-shi-new-liao-yi-ge-xin-de-securitymanager-fang-jin-qu-ci-shi-shi-fou-huan-you-gai-shu-xing-de-read-quan-xian" class="header-anchor">#</a></h2>
+<p><img src="/images/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/eb6b0119d97e6e30fd93f610fde5a8e5dc4ecd6b.png" alt="eb6b0119d97e6e30fd93f610fde5a8e5dc4ecd6b"></p>
+<p>A：没有了，之前由启动参数配进去的安全管理器已经被你覆盖掉了</p>
+<p>对于隐式启动和显示启动， 都是默认没有任何可用权限！</p>
+<p>都是白名单机制， 无黑名单机制。</p>
+<hr>
+<h2><span id="chang-jian-de-java-an-quan-quan-xian">常见的java 安全权限</span><a href="#chang-jian-de-java-an-quan-quan-xian" class="header-anchor">#</a></h2>
+<p>都是能从名字就知道什么作用的，瞄一眼有个印象就行，大概知道java里这些功能可能都会有权限。</p>
+<ul>
+<li>
+<p>java.security.AllPermission 所有权限的集合</p>
+</li>
+<li>
+<p>java.util.PropertyPermission 系统/环境属性权限<br>
+就是System.getProperty(<a target="_blank" rel="noopener" href="http://xxx.xxx.xxx">xxx.xxx.xxx</a>)的权限</p>
+</li>
+<li>
+<p>java.lang.RuntimePermission 运行时权限<br>
+这个安卓用的很多，</p>
+</li>
+<li>
+<p>java.net.SocketPermission Socket权限</p>
+</li>
+<li>
+<p>java.io.FilePermission 文件权限,包括读写,删除,执行</p>
+</li>
+<li>
+<p>java.io.SerializablePermission 序列化权限</p>
+</li>
+<li>
+<p>java.lang.reflect.ReflectPermission 反射权限</p>
+</li>
+<li>
+<p>java.security.UnresolvedPermission 未解析的权限</p>
+</li>
+<li>
+<p>java.net.NetPermission 网络权限</p>
+</li>
+<li>
+<p>java.awt.AWTPermission AWT权限</p>
+</li>
+<li>
+<p>java.sql.SQLPermission 数据库sql权限</p>
+</li>
+<li>
+<p>java.security.SecurityPermission 安全控制方面的权限</p>
+</li>
+<li>
+<p>java.util.logging.LoggingPermission 日志控制权限</p>
+</li>
+<li>
+<p>javax.net.ssl.SSLPermission 安全连接权限</p>
+</li>
+<li>
+<p>javax.security.auth.AuthPermission 认证权限</p>
+</li>
+<li>
+<p>javax.sound.sampled.AudioPermission 音频系统资源的访问权限</p>
+</li>
+</ul>
+<hr>
+<p>关于上面的permission权限，有一个重要的应用，就是在ClassLoader中。<br>
+如果JVM开启了SecurityManager，  ClasserLoader就会在加载类的时候调用Policy.getPermissions来获取代码权限集， 并将代码来源和权限集封装到保护域。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyClassLoader</span> <span class="keyword">extends</span> <span class="title class_">URLClassLoader</span> &#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	protect PermissionCollection <span class="title function_">getPermissions</span><span class="params">(CodeSource cs)</span> &#123;</span><br><span class="line">		<span class="type">PermissionCollection</span> <span class="variable">pc</span> <span class="operator">=</span> <span class="built_in">super</span>.getPermissions(cs);</span><br><span class="line">		<span class="comment">// 添加权限</span></span><br><span class="line">		pc.add(<span class="keyword">new</span> <span class="title class_">XXXPersion</span>());</span><br><span class="line">		<span class="keyword">return</span> pc;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2><span id="q-xiang-xi-jiang-jiang-an-quan-guan-li-qi-de-ying-yong-chang-jing">Q： 详细讲讲安全管理器的应用场景？</span><a href="#q-xiang-xi-jiang-jiang-an-quan-guan-li-qi-de-ying-yong-chang-jing" class="header-anchor">#</a></h2>
+<p>A：</p>
+<ul>
+<li>如果你是某个平台开发者，提供了某个SDK给其他人使用， 这里面涉及了某个文件读取或者文件写入操作。<br>
+但是你只希望他用这个sdk去操作平台下特定目录的文件，而不是去动其他的位置（比如根目录之类的）<br>
+于是你就可以给sdk代码封装上一层权限， 在这个代码块中只能读特定目录（就像上面的filePermission）</li>
+<li>或者你通过的公开类中有个高危方法deleteXXX， 你希望拥有管理员权限的人才能调用，其他人不能调用， 于是可以在高危方法中加一层权限， 下面的例子来自安全编码规范， removeEncryt就是高危方法， 调用前会检查一下是否具有这个自定义的权限类型</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SensitiveHash</span> &#123;</span><br><span class="line">	<span class="keyword">void</span> <span class="title function_">removeEntry</span><span class="params">(Object key)</span> &#123;</span><br><span class="line">		check(<span class="string">&quot;removeKeyPerssion&quot;</span>);</span><br><span class="line">		ht.remove(key);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">check</span><span class="params">(String dire)</span> &#123;</span><br><span class="line">		<span class="type">SecurityManager</span> <span class="variable">sm</span> <span class="operator">=</span> System.getSecurityManager();</span><br><span class="line">		<span class="keyword">if</span> (sm!=<span class="literal">null</span>) &#123;</span><br><span class="line">			sm.checkSecurityAccess(dire)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2><span id="q-shang-mian-zhe-ge-li-zi-zhong-ru-guo-e-yi-diao-yong-zhe-zi-ji-zai-an-quan-guan-li-qi-zhong-zeng-jia-zhe-chong-quan-xian-de-chu-li-zen-me-ban">Q： 上面这个例子中， 如果恶意调用者自己在安全管理器中增加这种权限的处理怎么办？</span><a href="#q-shang-mian-zhe-ge-li-zi-zhong-ru-guo-e-yi-diao-yong-zhe-zi-ji-zai-an-quan-guan-li-qi-zhong-zeng-jia-zhe-chong-quan-xian-de-chu-li-zen-me-ban" class="header-anchor">#</a></h2>
+<p>A： setSecurityManager方法API也是需要权限的。 作为客户端程序一般没有权限去设置SDK的安全管理器。 java默认的policy配置文件也没有放开这个权限。需要支持在policy里setSecurityManager才行。</p>
+<hr>
+<h2><span id="q-jia-she-mou-fu-wu-shi-xian-liao-yi-ge-zi-ding-yi-classloader-zhi-chi-cong-wang-luo-huo-qu-xin-ren-ke-hu-chuan-lai-de-jar-bao-bing-zai-zi-ji-de-fu-wu-zhong-zhi-xing-na-me-ying-gai-ru-he-fang-zhi-jia-zai-bu-ke-xin-de-jar-bao-ni">Q： 假设某服务实现了一个自定义classLoader， 支持从网络获取信任客户传来的jar包并在自己的服务中执行， 那么应该如何防止加载不可信的jar包呢？</span><a href="#q-jia-she-mou-fu-wu-shi-xian-liao-yi-ge-zi-ding-yi-classloader-zhi-chi-cong-wang-luo-huo-qu-xin-ren-ke-hu-chuan-lai-de-jar-bao-bing-zai-zi-ji-de-fu-wu-zhong-zhi-xing-na-me-ying-gai-ru-he-fang-zhi-jia-zai-bu-ke-xin-de-jar-bao-ni" class="header-anchor">#</a></h2>
+<p>A	：</p>
+<ol>
+<li>取出jar包中的证书资源</li>
+<li>获取服务自身的密钥</li>
+<li>校验证书是否是这些密钥的受信任签名（即我要识别你的这个证书是不是从我这里签发出去的）</li>
+</ol>
+<blockquote>
+<blockquote>
+<p>注意，不要使用URLClassLoaer和java.util.jar里的自动签名校验机制，他只是检查jar包中的签名和公钥是否匹配，这仅仅是完整性校验， 这2者是可以被全部替换的</p>
+</blockquote>
+</blockquote>
+<hr>
+<h2><span id="q-bu-jia-yan-zhi-de-ha-xi-kou-ling-ha-xi-you-shi-me-que-xian">Q：不加盐值的哈希口令哈希有什么缺陷？</span><a href="#q-bu-jia-yan-zhi-de-ha-xi-kou-ling-ha-xi-you-shi-me-que-xian" class="header-anchor">#</a></h2>
+<p>A：</p>
+<p>生日判定，可以快速找到一个口令</p>
+<p>可以利用事先计算好的哈希列表几秒钟破解。</p>
+<hr>
+<h2><span id="q-dui-kou-ling-zuo-ha-xi-jia-yan-zhi-shi-you-shi-me-yao-qiu">Q：对口令做哈希加盐值时有什么要求？</span><a href="#q-dui-kou-ling-zuo-ha-xi-jia-yan-zhi-shi-you-shi-me-yao-qiu" class="header-anchor">#</a></h2>
+<p>A:</p>
+<p>盐值至少应该包含8字节而且必须是由安全随机数产生。( 例如如果问你，sha256+4字节盐值，那肯定就是错误的！）</p>
+<p>应使用强哈希函数，推荐使用SHA-256或者更加安全的哈希函数。</p>
+<p>迭代次数默认推荐10000次，对于性能有特殊要求（比如嵌入式系统）的产品低可迭代1000次。</p>
+<p>对于单向哈希时，其输出长度应该不小于256比特</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/15/%E9%9A%8F%E7%AC%94/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2158,972 +3025,6 @@ PS： 注意，不是说不能调用get或add方法， 而是调用get或add时�
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/13/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/13/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">java容器基础概念和应用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-13 00:27:53" itemprop="dateCreated datePublished" datetime="2022-08-13T00:27:53+08:00">2022-08-13</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-15 23:43:17" itemprop="dateModified" datetime="2022-08-15T23:43:17+08:00">2022-08-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E5%88%9D%E7%BA%A7%E8%AF%AD%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">java初级语法</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/13/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/13/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>5.7k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#list-xiang-guan-wen-ti">List相关问题</a>
-<ul>
-<li><a href="#q-arrlist-new-arraylist-arrays-aslist-he-arrlist-arrays-aslist-you-shi-me-qu-bie">Q:arrList = new ArrayList&lt;&gt;(Arrays.asList（）)   和  arrList =   Arrays.asList（）有什么区别</a></li>
-<li><a href="#q-na-aslist-zhi-chi-tong-guo-xiu-gai-yuan-shu-zu-lai-xiu-gai-list-nei-rong-ma">Q：那asList()支持通过修改原数组来修改list内容吗？</a></li>
-<li><a href="#q-dang-shu-ru-wei-na-xie-zi-mu-shi-die-dai-shi-hui-bao-cuo">Q： 当输入为哪些字母时，迭代时会报错</a></li>
-<li><a href="#q-arraylist-de-kuo-rong-gong-shi-he-mo-ren-chu-shi-da-xiao-shi-duo-shao">Q： ArrayList的扩容公式和默认初始大小是多少？</a></li>
-<li><a href="#q-vector-de-kuo-rong-gong-shi-shi-duo-shao">Q： Vector的扩容公式是多少？</a></li>
-<li><a href="#q-vector-he-arraylist-de-qu-bie">Q：vector和ArrayList的区别</a></li>
-<li><a href="#q-wei-shi-me-bu-tui-jian-shi-yong-stack">Q：为什么不推荐使用stack</a></li>
-</ul>
-</li>
-<li><a href="#map-xiang-guan-wen-ti">Map相关问题</a>
-<ul>
-<li><a href="#q-jie-da-xia-lie-te-xing-he-na-xie-map-you-guan">Q： 解答下列特性和哪些Map有关</a></li>
-<li><a href="#q-hashcode-xiang-tong-na-me-equals-ken-ding-true-ma">Q： hashCode相同， 那么equals肯定true吗？</a></li>
-<li><a href="#q-equals-wei-true-na-me-hashcode-ken-ding-xiang-tong-ma">Q： equals为true， 那么hashCode肯定相同吗？</a></li>
-<li><a href="#q-2-ge-string-ru-guo-nei-rong-xiang-tong-na-me-hashcode-xiang-tong-ma">Q： 2个String如果内容相同，那么hashCode相同吗？</a></li>
-<li><a href="#hashtable-hashmap-concurrenthashmap-bi-jiao">HashTable、HashMap、ConcurrentHashMap比较：</a></li>
-<li><a href="#q-collections-synchronizedmap-map-he-concurrenthashmap-na-ge-tong-bu-xiao-guo-hao">Q：Collections.synchronizedMap（map）和ConcurrentHashMap,哪个同步效果好？</a></li>
-<li><a href="#q-linkedhashmap-de-accessorder-wen-ti-xia-mian-shu-chu-shi-me">Q:linkedHashMap的accessOrder问题,下面输出什么</a></li>
-<li><a href="#q-hashmap-wei-shi-me-duo-xian-cheng-shi-yong-shi-ke-neng-hui-zao-cheng-si-xun-huan">Q：hashMap为什么多线程使用时可能会造成死循环？</a></li>
-<li><a href="#q-java1-7-he-1-8-zhi-jian-hashmap-zuo-liao-shi-me-gai-jin">Q:java1.7 和1.8 之间， hashMap做了什么改进？</a></li>
-</ul>
-</li>
-<li><a href="#collections">Collections</a></li>
-<li><a href="#te-shu-de-yin-yong-rong-qi">特殊的引用容器</a>
-<ul>
-<li><a href="#q-ru-guo-ra-yin-yong-liao-a-ze-a-bi-bu-ke-neng-bei-hui-shou-ra-shu-yu-shi-me-yin-yong">Q：如果RA引用了A，则A必不可能被回收， RA属于什么引用？</a></li>
-<li><a href="#q-ru-guo-zhi-you-ra-yin-yong-liao-a-zai-nei-cun-bu-zu-shi-hui-qiang-zhi-hui-shou-a-ze-ra-shu-yu-shi-me-yin-yong">Q： 如果只有RA引用了A， 在内存不足时会强制回收A，则RA属于什么引用？</a></li>
-<li><a href="#hexopostrendercodeblock-figure-class-highlight-java-table-tr-td-class-gutter-pre-span-class-line-1-span-br-pre-td-td-class-code-pre-span-class-line-softreference-lt-string-gt-softreference-span-class-keyword-new-span-span-class-title-class-softreference-span-lt-string-gt-str-span-br-pre-td-tr-table-figure-hexopostrendercodeblock"><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SoftReference&lt;String&gt; softReference = <span class="keyword">new</span> <span class="title class_">SoftReference</span>&lt;String&gt;(str);</span><br></pre></td></tr></table></figure></a></li>
-<li><a href="#q-ru-guo-zhi-you-ra-yin-yong-liao-a-bu-guan-nei-cun-zu-bu-zu-zhi-yao-la-ji-hui-shou-qi-sao-miao-dao-liao-jiu-hui-zhi-jie-hui-shou-ra-shu-yu">Q： 如果只有RA引用了A， 不管内存足不足，只要垃圾回收器扫描到了，就会直接回收，RA属于：</a></li>
-<li><a href="#q-dang-zhi-you-ra-yin-yong-liao-a-shi-du-hui-zai-xia-yi-ci-la-ji-shou-ji-shi-zhi-jie-hui-shou-qie-chuang-jian-yin-yong-shi-bi-xu-yi-lai-yin-yong-dui-lie-zhe-ge-yin-yong-ra-shu-yu">Q： 当只有RA引用了A时，都会在下一次垃圾收集时直接回收，且创建引用时必须依赖引用队列，这个引用RA属于：</a></li>
-<li><a href="#q-yin-yong-dui-lie-shi-shi-me-zuo-yong-shi-shi-me">Q： 引用队列是什么，作用是什么？</a></li>
-<li><a href="#you-xian-dui-lie">优先队列</a></li>
-</ul>
-</li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<p>经典java容器结构图：<br>
-<img src="/images/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/1614218412983051246.png" alt="image.png"></p>
-<p>注意哪些属于Collection，哪些属于Map。</p>
-<hr>
-<h1><span id="list-xiang-guan-wen-ti">List相关问题</span><a href="#list-xiang-guan-wen-ti" class="header-anchor">#</a></h1>
-<h2><span id="q-arrlist-new-arraylist-lt-gt-arrays-aslist-he-arrlist-arrays-aslist-you-shi-me-qu-bie">Q:arrList = new ArrayList&lt;&gt;(Arrays.asList（）)   和  arrList =   Arrays.asList（）有什么区别</span><a href="#q-arrlist-new-arraylist-lt-gt-arrays-aslist-he-arrlist-arrays-aslist-you-shi-me-qu-bie" class="header-anchor">#</a></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Integer&gt; arrList1 = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;(Arrays.asList(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>));</span><br><span class="line">List&lt;Integer&gt; arrList2 = Arrays.asList(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">arrList1.add(<span class="number">4</span>);</span><br><span class="line">arrList2.add(<span class="number">4</span>);</span><br></pre></td></tr></table></figure>
-<p>A:执行arrList2.add(4)时会报错。<br>
-因为 Arrays.asList()只会返回1个固定大小的列表， 其返回的List是AbstractList，无法调用add、remove和clear， 如果调用会直接抛异常。<br>
-异常名字为UnsupportedOperationException<br>
-具体原因可以见评论区。</p>
-<hr>
-<h2><span id="q-na-aslist-zhi-chi-tong-guo-xiu-gai-yuan-shu-zu-lai-xiu-gai-list-nei-rong-ma">Q：那asList()支持通过修改原数组来修改list内容吗？</span><a href="#q-na-aslist-zhi-chi-tong-guo-xiu-gai-yuan-shu-zu-lai-xiu-gai-list-nei-rong-ma" class="header-anchor">#</a></h2>
-<p>例如</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String[] ss = &#123;<span class="string">&quot;a&quot;</span>,<span class="string">&quot;b&quot;</span>,<span class="string">&quot;c&quot;</span>&#125;;</span><br><span class="line">List&lt;String&gt; arrList = Arrays.asList(ss);</span><br><span class="line">ss[<span class="number">0</span>] = <span class="string">&quot;d&quot;</span>;</span><br><span class="line">System.out.println(arrList);</span><br></pre></td></tr></table></figure>
-<p>上面操作后arrList会报错吗？</p>
-<p>A：<br>
-不会报错。arrList里的内容变成了{“d”,“b”,“c”}</p>
-<h2><span id="q-dang-shu-ru-wei-na-xie-zi-mu-shi-die-dai-shi-hui-bao-cuo">Q： 当输入为哪些字母时，迭代时会报错</span><a href="#q-dang-shu-ru-wei-na-xie-zi-mu-shi-die-dai-shi-hui-bao-cuo" class="header-anchor">#</a></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    List&lt;String&gt; list = Lists.newArrayList(<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;C&quot;</span>, <span class="string">&quot;D&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> args[<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">for</span> (String curStr : list) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s.equals(curStr)) &#123;</span><br><span class="line">            list.remove(curStr);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>A：<br>
-删除A或者B会报错，  但是删除C不会！<br>
-对于foreach遍历容器，并用remove做删除时，当删除倒数第二个元素时，是不会报错的。<br>
-因为：</p>
-<hr>
-<h2><span id="q-arraylist-de-kuo-rong-gong-shi-he-mo-ren-chu-shi-da-xiao-shi-duo-shao">Q： ArrayList的扩容公式和默认初始大小是多少？</span><a href="#q-arraylist-de-kuo-rong-gong-shi-he-mo-ren-chu-shi-da-xiao-shi-duo-shao" class="header-anchor">#</a></h2>
-<p>A：<br>
-扩容容量= 原容量 + (原容量右移1位，即0.5倍)= 1.5倍<br>
-<img src="/images/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/1614218437437040318.png" alt="image.png"></p>
-<p>初始容量为10.<br>
-<img src="/images/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/1614218442905061711.png" alt="image.png"></p>
-<ul>
-<li>注意，初始的数组长度还是0，数组长度和容量不是一个东西。</li>
-</ul>
-<hr>
-<h2><span id="q-vector-de-kuo-rong-gong-shi-shi-duo-shao">Q： Vector的扩容公式是多少？</span><a href="#q-vector-de-kuo-rong-gong-shi-shi-duo-shao" class="header-anchor">#</a></h2>
-<p>A:<br>
-扩容容量= 原容量 *2<br>
-<img src="/images/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/1614218451056083054.png" alt="image.png"></p>
-<p>初始大小为10<br>
-<img src="/images/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/1614218456618026072.png" alt="image.png"></p>
-<hr>
-<h2><span id="q-vector-he-arraylist-de-qu-bie">Q：vector和ArrayList的区别</span><a href="#q-vector-he-arraylist-de-qu-bie" class="header-anchor">#</a></h2>
-<p>A：<br>
-vector是线程安全的， 每个方法都加了syn关键字，频繁的加锁可能导致性能降低</p>
-<hr>
-<h2><span id="q-wei-shi-me-bu-tui-jian-shi-yong-stack">Q：为什么不推荐使用stack</span><a href="#q-wei-shi-me-bu-tui-jian-shi-yong-stack" class="header-anchor">#</a></h2>
-<p>A：<br>
-为什么不推荐使用stack<br>
-<a target="_blank" rel="noopener" href="https://www.cnblogs.com/cosmos-wong/p/11845934.html">https://www.cnblogs.com/cosmos-wong/p/11845934.html</a><br>
-stack 继承自vector ， 但是vector里包含了很多不需要的public方法<br>
-只是为了实现栈，不用链表来单独实现，而是为了复用简单的方法而迫使它继承 Vector，Stack 和 Vector 本来是毫无关系的。这使得 Stack 在基于数组实现上效率受影响，另外因为继承 Vector 类，Stack 可以复用 Vector 大量方法，这使得 Stack 在设计上不严谨</p>
-<hr>
-<h1><span id="map-xiang-guan-wen-ti">Map相关问题</span><a href="#map-xiang-guan-wen-ti" class="header-anchor">#</a></h1>
-<h2><span id="q-jie-da-xia-lie-te-xing-he-na-xie-map-you-guan">Q： 解答下列特性和哪些Map有关</span><a href="#q-jie-da-xia-lie-te-xing-he-na-xie-map-you-guan" class="header-anchor">#</a></h2>
-<ul>
-<li>
-<p>实现基于散列表，迭代时是不确定随机的顺序的Map为-----------------------------------------HashMap</p>
-</li>
-<li>
-<p>迭代时按照插入顺序进行迭代-----------------------------------------------------LinkedHashMap</p>
-</li>
-<li>
-<p>迭代时按照键值的比较顺序进行迭代-----------------------------------------------------TreeMap</p>
-</li>
-<li>
-<p>基于红黑树的实现-----------------------------------------------------TreeMap</p>
-</li>
-<li>
-<p>线程安全的Map-----------------------------------------------------ConcurrentHashMap</p>
-</li>
-<li>
-<p>键值比较时使用==而不是equal的Map-------------------------------------------------IdentityHashMap</p>
-</li>
-<li>
-<p>可以按区间得到1个子map的Map----------------------sortMap</p>
-</li>
-<li>
-<p>Set也有HashSet、LinkedSet、TreeSet、SortSet等，作用同理。</p>
-</li>
-</ul>
-<hr>
-<h2><span id="q-hashcode-xiang-tong-na-me-equals-ken-ding-true-ma">Q： hashCode相同， 那么equals肯定true吗？</span><a href="#q-hashcode-xiang-tong-na-me-equals-ken-ding-true-ma" class="header-anchor">#</a></h2>
-<p>A： 不一定。</p>
-<h2><span id="q-equals-wei-true-na-me-hashcode-ken-ding-xiang-tong-ma">Q： equals为true， 那么hashCode肯定相同吗？</span><a href="#q-equals-wei-true-na-me-hashcode-ken-ding-xiang-tong-ma" class="header-anchor">#</a></h2>
-<p>A： 对。<br>
-原因： 参见散列表的原理，明白hashCode的作用后就明白为什么了。<br>
-<br></p>
-<h2><span id="q-2-ge-string-ru-guo-nei-rong-xiang-tong-na-me-hashcode-xiang-tong-ma">Q： 2个String如果内容相同，那么hashCode相同吗？</span><a href="#q-2-ge-string-ru-guo-nei-rong-xiang-tong-na-me-hashcode-xiang-tong-ma" class="header-anchor">#</a></h2>
-<p>A： 对,相同。因为二者equals返回true，所以必定hashCode相同。<br>
-Q： 如果在插入后，修改某个key的hashCode，可能造成什么问题？<br>
-A：<br>
-可能造成内存泄漏。因为map是按计算后的hashCode存放的，而如果在外部修改了某个key的值，可能造成之前塞入的那个哈希所在的地址无法被外部remove(key)，却又无法被gc（因为一直持有），造成内存泄漏。</p>
-<hr>
-<h2><span id="hashtable-hashmap-concurrenthashmap-bi-jiao">HashTable、HashMap、ConcurrentHashMap比较：</span><a href="#hashtable-hashmap-concurrenthashmap-bi-jiao" class="header-anchor">#</a></h2>
-<ul>
-<li>key和value不可以为null的是：----------------------------HashTable</li>
-<li>线程安全的是：---------------------------------HashTable和ConcurrentHashMap<br>
-他们2个的区别：<br>
-在迭代的过程中，ConcurrentHashMap仅仅锁定map的某个部分，而Hashtable则会锁定整个map。(具体可参考底层实现原理，总之ConcurrentHashMap最重要的是做了分段)</li>
-</ul>
-<hr>
-<h2><span id="q-collections-synchronizedmap-map-he-concurrenthashmap-na-ge-tong-bu-xiao-guo-hao">Q：Collections.synchronizedMap（map）和ConcurrentHashMap,哪个同步效果好？</span><a href="#q-collections-synchronizedmap-map-he-concurrenthashmap-na-ge-tong-bu-xiao-guo-hao" class="header-anchor">#</a></h2>
-<p>A：</p>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>Collections.synchronizedMap(map)与ConcurrentHashMap主要区别是：Collections.synchronizedMap()和Hashtable一样，实现上在调用map所有方法时，都对整个map进行同步<br>
-而ConcurrentHashMap的实现却更加精细,分端加锁</p>
-</blockquote>
-</blockquote>
-</blockquote>
-<p>其实Colletions.synchronizedMap就是对放进去的map包了一层sync关键字。<br>
-详见：<br>
-<a target="_blank" rel="noopener" href="https://www.cnblogs.com/a198720/articles/4227500.html">https://www.cnblogs.com/a198720/articles/4227500.html</a></p>
-<hr>
-<h2><span id="q-linkedhashmap-de-accessorder-wen-ti-xia-mian-shu-chu-shi-me">Q:linkedHashMap的accessOrder问题,下面输出什么</span><a href="#q-linkedhashmap-de-accessorder-wen-ti-xia-mian-shu-chu-shi-me" class="header-anchor">#</a></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">fun2</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    LinkedHashMap&lt;String, String&gt; accessOrderTrue = <span class="keyword">new</span> <span class="title class_">LinkedHashMap</span>&lt;&gt;(<span class="number">16</span>, <span class="number">0.75f</span>, <span class="literal">true</span>);</span><br><span class="line">    accessOrderTrue.put(<span class="string">&quot;1&quot;</span>,<span class="string">&quot;1&quot;</span>);</span><br><span class="line">    accessOrderTrue.put(<span class="string">&quot;2&quot;</span>,<span class="string">&quot;2&quot;</span>);</span><br><span class="line">    accessOrderTrue.put(<span class="string">&quot;3&quot;</span>,<span class="string">&quot;3&quot;</span>);</span><br><span class="line">    accessOrderTrue.put(<span class="string">&quot;4&quot;</span>,<span class="string">&quot;4&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;put后的数据：&quot;</span>+accessOrderTrue);</span><br><span class="line">    accessOrderTrue.get(<span class="string">&quot;2&quot;</span>);</span><br><span class="line">    accessOrderTrue.get(<span class="string">&quot;3&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;get后的数据&quot;</span>+accessOrderTrue);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>A：<br>
-省略key值<br>
-put后的数据： {1=1,2=2,3=3,4=4}<br>
-get后的数据： {1=1,4=4,2=2,3=3}</p>
-<ul>
-<li>accessOrder为true时， 会把最近访问过的数据放到链表 <em><strong>末尾</strong></em>。</li>
-</ul>
-<hr>
-<h2><span id="q-hashmap-wei-shi-me-duo-xian-cheng-shi-yong-shi-ke-neng-hui-zao-cheng-si-xun-huan">Q：hashMap为什么多线程使用时可能会造成死循环？</span><a href="#q-hashmap-wei-shi-me-duo-xian-cheng-shi-yong-shi-ke-neng-hui-zao-cheng-si-xun-huan" class="header-anchor">#</a></h2>
-<p>A：<br>
-<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/1e9cf0ac07f4">https://www.jianshu.com/p/1e9cf0ac07f4</a><br>
-主要发生在2个线程同时put并进行扩容时， 对同一个对象的链表引用会出现问题。、</p>
-<hr>
-<h2><span id="q-java1-7-he-1-8-zhi-jian-hashmap-zuo-liao-shi-me-gai-jin">Q:java1.7 和1.8 之间， hashMap做了什么改进？</span><a href="#q-java1-7-he-1-8-zhi-jian-hashmap-zuo-liao-shi-me-gai-jin" class="header-anchor">#</a></h2>
-<p>A：<br>
-1.7的哈希如果冲突严重，则在一个点上形成的链表会越来越长。<br>
-因此1.8做了改进，如果那个点的链表长度超过TREEIFY_THRESHOLD,则会转为红黑树。</p>
-<h1><span id="collections">Collections</span><a href="#collections" class="header-anchor">#</a></h1>
-<ul>
-<li>Collection是接口， Collections是1个工具类</li>
-<li>排序： Collections.sort(collection ,Comparator&lt;&gt;)</li>
-<li>打乱顺序： Collections.shuffle(collection ,Random)</li>
-<li>填充: Collections.fill(list, 对象) ，  注意是浅拷贝填充， 即填充后使用的是同一个引用。</li>
-<li>返回不可变容器（即无法对容器做修改）： Collections.unmodifiableMap(容器)<br>
-除此之外可以返回空的不可变集合和仅有单个元素的不可变集合。<br>
-<img src="/images/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/1614218468075036317.png" alt="image.png"></li>
-</ul>
-<hr>
-<p><img src="/images/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/1614218476720061727.png" alt="image.png"></p>
-<h1><span id="te-shu-de-yin-yong-rong-qi">特殊的引用容器</span><a href="#te-shu-de-yin-yong-rong-qi" class="header-anchor">#</a></h1>
-<p>假设有1个对象A， 有1个引用RA指向A</p>
-<h2><span id="q-ru-guo-ra-yin-yong-liao-a-ze-a-bi-bu-ke-neng-bei-hui-shou-ra-shu-yu-shi-me-yin-yong">Q：如果RA引用了A，则A必不可能被回收， RA属于什么引用？</span><a href="#q-ru-guo-ra-yin-yong-liao-a-ze-a-bi-bu-ke-neng-bei-hui-shou-ra-shu-yu-shi-me-yin-yong" class="header-anchor">#</a></h2>
-<p>A:  强引用StrongRefernce，默认的引用操作都是强引用</p>
-<hr>
-<h2><span id="q-ru-guo-zhi-you-ra-yin-yong-liao-a-zai-nei-cun-bu-zu-shi-hui-qiang-zhi-hui-shou-a-ze-ra-shu-yu-shi-me-yin-yong">Q： 如果只有RA引用了A， 在内存不足时会强制回收A，则RA属于什么引用？</span><a href="#q-ru-guo-zhi-you-ra-yin-yong-liao-a-zai-nei-cun-bu-zu-shi-hui-qiang-zhi-hui-shou-a-ze-ra-shu-yu-shi-me-yin-yong" class="header-anchor">#</a></h2>
-<p>A: 软引用SoftReferencem，用法如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SoftReference&lt;String&gt; softReference = <span class="keyword">new</span> <span class="title class_">SoftReference</span>&lt;String&gt;(str);</span><br></pre></td></tr></table></figure>
-<hr>
-<h2><span id="q-ru-guo-zhi-you-ra-yin-yong-liao-a-bu-guan-nei-cun-zu-bu-zu-zhi-yao-la-ji-hui-shou-qi-sao-miao-dao-liao-jiu-hui-zhi-jie-hui-shou-ra-shu-yu">Q： 如果只有RA引用了A， 不管内存足不足，只要垃圾回收器扫描到了，就会直接回收，RA属于：</span><a href="#q-ru-guo-zhi-you-ra-yin-yong-liao-a-bu-guan-nei-cun-zu-bu-zu-zhi-yao-la-ji-hui-shou-qi-sao-miao-dao-liao-jiu-hui-zhi-jie-hui-shou-ra-shu-yu" class="header-anchor">#</a></h2>
-<p>A： 弱引用WeakReference，  注意和垃圾收集器的启动间隔有关，因此短时间内RA还是可用的。<br>
-和这个引用相关的集合：WeakHashMap</p>
-<hr>
-<h2><span id="q-dang-zhi-you-ra-yin-yong-liao-a-shi-du-hui-zai-xia-yi-ci-la-ji-shou-ji-shi-zhi-jie-hui-shou-qie-chuang-jian-yin-yong-shi-bi-xu-yi-lai-yin-yong-dui-lie-zhe-ge-yin-yong-ra-shu-yu">Q： 当只有RA引用了A时，都会在下一次垃圾收集时直接回收，且创建引用时必须依赖引用队列，这个引用RA属于：</span><a href="#q-dang-zhi-you-ra-yin-yong-liao-a-shi-du-hui-zai-xia-yi-ci-la-ji-shou-ji-shi-zhi-jie-hui-shou-qie-chuang-jian-yin-yong-shi-bi-xu-yi-lai-yin-yong-dui-lie-zhe-ge-yin-yong-ra-shu-yu" class="header-anchor">#</a></h2>
-<p>A： 虚引用（幽灵引用）PhantomReference。<br>
-和弱引用区别：<br>
-虚引用创建时必须依赖引用队列，且用途一般是跟踪对象的垃圾回收，让用户在回收时通过虚引用去触发一些清理行为。</p>
-<hr>
-<h2><span id="q-yin-yong-dui-lie-shi-shi-me-zuo-yong-shi-shi-me">Q： 引用队列是什么，作用是什么？</span><a href="#q-yin-yong-dui-lie-shi-shi-me-zuo-yong-shi-shi-me" class="header-anchor">#</a></h2>
-<p>A： 引用队列可以配合软引用、弱引用及幽灵引用使用，当引用的对象将要被JVM回收时，会将其加入到引用队列。<br>
-应用：通过引用队列可以了解JVM垃圾回收情况。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 引用队列</span></span><br><span class="line">ReferenceQueue&lt;String&gt; rq = <span class="keyword">new</span> <span class="title class_">ReferenceQueue</span>&lt;String&gt;();</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 幽灵引用</span></span><br><span class="line">PhantomReference&lt;String&gt; pr = <span class="keyword">new</span> <span class="title class_">PhantomReference</span>&lt;String&gt;(<span class="keyword">new</span> <span class="title class_">String</span>(<span class="string">&quot;&quot;</span>), rq);</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 永远为null（幽灵引用相当于无引用）</span></span><br><span class="line">System.out.println(pr.get());</span><br></pre></td></tr></table></figure>
-<hr>
-<p><img src="/images/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/1614218485847000930.png" alt="image.png"></p>
-<h2><span id="you-xian-dui-lie">优先队列</span><a href="#you-xian-dui-lie" class="header-anchor">#</a></h2>
-<p><img src="/images/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/1614218491033053213.png" alt="image.png"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/12/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/%E7%B1%BB%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/12/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/%E7%B1%BB%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" class="post-title-link" itemprop="url">类初始化顺序和类加载基础概念</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-12 00:13:51" itemprop="dateCreated datePublished" datetime="2022-08-12T00:13:51+08:00">2022-08-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-15 23:43:35" itemprop="dateModified" datetime="2022-08-15T23:43:35+08:00">2022-08-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E5%88%9D%E7%BA%A7%E8%AF%AD%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">java初级语法</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/12/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/%E7%B1%BB%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/12/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/%E7%B1%BB%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>5.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#java-lei-de-jia-zai-shun-xu">Java类的加载顺序</a>
-<ul>
-<li><a href="#q-shi-me-shi-hou-hui-jin-xing-jing-tai-bian-liang-de-fu-zhi-he-jing-tai-dai-ma-kuai-de-zhi-xing">Q： 什么时候会进行静态变量的赋值和静态代码块的执行？</a></li>
-<li><a href="#q-chu-shi-hua-mou-ge-zi-lei-shi-ye-hui-dui-fu-lei-zuo-jing-tai-chu-shi-hua-ma-shun-xu-ni">Q：初始化某个子类时，也会对父类做静态初始化吗？顺序呢？</a></li>
-<li><a href="#q-wei-shi-me-fu-lei-de-method-bu-hui-bei-zi-lei-de-method-chong-xie">Q： 为什么父类的method不会被子类的method重写？</a></li>
-<li><a href="#q-wei-shi-me-di-yi-ge-shu-chu-de-shi-e-er-bu-shi-a">Q： 为什么第一个输出的是e而不是a？</a></li>
-<li><a href="#q-mei-you-zai-zi-lei-de-gou-zao-qi-zhong-diao-yong-super-shi-ye-hui-jin-xing-fu-lei-dui-xiang-de-shi-li-hua-ma">Q： 没有在子类的构造器中调用super()时，也会进行父类对象的实例化吗？</a></li>
-<li><a href="#q-gou-zao-fang-fa-cheng-yuan-xian-shi-fu-zhi-fei-jing-tai-dai-ma-kuai-ji-shu-chu-c-he-h-de-na-2-ju-de-shun-xu-shi-shi-me">Q： 构造方法、成员显示赋值、非静态代码块（即输出c和h的那2句）的顺序是什么？</a></li>
-<li><a href="#q-wei-shi-me-animal-shi-li-hua-shi-i-test-zhong-shu-chu-de-shi-i-er-bu-shi-d">Q： 为什么Animal实例化时， i=test()中输出的是i而不是d？</a></li>
-<li><a href="#q-tong-shang-ti-ru-guo-test-fang-fa-du-shi-private-huo-zhe-final-shu-xing-na-me-shang-ti-de-qing-kuang-hui-you-bian-hua-ma">Q： 同上题， 如果test方法都是private或者final属性， 那么上题的情况会有变化吗？？</a></li>
-</ul>
-</li>
-<li><a href="#lei-jia-zai-guo-cheng">类加载过程</a>
-<ul>
-<li><a href="#q-lei-jia-zai-de-3-ge-bi-jing-jie-duan-shi">Q：类加载的3个必经阶段是：</a></li>
-</ul>
-</li>
-<li><a href="#bei-dong-yin-yong-zhong-he-lei-jing-tai-chu-shi-hua-de-guan-xi">被动引用中和类静态初始化的关系</a>
-<ul>
-<li><a href="#q-new-mou-ge-lei-de-shu-zu-shi-hui-yin-fa-lei-chu-shi-hua-ma">Q：new某个类的数组时，会引发类初始化吗？</a></li>
-<li><a href="#q-yin-yong-lei-de-final-jing-tai-zi-duan-hui-yin-fa-lei-chu-shi-hua-ma">Q：引用类的final静态字段，会引发类初始化吗？</a></li>
-<li><a href="#q-zi-lei-yin-yong-liao-fu-lei-de-jing-tai-cheng-yuan-ci-shi-zi-lei-hui-zuo-lei-chu-shi-hua-ma">Q：子类引用了父类的静态成员，此时子类会做类初始化嘛？</a></li>
-</ul>
-</li>
-<li><a href="#lei-jia-zai-qi">类加载器</a>
-<ul>
-<li><a href="#shuang-qin-wei-pai">双亲委派</a></li>
-<li><a href="#q-java-zhong-shi-fou-lei-he-jie-kou-de-bao-ming-he-ming-zi-xiang-tong-na-me-jiu-yi-ding-shi-tong-yi-ge-lei-huo-zhe-jie-kou">Q：java中， 是否类和接口的包名和名字相同， 那么就一定是同一个类或者接口？</a></li>
-<li><a href="#q-jiang-yi-xia-classloader-yuan-li-yi-ji-ying-yong-chang-jing">Q: 讲一下ClassLoader原理， 以及应用场景</a></li>
-<li><a href="#q-ru-guo-zai-ni-xiang-mu-zhong-jian-yi-ge-java-lang-string-de-lei-na-xi-tong-zhong-yong-de-string-lei-shi-ni-ding-yi-de-string-lei-huan-shi-yuan-sheng-api-zhong-de-string-lei">Q:如果在你项目中建一个java.lang.String的类，那系统中用的String类是你定义的String类，还是原生api中的String类？</a></li>
-<li><a href="#q-wei-shi-me-yao-yong-shuang-qin-wei-tuo-you-shi-me-hao-chu">Q ： 为什么要用双亲委托，有什么好处？</a></li>
-<li><a href="#q-na-wo-ru-guo-zhen-de-you-xu-qiu-bu-xiang-yong-shuang-qin-de-ji-zhi-ni">Q: 那我如果真的有需求， 不想用双亲的机制呢？</a></li>
-<li><a href="#q-shu-zu-lei-shi-zen-me-zuo-jia-zai-de">Q: 数组类是怎么做加载的？</a></li>
-</ul>
-</li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<hr>
-<p>很多时候提到类加载，大家总是没法马上回忆起顺序，这篇文章会用一个例子为你把类加载的诸多问题一次性澄清。</p>
-<h1><span id="java-lei-de-jia-zai-shun-xu">Java类的加载顺序</span><a href="#java-lei-de-jia-zai-shun-xu" class="header-anchor">#</a></h1>
-<p>引用1个网上的经典例子，并做稍许改动，以便大家更好地理解。<br>
-原例子引用自：<a target="_blank" rel="noopener" href="https://blog.csdn.net/zfx2013/article/details/89453482">https://blog.csdn.net/zfx2013/article/details/89453482</a></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Animal</span> &#123;</span><br><span class="line">     <span class="keyword">private</span> <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> test();</span><br><span class="line">     <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">int</span> j ?= method();</span><br><span class="line">     <span class="keyword">static</span> &#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;a&quot;</span>);</span><br><span class="line">     &#125;</span><br><span class="line">     Animal()&#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;b&quot;</span>);</span><br><span class="line">     &#125;</span><br><span class="line">     &#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;c&quot;</span>);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">test</span><span class="params">()</span>&#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;d&quot;</span>);</span><br><span class="line">          <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">method</span><span class="params">()</span>&#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;e&quot;</span>);</span><br><span class="line">          <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Dog</span> <span class="keyword">extends</span> <span class="title class_">Animal</span>&#123;</span><br><span class="line">     &#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;h&quot;</span>);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">private</span> <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> test();</span><br><span class="line">     <span class="keyword">static</span> &#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;f&quot;</span>);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">int</span> j ?= method();</span><br><span class="line"></span><br><span class="line">     Dog()&#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;g&quot;</span>);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">test</span><span class="params">()</span>&#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;i&quot;</span>);</span><br><span class="line">          <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">method</span><span class="params">()</span>&#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;j&quot;</span>);</span><br><span class="line">          <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">          <span class="type">Dog</span> <span class="variable">dog</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Dog</span>();</span><br><span class="line">          System.out.println();</span><br><span class="line">          <span class="type">Dog</span> <span class="variable">dog1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Dog</span>();</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>执行这段main程序，会输出什么？<br>
-答案是<br>
-eafjicbhig<br>
-icbhig</p>
-<p>为了方便大家一个个细节去理解， 我换一种方式去提问。</p>
-<h2><span id="q-shi-me-shi-hou-hui-jin-xing-jing-tai-bian-liang-de-fu-zhi-he-jing-tai-dai-ma-kuai-de-zhi-xing">Q： 什么时候会进行静态变量的赋值和静态代码块的执行？</span><a href="#q-shi-me-shi-hou-hui-jin-xing-jing-tai-bian-liang-de-fu-zhi-he-jing-tai-dai-ma-kuai-de-zhi-xing" class="header-anchor">#</a></h2>
-<p>A：?</p>
-<ul>
-<li>第一次创建某个类或者某个类的子类的实例</li>
-<li>访问类的静态变量、调用类的静态方法</li>
-<li>使用反射方法forName</li>
-<li>调用主类的main方法(本例子的第一次静态初始化其实属于这个情况，调用了Dog的main方法）<br>
-注： 类初始化只会进行一次， 上面任何一种情况触发后，之后都不会再引起类初始化操作。</li>
-</ul>
-<hr>
-<h2><span id="q-chu-shi-hua-mou-ge-zi-lei-shi-ye-hui-dui-fu-lei-zuo-jing-tai-chu-shi-hua-ma-shun-xu-ni">Q：初始化某个子类时，也会对父类做静态初始化吗？顺序呢？</span><a href="#q-chu-shi-hua-mou-ge-zi-lei-shi-ye-hui-dui-fu-lei-zuo-jing-tai-chu-shi-hua-ma-shun-xu-ni" class="header-anchor">#</a></h2>
-<p>A：如果父类之前没有被静态初始化过，那就会进行， 且顺序是先父类再子类。 后面的非静态成员初始化也是如此。<br>
-所以会先输出eafj。</p>
-<hr>
-<h2><span id="q-wei-shi-me-fu-lei-de-method-bu-hui-bei-zi-lei-de-method-chong-xie">Q： 为什么父类的method不会被子类的method重写？</span><a href="#q-wei-shi-me-fu-lei-de-method-bu-hui-bei-zi-lei-de-method-chong-xie" class="header-anchor">#</a></h2>
-<p>A： 静态方法是类方法，不会被子类重写。毕竟类方法调用时，是必定带上类名的。</p>
-<hr>
-<h2><span id="q-wei-shi-me-di-yi-ge-shu-chu-de-shi-e-er-bu-shi-a">Q： 为什么第一个输出的是e而不是a？</span><a href="#q-wei-shi-me-di-yi-ge-shu-chu-de-shi-e-er-bu-shi-a" class="header-anchor">#</a></h2>
-<p>A： 因为类变量的显示赋值代码和静态代码块代码按照从上到下的顺序执行。<br>
-Animal的静态初始化过程中，method的调用在static代码块之前，所以先输出e再输出a。<br>
-而Dog的静态初始化过程中，method的调用在static代码块之后，因此先输出f，再输出j</p>
-<hr>
-<h2><span id="q-mei-you-zai-zi-lei-de-gou-zao-qi-zhong-diao-yong-super-shi-ye-hui-jin-xing-fu-lei-dui-xiang-de-shi-li-hua-ma">Q： 没有在子类的构造器中调用super()时，也会进行父类对象的实例化吗？</span><a href="#q-mei-you-zai-zi-lei-de-gou-zao-qi-zhong-diao-yong-super-shi-ye-hui-jin-xing-fu-lei-dui-xiang-de-shi-li-hua-ma" class="header-anchor">#</a></h2>
-<p>A： 会的。会自动调用父类的默认构造器。 ?super()主要是用于需要调用父类的特殊构造器的情况。<br>
-因此会先进行Animal的对象实例化，再进行Dog的对象实例化</p>
-<hr>
-<h2><span id="q-gou-zao-fang-fa-cheng-yuan-xian-shi-fu-zhi-fei-jing-tai-dai-ma-kuai-ji-shu-chu-c-he-h-de-na-2-ju-de-shun-xu-shi-shi-me">Q： 构造方法、成员显示赋值、非静态代码块（即输出c和h的那2句）的顺序是什么？</span><a href="#q-gou-zao-fang-fa-cheng-yuan-xian-shi-fu-zhi-fei-jing-tai-dai-ma-kuai-ji-shu-chu-c-he-h-de-na-2-ju-de-shun-xu-shi-shi-me" class="header-anchor">#</a></h2>
-<p>A：?</p>
-<ol>
-<li>成员显示赋值、非静态代码块（按定义顺序）</li>
-<li>构造方法<br>
-因此Animal的实例化过程输出icb（如果对输出i有疑问，见下面一题）<br>
-接着进行Dog的实例化，输出hig</li>
-</ol>
-<hr>
-<h2><span id="q-wei-shi-me-animal-shi-li-hua-shi-i-test-zhong-shu-chu-de-shi-i-er-bu-shi-d">Q： 为什么Animal实例化时， i=test()中输出的是i而不是d？</span><a href="#q-wei-shi-me-animal-shi-li-hua-shi-i-test-zhong-shu-chu-de-shi-i-er-bu-shi-d" class="header-anchor">#</a></h2>
-<p>A:因为你真正创建的是Dog子类，Dog子类中的test()方法由于签名和父类test方法一致，因此test方法被重写了。?<br>
-此时即使在父类中调用，也还是用使用子类Dog的方法。除非你new的是Animal。</p>
-<hr>
-<h2><span id="q-tong-shang-ti-ru-guo-test-fang-fa-du-shi-private-huo-zhe-final-shu-xing-na-me-shang-ti-de-qing-kuang-hui-you-bian-hua-ma">Q： 同上题， 如果test方法都是private或者final属性， 那么上题的情况会有变化吗？？</span><a href="#q-tong-shang-ti-ru-guo-test-fang-fa-du-shi-private-huo-zhe-final-shu-xing-na-me-shang-ti-de-qing-kuang-hui-you-bian-hua-ma" class="header-anchor">#</a></h2>
-<p>A: ?<br>
-因为private和final方法是不能被子类重写的。<br>
-所以Animal实例化时，i=test输出d。</p>
-<hr>
-<p>总结一下顺序：</p>
-<ol>
-<li>父类静态变量显式赋值、父类静态代码块（按定义顺序）</li>
-<li>子类静态变量显式赋值、子类静态代码块（按定义顺序）</li>
-<li>父类非静态变量显式赋值（父类实例成员变量）、父类非静态代码块（按定义顺序）</li>
-<li>父类构造函数</li>
-<li>子类非静态变量（子类实例成员变量）、子类非静态代码块（按定义顺序）</li>
-<li>子类构造函数。</li>
-</ol>
-<h1><span id="lei-jia-zai-guo-cheng">类加载过程</span><a href="#lei-jia-zai-guo-cheng" class="header-anchor">#</a></h1>
-<h2><span id="q-lei-jia-zai-de-3-ge-bi-jing-jie-duan-shi">Q：类加载的3个必经阶段是：</span><a href="#q-lei-jia-zai-de-3-ge-bi-jing-jie-duan-shi" class="header-anchor">#</a></h2>
-<p>A：</p>
-<ol>
-<li>加载（类加载器读取二进制字节流，生成java类对象）</li>
-<li>链接（验证，分配静态域初始零值）</li>
-<li>初始化（前面的题目讲的其实就是初始化时的顺序）<br>
-更详细的如下：<br>
-<img src="/images/%E7%B1%BB%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/image(142).png" alt="image.png"></li>
-</ol>
-<h1><span id="bei-dong-yin-yong-zhong-he-lei-jing-tai-chu-shi-hua-de-guan-xi">被动引用中和类静态初始化的关系</span><a href="#bei-dong-yin-yong-zhong-he-lei-jing-tai-chu-shi-hua-de-guan-xi" class="header-anchor">#</a></h1>
-<h2><span id="q-new-mou-ge-lei-de-shu-zu-shi-hui-yin-fa-lei-chu-shi-hua-ma">Q：new某个类的数组时，会引发类初始化吗？</span><a href="#q-new-mou-ge-lei-de-shu-zu-shi-hui-yin-fa-lei-chu-shi-hua-ma" class="header-anchor">#</a></h2>
-<p>像下面输出什么</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">     <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">A</span>&#123;</span><br><span class="line">          <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">          <span class="keyword">static</span>&#123;</span><br><span class="line">               System.out.println(<span class="string">&quot;initA&quot;</span>);</span><br><span class="line">          &#125;</span><br><span class="line">     &#125;</span><br><span class="line">    ?</span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">          A[] as = <span class="keyword">new</span> <span class="title class_">A</span>[<span class="number">5</span>];</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>A：?<br>
-new数组时，不会引发类初始化。<br>
-什么都不输出。</p>
-<hr>
-<h2><span id="q-yin-yong-lei-de-final-jing-tai-zi-duan-hui-yin-fa-lei-chu-shi-hua-ma">Q：引用类的final静态字段，会引发类初始化吗？</span><a href="#q-yin-yong-lei-de-final-jing-tai-zi-duan-hui-yin-fa-lei-chu-shi-hua-ma" class="header-anchor">#</a></h2>
-<p>像下面输出什么?</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">     <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">A</span>&#123;</span><br><span class="line">          <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">          <span class="keyword">static</span>&#123;</span><br><span class="line">               System.out.println(<span class="string">&quot;initA&quot;</span>);</span><br><span class="line">          &#125;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;A.a=&quot;</span> + A.a);</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>A： 不会引发。<br>
-不会输出initA。 去掉final就会引发了。<br>
-（注意这里必须是基本类型常量， 如果是引用类型产量，则会引发类初始化）</p>
-<hr>
-<h2><span id="q-zi-lei-yin-yong-liao-fu-lei-de-jing-tai-cheng-yuan-ci-shi-zi-lei-hui-zuo-lei-chu-shi-hua-ma">Q：子类引用了父类的静态成员，此时子类会做类初始化嘛？</span><a href="#q-zi-lei-yin-yong-liao-fu-lei-de-jing-tai-cheng-yuan-ci-shi-zi-lei-hui-zuo-lei-chu-shi-hua-ma" class="header-anchor">#</a></h2>
-<p>如下会输出什么</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">     <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">A</span>&#123;</span><br><span class="line">          <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">          <span class="keyword">static</span>&#123;</span><br><span class="line">               System.out.println(<span class="string">&quot;initA&quot;</span>);</span><br><span class="line">          &#125;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">B</span> <span class="keyword">extends</span> <span class="title class_">A</span>&#123;</span><br><span class="line">          <span class="keyword">static</span> &#123;</span><br><span class="line">               System.out.println(<span class="string">&quot;initB&quot;</span>);</span><br><span class="line">          &#125;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">          System.out.println(<span class="string">&quot;B.a=&quot;</span> + B.a);</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>A：?<br>
-子类不会初始化。<br>
-打印initA,却不会打印initB。</p>
-<h1><span id="lei-jia-zai-qi">类加载器</span><a href="#lei-jia-zai-qi" class="header-anchor">#</a></h1>
-<h2><span id="shuang-qin-wei-pai">双亲委派</span><a href="#shuang-qin-wei-pai" class="header-anchor">#</a></h2>
-<hr>
-<p>类加载时的双亲委派模型，不知道能怎么出题。。。反正就记得优先去父类加载器中看类是否能加载。<br>
-就贴个图吧<br>
-<img src="/images/%E7%B1%BB%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/image(143).png" alt="image.png"></p>
-<hr>
-<p>注意，上面的图有问题。<br>
-Bootsrap不是ClassLoader的子类，他是C++编写的。<br>
-而ExtClassLoader和AppClassLoader都是继承自ClassLoader的</p>
-<h2><span id="q-java-zhong-shi-fou-lei-he-jie-kou-de-bao-ming-he-ming-zi-xiang-tong-na-me-jiu-yi-ding-shi-tong-yi-ge-lei-huo-zhe-jie-kou">Q：java中， 是否类和接口的包名和名字相同， 那么就一定是同一个类或者接口？</span><a href="#q-java-zhong-shi-fou-lei-he-jie-kou-de-bao-ming-he-ming-zi-xiang-tong-na-me-jiu-yi-ding-shi-tong-yi-ge-lei-huo-zhe-jie-kou" class="header-anchor">#</a></h2>
-<p>A：<br>
-错误。<br>
-1个jvm中， 类和接口的唯一性由 <em><strong>二进制名称以及它的定义类加载器</strong></em> 共同决定。<br>
-因此2个不同的加载器加载出来相同的类或接口时， 实际上是不同的。</p>
-<hr>
-<h2><span id="q-jiang-yi-xia-classloader-yuan-li-yi-ji-ying-yong-chang-jing">Q: 讲一下ClassLoader原理， 以及应用场景</span><a href="#q-jiang-yi-xia-classloader-yuan-li-yi-ji-ying-yong-chang-jing" class="header-anchor">#</a></h2>
-<p>loaderClass  双亲加载实现（这里会体现先去父亲找，再自己）<br>
-findClass  如何根据名字，生成1个class（内部需要借助defineClass）<br>
-defineClass  通过这个方法生成1个class类</p>
-<p>例如需要根据类目，从某个远端网络加载获取这个类， 而且获取过来的时候还是加密的，需要在findClass里对byte数组做解密并加载。</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zzti_erlie/article/details/82757435">https://blog.csdn.net/zzti_erlie/article/details/82757435</a></p>
-<hr>
-<h2><span id="q-ru-guo-zai-ni-xiang-mu-zhong-jian-yi-ge-java-lang-string-de-lei-na-xi-tong-zhong-yong-de-string-lei-shi-ni-ding-yi-de-string-lei-huan-shi-yuan-sheng-api-zhong-de-string-lei">Q:如果在你项目中建一个java.lang.String的类，那系统中用的String类是你定义的String类，还是原生api中的String类？</span><a href="#q-ru-guo-zai-ni-xiang-mu-zhong-jian-yi-ge-java-lang-string-de-lei-na-xi-tong-zhong-yong-de-string-lei-shi-ni-ding-yi-de-string-lei-huan-shi-yuan-sheng-api-zhong-de-string-lei" class="header-anchor">#</a></h2>
-<p>A:<br>
-用的原生api中的string， 因为双亲委派机制。</p>
-<hr>
-<h2><span id="q-wei-shi-me-yao-yong-shuang-qin-wei-tuo-you-shi-me-hao-chu">Q ： 为什么要用双亲委托，有什么好处？</span><a href="#q-wei-shi-me-yao-yong-shuang-qin-wei-tuo-you-shi-me-hao-chu" class="header-anchor">#</a></h2>
-<p>A:</p>
-<ul>
-<li>对于任意一个类，都需要由加载它的&quot;类加载器和这个类本身&quot;来一同确立其在Java虚拟机中的唯一性。那么双亲委派可以保证顺序加载的特性。</li>
-<li>核心类的安全。Object类如果不使用双亲委派原则的话，那么A创建的Object对象就可能和B创建的Object是不一样的。不使用双亲委派原则无法保证一些java核心类库的唯一性</li>
-<li>例如类java.lang.Object，它存放在rt.jar中，无论哪个类加载器要加载这个类，最终都会委派给启动类加载器进行加载，因此Object类在程序的各种类加载器环境中都是同一个类。相反，如果用户自己写了一个名为java.lang.Object的类，并放在程序的Classpath中，那系统中将会出现多个不同的Object类，java类型体系中最基础的行为也无法保证，应用程序也会变得一片混乱。</li>
-</ul>
-<hr>
-<h2><span id="q-na-wo-ru-guo-zhen-de-you-xu-qiu-bu-xiang-yong-shuang-qin-de-ji-zhi-ni">Q: 那我如果真的有需求， 不想用双亲的机制呢？</span><a href="#q-na-wo-ru-guo-zhen-de-you-xu-qiu-bu-xiang-yong-shuang-qin-de-ji-zhi-ni" class="header-anchor">#</a></h2>
-<p>A:<br>
-按照上 面说的， 自己重写类加载的loaderClass就行了， 不走双亲机制的那块代码。</p>
-<hr>
-<h2><span id="q-shu-zu-lei-shi-zen-me-zuo-jia-zai-de">Q: 数组类是怎么做加载的？</span><a href="#q-shu-zu-lei-shi-zen-me-zuo-jia-zai-de" class="header-anchor">#</a></h2>
-<p>A:<br>
-数组类是由AppClassLoader加载的。<br>
-数组类打印className时，前面会有个[Lxx类<br>
-二维数组就是[[Lxxx类<br>
-数组类的父类型是Object</p>
-<p>注意此时加载的是数组类，而数组类里面的对象是不会做自动加载的<br>
-因此xx类的静态代码并不会被直接调用</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/12/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/12/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" class="post-title-link" itemprop="url">类和接口基本概念</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-12 00:09:30" itemprop="dateCreated datePublished" datetime="2022-08-12T00:09:30+08:00">2022-08-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-15 23:43:41" itemprop="dateModified" datetime="2022-08-15T23:43:41+08:00">2022-08-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E5%88%9D%E7%BA%A7%E8%AF%AD%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">java初级语法</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/12/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/12/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>5.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#xiu-shi-fu">修饰符</a>
-<ul>
-<li><a href="#q-ge-xiu-shi-fu-suo-dai-biao-de-ke-jian-xing">Q： 各修饰符所代表的可见性？</a></li>
-<li><a href="#q-wai-bu-lei-ke-yi-yong-private-huo-zhe-protect-xiu-shi-ma">Q： 外部类可以用private或者protect修饰吗？</a></li>
-<li><a href="#jie-shi-yi-xia-final-de-zuo-yong">解释以下final的作用</a>
-<ul>
-<li><a href="#q-final-cheng-yuan">Q： final 成员？</a></li>
-<li><a href="#q-final-can-shu">Q： final 参数？</a></li>
-<li><a href="#q-final-fang-fa">Q： final方法</a></li>
-<li><a href="#q-final-lei">Q： final类</a></li>
-</ul>
-</li>
-<li><a href="#q-final-ju-bu-bian-liang-ke-yi-zuo-wei-fei-final-de-can-shu-chuan-ru-ma-hui-bian-yi-bao-cuo-ma">Q:final局部变量可以作为非final的参数传入吗？会编译报错吗？</a></li>
-</ul>
-</li>
-<li><a href="#lei">类</a>
-<ul>
-<li><a href="#q-chong-zai-he-chong-xie-de-qu-bie">Q： 重载和重写的区别？</a></li>
-<li><a href="#q-ru-guo-zi-lei-chong-xie-liao-fu-lei-zhong-de-fang-fa-na-me-zi-lei-zhong-huan-neng-diao-yong-fu-lei-zhong-de-tong-ming-fang-fa-ma">Q: 如果子类重写了父类中的方法， 那么子类中还能调用父类中的同名方法吗？</a></li>
-<li><a href="#q-zen-yang-neng-bi-mian-zi-lei-zai-chong-xie-fu-lei-de-fang-fa-bu-xiao-xin-nong-cheng-liao-chong-zai">Q: 怎样能避免子类在重写父类的方法，不小心弄成了重载？</a></li>
-<li><a href="#q-fu-lei-de-cheng-yuan-bian-liang-neng-bei-chong-xie-fu-gai-ma">Q：父类的成员变量能被重写/覆盖嘛？</a></li>
-<li><a href="#q-nei-bu-lei-shi-sha-nei-bu-lei-neng-fang-wen-wai-bu-lei-de-cheng-yuan-ma">Q：内部类是啥，内部类能访问外部类的成员吗？</a></li>
-<li><a href="#q-a-zhong-you-1-ge-nei-bu-lei-c-a-de-zi-lei-b-zhong-ye-you-1-ge-nei-bu-lei-c-b-zhong-de-c-hui-fu-gai-a-zhong-de-c-ma">Q： A中有1个内部类C， A的子类B中也有1个内部类C， B中的C会覆盖A中的C吗？</a></li>
-<li><a href="#q-ke-yi-zai-nei-bu-lei-zhong-ding-yi-jing-tai-cheng-yuan-ma">Q：可以在内部类中定义静态成员吗？</a></li>
-<li><a href="#q-ni-ming-lei-shi-sha-ni-ming-lei-neng-fang-wen-wai-mian-de-bian-liang-huo-zhe-dui-xiang-ma">Q： 匿名类是啥， 匿名类能访问外面的变量或者对象吗？</a></li>
-<li><a href="#q-qian-tao-lei-shi-sha-neng-fang-wen-wai-bu-lei-de-cheng-yuan-ma">Q: 嵌套类是啥，能访问外部类的成员吗？</a></li>
-</ul>
-</li>
-<li><a href="#jie-kou">接口</a>
-<ul>
-<li><a href="#q-jie-kou-zhong-ru-guo-yao-ding-yi-cheng-yuan-bian-liang-na-cheng-yuan-de-mo-ren-xiu-shi-fu-shi-shi-me">Q： 接口中如果要定义成员变量，那成员的默认修饰符是什么？</a></li>
-<li><a href="#q-jie-kou-zhong-ge-fang-fa-de-mo-ren-xiu-shi-fu-shi-shi-me">Q： 接口中各方法的默认修饰符是什么？</a></li>
-<li><a href="#q-jie-kou-zhong-ke-yi-ding-yi-shi-xian-ju-ti-fang-fa-ma">Q： 接口中可以定义实现具体方法嘛？</a></li>
-</ul>
-</li>
-<li><a href="#mei-ju">枚举</a>
-<ul>
-<li><a href="#q-enum-ke-yi-bei-ji-cheng-ma">Q： enum可以被继承吗？</a></li>
-<li><a href="#q-switch-enum-shi-xu-yao-jia-default-ma">Q： switch(enum)时需要加default吗？</a></li>
-<li><a href="#q-enum-ji-lei-li-shi-xian-liao-values-fang-fa-ma">Q： Enum基类里实现了values()方法吗？</a></li>
-</ul>
-</li>
-<li><a href="#jing-tai-fen-pai-he-dong-tai-fen-pai">静态分派和动态分派</a>
-<ul>
-<li><a href="#q-xia-mian-shu-chu-shi-me-shu-yu-shi-me-fen-pai">Q： 下面输出什么，属于什么分派？</a></li>
-<li><a href="#q-she-ji-ru-xia-ge-chong-bu-tong-shu-ju-lei-xing-de-jing-tai-fen-pai-ru-he-ying-dui">Q： 涉及如下各种不同数据类型的静态分派如何应对？</a></li>
-<li><a href="#q-xia-mian-shu-chu-shi-me-shu-yu-shi-me-fen-pai">Q： 下面输出什么，属于什么分派：</a></li>
-<li><a href="#q-jing-tai-fen-pai-shu-yu-dan-fen-pai-huan-shi-duo-fen-pai-dong-tai-fen-pai-shu-yu-dan-fen-pai-huan-shi-duo-fen-pai">Q：静态分派属于单分派还是多分派？动态分派属于单分派还是多分派？</a></li>
-<li><a href="#q-lei-fang-fa-zai-class-wen-jian-zhong-shi-shi-me-yang-de-shi-fu-hao-yin-yong-huan-shi-zhi-jie-yin-yong">Q：类方法在class文件中是什么样的? 是符号引用还是直接引用？</a></li>
-<li><a href="#q-shi-me-shi-hou-fang-fa-de-fu-hao-yin-yong-hui-zhuan-wei-shi-ji-fang-fa-qu-zhong-de-zhi-jie-yin-yong">Q：什么时候方法的符号引用会转为实际方法区中的直接引用？</a></li>
-<li><a href="#q-dong-tai-fen-pai-ji-duo-tai-xu-ni-ji-li-shi-zen-me-que-ding-diao-yong-na-ge-fang-fa-de">Q：动态分派(即多态）， 虚拟机里是怎么确定调用哪个方法的？</a></li>
-</ul>
-</li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="xiu-shi-fu">修饰符</span><a href="#xiu-shi-fu" class="header-anchor">#</a></h1>
-<h2><span id="q-ge-xiu-shi-fu-suo-dai-biao-de-ke-jian-xing">Q： 各修饰符所代表的可见性？</span><a href="#q-ge-xiu-shi-fu-suo-dai-biao-de-ke-jian-xing" class="header-anchor">#</a></h2>
-<p>public: 可被所有使用<br>
-protect： 只能被自己和子类使用，或者同一个包路径<br>
-private： 只能自己使用，儿子都不行<br>
-不加修饰符即default权限： 包访问权限，和他在同一包内的类都可以访问他，包外的则都不能访问</p>
-<hr>
-<h2><span id="q-wai-bu-lei-ke-yi-yong-private-huo-zhe-protect-xiu-shi-ma">Q： 外部类可以用private或者protect修饰吗？</span><a href="#q-wai-bu-lei-ke-yi-yong-private-huo-zhe-protect-xiu-shi-ma" class="header-anchor">#</a></h2>
-<p>A： 不能，只能用public或者包访问权限。 内部类可以。</p>
-<hr>
-<h2><span id="jie-shi-yi-xia-final-de-zuo-yong">解释以下final的作用</span><a href="#jie-shi-yi-xia-final-de-zuo-yong" class="header-anchor">#</a></h2>
-<h3><span id="q-final-cheng-yuan">Q： final 成员？</span><a href="#q-final-cheng-yuan" class="header-anchor">#</a></h3>
-<p>A： 如果是基本类型，则指值不能被改变。 如果是对象，指对象的引用不可改变，但是引用处的内容可改变。</p>
-<hr>
-<p>编译器会要求final成员必须初始化或者构造器里赋值，且后续不能再主动赋值。</p>
-<h3><span id="q-final-can-shu">Q： final 参数？</span><a href="#q-final-can-shu" class="header-anchor">#</a></h3>
-<p>A： 参数不可变，只能读不能修改，同上</p>
-<hr>
-<h3><span id="q-final-fang-fa">Q： final方法</span><a href="#q-final-fang-fa" class="header-anchor">#</a></h3>
-<p>A： 方法不能被子类重写。</p>
-<hr>
-<h3><span id="q-final-lei">Q： final类</span><a href="#q-final-lei" class="header-anchor">#</a></h3>
-<p>A： 该类不能被继承。</p>
-<hr>
-<h2><span id="q-final-ju-bu-bian-liang-ke-yi-zuo-wei-fei-final-de-can-shu-chuan-ru-ma-hui-bian-yi-bao-cuo-ma">Q:final局部变量可以作为非final的参数传入吗？会编译报错吗？</span><a href="#q-final-ju-bu-bian-liang-ke-yi-zuo-wei-fei-final-de-can-shu-chuan-ru-ma-hui-bian-yi-bao-cuo-ma" class="header-anchor">#</a></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>&#123;</span><br><span class="line">	<span class="keyword">final</span> <span class="type">A</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">A</span>();</span><br><span class="line">	changeA(a);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">changeA</span><span class="params">(A a)</span> &#123;</span><br><span class="line">	<span class="comment">// change A...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>A:<br>
-可以作为非final的参数传入，不会编译报错。</p>
-<hr>
-<h1><span id="lei">类</span><a href="#lei" class="header-anchor">#</a></h1>
-<h2><span id="q-chong-zai-he-chong-xie-de-qu-bie">Q： 重载和重写的区别？</span><a href="#q-chong-zai-he-chong-xie-de-qu-bie" class="header-anchor">#</a></h2>
-<p>A：<br>
-重载是方法名相同，参数不同。<br>
-重写是方法参数等都一致的情况下重写父类的方法。</p>
-<hr>
-<h2><span id="q-ru-guo-zi-lei-chong-xie-liao-fu-lei-zhong-de-fang-fa-na-me-zi-lei-zhong-huan-neng-diao-yong-fu-lei-zhong-de-tong-ming-fang-fa-ma">Q: 如果子类重写了父类中的方法， 那么子类中还能调用父类中的同名方法吗？</span><a href="#q-ru-guo-zi-lei-chong-xie-liao-fu-lei-zhong-de-fang-fa-na-me-zi-lei-zhong-huan-neng-diao-yong-fu-lei-zhong-de-tong-ming-fang-fa-ma" class="header-anchor">#</a></h2>
-<p>A: 可以，super.xxx即可（C++中不可以调用父类中的同名重载方法)。</p>
-<hr>
-<h2><span id="q-zen-yang-neng-bi-mian-zi-lei-zai-chong-xie-fu-lei-de-fang-fa-bu-xiao-xin-nong-cheng-liao-chong-zai">Q: 怎样能避免子类在重写父类的方法，不小心弄成了重载？</span><a href="#q-zen-yang-neng-bi-mian-zi-lei-zai-chong-xie-fu-lei-de-fang-fa-bu-xiao-xin-nong-cheng-liao-chong-zai" class="header-anchor">#</a></h2>
-<p>（即你想重写父类的f(int), 却不小心写成了f(int，int)，导致调用f(int)时还是调用了父类的f ，怎么能避免这种失误？）<br>
-A: 加个@Override关键字即可，原文解释：<br>
-<img src="/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/69e4b13dbfbb57476c7f29e7a5b00ee24db66776.png" alt="69e4b13dbfbb57476c7f29e7a5b00ee24db66776"></p>
-<hr>
-<h2><span id="q-fu-lei-de-cheng-yuan-bian-liang-neng-bei-chong-xie-fu-gai-ma">Q：父类的成员变量能被重写/覆盖嘛？</span><a href="#q-fu-lei-de-cheng-yuan-bian-liang-neng-bei-chong-xie-fu-gai-ma" class="header-anchor">#</a></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;A&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span> <span class="keyword">extends</span> <span class="title class_">A</span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;B&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main&#123;</span><br><span class="line">	<span class="type">A</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">B</span>();</span><br><span class="line">   System.out.println(a.name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>A:<br>
-输出A。<br>
-注意成员变量不具有多态性，因此你定义的是A，赋值的是B， 那么输出的依旧是A里的成员。<br>
-如果是被重写的方法的话，那会用B里的方法。</p>
-<hr>
-<h2><span id="q-nei-bu-lei-shi-sha-nei-bu-lei-neng-fang-wen-wai-bu-lei-de-cheng-yuan-ma">Q：内部类是啥，内部类能访问外部类的成员吗？</span><a href="#q-nei-bu-lei-shi-sha-nei-bu-lei-neng-fang-wen-wai-bu-lei-de-cheng-yuan-ma" class="header-anchor">#</a></h2>
-<p>A：<br>
-内部类概念：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">	<span class="keyword">class</span> <span class="title class_">B</span>&#123;</span><br><span class="line">   		...</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>B就是A的内部类,B能访问A的所有成员</p>
-<hr>
-<h2><span id="q-a-zhong-you-1-ge-nei-bu-lei-c-a-de-zi-lei-b-zhong-ye-you-1-ge-nei-bu-lei-c-b-zhong-de-c-hui-fu-gai-a-zhong-de-c-ma">Q： A中有1个内部类C， A的子类B中也有1个内部类C， B中的C会覆盖A中的C吗？</span><a href="#q-a-zhong-you-1-ge-nei-bu-lei-c-a-de-zi-lei-b-zhong-ye-you-1-ge-nei-bu-lei-c-b-zhong-de-c-hui-fu-gai-a-zhong-de-c-ma" class="header-anchor">#</a></h2>
-<p>A： 不会， 因为使用时是通过B.C或者A.C去调用的，存在命名空间的关系。</p>
-<hr>
-<h2><span id="q-ke-yi-zai-nei-bu-lei-zhong-ding-yi-jing-tai-cheng-yuan-ma">Q：可以在内部类中定义静态成员吗？</span><a href="#q-ke-yi-zai-nei-bu-lei-zhong-ding-yi-jing-tai-cheng-yuan-ma" class="header-anchor">#</a></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">	<span class="keyword">class</span> <span class="title class_">B</span>&#123;</span><br><span class="line">    	<span class="keyword">static</span> <span class="type">int</span> b;</span><br><span class="line">   		...</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>A:<br>
-不可以。 除非在class B前面加static变为静态类</p>
-<hr>
-<h2><span id="q-ni-ming-lei-shi-sha-ni-ming-lei-neng-fang-wen-wai-mian-de-bian-liang-huo-zhe-dui-xiang-ma">Q： 匿名类是啥， 匿名类能访问外面的变量或者对象吗？</span><a href="#q-ni-ming-lei-shi-sha-ni-ming-lei-neng-fang-wen-wai-mian-de-bian-liang-huo-zhe-dui-xiang-ma" class="header-anchor">#</a></h2>
-<p>A： 匿名类概念：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">A</span>(构造参数)&#123;</span><br><span class="line">   &#123;构造器内容&#125;</span><br><span class="line">   类定义 </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>匿名类如果要用外面的对象， 外面的对象必须要定义为final。</p>
-<hr>
-<h2><span id="q-qian-tao-lei-shi-sha-neng-fang-wen-wai-bu-lei-de-cheng-yuan-ma">Q: 嵌套类是啥，能访问外部类的成员吗？</span><a href="#q-qian-tao-lei-shi-sha-neng-fang-wen-wai-bu-lei-de-cheng-yuan-ma" class="header-anchor">#</a></h2>
-<p>A：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">   <span class="keyword">static</span> <span class="type">int</span> sa;</span><br><span class="line">   <span class="type">int</span> a;</span><br><span class="line">	<span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">B</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>B只能访问A中的静态成员sa, 而不能访问a。</p>
-<h1><span id="jie-kou">接口</span><a href="#jie-kou" class="header-anchor">#</a></h1>
-<p>类是单继承，接口可以多继承</p>
-<hr>
-<h2><span id="q-jie-kou-zhong-ru-guo-yao-ding-yi-cheng-yuan-bian-liang-na-cheng-yuan-de-mo-ren-xiu-shi-fu-shi-shi-me">Q： 接口中如果要定义成员变量，那成员的默认修饰符是什么？</span><a href="#q-jie-kou-zhong-ru-guo-yao-ding-yi-cheng-yuan-bian-liang-na-cheng-yuan-de-mo-ren-xiu-shi-fu-shi-shi-me" class="header-anchor">#</a></h2>
-<p>A： public static final</p>
-<hr>
-<h2><span id="q-jie-kou-zhong-ge-fang-fa-de-mo-ren-xiu-shi-fu-shi-shi-me">Q： 接口中各方法的默认修饰符是什么？</span><a href="#q-jie-kou-zhong-ge-fang-fa-de-mo-ren-xiu-shi-fu-shi-shi-me" class="header-anchor">#</a></h2>
-<p>A： public abstract</p>
-<hr>
-<h2><span id="q-jie-kou-zhong-ke-yi-ding-yi-shi-xian-ju-ti-fang-fa-ma">Q： 接口中可以定义实现具体方法嘛？</span><a href="#q-jie-kou-zhong-ke-yi-ding-yi-shi-xian-ju-ti-fang-fa-ma" class="header-anchor">#</a></h2>
-<p>A：<br>
-java8以上版本可以。<br>
-引入了default关键字，在接口中用default关键字修饰接口，就可以在接口中去实现这个接口了。</p>
-<hr>
-<h1><span id="mei-ju">枚举</span><a href="#mei-ju" class="header-anchor">#</a></h1>
-<h2><span id="q-enum-ke-yi-bei-ji-cheng-ma">Q： enum可以被继承吗？</span><a href="#q-enum-ke-yi-bei-ji-cheng-ma" class="header-anchor">#</a></h2>
-<p>像下面这样：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">A</span> extend B&#123;</span><br><span class="line">...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>A： 不可以。enum标识符本身被编译器处理过，自身就继承自Enum类，而java不支持多重继承。但支持实现接口<br>
-<img src="/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/6ae62ac7072c2bf308db83b832dafce68ed2d5cf.png" alt="6ae62ac7072c2bf308db83b832dafce68ed2d5cf"></p>
-<hr>
-<h2><span id="q-switch-enum-shi-xu-yao-jia-default-ma">Q： switch(enum)时需要加default吗？</span><a href="#q-switch-enum-shi-xu-yao-jia-default-ma" class="header-anchor">#</a></h2>
-<p>A： 可以不需要。</p>
-<hr>
-<h2><span id="q-enum-ji-lei-li-shi-xian-liao-values-fang-fa-ma">Q： Enum基类里实现了values()方法吗？</span><a href="#q-enum-ji-lei-li-shi-xian-liao-values-fang-fa-ma" class="header-anchor">#</a></h2>
-<p>A： 没有实现， values方法是编译器加的。因此从List<enum>里取出的对象，是不能调用values（）的。<br>
-<img src="/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/3f7ff65142341ef0771067edc7698616e0ce6154.png" alt="3f7ff65142341ef0771067edc7698616e0ce6154"></enum></p>
-<hr>
-<p>Q：enum里的枚举的默认修饰符默认是？<br>
-A：static final</p>
-<hr>
-<h1><span id="jing-tai-fen-pai-he-dong-tai-fen-pai">静态分派和动态分派</span><a href="#jing-tai-fen-pai-he-dong-tai-fen-pai" class="header-anchor">#</a></h1>
-<h2><span id="q-xia-mian-shu-chu-shi-me-shu-yu-shi-me-fen-pai">Q： 下面输出什么，属于什么分派？</span><a href="#q-xia-mian-shu-chu-shi-me-shu-yu-shi-me-fen-pai" class="header-anchor">#</a></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">test</span><span class="params">()</span> &#123;</span><br><span class="line">       <span class="type">Father</span> <span class="variable">father</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Son</span>();          <span class="comment">//静态分派</span></span><br><span class="line">       print(father);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">void</span> <span class="title function_">print</span><span class="params">(Father father)</span> &#123;</span><br><span class="line">       System.out.println(<span class="string">&quot;this is father&quot;</span>);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">void</span> <span class="title function_">print</span><span class="params">(Son son)</span> &#123;</span><br><span class="line">       System.out.println(<span class="string">&quot;this is son&quot;</span>);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
-<p>A:<br>
-输出this is father。 属于静态分派。<br>
-静态分派概念： 编译器就能确定调用哪个方法。<br>
-这里2个print属于重载方法，通过输入参数的定义类型即立刻确定调用哪个<br>
-静态分派取决于静态类型</p>
-<p>静态类型概念： 编译期写在java文件里能马上看到的类型<br>
-例如 A a = Factory.create(args);<br>
-那么左边的A就是静态类型， 而右边的类型取决于运行期，是不确定的。</p>
-<hr>
-<h2><span id="q-she-ji-ru-xia-ge-chong-bu-tong-shu-ju-lei-xing-de-jing-tai-fen-pai-ru-he-ying-dui">Q： 涉及如下各种不同数据类型的静态分派如何应对？</span><a href="#q-she-ji-ru-xia-ge-chong-bu-tong-shu-ju-lei-xing-de-jing-tai-fen-pai-ru-he-ying-dui" class="header-anchor">#</a></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Overload</span> &#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">sayHello</span><span class="params">(<span class="type">char</span> arg)</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;hello char&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">sayHello</span><span class="params">(Object arg)</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;hello Object&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">sayHello</span><span class="params">(<span class="type">int</span> arg)</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;hello int&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">sayHello</span><span class="params">(<span class="type">long</span> arg)</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;hello long&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 测试代码</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    sayHello(<span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出什么？<br>
-A：<br>
-输出 hello char<br>
-因为‘a’是一个char类型数据（即静态类型是char），所以会选择参数类型为char的重载方法。<br>
-若注释掉sayHello(char arg)方法，那么会输出 hello int<br>
-因为‘a’除了可代表字符串，还可代表数字97。因此当没有最合适的sayHello(char arg)方式进行重载时，会选择第二合适（第二优先级）的方法重载，即sayHello(int arg)</p>
-<p>总结：当没有最合适的方法进行重载时，会选优先级第二高的的方法进行重载，如此类推。<br>
-优先级顺序为：char&gt;int&gt;long&gt;float&gt;double&gt;Character（自动装箱）&gt;Serializable（接口，从下往上）&gt;Object（父类1，父类2，从下往上）&gt;…<br>
-其中…为变长参数，将其视为一个数组元素。变长参数的重载优先级最低。<br>
-因为 char 转型到 byte 或 short 的过程是不安全的，所以不会选择参数类型为byte 或 short的方法进行重载，故优先级列表里也没有。</p>
-<p><strong>上面可以看到，重载时选择方法的优先级顺序是基本类型-&gt;高精度类型-&gt;包装类-&gt;接口（从下往上）-&gt;父类（从下往上）-&gt;可变参数</strong></p>
-<hr>
-<h2><span id="q-xia-mian-shu-chu-shi-me-shu-yu-shi-me-fen-pai">Q： 下面输出什么，属于什么分派：</span><a href="#q-xia-mian-shu-chu-shi-me-shu-yu-shi-me-fen-pai" class="header-anchor">#</a></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">test</span><span class="params">()</span> &#123;</span><br><span class="line">     <span class="type">Father</span> <span class="variable">father</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Son</span>();       </span><br><span class="line">     father.name();    </span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">class</span> <span class="title class_">Son</span> <span class="keyword">extends</span> <span class="title class_">Father</span> &#123;</span><br><span class="line">     <span class="keyword">void</span> <span class="title function_">name</span><span class="params">()</span>&#123;</span><br><span class="line">         System.out.println(<span class="string">&quot;son&quot;</span>);</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">class</span> <span class="title class_">Father</span> &#123;</span><br><span class="line">     <span class="keyword">void</span> <span class="title function_">name</span><span class="params">()</span>&#123;</span><br><span class="line">         System.out.println(<span class="string">&quot;father&quot;</span>);</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p>A：<br>
-输出son，属于动态分派。运行的时候根据所指向的具体对象才确定调用哪个方法</p>
-<hr>
-<h2><span id="q-jing-tai-fen-pai-shu-yu-dan-fen-pai-huan-shi-duo-fen-pai-dong-tai-fen-pai-shu-yu-dan-fen-pai-huan-shi-duo-fen-pai">Q：静态分派属于单分派还是多分派？动态分派属于单分派还是多分派？</span><a href="#q-jing-tai-fen-pai-shu-yu-dan-fen-pai-huan-shi-duo-fen-pai-dong-tai-fen-pai-shu-yu-dan-fen-pai-huan-shi-duo-fen-pai" class="header-anchor">#</a></h2>
-<p>A：<br>
-静态分派是多分派。<br>
-动态分派是单分派。<br>
-多分派概念: 分派时即要考虑调用者的类型，也要考虑参数类型。<br>
-而单分派只考虑调用者的类型。</p>
-<p>动态分派原理：</p>
-<hr>
-<h2><span id="q-lei-fang-fa-zai-class-wen-jian-zhong-shi-shi-me-yang-de-shi-fu-hao-yin-yong-huan-shi-zhi-jie-yin-yong">Q：类方法在class文件中是什么样的? 是符号引用还是直接引用？</span><a href="#q-lei-fang-fa-zai-class-wen-jian-zhong-shi-shi-me-yang-de-shi-fu-hao-yin-yong-huan-shi-zhi-jie-yin-yong" class="header-anchor">#</a></h2>
-<p>A：<br>
-class文件中， 所定义的方法 都只是符号引用，即只是个符号，知道方法名字， 但是不知道方法的实际指令运行地址<br>
-符号引用如下，不过我这展示的时class_info即类的符号引用， 实际上还会有method_info即方法的引用：<br>
-<img src="/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/ce8d672af3d63cb9a8b56a2325651bea772d8970.png" alt="ce8d672af3d63cb9a8b56a2325651bea772d8970"></p>
-<p>然后方法在class文件中时这样存放的， 先是一个method_count数量，接着再存储方法。<br>
-<img src="/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/03f7962c02a331c88824602f1052a7f866ae687f.png" alt="03f7962c02a331c88824602f1052a7f866ae687f"></p>
-<p>此时是不知道方法的指令地址的。 除非从符号引用转为直接引用。</p>
-<hr>
-<h2><span id="q-shi-me-shi-hou-fang-fa-de-fu-hao-yin-yong-hui-zhuan-wei-shi-ji-fang-fa-qu-zhong-de-zhi-jie-yin-yong">Q：什么时候方法的符号引用会转为实际方法区中的直接引用？</span><a href="#q-shi-me-shi-hou-fang-fa-de-fu-hao-yin-yong-hui-zhuan-wei-shi-ji-fang-fa-qu-zhong-de-zhi-jie-yin-yong" class="header-anchor">#</a></h2>
-<p>A：<br>
-类加载的解析阶段会把满足「编译期可知，运行期不可变」的方法的符号引用替换为指向方法区的直接引用，不会延迟到运行时再去完成。</p>
-<ul>
-<li>构造</li>
-<li>私有</li>
-<li>静态<br>
-final修饰<br>
-上面这4类方法在类加载时都会被识别出来，并转成 指向方法区的直接引用（即能知道了指令地址了，而不是字节码的符号）</li>
-</ul>
-<hr>
-<h2><span id="q-dong-tai-fen-pai-ji-duo-tai-xu-ni-ji-li-shi-zen-me-que-ding-diao-yong-na-ge-fang-fa-de">Q：动态分派(即多态）， 虚拟机里是怎么确定调用哪个方法的？</span><a href="#q-dong-tai-fen-pai-ji-duo-tai-xu-ni-ji-li-shi-zen-me-que-ding-diao-yong-na-ge-fang-fa-de" class="header-anchor">#</a></h2>
-<p>如下， 他怎么确定调用的是Son实现的do， 还是father实现的do？</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"><span class="type">Father</span> <span class="variable">f</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Son</span>()</span><br><span class="line">f.<span class="keyword">do</span>(a);</span><br></pre></td></tr></table></figure>
-<p>A：<br>
-首先，通过静态分派， 他知道一定选用的是f(int a) 这个方法，但是他不知道选用哪个类的do(int a)方法。<br>
-<a target="_blank" rel="noopener" href="http://xn--f-376av22dj41a1vi.do">而你执行f.do</a>(a)时， 操作数栈上会存放一个对象引用</p>
-<p><img src="/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/4b25d6e4706cecfa8651680fb19d2603db8113e0.png" alt="4b25d6e4706cecfa8651680fb19d2603db8113e0"></p>
-<p>那么执行f方法的虚拟机指令就会通过这个对象引用，找到他的实际类型的class<br>
-<img src="/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/ee1b41d71b7c0e897c34fa86deb79fb9a242cad8.png" alt="ee1b41d71b7c0e897c34fa86deb79fb9a242cad8"></p>
-<p>他会在这个实际类中查找是否有实现这个方法，具体看class文件中有没有这个方法的定义<br>
-<img src="/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/1dc65dc0cda6cf91e650f456d2351518465e6ebb.png" alt="1dc65dc0cda6cf91e650f456d2351518465e6ebb"></p>
-<p>如果没有找到，他就去父类找，父类的关系class文件中就可以知道<br>
-<img src="/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/95427daaed60924141c46d48a56efb4f66c97691.png" alt="95427daaed60924141c46d48a56efb4f66c97691"></p>
-<p>如果父类没有，就接着往上找，直到找到实现了的。</p>
-<p><img src="/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/0cd5d2504cda48e554facaded21ffbf82b8af33a.png" alt="0cd5d2504cda48e554facaded21ffbf82b8af33a"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -3195,7 +3096,7 @@ final修饰<br>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-count">55</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -3206,7 +3107,7 @@ final修饰<br>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -3266,7 +3167,7 @@ final修饰<br>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共128.2k字</span>
+  <span class="post-count">博客全站共133.2k字</span>
 </div>
 
         
