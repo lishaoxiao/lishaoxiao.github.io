@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="索引的基本概念  索引的优点 索引类型  哈希索引  自定义哈希索引   空间数据索引（R-Tree) 全文索引   三星索引的评价   索引原理  B+ tree实现 Q: 为什么不选择使用B树， 而是使用B+树？ Q: 那为什么不选用红黑树？ Q: 那为什么不用哈希表？   高性能的索引策略  独立的列的问题 前缀索引优化  前缀索引的创建 确定前缀长度 如何做后缀索引？   多列索引">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据库索引详解">
+<meta property="og:url" content="http://breakdawncoder.com/2022/08/21/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="索引的基本概念  索引的优点 索引类型  哈希索引  自定义哈希索引   空间数据索引（R-Tree) 全文索引   三星索引的评价   索引原理  B+ tree实现 Q: 为什么不选择使用B树， 而是使用B+树？ Q: 那为什么不选用红黑树？ Q: 那为什么不用哈希表？   高性能的索引策略  独立的列的问题 前缀索引优化  前缀索引的创建 确定前缀长度 如何做后缀索引？   多列索引">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/6969d29b8468739b7480fa2315ed0478c0ad46d3.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/0856365975e56e39b87ec59c6e52c6c2260027e1.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/c29493c31974255e9ce7dbb32c788130b5de1b76.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/93d013b61925f7f744e0aad9bdb1062b32874881.png">
+<meta property="article:published_time" content="2022-08-21T15:46:49.000Z">
+<meta property="article:modified_time" content="2022-08-21T15:52:44.223Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="后台开发,SQL数据库">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/6969d29b8468739b7480fa2315ed0478c0ad46d3.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/2022/08/21/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>数据库索引详解 | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/21/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          数据库索引详解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-21 23:46:49 / 修改时间：23:52:44" itemprop="dateCreated datePublished" datetime="2022-08-21T23:46:49+08:00">2022-08-21</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/21/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/21/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#suo-yin-de-ji-ben-gai-nian">索引的基本概念</a>
+<ul>
+<li><a href="#suo-yin-de-you-dian">索引的优点</a></li>
+<li><a href="#suo-yin-lei-xing">索引类型</a>
+<ul>
+<li><a href="#ha-xi-suo-yin">哈希索引</a>
+<ul>
+<li><a href="#zi-ding-yi-ha-xi-suo-yin">自定义哈希索引</a></li>
+</ul>
+</li>
+<li><a href="#kong-jian-shu-ju-suo-yin-r-tree">空间数据索引（R-Tree)</a></li>
+<li><a href="#quan-wen-suo-yin">全文索引</a></li>
+</ul>
+</li>
+<li><a href="#san-xing-suo-yin-de-ping-jie">三星索引的评价</a></li>
+</ul>
+</li>
+<li><a href="#suo-yin-yuan-li">索引原理</a>
+<ul>
+<li><a href="#b-tree-shi-xian">B+ tree实现</a></li>
+<li><a href="#q-wei-shi-me-bu-xuan-ze-shi-yong-b-shu-er-shi-shi-yong-b-shu">Q: 为什么不选择使用B树， 而是使用B+树？</a></li>
+<li><a href="#q-na-wei-shi-me-bu-xuan-yong-hong-hei-shu">Q: 那为什么不选用红黑树？</a></li>
+<li><a href="#q-na-wei-shi-me-bu-yong-ha-xi-biao">Q: 那为什么不用哈希表？</a></li>
+</ul>
+</li>
+<li><a href="#gao-xing-neng-de-suo-yin-ce-lue">高性能的索引策略</a>
+<ul>
+<li><a href="#du-li-de-lie-de-wen-ti">独立的列的问题</a></li>
+<li><a href="#qian-zhui-suo-yin-you-hua">前缀索引优化</a>
+<ul>
+<li><a href="#qian-zhui-suo-yin-de-chuang-jian">前缀索引的创建</a></li>
+<li><a href="#que-ding-qian-zhui-chang-du">确定前缀长度</a></li>
+<li><a href="#ru-he-zuo-hou-zhui-suo-yin">如何做后缀索引？</a></li>
+</ul>
+</li>
+<li><a href="#duo-lie-suo-yin">多列索引</a></li>
+<li><a href="#ru-he-que-ding-suo-yin-lie-shun-xu">如何确定索引列顺序</a></li>
+</ul>
+</li>
+<li><a href="#ju-cu-suo-yin">聚簇索引</a>
+<ul>
+<li><a href="#ju-cu-he-fei-ju-cu-de-qu-bie">聚簇和非聚簇的区别</a></li>
+<li><a href="#ju-cu-de-you-dian">聚簇的优点</a></li>
+<li><a href="#ju-cu-de-que-dian">聚簇的缺点</a></li>
+<li><a href="#ju-cu-he-fei-ju-cu-de-dui-bi">聚簇和非聚簇的对比</a></li>
+<li><a href="#q-shi-me-shi-hui-biao">Q: 什么是回表？</a></li>
+<li><a href="#q-na-me-dang-fa-sheng-hui-biao-shi-zen-me-bi-mian-ni">Q: 那么当发生回表时，怎么避免呢？</a></li>
+<li><a href="#q-fei-zhu-jian-suo-yin-a-zuo-where-a-3-shi-neng-chong-fen-li-yong-suo-yin-zuo-jian-dan-de-fan-wei-du-qu-me">Q: 非主键索引a， 做where a&gt;3时， 能充分利用索引做简单的范围读取么？</a></li>
+<li><a href="#er-ji-suo-yin-he-zhu-jian">二级索引和主键</a></li>
+<li><a href="#q-zhu-jian-suo-yin-he-wei-yi-suo-yin-you-shi-me-qu-bie-ni">Q: 主键索引和唯一索引有什么区别呢？</a></li>
+<li><a href="#q-que-ding-bu-neng-you-duo-ge-zhu-jian-suo-yin-ma-na-fan-shi-li-ti-dao-de-duo-ge-zhu-jian-shi-zen-me-hui-shi-ni">Q: 确定不能有多个主键索引吗？那泛式里提到的多个主键是怎么回事呢？</a></li>
+</ul>
+</li>
+<li><a href="#suo-yin-de-cha-ru">索引的插入</a>
+<ul>
+<li><a href="#suo-yin-cha-ru-de-gui-fan">索引插入的规范</a></li>
+<li><a href="#q-wei-shi-me-zi-zeng-id-ke-neng-hui-chu-xian-bu-lian-xu-de-qing-kuang">Q: 为什么自增id可能会出现不连续的情况？</a></li>
+<li><a href="#q-wei-shi-me-zi-zeng-id-bu-neng-hui-gun-ni">Q: 为什么自增id不能回滚呢？</a></li>
+</ul>
+</li>
+<li><a href="#qi-ta-suo-yin">其他索引</a>
+<ul>
+<li><a href="#fu-gai-suo-yin">覆盖索引</a></li>
+<li><a href="#yong-suo-yin-zuo-pai-xu">用索引做排序</a></li>
+<li><a href="#ya-suo-qian-zhui-suo-yin">压缩（前缀索引）</a></li>
+<li><a href="#chong-fu-suo-yin">重复索引</a></li>
+<li><a href="#rong-yu-suo-yin">冗余索引</a></li>
+<li><a href="#wei-shi-yong-de-suo-yin">未使用的索引</a></li>
+<li><a href="#suo-yin-he-suo">索引和锁</a></li>
+</ul>
+</li>
+<li><a href="#suo-yin-ying-yong">索引应用</a>
+<ul>
+<li><a href="#duo-chong-guo-lu-tiao-jian-you-hua">多种过滤条件优化</a></li>
+<li><a href="#bi-mian-duo-ge-fan-wei-tiao-jian">避免多个范围条件</a></li>
+<li><a href="#q-xie-ru-biao-de-shi-hou-wei-shi-me-yi-ban-jian-yi-zi-zeng-de-zhu-jian-id-lai-xie-ru">Q: 写入表的时候， 为什么一般建议自增的主键id来写入？</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="suo-yin-de-ji-ben-gai-nian">索引的基本概念</span><a href="#suo-yin-de-ji-ben-gai-nian" class="header-anchor">#</a></h1>
+<h2><span id="suo-yin-de-you-dian">索引的优点</span><a href="#suo-yin-de-you-dian" class="header-anchor">#</a></h2>
+<ol>
+<li>大大减少服务器需要扫描的数据量（本来O(n)的扫描，在B-Tree或者哈希索引的帮助下， 变成O(logn)或者O(1)）</li>
+<li>避免了不必要的排序或者临时表（order by和排序需要先弄一个临时存储的表）</li>
+<li>把随机IO改成为了顺序IO，IO速度加快</li>
+</ol>
+<h2><span id="suo-yin-lei-xing">索引类型</span><a href="#suo-yin-lei-xing" class="header-anchor">#</a></h2>
+<hr>
+<ul>
+<li>支持的类型</li>
+</ul>
+<ol>
+<li>全值匹配——key中所有索引列全部匹配中，单个的</li>
+<li>匹配最左索引——匹配key中的第一个索引值</li>
+<li>匹配列前缀——可以只匹配某个索引的前缀（适用于字符串的情况）</li>
+<li>可以匹配最左索引+列前缀——可以只匹配  索引1、索引2加上索引3的前缀。</li>
+</ol>
+<ul>
+<li>注意上面的匹配，都是从左往右的匹配， 因此不支持只匹配中间那个索引的情况。</li>
+<li>如果有一列索引用了范围， 那么后面的列都不能再用来匹配了。</li>
+<li>B-Tree也可用于排序或者group by key，会加快速度，毕竟默认都是排好序的了。</li>
+</ul>
+<h3><span id="ha-xi-suo-yin">哈希索引</span><a href="#ha-xi-suo-yin" class="header-anchor">#</a></h3>
+<ul>
+<li>指的是把 索引列计算出一个哈希值， 存到一个哈希表中， key是哈希值，val是行指针。</li>
+<li>只有Memory引擎支持（key using hash(索引值） ）， inndb不支持。</li>
+<li>因为不是按照顺序存的， 所以不可用于优化排序， 只能优化查询。</li>
+<li>不支持部分索引匹配， 因为哈希值是根据全索引计算的。</li>
+<li>也不支持范围。</li>
+<li>如果有哈希冲突，且很多，就可能造成性能变慢，</li>
+</ul>
+<h4><span id="zi-ding-yi-ha-xi-suo-yin">自定义哈希索引</span><a href="#zi-ding-yi-ha-xi-suo-yin" class="header-anchor">#</a></h4>
+<ul>
+<li>可以利用B-tree弄一个自定义的哈希索引</li>
+<li>例如想哈希的列是url， 于是我弄了一个hash_url的列,  里面的值是url经过CRC32(url）后的值， 然后把hash_url这一列作为索引。</li>
+<li>然后select语句的时候，  where url = ‘xx’ and hash_url=CRC32(‘xx’)  ，即可 快速定位。</li>
+<li>hash_url的值可以通过insert触发器，每次插入url的时候进行更新</li>
+<li>查询时必须带上哈希前原本的值（就是上面的url = ‘xxx’)，否则可能会因为哈希冲突返回多行。</li>
+<li>不可用SHA1和MDK做哈希函数。</li>
+</ul>
+<h3><span id="kong-jian-shu-ju-suo-yin-r-tree">空间数据索引（R-Tree)</span><a href="#kong-jian-shu-ju-suo-yin-r-tree" class="header-anchor">#</a></h3>
+<ul>
+<li>只有MyISAM才支持</li>
+<li>从所有维度来索引数据，用于地理信息存储之类的</li>
+</ul>
+<h3><span id="quan-wen-suo-yin">全文索引</span><a href="#quan-wen-suo-yin" class="header-anchor">#</a></h3>
+<ul>
+<li>查找文本中的关键词</li>
+<li>可以同时创建全文索引和基于值的B-Tree索引</li>
+</ul>
+<h2><span id="san-xing-suo-yin-de-ping-jie">三星索引的评价</span><a href="#san-xing-suo-yin-de-ping-jie" class="header-anchor">#</a></h2>
+<ul>
+<li>一星：需要拿的记录都放到同一行（即不用再关联其他表）</li>
+<li>二星：索引数据顺序和查找顺序一致</li>
+<li>三星: 索引的列包含了查询中需要的全部的列（即不用去返回行中所有顺序，直接返回key就好了）</li>
+</ul>
+<h1><span id="suo-yin-yuan-li">索引原理</span><a href="#suo-yin-yuan-li" class="header-anchor">#</a></h1>
+<h2><span id="b-tree-shi-xian">B+ tree实现</span><a href="#b-tree-shi-xian" class="header-anchor">#</a></h2>
+<ul>
+<li>如果没有指明类型，基本上都是用的B+ tree索引</li>
+<li>B+ tree结构</li>
+</ul>
+<p><img src="/images/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/6969d29b8468739b7480fa2315ed0478c0ad46d3.png" alt="6969d29b8468739b7480fa2315ed0478c0ad46d3"><br>
+里面的key就是 你选定的索引值<br>
+然后按照范围，指向后面其他的范围，直到定位到具体的叶子节点即行所对应的值。<br>
+同时因为最后叶子都是按照顺序连起来的，所以也很适合按照范围返回数据。</p>
+<ul>
+<li>B+tree里的key可以包含多个列的值， 并且这些列匹配时有顺序关系，按照定义key时的优先级来排序。（就是说可以多个key组成一个节点，里面自定义了对应的判定顺序）<br>
+<img src="/images/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/0856365975e56e39b87ec59c6e52c6c2260027e1.png" alt="0856365975e56e39b87ec59c6e52c6c2260027e1"></li>
+</ul>
+<hr>
+<h2><span id="q-wei-shi-me-bu-xuan-ze-shi-yong-b-shu-er-shi-shi-yong-b-shu">Q: 为什么不选择使用B树， 而是使用B+树？</span><a href="#q-wei-shi-me-bu-xuan-ze-shi-yong-b-shu-er-shi-shi-yong-b-shu" class="header-anchor">#</a></h2>
+<p>A:<br>
+数据库索引采用B+树的主要原因是 B树在提高了磁盘IO性能的同时并没有解决元素遍历的效率低下的问题<br>
+正是为了解决这个问题，B+树应运而生。B+树只要遍历叶子节点就可以实现整棵树的遍历<br>
+在数据库中基于范围的查询是非常频繁的，而B树不支持这样的操作，或者说效率太低。</p>
+<p>另外B树的索引节点上也存了数据，导致搜索过程种读了很多不必要的数据，加大了磁盘IO时间</p>
+<hr>
+<h2><span id="q-na-wei-shi-me-bu-xuan-yong-hong-hei-shu">Q: 那为什么不选用红黑树？</span><a href="#q-na-wei-shi-me-bu-xuan-yong-hong-hei-shu" class="header-anchor">#</a></h2>
+<p>A:<br>
+红黑树往往出现由于树的深度过大。<br>
+磁盘IO代价主要花费在查找所需的柱面上，树的深度过大会造成磁盘IO频繁读写</p>
+<hr>
+<h2><span id="q-na-wei-shi-me-bu-yong-ha-xi-biao">Q: 那为什么不用哈希表？</span><a href="#q-na-wei-shi-me-bu-yong-ha-xi-biao" class="header-anchor">#</a></h2>
+<p>A:<br>
+哈希表没法做范围查询以及前缀索引匹配查询。</p>
+<hr>
+<h1><span id="gao-xing-neng-de-suo-yin-ce-lue">高性能的索引策略</span><a href="#gao-xing-neng-de-suo-yin-ce-lue" class="header-anchor">#</a></h1>
+<h2><span id="du-li-de-lie-de-wen-ti">独立的列的问题</span><a href="#du-li-de-lie-de-wen-ti" class="header-anchor">#</a></h2>
+<ul>
+<li>索引列不可以作为表达式的一部分， 必须是独立的<br>
+例如 where id+1=5 或者 where Func(id) &lt; 5 都是错误的<br>
+应该改成<br>
+where id = 5-1 或者  where id &lt; uFunc(5)</li>
+</ul>
+<h2><span id="qian-zhui-suo-yin-you-hua">前缀索引优化</span><a href="#qian-zhui-suo-yin-you-hua" class="header-anchor">#</a></h2>
+<ul>
+<li>索引列如果是text之类特别长的，必须使用前缀索引， 不可以用完整长度去做索引，mysql不支持。</li>
+</ul>
+<h4><span id="qian-zhui-suo-yin-de-chuang-jian">前缀索引的创建</span><a href="#qian-zhui-suo-yin-de-chuang-jian" class="header-anchor">#</a></h4>
+<p>… KEY(city(7)),   那么你按照city去where时，就会用city的前缀去索引了。</p>
+<h4><span id="que-ding-qian-zhui-chang-du">确定前缀长度</span><a href="#que-ding-qian-zhui-chang-du" class="header-anchor">#</a></h4>
+<ul>
+<li>前缀索引的选择性 =   不重复的个数/记录总数</li>
+<li>如何确定较优的前缀长度？</li>
+</ul>
+<p>全列选择性：</p>
+<p>SELECT COUNT(DISTINCT column_name) / COUNT(*) FROM table_name;</p>
+<p>某一长度前缀的选择性：</p>
+<p>SELECT COUNT(DISTINCT LEFT(column_name, prefix_length)) / COUNT(*) FROM table_name;</p>
+<p>当你不断调整prefix_length，让前缀的选择性越接近全列选择性的时候，索引效果越好。如果发现继续增加prefi_length，变动幅度不大了，则选取那个值</p>
+<ul>
+<li>也要注意前缀最大值， 例如该长度n下，平均选择性不高，但是有1-2个前缀数量特别大，也不行。</li>
+</ul>
+<h4><span id="ru-he-zuo-hou-zhui-suo-yin">如何做后缀索引？</span><a href="#ru-he-zuo-hou-zhui-suo-yin" class="header-anchor">#</a></h4>
+<p>存储的时候把字符串 <em><strong>翻转</strong></em> 存进表里，然后再做前缀索引</p>
+<h2><span id="duo-lie-suo-yin">多列索引</span><a href="#duo-lie-suo-yin" class="header-anchor">#</a></h2>
+<ul>
+<li>多列索引指的是 多个独立的索引。就是给表定义了Key(a), key(b) ， 而不是Key(a,b)</li>
+<li>如果在多列索引的情况下，要where a=1 or b= 2， 且要性能好， 需要改成  union(a,b) 即查询union的形式。 mysql5.0之后都会优化成union， 简称 <em><strong>索引合并</strong></em></li>
+<li>上述默认优化的缺点:  联合操作会耗费大量的CPU和内存。 可是统计时间时又不会统计进来，导致低估时间成本。</li>
+<li>可以通过explanin sql语句， 查看extra中是否有using union(a,b)来判断是否有索引合并的情况</li>
+</ul>
+<h2><span id="ru-he-que-ding-suo-yin-lie-shun-xu">如何确定索引列顺序</span><a href="#ru-he-que-ding-suo-yin-lie-shun-xu" class="header-anchor">#</a></h2>
+<ul>
+<li>这里指的是如何确定key(a,b,c)里abc的顺序</li>
+<li>通用法则：把选择性最高的那个列放前面</li>
+<li>选择性计算：  distinct(列)/count(*)  越大，选择性越好。</li>
+<li>因为这样的话，可以减少在叶子节点上的遍历。</li>
+<li>特殊情况：  某场景下突然表里的username都变成了一样的用户名， 然后对username索引做查询时， 就很慢， 因为相当于在叶子节点上遍历去查了，O(n)的复杂度。</li>
+<li>对于特殊场景，要尽量在数据输入避免， 或者查询避免（例如避免在那个时间段去查询那个统一的username）</li>
+</ul>
+<hr>
+<h1><span id="ju-cu-suo-yin">聚簇索引</span><a href="#ju-cu-suo-yin" class="header-anchor">#</a></h1>
+<ul>
+<li>聚簇索引是一种存储结构，而不是索引类型。</li>
+<li>InnoDb默认使用主键列做聚簇索引</li>
+<li>如果没有主键，则用第一个非空not NULL unique的索引作为聚簇索引</li>
+<li>如果没主键没索引，则会创建一个隐藏的行id作为聚簇索引（毕竟他总要搞一个B+树)</li>
+</ul>
+<h2><span id="ju-cu-he-fei-ju-cu-de-qu-bie">聚簇和非聚簇的区别</span><a href="#ju-cu-he-fei-ju-cu-de-qu-bie" class="header-anchor">#</a></h2>
+<ul>
+<li>聚簇索引其实就是指，当你搜索到B+树的叶子之后， 叶子里存的就是数据行了，因此叶子的左右都是与自己索引值相邻的数据行，可以串起来直接一起获取。</li>
+<li>而非聚簇索引时， 当你搜到叶子时， 叶子里依然只有索引值， 而后面的指针才指向真正的位置， 这意味着数据行的存放是不连续的， 没有办法用一根线串起来。</li>
+</ul>
+<h2><span id="ju-cu-de-you-dian">聚簇的优点</span><a href="#ju-cu-de-you-dian" class="header-anchor">#</a></h2>
+<ol>
+<li>可以一次性读取到 某主键范围的所有行，减少磁盘IO</li>
+<li>相比非聚簇，少跑一层（就是最后一层）。</li>
+</ol>
+<h2><span id="ju-cu-de-que-dian">聚簇的缺点</span><a href="#ju-cu-de-que-dian" class="header-anchor">#</a></h2>
+<ol>
+<li>如果数据都放在内存中，就没优势了，毕竟非聚簇通过指针一样很快。</li>
+<li>更新聚簇索引会很慢，因为会重新组织B+树重新移动。</li>
+<li>B+树插入新行时，可能导致叶子节点的页出现分裂，导致更多的空间。（聚簇索引的叶子非常大！）<br>
+非聚簇的话都是指针，数据不放在叶子中，也就不会出现那种大叶子的分裂。</li>
+</ol>
+<h2><span id="ju-cu-he-fei-ju-cu-de-dui-bi">聚簇和非聚簇的对比</span><a href="#ju-cu-he-fei-ju-cu-de-dui-bi" class="header-anchor">#</a></h2>
+<p>Innodb都是聚簇索引，叶子节点一般就是数据，数据按顺序存储了。<br>
+MyIsam都是非聚簇索引， 叶子节点还是索引，凌乱指向存储位置。<br>
+<img src="/images/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/c29493c31974255e9ce7dbb32c788130b5de1b76.png" alt="c29493c31974255e9ce7dbb32c788130b5de1b76"></p>
+<hr>
+<h2><span id="q-shi-me-shi-hui-biao">Q:  什么是回表？</span><a href="#q-shi-me-shi-hui-biao" class="header-anchor">#</a></h2>
+<p>A:<br>
+非聚簇索引查询时， 因为最终只查到的是主键值，最终还需要经过聚簇索引找到数据行<br>
+<img src="/images/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/93d013b61925f7f744e0aad9bdb1062b32874881.png" alt="93d013b61925f7f744e0aad9bdb1062b32874881"><br>
+如粉红色路径，需要扫码两遍索引树：</p>
+<ol>
+<li>先通过普通索引定位到主键值id=5；</li>
+<li>在通过聚集索引定位到行记录；<br>
+这就是所谓的回表查询，先定位主键值，再定位行记录，它的性能较扫一遍索引树更低</li>
+</ol>
+<hr>
+<h2><span id="q-na-me-dang-fa-sheng-hui-biao-shi-zen-me-bi-mian-ni">Q: 那么当发生回表时，怎么避免呢？</span><a href="#q-na-me-dang-fa-sheng-hui-biao-shi-zen-me-bi-mian-ni" class="header-anchor">#</a></h2>
+<p>A:<br>
+把普通索引列升级到联合主键中。<br>
+例如将单列索引(name)升级为联合索引(name, sex)，即可避免回表(代价是name要放到第一个，或者sex in ‘男，女’）</p>
+<hr>
+<h2><span id="q-fei-zhu-jian-suo-yin-a-zuo-where-a-gt-3-shi-neng-chong-fen-li-yong-suo-yin-zuo-jian-dan-de-fan-wei-du-qu-me">Q: 非主键索引a， 做where a&gt;3时， 能充分利用索引做简单的范围读取么？</span><a href="#q-fei-zhu-jian-suo-yin-a-zuo-where-a-gt-3-shi-neng-chong-fen-li-yong-suo-yin-zuo-jian-dan-de-fan-wei-du-qu-me" class="header-anchor">#</a></h2>
+<p>A:<br>
+不能。<br>
+因为非主键索引最终还是要做回表， 到主键（聚簇）索引树中进行查询。此时a&gt;3是无法直接取出一堆数据的。</p>
+<p>mysql5.5之前， 是每个a&gt;3的记录都进行随机回表读取数据。<br>
+mysql5.5之后，做了一个MR2优化</p>
+<ol>
+<li>当a&gt;3的记录不是很多时， 会读取到内存中</li>
+<li>接着按照主键id（聚簇索引）进行排序</li>
+<li>然后根据id排序后的情况进行回表， 如果有一堆id都是挤在一起的，就对这一批id进行范围查询。</li>
+</ol>
+<hr>
+<h2><span id="er-ji-suo-yin-he-zhu-jian">二级索引和主键</span><a href="#er-ji-suo-yin-he-zhu-jian" class="header-anchor">#</a></h2>
+<ul>
+<li>注意， 如果有1个key(xx)加一个primKey(yy)，  相当于有2个索引（主键默认索引）<br>
+而这2个索引的意思是指：<br>
+<em><strong>建立了2个B+树！！</strong></em><br>
+对于主键的B+树， 数据就放在叶子<br>
+而对于另一个索引的B+树， 叶子节点是主键+索引，  后面才是指向数据</li>
+<li>即对于聚簇索引，如果存在主键和二级索引，则选择主键做聚簇， 二级索引和非聚簇索引的B+树没两样。</li>
+</ul>
+<hr>
+<h2><span id="q-zhu-jian-suo-yin-he-wei-yi-suo-yin-you-shi-me-qu-bie-ni">Q:  主键索引和唯一索引有什么区别呢？</span><a href="#q-zhu-jian-suo-yin-he-wei-yi-suo-yin-you-shi-me-qu-bie-ni" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ol>
+<li>主键索引一定是唯一索引， 但唯一索引不一定是主键。</li>
+<li>主键索引列默认不支持空值，  而唯一索引本身没有这个限制。</li>
+<li>主键产生唯一的聚集索引（即聚集索引和主键相关），非主键唯一索引产生唯一的非聚集索引</li>
+<li>唯一索引可以有多个， 但是主键只能有一个。</li>
+</ol>
+<hr>
+<h2><span id="q-que-ding-bu-neng-you-duo-ge-zhu-jian-suo-yin-ma-na-fan-shi-li-ti-dao-de-duo-ge-zhu-jian-shi-zen-me-hui-shi-ni">Q:  确定不能有多个主键索引吗？那泛式里提到的多个主键是怎么回事呢？</span><a href="#q-que-ding-bu-neng-you-duo-ge-zhu-jian-suo-yin-ma-na-fan-shi-li-ti-dao-de-duo-ge-zhu-jian-shi-zen-me-hui-shi-ni" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ol>
+<li>
+<p>数据库的每张表只能有一个主键，不可能有多个主键。</p>
+</li>
+<li>
+<p>所谓的一张表多个主键，我们称之为联合主键。</p>
+</li>
+</ol>
+<p>注：联合主键：就是用多个字段一起作为一张表的主键。</p>
+<ol start="3">
+<li>主键的主键的作用是保证数据的唯一性和完整性，同时通过主键检索表能够增加检索速度。</li>
+</ol>
+<hr>
+<h1><span id="suo-yin-de-cha-ru">索引的插入</span><a href="#suo-yin-de-cha-ru" class="header-anchor">#</a></h1>
+<h2><span id="suo-yin-cha-ru-de-gui-fan">索引插入的规范</span><a href="#suo-yin-cha-ru-de-gui-fan" class="header-anchor">#</a></h2>
+<ul>
+<li>尽量保证在插入时是按索引的顺序插入的</li>
+<li>如果没按顺序插入，会导致经常性的中间分页，移动数据。性能可以差距四倍以上。</li>
+<li>所以尽量选用自增的id做索引，尽量不要用随机的UUID做大批量插入的操作。</li>
+<li>如果用了UUID做插入，插入之后还要要用一个命令<br>
+Optimize Table 表名<br>
+来重建表并优化页的填充</li>
+<li>什么时候顺序主键的插入是不好的？<br>
+同一时刻并发插入（非单线程插入）的情况<br>
+这会导致在 数据表末尾发生激烈的竞争冲突（如果是随机的反而可以避免这个情况） P171</li>
+</ul>
+<hr>
+<h2><span id="q-wei-shi-me-zi-zeng-id-ke-neng-hui-chu-xian-bu-lian-xu-de-qing-kuang">Q: 为什么自增id可能会出现不连续的情况？</span><a href="#q-wei-shi-me-zi-zeng-id-ke-neng-hui-chu-xian-bu-lian-xu-de-qing-kuang" class="header-anchor">#</a></h2>
+<p>A:<br>
+插入时，如果insert语句中不包含id，但是id设成了自增<br>
+mysql此时就会从某个自增表中申请一个主键，当申请成功之后，就会拿着这个主键+1去做真实的Insert操作。（注意，是先申请，再插入）<br>
+如果主键/唯一键冲突，或者事务回滚， <em><strong>这个自增id不会回滚</strong></em>。 下一次会继续主键+1使用。<br>
+因此</p>
+<hr>
+<h2><span id="q-wei-shi-me-zi-zeng-id-bu-neng-hui-gun-ni">Q: 为什么自增id不能回滚呢？</span><a href="#q-wei-shi-me-zi-zeng-id-bu-neng-hui-gun-ni" class="header-anchor">#</a></h2>
+<p>A:<br>
+为什么不回退，是避免回退导致重复的冲突，也为了避免太大范围的锁</p>
+<ul>
+<li>避免回退导致多个id同时插入引发重复的冲突，也为了避免太大范围的锁</li>
+<li>自增主键比较大的作用是避免页分割，我们只需要数据是递增而无需连续</li>
+</ul>
+<hr>
+<hr>
+<h1><span id="qi-ta-suo-yin">其他索引</span><a href="#qi-ta-suo-yin" class="header-anchor">#</a></h1>
+<h2><span id="fu-gai-suo-yin">覆盖索引</span><a href="#fu-gai-suo-yin" class="header-anchor">#</a></h2>
+<p>指查询语句中 只有索引相关的列。</p>
+<ul>
+<li>这样的话，可以不需要回表访问聚簇索引树了， 直接拿索引节点里的索引结果返回，效率非常高。</li>
+<li>全覆盖的情况比较少见，一般用于<br>
+先用覆盖索引的查询语句得到一个小表<br>
+再利用这个小表的结果对原表做查询（相当于省去了一些条件里的判断）</li>
+<li>Explanin 解析时，如果extra显示 using index，则说明使用了覆盖索引。</li>
+</ul>
+<h2><span id="yong-suo-yin-zuo-pai-xu">用索引做排序</span><a href="#yong-suo-yin-zuo-pai-xu" class="header-anchor">#</a></h2>
+<ul>
+<li>索引和排序语句写对的话，可以不需要弄临时表做排序，直接按照顺序取出返回即可。</li>
+<li>索引列的顺序， 必须和order by中声明的索引顺序一致</li>
+<li>即你的key是(a,b,c)， 那么oder by a b c才行，不能打乱顺序</li>
+<li>order by 索引满足 前缀定理，  即必须是  a 或者 a+b或者  a+b前缀</li>
+<li>特例： 如果where中定义了a=‘某个常量’，  那么order by中只需要b和c也满足 前缀定义。</li>
+<li>如果是范围就不行了</li>
+</ul>
+<h2><span id="ya-suo-qian-zhui-suo-yin">压缩（前缀索引）</span><a href="#ya-suo-qian-zhui-suo-yin" class="header-anchor">#</a></h2>
+<ul>
+<li>就是把索引在存储的做压缩，减少字节数</li>
+<li>例如第一个索引是perform， 第二个是performance， 那么第二个存储的时候就表示为7,ance</li>
+<li>可以在Create Table语句中指定PACK_KEYS来控制索引压缩</li>
+<li>压缩索引主要是为了减少磁盘和内存占用量， 但因为压缩了，每次到节点时要先解开压缩再计算（即只有用到才解压），再去查找，会降低性能。</li>
+</ul>
+<h2><span id="chong-fu-suo-yin">重复索引</span><a href="#chong-fu-suo-yin" class="header-anchor">#</a></h2>
+<p>primary key、 unique(key)、 index(key）这3个本质上都会形成索引，很容易有人定义了主键后， 又给主键加个索引， 这就会出现多个相同的B+树。</p>
+<h2><span id="rong-yu-suo-yin">冗余索引</span><a href="#rong-yu-suo-yin" class="header-anchor">#</a></h2>
+<ul>
+<li>创建了索引（A，B）之后， 又创建了（A）， 那么就是冗余， 因为（A，B） 可以实现单独A的索引功能。</li>
+<li>所以尽量修改索引，而不是去新增索引， 新增索引容易出现冗余索引。</li>
+<li>修改索引的缺陷:  可能导致一些老的查询语句的性能下降。<br>
+例如本来是用索引（A） + 主键ID排序做查询，  那个脚本一直在跑很正常， 后来改成了索引（A.B）  + 主键ID排序， 于是原先的脚本性能GG， 因为A和ID被B分开了（只是我们看不到ID放在我们定义的key里）</li>
+</ul>
+<h2><span id="wei-shi-yong-de-suo-yin">未使用的索引</span><a href="#wei-shi-yong-de-suo-yin" class="header-anchor">#</a></h2>
+<ul>
+<li>就是定义了但是平时不用的索引！</li>
+<li>定位未使用索引的方法：  打开userstates变量， 然后让服务器运行几天之后， 查询INFORMATION_SCHEMA.INDEX_STATISTICS用来查看索引的使用频率。</li>
+<li>具体见P188</li>
+</ul>
+<h2><span id="suo-yin-he-suo">索引和锁</span><a href="#suo-yin-he-suo" class="header-anchor">#</a></h2>
+<ul>
+<li>索引能够减少访问的行数，从而减少锁的数量</li>
+</ul>
+<hr>
+<h1><span id="suo-yin-ying-yong">索引应用</span><a href="#suo-yin-ying-yong" class="header-anchor">#</a></h1>
+<h2><span id="duo-chong-guo-lu-tiao-jian-you-hua">多种过滤条件优化</span><a href="#duo-chong-guo-lu-tiao-jian-you-hua" class="header-anchor">#</a></h2>
+<ul>
+<li>如果我们的索引是 sex country age， 但是我们的查询里不关心sex，怎么办？ 如果不走sex，索引就失效了<br>
+可以在where中加入  sex in (‘m’,‘f’)  这样就能用到sex了</li>
+<li>原则1：<br>
+枚举少的放前面， 这样可以用in方式来处理</li>
+<li>原则2：<br>
+经常范围性查询的索引列放后面 ，例如age， 毕竟范围查的话，后面的索引就肯定用不了了。</li>
+</ul>
+<h2><span id="bi-mian-duo-ge-fan-wei-tiao-jian">避免多个范围条件</span><a href="#bi-mian-duo-ge-fan-wei-tiao-jian" class="header-anchor">#</a></h2>
+<ul>
+<li>mysql会把in(1,2,3)和 &gt;1 and &lt; 3 都认为是range的type，  不过在索引的使用，  in之后还可以接其他索引，  但是大于1小于3就不行了</li>
+<li>如果出现了  lastoneline  &gt; xxx  and age  between x and y<br>
+这种2个范围的索引查询，就会导致age索引失效</li>
+<li>一种优化的办法：  如果lastoneline &gt; xxx 仅仅是表示 这个用户是否未过期，则可以新增一个经常维护的字段active，来吧lasttime&gt;xxx的这个条件转成true和false这两种值。</li>
+<li>那么后面就可以改成lastline = true and age between… 了， 用等值的话，就不会影响后面的索引</li>
+</ul>
+<hr>
+<h2><span id="q-xie-ru-biao-de-shi-hou-wei-shi-me-yi-ban-jian-yi-zi-zeng-de-zhu-jian-id-lai-xie-ru">Q: 写入表的时候， 为什么一般建议自增的主键id来写入？</span><a href="#q-xie-ru-biao-de-shi-hou-wei-shi-me-yi-ban-jian-yi-zi-zeng-de-zhu-jian-id-lai-xie-ru" class="header-anchor">#</a></h2>
+<p>A:<br>
+因为底层的索引本质上是B+树<br>
+有页分裂<br>
+如果id随机，则写入时会碎片化，无法做到顺序写</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/2022/08/21/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/" title="数据库索引详解">http://breakdawncoder.com/2022/08/21/知识库/后台开发知识/关系型数据库/数据与索引详解/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91-SQL%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 后台开发,SQL数据库</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/08/21/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC307%E5%9C%BA%E5%91%A8%E8%B5%9B-1232%E5%90%8D-3%E9%A2%98/" rel="prev" title="第307场周赛-1232名-3题">
+      <i class="fa fa-chevron-left"></i> 第307场周赛-1232名-3题
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">索引的基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">索引的优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">索引类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.1.</span> <span class="nav-text">哈希索引</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">自定义哈希索引</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.2.</span> <span class="nav-text">空间数据索引（R-Tree)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.3.</span> <span class="nav-text">全文索引</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">三星索引的评价</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">索引原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">B+ tree实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">Q: 为什么不选择使用B树， 而是使用B+树？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">Q: 那为什么不选用红黑树？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.4.</span> <span class="nav-text">Q: 那为什么不用哈希表？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">高性能的索引策略</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">独立的列的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">前缀索引优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.0.1.</span> <span class="nav-text">前缀索引的创建</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.0.2.</span> <span class="nav-text">确定前缀长度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.0.3.</span> <span class="nav-text">如何做后缀索引？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">多列索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.4.</span> <span class="nav-text">如何确定索引列顺序</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">聚簇索引</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">聚簇和非聚簇的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.2.</span> <span class="nav-text">聚簇的优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.3.</span> <span class="nav-text">聚簇的缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.4.</span> <span class="nav-text">聚簇和非聚簇的对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.5.</span> <span class="nav-text">Q:  什么是回表？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.6.</span> <span class="nav-text">Q: 那么当发生回表时，怎么避免呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.7.</span> <span class="nav-text">Q: 非主键索引a， 做where a&gt;3时， 能充分利用索引做简单的范围读取么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.8.</span> <span class="nav-text">二级索引和主键</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.9.</span> <span class="nav-text">Q:  主键索引和唯一索引有什么区别呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.10.</span> <span class="nav-text">Q:  确定不能有多个主键索引吗？那泛式里提到的多个主键是怎么回事呢？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">索引的插入</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.1.</span> <span class="nav-text">索引插入的规范</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.2.</span> <span class="nav-text">Q: 为什么自增id可能会出现不连续的情况？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.3.</span> <span class="nav-text">Q: 为什么自增id不能回滚呢？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">其他索引</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.1.</span> <span class="nav-text">覆盖索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.2.</span> <span class="nav-text">用索引做排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.3.</span> <span class="nav-text">压缩（前缀索引）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.4.</span> <span class="nav-text">重复索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.5.</span> <span class="nav-text">冗余索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.6.</span> <span class="nav-text">未使用的索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.7.</span> <span class="nav-text">索引和锁</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">索引应用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">7.1.</span> <span class="nav-text">多种过滤条件优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">7.2.</span> <span class="nav-text">避免多个范围条件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">7.3.</span> <span class="nav-text">Q: 写入表的时候， 为什么一般建议自增的主键id来写入？</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共142.8k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

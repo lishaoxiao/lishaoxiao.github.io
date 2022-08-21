@@ -148,6 +148,495 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/10/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/10/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">Java线程高级应用和原理分析</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-10 00:35:00 / 修改时间：23:56:19" itemprop="dateCreated datePublished" datetime="2022-08-10T00:35:00+08:00">2022-08-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">java高级原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/10/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/10/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#executor-xian-cheng-chi-ying-yong-xiang-jie">Executor线程池应用详解</a>
+<ul>
+<li><a href="#corepoolsize-he-maximumpoolsize-can-shu-you-shi-me-qu-bie">corePoolSize和maximumPoolSize参数有什么区别？</a></li>
+<li><a href="#keepalive-can-shu-shi-gan-ma-de">keepalive参数是干嘛的？</a></li>
+<li><a href="#he-xin-xian-cheng-ke-yi-bei-hui-shou-ma-xian-cheng-chi-mei-you-bei-hui-shou-de-qing-kuang-xia">核心线程可以被回收吗？（线程池没有被回收的情况下）</a></li>
+<li><a href="#he-xin-xian-cheng-shu-she-zhi-duo-shao-zen-me-kao-lu">核心线程数设置多少，怎么考虑？</a></li>
+<li><a href="#xian-cheng-chi-you-na-san-chong-dui-lie-ce-lue">线程池有哪三种队列策略？</a></li>
+<li><a href="#xian-cheng-chi-dui-lie-yi-man-qie-maxinumpoolsize-yi-man-shi-you-na-xie-ju-jue-ce-lue">线程池队列已满且maxinumPoolSize已满时，有哪些拒绝策略？</a></li>
+<li><a href="#xian-cheng-chi-wei-shi-me-xu-yao-zu-sai-dui-lie">线程池为什么需要阻塞队列？</a></li>
+<li><a href="#wu-chong-chang-jian-de-executor-zi-dai-xian-cheng-chi">五种常见的Executor自带线程池</a>
+<ul>
+<li><a href="#newcachedthreadpool-huan-cun-xian-cheng-chi">newCachedThreadPool： 缓存线程池</a></li>
+<li><a href="#newfixedthreadpool-ding-chang-xian-cheng-chi">newFixedThreadPool ：定长线程池</a></li>
+<li><a href="#newscheduledthreadpool-ding-shi-qi-xian-cheng-chi">newScheduledThreadPool :定时器线程池</a></li>
+<li><a href="#newsinglethreadexecutor-dan-xian-cheng-chi">newSingleThreadExecutor : 单线程池</a></li>
+<li><a href="#newworkstealingpool-ji-cheng-zi-forkjoinpool-gong-zuo-mi-qu-xian-cheng-chi">newWorkStealingPool（继承自ForkJoinPool ）： 工作密取线程池</a></li>
+</ul>
+</li>
+<li><a href="#submit-he-execute-fang-fa-qu-bie-shi-shi-me">submit和execute方法区别是什么？</a>
+<ul>
+<li><a href="#xian-cheng-chi-zhong-shutdown-shutdownnow-awaittermination-de-qu-bie">线程池中， shutdown、 shutdownNow、awaitTermination的区别？</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#forkjoin-xian-cheng-chi">ForkJoin线程池</a>
+<ul>
+<li><a href="#forkjoin-he-xin-gai-nian">forkJoin核心概念</a></li>
+<li><a href="#forkjoin-zhong-ge-ge-xian-cheng-shi-ru-he-huo-qu-na-xie-xiao-ren-wu-de-ni">forkJoin中各个线程是如何获取那些小任务的呢？</a></li>
+<li><a href="#fork-shi-ju-ti-fa-sheng-liao-shi-me">fork时具体发生了什么？</a></li>
+<li><a href="#join-shi-shi-me-han-yi-shi-me-shi-hou-zuo-de">join是什么含义？什么时候做的？</a></li>
+<li><a href="#join-zhe-ge-zu-sai-guo-cheng-shi-zen-me-zuo-de-ru-guo-ba-xian-cheng-gua-qi-na-zhe-ge-xian-cheng-qi-bu-shi-wu-fa-gong-zuo-liao">join这个阻塞过程是怎么做的？如果把线程挂起，那这个线程岂不是无法工作了？</a></li>
+<li><a href="#forkjoin-cun-fang-ren-wu-de-shi-hou-zen-me-bao-zheng-bu-hui-chu-xian-bing-fa-wen-ti-bi-ru-tong-shi-wang-dui-wei-cha-ru-de-hua">forkJoin存放任务的时候，怎么保证不会出现并发问题？比如同时往队尾插入的话</a></li>
+<li><a href="#forkjoin-ying-yong-zai-na">forkJoin应用在哪？</a></li>
+</ul>
+</li>
+<li><a href="#theadlocal-he-xin-yuan-li">TheadLocal核心原理</a>
+<ul>
+<li><a href="#threadlocal-de-chang-jian-shi-yong-chang-jing">ThreadLocal的常见使用场景？</a></li>
+<li><a href="#threadlocal-he-synchronized-guan-jian-zi-de-qu-bie">ThreadLocal和Synchronized关键字的区别？</a></li>
+<li><a href="#theadlocal-zai-mei-ge-xian-cheng-zhong-shi-yi-shi-me-xing-shi-cun-chu-de-yuan-li-shi-shi-me">TheadLocal在每个线程中是以什么形式存储的？ 原理是什么</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="executor-xian-cheng-chi-ying-yong-xiang-jie">Executor线程池应用详解</span><a href="#executor-xian-cheng-chi-ying-yong-xiang-jie" class="header-anchor">#</a></h1>
+<h2><span id="corepoolsize-he-maximumpoolsize-can-shu-you-shi-me-qu-bie">corePoolSize和maximumPoolSize参数有什么区别？</span><a href="#corepoolsize-he-maximumpoolsize-can-shu-you-shi-me-qu-bie" class="header-anchor">#</a></h2>
+<p>A：<br>
+当提交新线程到池中时</p>
+<ul>
+<li>如果当前线程数 &lt; corePoolSize，则会创建新线程</li>
+<li>如果当前线程数=corePoolSize，则新线程被塞进一个队列中等待。</li>
+<li>如果队列也被塞满了，那么又会开始新建线程来运行任务，避免任务阻塞或者丢弃</li>
+<li>如果队列满了的情况下， 线程总数超过了maxinumPoolSize，那么就抛异常或者阻塞（取决于队列性质）。</li>
+</ul>
+<hr>
+<ul>
+<li>调用prestartCoreThread()可提前开启一个空闲的核心线程</li>
+<li>调用prestartAllCoreThreads()，可提前创建corePoolSize个核心线程。</li>
+</ul>
+<hr>
+<h2><span id="keepalive-can-shu-shi-gan-ma-de">keepalive参数是干嘛的？</span><a href="#keepalive-can-shu-shi-gan-ma-de" class="header-anchor">#</a></h2>
+<p>A：当线程数量在corePoolSize到maxinumPoolSize之间时， 如果有线程已跑完，且空闲时间超过keepalive时，则会被清除（注意只限于corePoolSize到maxinumPoolsize之间的线程）</p>
+<hr>
+<h2><span id="he-xin-xian-cheng-ke-yi-bei-hui-shou-ma-xian-cheng-chi-mei-you-bei-hui-shou-de-qing-kuang-xia">核心线程可以被回收吗？（线程池没有被回收的情况下）</span><a href="#he-xin-xian-cheng-ke-yi-bei-hui-shou-ma-xian-cheng-chi-mei-you-bei-hui-shou-de-qing-kuang-xia" class="header-anchor">#</a></h2>
+<p>A:<br>
+ThreadPoolExecutor有个allowCoreThreadTimeOut(boolean value)方法，可以设置是否在超期后做回收</p>
+<hr>
+<h2><span id="he-xin-xian-cheng-shu-she-zhi-duo-shao-zen-me-kao-lu">核心线程数设置多少，怎么考虑？</span><a href="#he-xin-xian-cheng-shu-she-zhi-duo-shao-zen-me-kao-lu" class="header-anchor">#</a></h2>
+<p>A:<br>
+io密集型， 可以设置多一点， 因为多一个线程，他可能也没太占cpu，都是在等待IO。<br>
+如果是计算密集型，则要设置少一点，别把cpu搞满载了。</p>
+<p>有超线程技术的话， 一般可以设置成2倍CPU数量的线程数</p>
+<blockquote>
+<blockquote>
+<p>超线程技术把多线程处理器内部的两个逻辑内核模拟成两个物理芯片，让单个处理器就能使用线程级的并行计算，进而兼容多线程操作系统和软件。超线程技术充分利用空闲CPU资源，在相同时间内完成更多工作</p>
+</blockquote>
+</blockquote>
+<hr>
+<h2><span id="xian-cheng-chi-you-na-san-chong-dui-lie-ce-lue">线程池有哪三种队列策略？</span><a href="#xian-cheng-chi-you-na-san-chong-dui-lie-ce-lue" class="header-anchor">#</a></h2>
+<p>A：</p>
+<ol>
+<li>握手队列<br>
+相当于不排队的队列。可能造成线程数量无限增长直到超过maxinumPoolSize（相当于corePoolSize没什么用了，只以maxinumPoolSize做上限）</li>
+<li>无界队列<br>
+队列队长无限，即线程数量达到corePoolSize时，后面的线程只会在队列中等待。（相当于maxinumPoolSize没什么用了）<br>
+缺陷： 可能造成队列无限增长以至于OOM</li>
+<li>有界队列</li>
+</ol>
+<hr>
+<h2><span id="xian-cheng-chi-dui-lie-yi-man-qie-maxinumpoolsize-yi-man-shi-you-na-xie-ju-jue-ce-lue">线程池队列已满且maxinumPoolSize已满时，有哪些拒绝策略？</span><a href="#xian-cheng-chi-dui-lie-yi-man-qie-maxinumpoolsize-yi-man-shi-you-na-xie-ju-jue-ce-lue" class="header-anchor">#</a></h2>
+<p>A：</p>
+<ul>
+<li>AbortPolicy 默认策略：直接抛出RejectedExecutionException异常</li>
+<li>DiscardPolicy 丢弃策略： 直接丢了，什么错误也不报</li>
+<li>DiscardOldestPolicy 丢弃队头策略： 即把最先入队的人从队头扔出去，再尝试让该任务进入队尾（队头任务内心：不公平。。。。）</li>
+<li>CallerRunsPolicy 调用者处理策略： 交给调用者所在线程自己去跑任务（即谁调用的submit或者execute，他就自己去跑） <strong>注意这个策略会用的比较多</strong></li>
+<li>也可以用实现自定义新的RejectedExecutionHandler</li>
+</ul>
+<hr>
+<h2><span id="xian-cheng-chi-wei-shi-me-xu-yao-zu-sai-dui-lie">线程池为什么需要阻塞队列？</span><a href="#xian-cheng-chi-wei-shi-me-xu-yao-zu-sai-dui-lie" class="header-anchor">#</a></h2>
+<p>A:<br>
+线程池创建线程需要获取mainlock这个全局锁，影响并发效率，阻塞队列可以很好的缓冲。避免大量线程获取这个创建锁。</p>
+<hr>
+<h2><span id="wu-chong-chang-jian-de-executor-zi-dai-xian-cheng-chi">五种常见的Executor自带线程池</span><a href="#wu-chong-chang-jian-de-executor-zi-dai-xian-cheng-chi" class="header-anchor">#</a></h2>
+<p>有以下五种Executor提供的线程池，注意记忆一下他们的用途，就能理解内部的原理了。</p>
+<ul>
+<li>
+<h3><span id="newcachedthreadpool-huan-cun-xian-cheng-chi">newCachedThreadPool： 缓存线程池</span><a href="#newcachedthreadpool-huan-cun-xian-cheng-chi" class="header-anchor">#</a></h3>
+<p>corePoolSize=0, maxinumPoolSize=+∞，队列长度=0 ，<br>
+因此线程数量会在corePoolSize到maxinumPoolSize之间一直灵活缓存和变动， 且不存在队列等待的情况，一来任务我就创建，用完了会释放。<br>
+<img src="/images/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/1619147438780044960.png" alt="image.png"></p>
+</li>
+<li>
+<h3><span id="newfixedthreadpool-ding-chang-xian-cheng-chi">newFixedThreadPool ：定长线程池</span><a href="#newfixedthreadpool-ding-chang-xian-cheng-chi" class="header-anchor">#</a></h3>
+<p>corePoolSize= maxinumPoolSize=构造参数值， 队列长度=+∞。<br>
+因此不存在线程不够时扩充的情况</p>
+</li>
+<li>
+<h3><span id="newscheduledthreadpool-ding-shi-qi-xian-cheng-chi">newScheduledThreadPool :定时器线程池</span><a href="#newscheduledthreadpool-ding-shi-qi-xian-cheng-chi" class="header-anchor">#</a></h3>
+<p>提交定时任务用的，构造参数里会带定时器的间隔和单位。 其他和FixedThreadPool相同，属于定长线程池。</p>
+</li>
+<li>
+<h3><span id="newsinglethreadexecutor-dan-xian-cheng-chi">newSingleThreadExecutor : 单线程池</span><a href="#newsinglethreadexecutor-dan-xian-cheng-chi" class="header-anchor">#</a></h3>
+<p>corePoolSize=maxinumPoolSize=1， 队列长度=+∞<br>
+只会跑一个任务， 所以其他的任务都会在队列中等待，因此会严格按照FIFO执行</p>
+</li>
+<li>
+<h3><span id="newworkstealingpool-ji-cheng-zi-forkjoinpool-gong-zuo-mi-qu-xian-cheng-chi">newWorkStealingPool（继承自ForkJoinPool ）： 工作密取线程池</span><a href="#newworkstealingpool-ji-cheng-zi-forkjoinpool-gong-zuo-mi-qu-xian-cheng-chi" class="header-anchor">#</a></h3>
+</li>
+</ul>
+<p>如果你的任务执行时间很长，并且里面的任务运行并行跑的，那么他会把你的线程任务再细分到其他的线程来分治。这种特点在于可以在任务队列的两头取任务</p>
+<hr>
+<h2><span id="submit-he-execute-fang-fa-qu-bie-shi-shi-me">submit和execute方法区别是什么？</span><a href="#submit-he-execute-fang-fa-qu-bie-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>execute只能接收Runnable类型的任务，而submit除了Runnable，还能接收Callable（Callable类型任务支持返回值）</li>
+<li>execute方法返回void，  submit方法返回FutureTask。</li>
+<li>异常方面， submit方法因为返回了futureTask对象，而当进行future.get()时，会把线程中的异常抛出，因此调用者可以方便地处理异常。（如果是execute，只能用内部捕捉或者设置catchHandler）</li>
+</ul>
+<hr>
+<h3><span id="xian-cheng-chi-zhong-shutdown-shutdownnow-awaittermination-de-qu-bie">线程池中， shutdown、 shutdownNow、awaitTermination的区别？</span><a href="#xian-cheng-chi-zhong-shutdown-shutdownnow-awaittermination-de-qu-bie" class="header-anchor">#</a></h3>
+<p>A：</p>
+<ul>
+<li>shutdown: 停止接收新任务，等待所有池中已存在任务完成（ <em><strong>包括等待队列中的线程</strong></em> ）。异步方法，即调用后马上返回。</li>
+<li>shutdownNow: 停止接收新任务，并 <em><strong>停止所有正执行的task</strong></em>，返回还在队列中的task列表 。</li>
+<li>awaitTermination： <em><strong>仅仅是一个判断方法</strong></em>，判断当前线程池任务是否全部结束。一般用在shutdown后面，因为shutdown是异步方法，你需要知道什么时候才真正结束。</li>
+</ul>
+<h1><span id="forkjoin-xian-cheng-chi">ForkJoin线程池</span><a href="#forkjoin-xian-cheng-chi" class="header-anchor">#</a></h1>
+<h2><span id="forkjoin-he-xin-gai-nian">forkJoin核心概念</span><a href="#forkjoin-he-xin-gai-nian" class="header-anchor">#</a></h2>
+<p>ForkJoin线程池在常规的java书籍里还是提到比较少的，毕竟是java8引入的产物。</p>
+<p>首先这里简单解释一下forkJoin的运作原理， 本质上有点像归并计算。</p>
+<ol>
+<li>他会将提交大任务按照一定规则拆解（fork）成多个小任务</li>
+<li>当任务小到一定程度时，就会执行计算</li>
+<li>执行完成时会和其他的小任务进行合并（join）， 逐步将所有小结果合成一个大结果。<br>
+<img src="/images/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/1636361412728070823-1660063481962.png" alt="image.png"></li>
+</ol>
+<p>可以看这个forkJoinTask的实现伪代码，即如果想使用forkJoin并发执行任务，需要自己把任务继承RecursiveTask，作为forkJoin池的submit对象：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ForkJoinTask</span> <span class="keyword">extends</span> <span class="title class_">RecursiveTask</span>&lt;任务参数&gt; &#123;</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="title function_">ReckonTask</span><span class="params">(任务参数)</span> &#123;</span><br><span class="line"></span><br><span class="line">	&#125; </span><br><span class="line"> </span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="keyword">protected</span> File <span class="title function_">compute</span><span class="params">()</span> &#123;</span><br><span class="line">		<span class="keyword">if</span>(根据任务参数判断任务是否足够小) &#123;</span><br><span class="line">        计算，返回</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      	 拆分成子任务<span class="number">1</span>和子任务<span class="number">2</span> </span><br><span class="line">        任务<span class="number">1.</span>fork();</span><br><span class="line">        任务<span class="number">2.</span>fork();</span><br><span class="line">        结果<span class="number">1</span> = 任务<span class="number">1.</span>join();</span><br><span class="line">        结果<span class="number">2</span> = 任务<span class="number">2.</span>join();</span><br><span class="line">        返回结果<span class="number">1</span>+结果<span class="number">2</span>；</span><br><span class="line">      &#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后实际上整个forkjoin的细节非常多，这里我通过给自己提好几个问题，来逐步理解forkJoin的原理，</p>
+<hr>
+<h2><span id="forkjoin-zhong-ge-ge-xian-cheng-shi-ru-he-huo-qu-na-xie-xiao-ren-wu-de-ni">forkJoin中各个线程是如何获取那些小任务的呢？</span><a href="#forkjoin-zhong-ge-ge-xian-cheng-shi-ru-he-huo-qu-na-xie-xiao-ren-wu-de-ni" class="header-anchor">#</a></h2>
+<p>A:<br>
+他是通过工作密取的方式获取。（java并发那本书里提到过工作密取workSteal，原来是用在这了）</p>
+<ul>
+<li>假设我们给forkJoin设置3个工作线程，那么就会有3个工作队列， 注意，这个队列是双端队列。</li>
+<li>每当执行任务时，如果不满足小任务的条件，他会fork出2个子任务，并push进自己的工作队列中。</li>
+<li>每个工作线程不断取自己队头的任务执行。</li>
+<li>关键点：如果自己队列里没有数据，则会从其他队列的队尾取数据。</li>
+</ul>
+<hr>
+<h2><span id="fork-shi-ju-ti-fa-sheng-liao-shi-me">fork时具体发生了什么？</span><a href="#fork-shi-ju-ti-fa-sheng-liao-shi-me" class="header-anchor">#</a></h2>
+<p>A:<br>
+是一个异步的操作， 就是向当前线程队列中添加这个fork出来任务，能放进去的话就返回，不会等待。<br>
+注意，默认fork出的任务是先默认给自己的。 当自己做不完时，才可能被别人取走！<br>
+<img src="/images/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/1636361429766064686-1660063481975.png" alt="image.png"></p>
+<hr>
+<h2><span id="join-shi-shi-me-han-yi-shi-me-shi-hou-zuo-de">join是什么含义？什么时候做的？</span><a href="#join-shi-shi-me-han-yi-shi-me-shi-hou-zuo-de" class="header-anchor">#</a></h2>
+<p>A:<br>
+见实现forkJoin任务接口时的代码：<br>
+<img src="/images/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/1636361436926002588-1660063481980.png" alt="image.png"></p>
+<p>可以看到时每次fork完之后， 通过join，来获取子task的结果，获取到之后，再合并计算，返回结果。</p>
+<hr>
+<h2><span id="join-zhe-ge-zu-sai-guo-cheng-shi-zen-me-zuo-de-ru-guo-ba-xian-cheng-gua-qi-na-zhe-ge-xian-cheng-qi-bu-shi-wu-fa-gong-zuo-liao">join这个阻塞过程是怎么做的？如果把线程挂起，那这个线程岂不是无法工作了？</span><a href="#join-zhe-ge-zu-sai-guo-cheng-shi-zen-me-zuo-de-ru-guo-ba-xian-cheng-gua-qi-na-zhe-ge-xian-cheng-qi-bu-shi-wu-fa-gong-zuo-liao" class="header-anchor">#</a></h2>
+<p>A:</p>
+<p>首先，之前fork时，新的子任务已经被放入队列了。<br>
+每个子任务都有一个任务状态。<br>
+当调用该子任务的join时， 会循环判断他的状态</p>
+<p>如果这个子任务状态未完成， 则从自身队列或其他人的队列中取出新的任务执行，因此进入了下一层的exec()操作。<br>
+如果发现子任务状态更新为了完成（这个更新动作可能是自己线程完成的，也可能是别的线程完成的，反正这个任务的状态实现了同步和可见）， 则将结果返回给上层。<br>
+因此join的本质是一个递归的过程， 任务没完成的话，他就取其他任务继续递归往下执行。</p>
+<p>更详细的可以看这个链接<a target="_blank" rel="noopener" href="https://www.cnblogs.com/yougewe/p/14943418.html">fork+join过程详细解读</a></p>
+<hr>
+<h2><span id="forkjoin-cun-fang-ren-wu-de-shi-hou-zen-me-bao-zheng-bu-hui-chu-xian-bing-fa-wen-ti-bi-ru-tong-shi-wang-dui-wei-cha-ru-de-hua">forkJoin存放任务的时候，怎么保证不会出现并发问题？比如同时往队尾插入的话</span><a href="#forkjoin-cun-fang-ren-wu-de-shi-hou-zen-me-bao-zheng-bu-hui-chu-xian-bing-fa-wen-ti-bi-ru-tong-shi-wang-dui-wei-cha-ru-de-hua" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>n个工作线程是通过数组存放的（即有一个工作线程数组）</li>
+<li>sun.misc.Unsafe操作类直接基于操作系统控制层在硬件层面上进行原子操作，它是ForkJoinPool高效性能的一大保证，类似的编程思路还体现在java.util.concurrent包中相当规模的类功能实现中。<br>
+<img src="/images/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/1636361445964033773-1660063481982.png" alt="image.png"></li>
+</ul>
+<hr>
+<h2><span id="forkjoin-ying-yong-zai-na">forkJoin应用在哪？</span><a href="#forkjoin-ying-yong-zai-na" class="header-anchor">#</a></h2>
+<p>A:<br>
+java8 stream的parallel并发功能就是基于forkJoin做的， parallelStream实现的forkJoin拆解任务和执行任务的接口， 默认用机器所有CPU数量的forkJoin线程池。<br>
+如果需要限制线程数量，可以用<br>
+new forkJoin(线程数).submit(()-&gt;(list.stream().parallel().map()…)); 即可</p>
+<p>关于java8和forkJoin究竟是如何配合的，可以看这个链接：<br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/Dorae/p/7779246.html">源码级别学习java8并行流执行原理</a><br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/Dorae/p/7779246.html">https://www.cnblogs.com/Dorae/p/7779246.html</a></p>
+<h1><span id="theadlocal-he-xin-yuan-li">TheadLocal核心原理</span><a href="#theadlocal-he-xin-yuan-li" class="header-anchor">#</a></h1>
+<hr>
+<h2><span id="threadlocal-de-chang-jian-shi-yong-chang-jing">ThreadLocal的常见使用场景？</span><a href="#threadlocal-de-chang-jian-shi-yong-chang-jing" class="header-anchor">#</a></h2>
+<p>每个线程中需要维护1个不同的副本， 但这个副本可能是某一个时刻一起塞入每个线程的， 只不过之后该副本的变化 不再受其他线程的影响。</p>
+<p>常见场景有连接器管理模块connectorManager， 每个线程持有的connect变量是单独使用的，不会互相影响或者需要加锁。原因就是将其作为副本放入每个线程，当线程启动连接或者关闭时，不影响其他线程里的getConnect方法。</p>
+<hr>
+<h2><span id="threadlocal-he-synchronized-guan-jian-zi-de-qu-bie">ThreadLocal和Synchronized关键字的区别？</span><a href="#threadlocal-he-synchronized-guan-jian-zi-de-qu-bie" class="header-anchor">#</a></h2>
+<p>A：<br>
+Synchronized是用时间的消耗，来换取数据同步以及互不冲突<br>
+ThreadLocal则是用空间的消耗，来换取数据之间互不冲突（不涉及同步）</p>
+<hr>
+<h2><span id="theadlocal-zai-mei-ge-xian-cheng-zhong-shi-yi-shi-me-xing-shi-cun-chu-de-yuan-li-shi-shi-me">TheadLocal在每个线程中是以什么形式存储的？ 原理是什么</span><a href="#theadlocal-zai-mei-ge-xian-cheng-zhong-shi-yi-shi-me-xing-shi-cun-chu-de-yuan-li-shi-shi-me" class="header-anchor">#</a></h2>
+<p>这篇文章讲解ThreadLocal源码讲解的蛮好的：<br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/dolphin0520/p/3920407.html">Java并发编程：深入剖析</a></p>
+<p>看完后用我自己的话总结一下就是：</p>
+<ol>
+<li>
+<p>在某个线程中调用 某threadlocal.set(value)时， 其实就是在该线程中新建了1个threalocalMap， 然后把threadLocal作为键，value作为值，放进本线程的threalocalMap中。</p>
+</li>
+<li>
+<p>当在线程中调用threadlocal.get()的时候，就是从线程的threadLocalMap中获取这个threadLocal对应的值<br>
+如果get不到，则可以通过自定义initValue方法生成一个threadLocal的默认值</p>
+</li>
+</ol>
+<p>见如下图所示：<br>
+<img src="/images/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/20210718230858556.png" alt="在这里插入图片描述"></p>
+<hr>
+<p>下面这个代码会报什么错？（例子改编自上面链接的文章）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    ThreadLocal&lt;String&gt; stringLocal = <span class="keyword">new</span> <span class="title class_">ThreadLocal</span>&lt;String&gt;();</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="type">Test</span> <span class="variable">test</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Test</span>();</span><br><span class="line">         </span><br><span class="line">        System.out.println(test.getString());</span><br><span class="line"> </span><br><span class="line">        <span class="type">Thread</span> <span class="variable">thread1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>()&#123;</span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">                System.out.println(stringLocal.get());</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125;;</span><br><span class="line">        thread1.start();</span><br><span class="line">        thread1.join();</span><br><span class="line">		stringLocal.set(<span class="string">&quot;thread0&quot;</span>)</span><br><span class="line">        System.out.println(test.getString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在Thread1中，会报空指针， 因为调用get之前没有做过set， 此时做get会报错。<br>
+一种方式改成这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Thread</span> <span class="variable">thread1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>()&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">    	stringLocal.set(<span class="string">&quot;thread1&quot;</span>)</span><br><span class="line">        System.out.println(stringLocal.get());</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>另一种是给stringLocal设置默认值，这种一般用于能直接根据线程推导出初始值的情况：<br>
+ThreadLocal<string> stringLocal = new ThreadLocal<string>(){;<br>
+protected String initialValue() {<br>
+return xxx;<br>
+};<br>
+};</string></string></p>
+<p>正确set之后， 答案就会返回thread0和thread1， 且后续怎么set，两边都不会互相影响各自的threadLocal，<strong>虽然看起来是都用的是同一个Test里的成员。</strong></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/07/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC305%E5%9C%BA%E5%91%A8%E8%B5%9B-264%E5%90%8D-22%E5%88%86%E9%92%9F4%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/07/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC305%E5%9C%BA%E5%91%A8%E8%B5%9B-264%E5%90%8D-22%E5%88%86%E9%92%9F4%E9%A2%98/" class="post-title-link" itemprop="url">第305场周赛-264名-22分钟4题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-07 22:12:42 / 修改时间：11:08:28" itemprop="dateCreated datePublished" datetime="2022-08-07T22:12:42+08:00">2022-08-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">力扣周赛记录</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/07/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC305%E5%9C%BA%E5%91%A8%E8%B5%9B-264%E5%90%8D-22%E5%88%86%E9%92%9F4%E9%A2%98/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/07/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC305%E5%9C%BA%E5%91%A8%E8%B5%9B-264%E5%90%8D-22%E5%88%86%E9%92%9F4%E9%A2%98/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><img src="/images/%E7%AC%AC305%E5%9C%BA%E5%91%A8%E8%B5%9B-264%E5%90%8D-22%E5%88%86%E9%92%9F4%E9%A2%98/1659841108569.png" alt="1659841108569"></p>
+ <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#ben-qi-zong-jie">本期总结：</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<h2><span id="ben-qi-zong-jie">本期总结：</span><a href="#ben-qi-zong-jie" class="header-anchor">#</a></h2>
+<ol>
+<li>bfs时，必须要记得在对第一个入队节点做vis[start]=true的操作！否则一定会导致WA！</li>
+<li></li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/contest/weekly-contest-305/problems/number-of-arithmetic-triplets/">算术三元组的数目 - 力扣 (LeetCode) 竞赛</a></p>
+<p>直接3个for循环搞定</p>
+<hr>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/contest/weekly-contest-305/problems/reachable-nodes-with-restrictions/">受限条件下可到达节点的数目 - 力扣 (LeetCode) 竞赛</a></p>
+<p><img src="/images/%E7%AC%AC305%E5%9C%BA%E5%91%A8%E8%B5%9B-264%E5%90%8D-22%E5%88%86%E9%92%9F4%E9%A2%98/1659841166952.png" alt="1659841166952"></p>
+<p>这么简单的bfs题竟然错了一次（用bfs是因为节点数量很多有10^5个）</p>
+<p>因为bfs时忘了对第一个入队节点做vis[起点] = true;的操作， 直接导致错失前200</p>
+<p>另外这题甚至不应该思考， 直接开写才对</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> List&lt;Integer&gt;[] edgToNextNodeLists(<span class="type">int</span> n, <span class="type">int</span>[][] edges) &#123;</span><br><span class="line">        List&lt;Integer&gt;[] list = <span class="keyword">new</span> <span class="title class_">List</span>[n];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>;i&lt;n;i++) &#123;</span><br><span class="line">            list[i] = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span>[] edg : edges) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">s</span> <span class="operator">=</span> edg[<span class="number">0</span>];</span><br><span class="line">            <span class="type">int</span> <span class="variable">e</span> <span class="operator">=</span> edg[<span class="number">1</span>];</span><br><span class="line">            list[s].add(e);</span><br><span class="line">            list[e].add(s);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> list;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">reachableNodes</span><span class="params">(<span class="type">int</span> n, <span class="type">int</span>[][] edges, <span class="type">int</span>[] restricted)</span> &#123;</span><br><span class="line">        List&lt;Integer&gt;[] nextNodes = edgToNextNodeLists(n, edges);</span><br><span class="line">        Queue&lt;Integer&gt; queue = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;&gt;();</span><br><span class="line">        queue.offer(<span class="number">0</span>);</span><br><span class="line">        Set&lt;Integer&gt; resSet = Arrays.stream(restricted).boxed().collect(Collectors.toSet());</span><br><span class="line">        <span class="type">boolean</span>[] vis = <span class="keyword">new</span> <span class="title class_">boolean</span>[n];</span><br><span class="line">        <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        vis[<span class="number">0</span>] = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">while</span> (!queue.isEmpty()) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">node</span> <span class="operator">=</span> queue.poll();</span><br><span class="line">            count++;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> nextNode : nextNodes[node]) &#123;</span><br><span class="line">                <span class="keyword">if</span> (vis[nextNode] || resSet.contains(nextNode)) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                queue.offer(nextNode);</span><br><span class="line">                vis[nextNode] = <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/contest/weekly-contest-305/problems/check-if-there-is-a-valid-partition-for-the-array/">检查数组是否存在有效划分 - 力扣 (LeetCode) 竞赛</a></p>
+<p><img src="/images/%E7%AC%AC305%E5%9C%BA%E5%91%A8%E8%B5%9B-264%E5%90%8D-22%E5%88%86%E9%92%9F4%E9%A2%98/1659841394607.png" alt="1659841394607"></p>
+<p>可检查范围最多就3个，如果[4,5,6]如果符合，那我只要检查4前面那个数字是否有符合的划分，划分可以传递，因此直接动态规划即可</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">validPartition</span><span class="params">(<span class="type">int</span>[] nums)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> nums.length;</span><br><span class="line">    <span class="type">boolean</span>[] dp = <span class="keyword">new</span> <span class="title class_">boolean</span>[n];</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; nums.length;i++) &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">num</span> <span class="operator">=</span> nums[i];</span><br><span class="line">        <span class="keyword">if</span> (i-<span class="number">1</span>&gt;=<span class="number">0</span> &amp;&amp; nums[i-<span class="number">1</span>] == num) &#123;</span><br><span class="line">            dp[i] |= (i-<span class="number">2</span>&gt;=<span class="number">0</span>?dp[i-<span class="number">2</span>] : <span class="literal">true</span>);    </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (i-<span class="number">2</span>&gt;=<span class="number">0</span> &amp;&amp; nums[i-<span class="number">1</span>] == num &amp;&amp; nums[i-<span class="number">2</span>] == num) &#123;</span><br><span class="line">            dp[i] |= (i-<span class="number">3</span>&gt;=<span class="number">0</span>?dp[i-<span class="number">3</span>] : <span class="literal">true</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (i-<span class="number">2</span>&gt;=<span class="number">0</span> &amp;&amp; nums[i-<span class="number">1</span>] == num-<span class="number">1</span> &amp;&amp; nums[i-<span class="number">2</span>] == num-<span class="number">2</span>) &#123;</span><br><span class="line">            dp[i] |= (i-<span class="number">3</span>&gt;=<span class="number">0</span>?dp[i-<span class="number">3</span>] : <span class="literal">true</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dp[n-<span class="number">1</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/contest/weekly-contest-305/problems/longest-ideal-subsequence/">最长理想子序列 - 力扣 (LeetCode) 竞赛</a></p>
+<p><img src="/images/%E7%AC%AC305%E5%9C%BA%E5%91%A8%E8%B5%9B-264%E5%90%8D-22%E5%88%86%E9%92%9F4%E9%A2%98/1659841530495.png" alt="1659841530495"></p>
+<p>显然是动态规划，   在[a-z]中找到符合k差值的字母， 根据字母已记录的最长子序列长度，进行+1即可。</p>
+<p>最开始想歪了，想成了k是位置距离了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">longestIdealString</span><span class="params">(String s, <span class="type">int</span> k)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">n</span>  <span class="operator">=</span> s.length();</span><br><span class="line">        <span class="type">int</span>[] dp = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">26</span>];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; s.length();i++) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">c</span> <span class="operator">=</span> s.charAt(i) - <span class="string">&#x27;a&#x27;</span>;</span><br><span class="line">            <span class="type">int</span> <span class="variable">max</span> <span class="operator">=</span> Integer.MIN_VALUE;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">lastc</span> <span class="operator">=</span> c-k;lastc &lt;= c+k;lastc++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (lastc &lt; <span class="number">0</span> || lastc &gt; <span class="number">25</span>) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                max = Math.max(max, dp[lastc] + <span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            dp[c] = max;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> Arrays.stream(dp).max().getAsInt();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/06/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC85%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-1322-3%E9%A2%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1003,7 +1492,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-21 00:55:03" itemprop="dateModified" datetime="2022-08-21T00:55:03+08:00">2022-08-21</time>
+                <time title="修改时间：2022-08-21 23:45:31" itemprop="dateModified" datetime="2022-08-21T23:45:31+08:00">2022-08-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1015,7 +1504,7 @@
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/SQL%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">SQL数据库</span></a>
                 </span>
             </span>
 
@@ -2291,521 +2780,6 @@ Se级别时，会从MVCC并发控制退化为基于锁的并发控制（LCBB）�
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/07/07/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/07/07/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/" class="post-title-link" itemprop="url">java常见容器使用原理（Map\List等)</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-07-07 23:29:15" itemprop="dateCreated datePublished" datetime="2022-07-07T23:29:15+08:00">2022-07-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-10 00:51:46" itemprop="dateModified" datetime="2022-08-10T00:51:46+08:00">2022-08-10</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">java高级原理</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/java%E5%B8%B8%E8%A7%81%E5%BA%94%E7%94%A8%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">java常见应用原理</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/07/07/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/07/07/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>5.7k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <hr>
-<p>[toc]</p>
- <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#arraylist-yuan-li">ArrayList原理</a></li>
-<li><a href="#copyonwritearraylist-yuan-li">CopyOnWriteArrayList 原理</a>
-<ul>
-<li><a href="#wei-shi-me-xu-yao-xie-shi-fu-zhi">为什么需要写时复制？</a></li>
-<li><a href="#ru-he-bi-mian-duo-xian-cheng-xiu-gai-de-chong-tu">如何避免多线程修改的冲突？</a></li>
-<li><a href="#ru-he-bao-zheng-geng-xin-hou-shu-zu-yin-yong-de-bian-dong-neng-ji-shi-dui-wai-cheng-xian">如何保证更新后，数组引用的变动能及时对外呈现？</a></li>
-</ul>
-</li>
-<li><a href="#hashmap-he-xin-yuan-li">HashMap核心原理</a>
-<ul>
-<li><a href="#hashmap-wan-zheng-de-put-guo-cheng">hashMap完整的put过程</a></li>
-<li><a href="#hashmap-de-kuo-rong-guo-cheng-java7-he-8-kuo-rong-de-qu-bie">hashMap的扩容过程，java7和8扩容的区别</a></li>
-<li><a href="#wei-shi-me-java8-yao-gai-cheng-wei-cha-fa">为什么java8要改成尾插法？</a></li>
-<li><a href="#sui-ran-jie-jue-liao-si-xun-huan-wen-ti-dan-java8-de-hashmap-reng-ran-shi-xian-cheng-bu-an-quan-de-wei-shi-me">虽然解决了死循环问题， 但java8的hashMap仍然是线程不安全的，为什么？</a></li>
-<li><a href="#ju-ti-dao-di-man-zu-shi-me-qing-kuang-cai-hui-resize-kuo-rong-ni">具体到底满足什么情况，才会resize扩容呢？</a></li>
-<li><a href="#kuo-rong-hou-capacity-kuo-rong-duo-shao-bei-ni">扩容后，capacity扩容多少倍呢？</a></li>
-</ul>
-</li>
-<li><a href="#concurrenthashmap-he-xin-yuan-li">ConcurrentHashMap 核心原理</a>
-<ul>
-<li><a href="#jdk6-7-zhong-de-shi-xian-yuan-li">JDK6-7中的实现原理</a>
-<ul>
-<li><a href="#chu-shi-hua-map">初始化map</a>
-<ul>
-<li><a href="#chu-shi-hua-segment-shu-zu-tong-guo-concurrencylevel-he-ssize">初始化segment数组（通过concurrencyLevel和ssize）</a></li>
-<li><a href="#chu-shi-hua-segmentshift-duan-pian-yi-liang-he-segmentmask-duan-yan-ma">初始化segmentShift段偏移量和segmentMask段掩码</a></li>
-<li><a href="#chu-shi-hua-mei-ge-segment">初始化每个segment</a></li>
-</ul>
-</li>
-<li><a href="#ding-wei-segment">定位Segment</a></li>
-<li><a href="#get-cao-zuo">get操作</a></li>
-<li><a href="#put-cao-zuo">put操作</a></li>
-<li><a href="#size-cao-zuo">size操作</a></li>
-</ul>
-</li>
-<li><a href="#jdk8-de-gai-zao-sheng-ji-chong-yao">JDK8的改造升级（重要）</a></li>
-</ul>
-</li>
-<li><a href="#concurrentlinkedqueue-he-xin-yuan-li">ConcurrentLinkedQueue核心原理</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<h1><span id="arraylist-yuan-li">ArrayList原理</span><a href="#arraylist-yuan-li" class="header-anchor">#</a></h1>
-<p>Q: 讲一下啊arrayList的扩容原理？<br>
-A:<br>
-比较简单，算出新容量后，直接Arrays.copy拷贝到新数组，搞定<br>
-<img src="/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/c0f46fd3dbc58ac475051f1102dd4c43f80fc8e0.png" alt="c0f46fd3dbc58ac475051f1102dd4c43f80fc8e0"></p>
-<p>扩容容量= 原容量 + (原容量右移1位，即0.5倍)= 1.5倍<br>
-<img src="/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/395ae953519c9a0a9cba440644a6d8dd4999db66.png" alt="395ae953519c9a0a9cba440644a6d8dd4999db66"></p>
-<hr>
-<p>Q: arrayList的初始最大容量是多少？可以更改吗？<br>
-A:<br>
-初始容量为10。不可修改<br>
-<img src="/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/11f8400ec134b045dae9118f28877a284924b1c3.png" alt="11f8400ec134b045dae9118f28877a284924b1c3"></p>
-<h1><span id="copyonwritearraylist-yuan-li">CopyOnWriteArrayList 原理</span><a href="#copyonwritearraylist-yuan-li" class="header-anchor">#</a></h1>
-<p>就是一个写时复制列表</p>
-<p>当发生“删除/修改/新增”时，会先新建一个数组，更新后的数据拷贝到数组中</p>
-<p>最后再更新到CopyOnWriteArrayList的数组成员引用上。</p>
-<h2><span id="wei-shi-me-xu-yao-xie-shi-fu-zhi">为什么需要写时复制？</span><a href="#wei-shi-me-xu-yao-xie-shi-fu-zhi" class="header-anchor">#</a></h2>
-<p>针对多线程环境下，读多写少的情况，如果每个读都加线程同步，太浪费了</p>
-<p>因此可以读的时候不加锁</p>
-<p>只有写的时候加锁，写完更新</p>
-<p>读的时候可能会有点延迟的数据，但不影响。</p>
-<h2><span id="ru-he-bi-mian-duo-xian-cheng-xiu-gai-de-chong-tu">如何避免多线程修改的冲突？</span><a href="#ru-he-bi-mian-duo-xian-cheng-xiu-gai-de-chong-tu" class="header-anchor">#</a></h2>
-<p>加了一个sync锁，修改动作是线程安全的。</p>
-<h2><span id="ru-he-bao-zheng-geng-xin-hou-shu-zu-yin-yong-de-bian-dong-neng-ji-shi-dui-wai-cheng-xian">如何保证更新后，数组引用的变动能及时对外呈现？</span><a href="#ru-he-bao-zheng-geng-xin-hou-shu-zu-yin-yong-de-bian-dong-neng-ji-shi-dui-wai-cheng-xian" class="header-anchor">#</a></h2>
-<p>数组成员设置成volatile</p>
-<h1><span id="hashmap-he-xin-yuan-li">HashMap核心原理</span><a href="#hashmap-he-xin-yuan-li" class="header-anchor">#</a></h1>
-<h2><span id="hashmap-wan-zheng-de-put-guo-cheng">hashMap完整的put过程</span><a href="#hashmap-wan-zheng-de-put-guo-cheng" class="header-anchor">#</a></h2>
-<ol>
-<li>首先，要获取key的哈希值。<br>
-如果为空，就统一是0<br>
-否则，调用对象的.hashCode()方法，接着再与自己的右移16位进行异或，以便充分利用高位信息。</li>
-<li>接着判断内部node数组是否为空，如果是，先进行初始化扩容。默认为16。</li>
-<li>根据(n-1)&amp;hash值，获取哈希表索引位置。 （&amp;的性能比取余要高,具体讨论见<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/21070971">CPU取余原理</a>）</li>
-<li>哈希表的node数组中，存放的是每组链表的头节点。<br>
-先检查头节点是否和自己要存放的key完全匹配 （hash值相同，key值相同，先hash再key，是因为hash的判断简单，key的equals判断可能会复杂）<br>
-如果匹配，得到需要替换的节点。</li>
-<li>头节点和自己要放的key不匹配，则判断一下这个头节点是否是红黑树节点，如果是，说明已经升级成红黑树了，调用putTree插入到红黑树中。</li>
-<li>如果不是红黑树， 那就是遍历链表，完全匹配就得到需要替换的节点。如果到尾部了，也没匹配的，则插入新节点。</li>
-<li>如果前面找到了要替换的节点，则判断一下是否可以替换（是否没要求putIfAbsent，或者value为null），是就替换，不是就结束</li>
-<li>如果前面是插入了新节点，非替换， 则要modCount++（方便迭代器确认map是否更新），  同时++size， 然后和扩容阈值做判断， 如果太大，就resize进行扩容<br>
-<img src="/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/61d85897f346fb06cb884b84.png" alt="hashMap-put详解"></li>
-</ol>
-<hr>
-<h2><span id="hashmap-de-kuo-rong-guo-cheng-java7-he-8-kuo-rong-de-qu-bie">hashMap的扩容过程，java7和8扩容的区别</span><a href="#hashmap-de-kuo-rong-guo-cheng-java7-he-8-kuo-rong-de-qu-bie" class="header-anchor">#</a></h2>
-<ol>
-<li>java7：</li>
-</ol>
-<ul>
-<li>当resize时，新建一个数组newTable</li>
-<li>遍历原table中的每个链表和节点，重新hash，找到新的位置放入</li>
-<li>放入的方式是头插法，即始终插在链表的头节点。</li>
-</ul>
-<ol start="2">
-<li>java8:</li>
-</ol>
-<ul>
-<li>不再每个点rehash放置，而是最高位是0则坐标不变，最高位是1则坐标变为“10000+原坐标”，即“原长度+原坐标. 避免了频繁的哈希计算和搬移过程。</li>
-<li>使用尾插法在链表上插入节点</li>
-<li>桶内元素超过8个，链表转成红黑树</li>
-</ul>
-<hr>
-<h2><span id="wei-shi-me-java8-yao-gai-cheng-wei-cha-fa">为什么java8要改成尾插法？</span><a href="#wei-shi-me-java8-yao-gai-cheng-wei-cha-fa" class="header-anchor">#</a></h2>
-<p>A:<br>
-多线程时，java7的map-put可能造成死循环。<br>
-A线程扩容到那一半， 还处在遍历链表做头插法搬移的过程时，存了2个局部变量，当前链点now指向a， next指向b，正准备搬移（a-&gt;b-&gt;c这样的链表，a是头节点）</p>
-<p>B线程则同时完成线程扩容，但是map里都是引用，浅拷贝，** 因为是头插法， 会导致顺序变化**， 原本a-&gt;b-&gt;c 变成了c-&gt;b-&gt;a。<br>
-因此A恢复时， 链点还是a，next还是b， 于是往下走到了b， 取bbs的next时，已经变成了a， 于是发生了a-&gt;b-&gt;a的循环<br>
-导致后续操作的next都是错误操作，引发环形指针。</p>
-<p>java8里改成尾插法，这样做resize时，a-&gt;b-&gt;c 如果仍然哈希到同一个节点， 顺序是不会发生变化的。</p>
-<hr>
-<h2><span id="sui-ran-jie-jue-liao-si-xun-huan-wen-ti-dan-java8-de-hashmap-reng-ran-shi-xian-cheng-bu-an-quan-de-wei-shi-me">虽然解决了死循环问题， 但java8的hashMap仍然是线程不安全的，为什么？</span><a href="#sui-ran-jie-jue-liao-si-xun-huan-wen-ti-dan-java8-de-hashmap-reng-ran-shi-xian-cheng-bu-an-quan-de-wei-shi-me" class="header-anchor">#</a></h2>
-<p>A:<br>
-因为缺乏同步，导致同节点发生哈希碰撞时，if条件的判断都可能是有问题的，导致本该插在链表头节点后面的，结果直接作为链表头覆盖到数组上了。</p>
-<hr>
-<h2><span id="ju-ti-dao-di-man-zu-shi-me-qing-kuang-cai-hui-resize-kuo-rong-ni">具体到底满足什么情况，才会resize扩容呢？</span><a href="#ju-ti-dao-di-man-zu-shi-me-qing-kuang-cai-hui-resize-kuo-rong-ni" class="header-anchor">#</a></h2>
-<p>A:<br>
-　HashMap负载因子 LoadFactor，默认值为0.75f。<br>
-　衡量HashMap是否进行Resize的条件如下：<br>
-　HashMap.Size &gt;= Capacity * LoadFactor</p>
-<p>另一种情况。JDK1.8源码中，执行树形化之前，会先检查数组长度，如果长度小于64，则对数组进行扩容，而不是进行树形化</p>
-<hr>
-<h2><span id="kuo-rong-hou-capacity-kuo-rong-duo-shao-bei-ni">扩容后，capacity扩容多少倍呢？</span><a href="#kuo-rong-hou-capacity-kuo-rong-duo-shao-bei-ni" class="header-anchor">#</a></h2>
-<p>A:<br>
-哈希表每次扩容是两倍</p>
-<h1><span id="concurrenthashmap-he-xin-yuan-li">ConcurrentHashMap 核心原理</span><a href="#concurrenthashmap-he-xin-yuan-li" class="header-anchor">#</a></h1>
-<p>CHM结构</p>
-<p>每个concurrentHashMap里有一个segment数组</p>
-<p>每个segment里有HashEntry数组</p>
-<p>每个hashEntry可以演变为链表或者红黑树</p>
-<p><img src="/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/1659369632360.png" alt="1659369632360"></p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_18300037/article/details/123795776">https://blog.csdn.net/qq_18300037/article/details/123795776</a></p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/every__day/article/details/114293107">https://blog.csdn.net/every__day/article/details/114293107</a></p>
-<h2><span id="jdk6-7-zhong-de-shi-xian-yuan-li">JDK6-7中的实现原理</span><a href="#jdk6-7-zhong-de-shi-xian-yuan-li" class="header-anchor">#</a></h2>
-<h3><span id="chu-shi-hua-map">初始化map</span><a href="#chu-shi-hua-map" class="header-anchor">#</a></h3>
-<h4><span id="chu-shi-hua-segment-shu-zu-tong-guo-concurrencylevel-he-ssize">初始化segment数组（通过concurrencyLevel和ssize）</span><a href="#chu-shi-hua-segment-shu-zu-tong-guo-concurrencylevel-he-ssize" class="header-anchor">#</a></h4>
-<p>sszie即segment size，是seg数组的大小</p>
-<p>ssize一定是2的N次方，且一定是 大于等于concurrencyLevel的最小值</p>
-<p>sszie的最大值为65535</p>
-<p>ssize的默认值是16</p>
-<h4><span id="chu-shi-hua-segmentshift-duan-pian-yi-liang-he-segmentmask-duan-yan-ma">初始化segmentShift段偏移量和segmentMask段掩码</span><a href="#chu-shi-hua-segmentshift-duan-pian-yi-liang-he-segmentmask-duan-yan-ma" class="header-anchor">#</a></h4>
-<p>这2个变量用于后面定位segment的散列算法使用</p>
-<p>sshift  是 ssize的2的次方数</p>
-<p>segmentShift  = 32 - sshift   默认等于32-4=28</p>
-<p>segmentMask =  ssize -1  默认等于15</p>
-<h4><span id="chu-shi-hua-mei-ge-segment">初始化每个segment</span><a href="#chu-shi-hua-mei-ge-segment" class="header-anchor">#</a></h4>
-<p>每个segment里有一个entry数组</p>
-<p>这个数组的大小cap也是2的N次方，  且大于等于 initialCapacity(就是你传的初始容量值) / ssize 即<strong>平均每段数量</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">this.segments[i] = new Segment&lt;K,V&gt;(cap, loadFactor);</span><br></pre></td></tr></table></figure>
-<p>loadFactor默认0.75</p>
-<p>initialCapatity默认值为16</p>
-<h3><span id="ding-wei-segment">定位Segment</span><a href="#ding-wei-segment" class="header-anchor">#</a></h3>
-<p>对于一个key ，先是获取hashcode， 然后对hashcode进行变种算法再散列</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">hash</span><span class="params">(<span class="type">int</span> h)</span> &#123;</span><br><span class="line">        h += (h &lt;&lt; <span class="number">15</span>) ^ <span class="number">0xffffcd7d</span>;</span><br><span class="line">        h ^= (h &gt;&gt;&gt; <span class="number">10</span>);</span><br><span class="line">        h += (h &lt;&lt; <span class="number">3</span>);</span><br><span class="line">        h ^= (h &gt;&gt;&gt; <span class="number">6</span>);</span><br><span class="line">        h += (h &lt;&lt; <span class="number">2</span>) + (h &lt;&lt; <span class="number">14</span>);</span><br><span class="line">        <span class="keyword">return</span> h ^ (h &gt;&gt;&gt; <span class="number">16</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>这个算法能保证各位都能利用上，尽可能均匀， 相比hashmap里单纯和高16位做异或不同。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> segments[(hash &gt;&gt;&gt; segmentShift) &amp; segmentMask];</span><br></pre></td></tr></table></figure>
-<p>可以看出</p>
-<p>segmentShift的作用是让hash通过右移动，只保留符合ssize的2进制位数长度</p>
-<p>顺便通过和segmentMask进行&amp;操作，剔除其他的位</p>
-<p>总目的就是为了让32位的hash偏移后保持在ssize的范围内</p>
-<p>按默认值而言，即   (hash&gt;&gt;&gt;28) &amp; 15</p>
-<h3><span id="get-cao-zuo">get操作</span><a href="#get-cao-zuo" class="header-anchor">#</a></h3>
-<p>先按照上文进行哈希， 获取segment后再进行get操作</p>
-<p>整个过程都不需要加锁！</p>
-<p>除非读到的值时空的，才会加锁重读确认（可能是被修改过了）</p>
-<p>获取segment这个操作中，涉及的数组count、存储HashEntry的value，都涉及成了volatile，保持可见性。</p>
-<h3><span id="put-cao-zuo">put操作</span><a href="#put-cao-zuo" class="header-anchor">#</a></h3>
-<p>put操作处理共享变量（例如count等）是一定会加锁的。</p>
-<p>区别在于扩容时，只对某一个segment扩容，不会影响其他的segment</p>
-<p>扩容时会先创建容量两倍的数组，重新放入后在修改引用。</p>
-<p>CHM是插入前先判断，再选择是否扩容</p>
-<p>而hashMap是插入后判断，再选择是否扩容</p>
-<h3><span id="size-cao-zuo">size操作</span><a href="#size-cao-zuo" class="header-anchor">#</a></h3>
-<p>size自然是要把所有segment里的size进行相加</p>
-<p>但是for循环相加可能会有前面的segment被修改，导致size变化，但如果加锁又太耗时间</p>
-<p>因此引入了modCount，如果统计完成过程中发现modCount变化，则会加锁的方式重新统计。</p>
-<h2><span id="jdk8-de-gai-zao-sheng-ji-chong-yao">JDK8的改造升级（重要）</span><a href="#jdk8-de-gai-zao-sheng-ji-chong-yao" class="header-anchor">#</a></h2>
-<p>在`JDK8中，它进行了以下重要改进：</p>
-<ol>
-<li>
-<p>取消分段锁机制<code>（Segment）</code>，进一步降低冲突概率; 使用桶的概念。</p>
-<p>其内部虽然仍然有 <code>Segment</code> 定义，但仅仅是为了保证序列化时的兼容性而已，不再有任何结构 上的用处。</p>
-<p>因为不再使用 <code>Segment</code>，初始化操作大大简化，修改为 <code>lazy-load</code> 形式，这样可以有效避免 初始开销</p>
-</li>
-<li>
-<p>size()方法做了优化，表达范围变大。原来<code>map</code>原有的<code>size</code>方法最大只能表达2的31次方减一，现在额外提供<code>mappingCount</code>方法，最大表示为2的63次方减一</p>
-</li>
-<li>
-<p>使用 <code>Unsafe</code>、<code>LongAdder</code> 之类底层手段，进行极端情况的优化。使用 <code>CAS</code> 等操作，在特定场景进行无锁并发操作。 即get使用volatile读， 而put则使用cas进行并发put。</p>
-</li>
-<li>
-<p>类似hashMap引入红黑树解构，同一个哈希槽元素个数超过一定的阙值后，单链表转化成红黑树;</p>
-</li>
-<li>
-<p>支持多线程并发扩容，大大提升扩容速度。</p>
-</li>
-</ol>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zguoshuaiiii/article/details/78495332">(4条消息) java8中concurrentHashmap的改进_庄国帅哥的博客-CSDN博客</a></p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_40277163/article/details/122957808">(1条消息) JDK 8 ConcurrentHashMap_黄泥川水猴子的博客-CSDN博客_concurrenthashmap jdk8</a></p>
-<h1><span id="concurrentlinkedqueue-he-xin-yuan-li">ConcurrentLinkedQueue核心原理</span><a href="#concurrentlinkedqueue-he-xin-yuan-li" class="header-anchor">#</a></h1>
-<p>核心是使用CAS而不是锁来处理链式队列。</p>
-<p>比较容易想到的是每次用cas来处理next指针的跟新以及tail指针的指向</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">offer</span><span class="params">(E e)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (e == <span class="literal">null</span>)</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NullPointerException</span>();</span><br><span class="line">                Node&lt;E&gt; n = <span class="keyword">new</span> <span class="title class_">Node</span>&lt;E&gt;(e);</span><br><span class="line">                <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">                        Node&lt;E&gt; t = tail;</span><br><span class="line">                        <span class="keyword">if</span> (t.casNext(<span class="literal">null</span>, n) &amp;&amp; casTail(t, n)) &#123;</span><br><span class="line">                                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>但是缺点在于及时没有并发，也要频繁cas更新tail节点。</p>
-<p>实际上只需要用到tail节点的时候再去定位即可。</p>
-<p>所以设置了一个HOPS值</p>
-<p>当tail节点和实际尾节点的距离大于等于HOPS值，才去定位并cas更新tail节点，否则只更新next指针。</p>
-<p><img src="/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/1659795490061.png" alt="1659795490061"></p>
-<p>完整代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">offer</span><span class="params">(E e)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (e == <span class="literal">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NullPointerException</span>();</span><br><span class="line">        <span class="comment">// 入队前，创建一个入队节点</span></span><br><span class="line">        Node&lt;E&gt; n = <span class="keyword">new</span> <span class="title class_">Node</span>&lt;E&gt;(e);</span><br><span class="line">        retry:</span><br><span class="line">        <span class="comment">// 死循环，入队不成功反复入队。</span></span><br><span class="line">        <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">            <span class="comment">// 创建一个指向tail节点的引用</span></span><br><span class="line">            Node&lt;E&gt; t = tail;</span><br><span class="line">            <span class="comment">// p用来表示队列的尾节点，默认情况下等于tail节点。</span></span><br><span class="line">            Node&lt;E&gt; p = t;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">hops</span> <span class="operator">=</span> <span class="number">0</span>; ; hops++) &#123;</span><br><span class="line">            <span class="comment">// 获得p节点的下一个节点。</span></span><br><span class="line">                Node&lt;E&gt; next = succ(p);</span><br><span class="line">    		<span class="comment">// next节点不为空，说明p不是尾节点，需要更新p后在将它指向next节点</span></span><br><span class="line">                <span class="keyword">if</span> (next != <span class="literal">null</span>) &#123;</span><br><span class="line">                    <span class="comment">// 循环了两次及其以上，并且当前节点还是不等于尾节点</span></span><br><span class="line">                    <span class="comment">// 需要退出2层for循环，重新定位tail节点了</span></span><br><span class="line">                    <span class="keyword">if</span> (hops &gt; HOPS &amp;&amp; t != tail)</span><br><span class="line">                        <span class="keyword">continue</span> retry; </span><br><span class="line">                    p = next;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 如果p是尾节点，则设置p节点的next节点为入队节点。</span></span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (p.casNext(<span class="literal">null</span>, n)) &#123;</span><br><span class="line">                    <span class="comment">/*如果tail节点有大于等于1个next节点，则将入队节点设置成tail节点，</span></span><br><span class="line"><span class="comment">                      更新失败了也没关系，因为失败了表示有其他线程成功更新了tail节点*/</span></span><br><span class="line"><span class="keyword">if</span> (hops &gt;= HOPS)</span><br><span class="line">                        casTail(t, n); <span class="comment">// 更新tail节点，允许失败</span></span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// p有next节点,表示p的next节点是尾节点，则重新设置p节点</span></span><br><span class="line">                <span class="keyword">else</span> &#123;</span><br><span class="line">                    p = succ(p);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>代价是距离越长，入队时定位队尾的时间越长。</p>
-<p>但是效率总体上提升了， 因为通过增加对volatile变量的读操作来减少对volatile变量的写操作。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/07/06/%E9%9A%8F%E7%AC%94/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/07/06/%E9%9A%8F%E7%AC%94/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">hexo-next主题使用笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-07-06 23:27:35" itemprop="dateCreated datePublished" datetime="2022-07-06T23:27:35+08:00">2022-07-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-17 23:13:56" itemprop="dateModified" datetime="2022-08-17T23:13:56+08:00">2022-08-17</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9A%8F%E7%AC%94/" itemprop="url" rel="index"><span itemprop="name">随笔</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9A%8F%E7%AC%94/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/" itemprop="url" rel="index"><span itemprop="name">博客搭建</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/07/06/%E9%9A%8F%E7%AC%94/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/07/06/%E9%9A%8F%E7%AC%94/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>[toc]</p>
- <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#tu-pian-zhi-chi-fang-da">图片支持放大</a></li>
-<li><a href="#tian-jia-fang-wen-liang">添加访问量</a></li>
-<li><a href="#valine-ping-lun-guo-nei-ban">valine评论（国内版）</a></li>
-<li><a href="#she-jiao-lian-jie">社交链接</a></li>
-<li><a href="#ban-quan">版权</a></li>
-<li><a href="#sheng-ji-markdown-xuan-ran-qi-zhi-chi-cha-jian">升级markdown渲染器，支持插件</a></li>
-<li><a href="#chao-lian-jie-yan-se-gai-bian">超链接颜色改变</a></li>
-<li><a href="#xiu-gai-zuo-ce-cai-dan-lan">修改左侧菜单栏</a></li>
-<li><a href="#zeng-jia-she-jiao-lian-jie">增加社交链接</a></li>
-<li><a href="#xian-shi-zhan-dian-wen-zhang-zong-zi-shu-ling-yi-chong-tong-ji-zhan-dian-zong-zi-shu-de-fang-fa">显示站点文章总字数（另一种统计站点总字数的方法）</a></li>
-<li><a href="#tian-jia-bo-ke-bei-jing-tu-pian">添加博客背景图片</a></li>
-</ul>
-<!-- tocstop -->
-<p>[toc]用于编辑时目录跳转</p>
-<h1><span id="tu-pian-zhi-chi-fang-da">图片支持放大</span><a href="#tu-pian-zhi-chi-fang-da" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/wugenqiang/article/details/89057323">https://blog.csdn.net/wugenqiang/article/details/89057323</a><br>
-fancybox本地无法使用，会导致加载失败<br>
-主要是因为默认配置的cdn我们无法访问<br>
-<a target="_blank" rel="noopener" href="https://blog.csdn.net/Aelous_dp/article/details/107643344">https://blog.csdn.net/Aelous_dp/article/details/107643344</a><br>
-需要改为如下：<br>
-vendor:<br>
-jquery: <a target="_blank" rel="noopener" href="//code.jquery.com/jquery-2.0.3.min.js">//code.jquery.com/jquery-2.0.3.min.js</a><br>
-fancybox: <a target="_blank" rel="noopener" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js">//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js</a><br>
-fancybox_css: <a target="_blank" rel="noopener" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css</a><br>
-主要是本地无法连接他默认配置的那个CDN</p>
-<h1><span id="tian-jia-fang-wen-liang">添加访问量</span><a href="#tian-jia-fang-wen-liang" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/baidu_34310405/article/details/102665373">https://blog.csdn.net/baidu_34310405/article/details/102665373</a></p>
-<h1><span id="valine-ping-lun-guo-nei-ban">valine评论（国内版）</span><a href="#valine-ping-lun-guo-nei-ban" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_48927364/article/details/123321038">https://blog.csdn.net/weixin_48927364/article/details/123321038</a><br>
-<a target="_blank" rel="noopener" href="https://blog.csdn.net/blue_zy/article/details/79071414">https://blog.csdn.net/blue_zy/article/details/79071414</a><br>
-Valine交流群: 480972291<br>
-配置再next的config里的valine:</p>
-<p>waline国外版</p>
-<h1><span id="she-jiao-lian-jie">社交链接</span><a href="#she-jiao-lian-jie" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_44634406/article/details/122777058">https://blog.csdn.net/weixin_44634406/article/details/122777058</a></p>
-<p>themes/next下的_config.yml，搜索social</p>
-<p>图标库</p>
-<p><a target="_blank" rel="noopener" href="http://www.fontawesome.com.cn/faicons/#web-application">http://www.fontawesome.com.cn/faicons/#web-application</a></p>
-<p>想要其他的国内软件图标：</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_44634406/article/details/122777058">https://blog.csdn.net/weixin_44634406/article/details/122777058</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.iconfont.cn/?spm=a313x.7781069.1998910419.d4d0a486a">https://www.iconfont.cn/?spm=a313x.7781069.1998910419.d4d0a486a</a></p>
-<h1><span id="ban-quan">版权</span><a href="#ban-quan" class="header-anchor">#</a></h1>
-<p>hexo next config 中找到creative_commons， 各种设置为true</p>
-<p>主config中设置url: ‘<a href="http://breakdawncoder.com/">http://breakdawncoder.com/</a>’</p>
-<p>复制黏贴时带版权信息：<br>
-<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_33430083/article/details/105626840">(1条消息) 新手如何给Hexo博客在复制时添加版权声明_只是学习学习的博客-CSDN博客</a></p>
-<h1><span id="sheng-ji-markdown-xuan-ran-qi-zhi-chi-cha-jian">升级markdown渲染器，支持插件</span><a href="#sheng-ji-markdown-xuan-ran-qi-zhi-chi-cha-jian" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/0bfc3029c980">https://www.jianshu.com/p/0bfc3029c980</a></p>
-<h1><span id="chao-lian-jie-yan-se-gai-bian">超链接颜色改变</span><a href="#chao-lian-jie-yan-se-gai-bian" class="header-anchor">#</a></h1>
-<p>打开 <code>Blog\themes\next\source\css\_common\components\post</code> 路径下的<code>post.styl</code> , 并在底部添加如下代码</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">a</span>:<span class="title function_">not</span>(<span class="params">.btn</span>)&#123;</span><br><span class="line">  <span class="attr">color</span>: #6495ED; <span class="comment">//超链接显示颜色</span></span><br><span class="line">  border-<span class="attr">bottom</span>: none;</span><br><span class="line">  &amp;:hover &#123;</span><br><span class="line">	<span class="attr">color</span>: #0000FF;  <span class="comment">//鼠标移动上去后超链接颜色</span></span><br><span class="line">	font-<span class="attr">weight</span>: bold;</span><br><span class="line">	text-<span class="attr">decoration</span>: underline;</span><br><span class="line">	&#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><strong>颜色码链接:</strong> <a target="_blank" rel="noopener" href="https://www.sioe.cn/yingyong/yanse-rgb-16/">RGB颜色值与十六进制颜色码转换工具 (sioe.cn)</a></li>
-</ul>
-<h1><span id="xiu-gai-zuo-ce-cai-dan-lan">修改左侧菜单栏</span><a href="#xiu-gai-zuo-ce-cai-dan-lan" class="header-anchor">#</a></h1>
-<p>themes/next下的_config.yml，查找menu</p>
-<p>图标库：<a target="_blank" rel="noopener" href="http://www.fontawesome.com.cn/faicons/#web-application">http://www.fontawesome.com.cn/faicons/#web-application</a></p>
-<p>新添加的菜单需要翻译对应的中文，打开theme/next/languages/zh-CN.yml，在menu下设置</p>
-<h1><span id="zeng-jia-she-jiao-lian-jie">增加社交链接</span><a href="#zeng-jia-she-jiao-lian-jie" class="header-anchor">#</a></h1>
-<p>打开<strong>主题配置文件</strong>即themes/next下的_config.yml，搜索social：</p>
-<h1><span id="xian-shi-zhan-dian-wen-zhang-zong-zi-shu-ling-yi-chong-tong-ji-zhan-dian-zong-zi-shu-de-fang-fa">显示站点文章总字数（另一种统计站点总字数的方法）</span><a href="#xian-shi-zhan-dian-wen-zhang-zong-zi-shu-ling-yi-chong-tong-ji-zhan-dian-zong-zi-shu-de-fang-fa" class="header-anchor">#</a></h1>
-<p>从根目录Blog打开Git Bash，执行下面的命令，安装插件：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-wordcount --save</span><br></pre></td></tr></table></figure>
-<p>然后在/themes/next/layout/_partials/footer.swig文件尾部加上：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;div class=&quot;theme-info&quot;&gt;</span><br><span class="line">  &lt;div class=&quot;powered-by&quot;&gt;&lt;/div&gt;</span><br><span class="line">  &lt;span class=&quot;post-count&quot;&gt;博客全站共&#123;&#123; totalcount(site) &#125;&#125;字&lt;/span&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
-<p>再加上这里面的文章字数统计和阅读时常统计，关闭站点统计，站点统计用上面的这个</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_44082148/article/details/105701427">https://blog.csdn.net/qq_44082148/article/details/105701427</a></p>
-<p>如果出现NAN，尝试hexo clean即可</p>
-<p><img src="/images/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/1660668978986.png" alt="1660668978986"></p>
-<p><img src="/images/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/1660669009040.png" alt="1660669009040"></p>
-<h1><span id="tian-jia-bo-ke-bei-jing-tu-pian">添加博客背景图片</span><a href="#tian-jia-bo-ke-bei-jing-tu-pian" class="header-anchor">#</a></h1>
-<p>打开主题配置文件即themes/next下的_config.yml，将 style: source/_data/styles.styl 取消注释：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">custom_file_path:</span><br><span class="line">  style: source/_data/styles.styl</span><br></pre></td></tr></table></figure>
-<p>打开根目录Blog/source创建文件_data/styles.styl，添加以下内容：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// 添加背景图片</span><br><span class="line">body &#123;</span><br><span class="line">      background: url(/images/background.png);//自己喜欢的图片地址</span><br><span class="line">      background-size: cover;</span><br><span class="line">      background-repeat: no-repeat;</span><br><span class="line">      background-attachment: fixed;</span><br><span class="line">      background-position: 50% 50%;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>images目录处于source\images下</p>
-<p>注意图片名字不能带中文</p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/cscshi/p/15196114.html">Hexo-NexT 设置博客背景图片 - 锦瑟，无端 - 博客园 (cnblogs.com)</a></p>
-<p>里面backgroud的属性是css的常见属性</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2877,14 +2851,14 @@ Valine交流群: 480972291<br>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-count">60</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -2948,7 +2922,7 @@ Valine交流群: 480972291<br>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共136.4k字</span>
+  <span class="post-count">博客全站共142.8k字</span>
 </div>
 
         
