@@ -148,6 +148,1601 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/06/05/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/06/05/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/" class="post-title-link" itemprop="url">java类加载全过程详解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-06-05 14:16:01" itemprop="dateCreated datePublished" datetime="2022-06-05T14:16:01+08:00">2022-06-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-10 00:50:38" itemprop="dateModified" datetime="2022-08-10T00:50:38+08:00">2022-08-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">java高级原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/jvm%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">jvm原理</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>10k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#guan-yu-lei-chu-shi-hua-de-shi-ji-he-wu-qu">关于类初始化的时机和误区</a></li>
+<li><a href="#you-wu-dao-de-jia-zai-san-bu-qu">有误导的“加载三部曲”</a></li>
+<li><a href="#jia-zai-bu-jin-jin-shi-du-qu-zi-jie-liu">加载：不仅仅是读取字节流</a>
+<ul>
+<li><a href="#lei-jia-zai-qi">类加载器</a>
+<ul>
+<li><a href="#shuang-qin-wei-pai">双亲委派</a>
+<ul>
+<li><a href="#shuang-qin-wei-pai-de-xiang-xi-zhi-xing-guo-cheng-he-zhong-jian-fang-fa">双亲委派的详细执行过程和中间方法</a></li>
+<li><a href="#shuang-qin-wei-pai-de-hao-chu">双亲委派的好处</a></li>
+<li><a href="#fu-jia-zai-qi-zhong-yao-jia-zai-mou-ge-lei-a-shi-a-xu-yao-shi-yong-zi-jia-zai-qi-lai-jia-zai-dan-shi-fu-jia-zai-qi-mei-you-zi-jia-zai-qi-de-dai-ma-zen-me-ban">父加载器中要加载某个类A时，A需要使用子加载器来加载，但是父加载器没有子加载器的代码，怎么办？</a></li>
+</ul>
+</li>
+<li><a href="#osgi-wang-zhuang-lei-jia-zai-qi">OSGI网状类加载器</a>
+<ul>
+<li><a href="#wei-shi-me-osgi-ke-yi-shi-xian-re-bu-shu-dan-shi-shuang-qin-wei-pai-bu-ke-yi">为什么OSGI可以实现热部署，但是双亲委派不可以？</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#shu-zu-lei-shi-ru-he-jia-zai-de">数组类是如何加载的？</a></li>
+</ul>
+</li>
+<li><a href="#lian-jie">连接</a>
+<ul>
+<li><a href="#yan-zheng">验证</a>
+<ul>
+<li><a href="#wen-jian-ge-shi-xiao-yan-class-wen-jian-dui-bu-dui">文件格式校验（class文件对不对）</a></li>
+<li><a href="#yuan-shu-ju-yan-zheng-wo-de-fu-qin-dui-bu-dui">元数据验证（我的父亲对不对）</a>
+<ul>
+<li><a href="#yuan-shu-ju-yan-zheng-zhong-de-lei-jie-xi">元数据验证中的类解析</a></li>
+</ul>
+</li>
+<li><a href="#zi-jie-ma-yan-zheng-wo-de-zhi-ling-dui-bu-dui">字节码验证（我的指令对不对）</a></li>
+<li><a href="#fu-hao-yin-yong-yan-zheng-wo-de-zhi-ling-diao-yong-de-mu-biao-dui-bu-dui">符号引用验证（我的指令调用的目标对不对）</a>
+<ul>
+<li><a href="#fu-hao-yin-yong-yan-zheng-zhong-de-zi-duan-jie-xi">符号引用验证中的字段解析</a></li>
+<li><a href="#fu-hao-yin-yong-yan-zheng-zhong-de-lei-fang-fa-jie-xi">符号引用验证中的类方法解析</a></li>
+<li><a href="#fu-hao-yin-yong-yan-zheng-zhong-de-jie-kou-fang-fa-jie-xi">符号引用验证中的接口方法解析</a>
+<ul>
+<li><a href="#yi-wen-1-wei-shi-me-jie-kou-fang-fa-huan-yao-jie-xi-jie-kou-li-bu-shi-mei-you-dai-ma-ma">疑问1：为什么接口方法还要解析？接口里不是没有代码吗？</a></li>
+<li><a href="#yi-wen-2-wei-shi-me-yao-qu-fen-lei-de-fang-fa-he-jie-kou-fang-fa-bu-neng-yong-tong-yi-chong-si-lu-qu-jie-xi-me">疑问2：为什么要区分类的方法和接口方法？不能用同一种思路去解析么？</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#zhun-bei">准备</a>
+<ul>
+<li><a href="#lei-jing-tai-cheng-yuan-mo-ren-zhi-de-zhun-bei">类静态成员默认值的准备</a></li>
+<li><a href="#fang-fa-biao-de-zhun-bei">方法表的准备</a>
+<ul>
+<li><a href="#chong-yao-wen-ti-interface-de-jie-kou-fang-fa-hui-you-fang-fa-biao-ma">重要问题：interface的接口方法，会有方法表吗？</a></li>
+<li><a href="#wei-shi-me-jie-kou-bu-neng-you-fang-fa-biao">为什么接口不能有方法表？</a></li>
+<li><a href="#java-de-xu-biao-he-c-de-xu-biao-you-shi-me-qu-bie">java的虚表和C++的虚表有什么区别？</a></li>
+<li><a href="#java-xu-biao-de-sheng-cheng-guo-cheng">java虚表的生成过程</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#jie-xi">解析</a>
+<ul>
+<li><a href="#jie-xi-de-wu-qu-bing-bu-shi-yi-ge-dan-chun-de-jie-duan">解析的误区：并不是一个单纯的阶段</a></li>
+<li><a href="#jing-tai-jie-xi">静态解析</a></li>
+<li><a href="#jie-xi-he-fen-pai-de-qu-bie">解析和分派的区别</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#chu-shi-hua">初始化</a>
+<ul>
+<li><a href="#cinit-fang-fa-xi-jie-jie-xi">cinit方法细节解析</a>
+<ul>
+<li><a href="#yi-wen-1-cinit-fang-fa-zhong-de-dai-ma-shi-ru-he-sheng-cheng-de">疑问1：cinit方法中的代码是如何生成的？</a></li>
+<li><a href="#yi-wen-2-cinit-lei-chu-shi-hua-shi-xian-cheng-an-quan-de-ma">疑问2：cinit类初始化是线程安全的吗？</a></li>
+</ul>
+</li>
+<li><a href="#chu-shi-hua-zhong-de-dong-tai-jie-xi">初始化中的动态解析</a></li>
+<li><a href="#kuo-zhan-invoke-dynamic-shi-shi-me">扩展:invoke_dynamic是什么</a>
+<ul>
+<li><a href="#dong-tai-yu-yan-he-jing-tai-yu-yan-de-qu-bie">动态语言和静态语言的区别</a></li>
+<li><a href="#java-de-methodhandle-yong-fa">java的MethodHandle用法</a></li>
+<li><a href="#methodhandle-dian-xing-ying-yong-chang-jing-ru-he-diao-yong-ye-ye-lei-de-xu-fang-fa">methodHandle典型应用场景：如何调用爷爷类的虚方法</a></li>
+<li><a href="#java-de-methodhandle-ji-zhi-he-reflection-de-fan-she-you-shi-me-qu-bie-ma">java的methodHandle机制和reflection的反射有什么区别吗？</a></li>
+<li><a href="#invoke-dynamic-zhi-ling-yuan-li-shi-fou-she-ji-dong-tai-fen-pai-lei-jia-zai-he-jie-xi">invoke_dynamic指令原理。是否涉及动态分派、类加载和解析？</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#zui-hou-de-wan-zheng-da-tu">最后的完整大图</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<hr>
+<h1><span id="guan-yu-lei-chu-shi-hua-de-shi-ji-he-wu-qu">关于类初始化的时机和误区</span><a href="#guan-yu-lei-chu-shi-hua-de-shi-ji-he-wu-qu" class="header-anchor">#</a></h1>
+<p>书籍的第一步部分上来就先讲了类初始化的时机，整理成图片如下：<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652581844567633533.png" alt="image.png"><br>
+看起来非常多，很难记住，很折磨。</p>
+<p>个人认为，书籍把这一部分放到章节的最前面不太合理，曾经一度让我把上面的这些事件，理解成了类加载的时机，也不懂这些规则的缘由（根本原因还是此时读者对类加载的理解不够深。）</p>
+<p>先贴一下类加载和类初始化的区别：</p>
+<ul>
+<li>类加载概念：将class文件加载到jvm中并生成class对象，并根据情况做初始化。</li>
+<li>类初始化概念：调用类class文件中默认存在的&lt;cinit&gt;类初始化方法。</li>
+</ul>
+<p>而我们容易产生误解的原因，是因为书中没有这句话：：<strong>所谓的类初始化时机，只是针对cinit类初始化方法的调用，并不是指的类加载时机！</strong></p>
+<p>以上图中红色的部分为例：<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652582629860693478.png" alt="image.png"><br>
+这里书籍中没有解释这3个规则的原因，在没理解原理前，强行记忆这3条是没有任何意义的。我认为是作者的失误。</p>
+<p>在这里我挑其中一个做补充：<br>
+<strong>“使用类里的static final 常量，不会触发初始化”</strong><br>
+想要理解这个规则，需要先理解class文件原理。<br>
+对于类的static final常量字段，它的常量值是存放在字段的constanValue属性中。<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652583662013743457.png" alt="image.png"><br>
+正因为如此，static final常量并不需要通过cinit方法中的指令来完成赋值。<br>
+所以也就没有必要在这时候调用&lt;cinit&gt;方法了。</p>
+<p>因此对于“儿子类调用父类的静态成员，不用对儿子类做类初始化”也是一个道理，儿子类的类静态成员没有被使用到，没必要做cinit。</p>
+<p>对于上面的分析，可以浓缩为一句话：<br>
+<strong>“如果我们急需使用static成员，且这个成员的值是要通过cinit方法赋值的，那么我们才做cinit初始化”</strong></p>
+<p><strong>新的疑问</strong>：那为什么仅仅是new一个对象时，也一定要做cinit类初始化呢？<br>
+假设此时我还没用到static成员，那么new一个对象时，是否可以省去cinit，等用到静态成员的时候，再去触发cinit？</p>
+<p>这涉及到了类初始化的另一个容易被忽视的点：<strong>“cinit类初始化方法，并不仅仅是做类成员的赋值，其实还可能包含一些初始化行为调用”</strong>，这可以是资源的启动或者加载等类对象必须要用到的内容。</p>
+<p>因此在一切可能触发类对象实际行为前，必须触发cinit避免出错。</p>
+<p>所以刚才的长篇大论，可以再次进行优化，浓缩为：<br>
+<strong>“当需要用到static成员的初始赋值，或者对类对象进行正式使用时，才会触发cinit类初始化，目的是为了保证类对象或者类成员的正确使用”</strong><br>
+拿着这一句话，去回看前面的类初始化时机的触发时机和不触发的时机时，相信你就会有更深的理解了，甚至也不需要强行去记忆每一条规则了。</p>
+<hr>
+<h1><span id="you-wu-dao-de-jia-zai-san-bu-qu">有误导的“加载三部曲”</span><a href="#you-wu-dao-de-jia-zai-san-bu-qu" class="header-anchor">#</a></h1>
+<p>有一个很经典的回答，叫做<strong>类加载三部曲：加载、连接、初始化</strong><br>
+好像类加载过程就是这三步按照顺序串行拼装起来的。</p>
+<p>实际上这3个过程是存在交叉的！<br>
+只能说，“最早发生”的时机，是按照这个顺序发生，但是中间加载过程是有很多的，具体后面会结合我画的图以及原理解释进行呈现。</p>
+<h1><span id="jia-zai-bu-jin-jin-shi-du-qu-zi-jie-liu">加载：不仅仅是读取字节流</span><a href="#jia-zai-bu-jin-jin-shi-du-qu-zi-jie-liu" class="header-anchor">#</a></h1>
+<p><img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652594910504257328.png" alt="image.png"><br>
+对于加载，很容易只理解成只是“从文件里加载二进制字节到内存”。<br>
+这个过程显然是必须最先执行的，否则连类的基本信息都获取不到。<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652595413217848779.png" alt="image.png"><br>
+可以看到这个过程很灵活，只要你从你能想到的地方拿到字节流即可，任意形式都行。</p>
+<p>然而，对于“加载”，除了获取字节流，实际上还包含了“把字节流转成方法区里的数据结构，进行存储defineClass”、“生成一个class对象，存储在堆中”这两步。</p>
+<p>这2步是穿插在连接过程中的。<br>
+比如字节流转数据结构的过程，必须在确认字节流的正确性之后完成。<br>
+而生成class对象同理，符合一个class对象的条件时，才能将其在堆中生成。<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652595269171806676.png" alt="image.png"><br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652595359889871663.png" alt="image.png"></p>
+<p>加载过程是由类加载器classloader完成的，在这里对classLoader也顺便做一个详细的分析。</p>
+<h2><span id="lei-jia-zai-qi">类加载器</span><a href="#lei-jia-zai-qi" class="header-anchor">#</a></h2>
+<h3><span id="shuang-qin-wei-pai">双亲委派</span><a href="#shuang-qin-wei-pai" class="header-anchor">#</a></h3>
+<p>类加载时的双亲委派模型，反正就记得优先去父类加载器中看类是否能加载。</p>
+<p>这个过程和多态方法调用是相反的，多态方法是子类覆写了的话则优先子类调用，类加载则是父加载器能加载则加载。</p>
+<p><strong>注意：Bootsrap不是ClassLoader的子类，他是C++编写的。</strong><br>
+而ExtClassLoader和AppClassLoader都是继承自ClassLoader的</p>
+<p><img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/a4c77999a2f8a0d5bc6401d05efeca9cdcecef43.png" alt="a4c77999a2f8a0d5bc6401d05efeca9cdcecef43"></p>
+<h4><span id="shuang-qin-wei-pai-de-xiang-xi-zhi-xing-guo-cheng-he-zhong-jian-fang-fa">双亲委派的详细执行过程和中间方法</span><a href="#shuang-qin-wei-pai-de-xiang-xi-zhi-xing-guo-cheng-he-zhong-jian-fang-fa" class="header-anchor">#</a></h4>
+<p>loaderClass（className）  双亲加载实现（这里会体现先去父亲找，再自己）<strong>注意，jdk1.2之后不提倡覆盖loadClass方法，这个方法可以理解为一个模板方法</strong>。</p>
+<p><strong>但如果确实有需要破坏双亲委派的需求，则可以重写loaderClass方法，解除双亲委派机制</strong></p>
+<p>findClass()  如何根据名字，寻找并生成1个class（内部需要借助defineClass）<br>
+defineClass()  通过这个方法将字节码生成1个class类，基本不用改动。</p>
+<p>例如需要根据类目，从某个远端网络加载获取这个类， 而且获取过来的时候还是加密的，需要在findClass里对byte数组做解密，解密完成，再调用defineClass生成class类。</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zzti_erlie/article/details/82757435">https://blog.csdn.net/zzti_erlie/article/details/82757435</a></p>
+<h4><span id="shuang-qin-wei-pai-de-hao-chu">双亲委派的好处</span><a href="#shuang-qin-wei-pai-de-hao-chu" class="header-anchor">#</a></h4>
+<p>书中提到的原因就一个： java类随着类加载器，具备了带有优先级的层次关系。<br>
+保证了例如object类在每个环境里都是同一种，不会出现混乱。</p>
+<h4><span id="fu-jia-zai-qi-zhong-yao-jia-zai-mou-ge-lei-a-shi-a-xu-yao-shi-yong-zi-jia-zai-qi-lai-jia-zai-dan-shi-fu-jia-zai-qi-mei-you-zi-jia-zai-qi-de-dai-ma-zen-me-ban">父加载器中要加载某个类A时，A需要使用子加载器来加载，但是父加载器没有子加载器的代码，怎么办？</span><a href="#fu-jia-zai-qi-zhong-yao-jia-zai-mou-ge-lei-a-shi-a-xu-yao-shi-yong-zi-jia-zai-qi-lai-jia-zai-dan-shi-fu-jia-zai-qi-mei-you-zi-jia-zai-qi-de-dai-ma-zen-me-ban" class="header-anchor">#</a></h4>
+<p>可以使用线程上下文TCCL机制， 例如java的JNDI服务，JNDI是在启动类加载器里入加载的（JDK1.3的rt.jar)， 但是JNDI会加载很多扩展性很强的新资源类。</p>
+<p>因此可以在JNDI加载类的过程中，从TCCL这个context对象中，拿到set进去的用户加载器，然后进行加载即可。（JDBC、JBI等SPI机制都是如此）</p>
+<h3><span id="osgi-wang-zhuang-lei-jia-zai-qi">OSGI网状类加载器</span><a href="#osgi-wang-zhuang-lei-jia-zai-qi" class="header-anchor">#</a></h3>
+<p>OSGI中， 每一个程序模块（bundle）都有一个自己的类加载器，当需要更换一个bundle时，就把bundle连同类加载器一起换掉，实现代码的热替换</p>
+<p>它是一个网状的类加载结构，只有java.*以及委派名单的，才会用双亲委派机制，否则都是各种网状的加载。加载过程如下所示：</p>
+<p><img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/62408d2e1e08530789333ccd-1651765505820.png" alt="OSGI加载"></p>
+<h4><span id="wei-shi-me-osgi-ke-yi-shi-xian-re-bu-shu-dan-shi-shuang-qin-wei-pai-bu-ke-yi">为什么OSGI可以实现热部署，但是双亲委派不可以？</span><a href="#wei-shi-me-osgi-ke-yi-shi-xian-re-bu-shu-dan-shi-shuang-qin-wei-pai-bu-ke-yi" class="header-anchor">#</a></h4>
+<p>首先，理解双亲委派模型下，不能热部署的原因：<br>
+<strong>如果有新升级的同名类要加入，它只能在新给出的一个加载器去加载， 但是双亲模型限定了必须是先交给父加载器加载，这导致了升级困难，无法让新的加载器去做抢先加载。</strong></p>
+<p>OSGi类加载模型则是网络图状的，可以在bundle间互相委托<br>
+例如bundleA、B都依赖于bundleC，当他们访问bundleC中的类时，就会委托给bundleC的类加载器，由它来查找类；如果它发现还要依赖bundleE中的类，就会再委托给bundleE的类加载器。</p>
+<blockquote>
+<blockquote>
+<p>另一篇文章的解释：</p>
+</blockquote>
+<ul>
+<li>由于类加载机制的原因，导致一个类一旦加载进去就再也无法释放，因此，OSGi引入了基于插件的类加载机制</li>
+<li>举例说明：plugin1里有examples.Test1类，而pulgin2里也有examples.Test1类，在载入这两个插件时，两个类是可以同时载入进入到类缓存中，这归功于OSGi实现的插件类加载器(ClassLoader)</li>
+<li>我们把“examples.Test”服务的 Service Ranking 属性更改成了 100，那么其他bundle使用这个bundle对应的example类时，就会用优先级最高的类。</li>
+<li>在不需要停止服务和其他插件都不用更新的情况下，我们只需要再安装一个更新版本的插件，其所注册的服务就可以自动更新并应用到所有调用该插件的插件中，达到了热部署的目的。<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/yipsilon/article/details/83369177">OSGi的热部署特性及实现</a></li>
+</ul>
+</blockquote>
+<h2><span id="shu-zu-lei-shi-ru-he-jia-zai-de">数组类是如何加载的？</span><a href="#shu-zu-lei-shi-ru-he-jia-zai-de" class="header-anchor">#</a></h2>
+<p>数组类是由AppClassLoader加载的。<br>
+数组类打印className时，前面会有个[Lxx类<br>
+二维数组就是[[Lxxx类<br>
+<strong>数组类的父类型是Object</strong></p>
+<p>注意此时加载的是数组类，而数组类里面的对象是不会做自动加载的<br>
+因此xx类的静态代码并不会被直接调用</p>
+<h1><span id="lian-jie">连接</span><a href="#lian-jie" class="header-anchor">#</a></h1>
+<p>连接过程可以说是最难记住的一个过程， 里面包含了各种校验啊之类的，让人摸不清头脑。这里会通过更细致的解释和图解，让你明白连接过程究竟做了什么。<br>
+首先连接过程分为 验证、准备和解析，<strong>“解析”并不是连接的最后一步，而是在验证过程中实时发生的！</strong>。 下文会为你详细解释为什么。</p>
+<h2><span id="yan-zheng">验证</span><a href="#yan-zheng" class="header-anchor">#</a></h2>
+<h3><span id="wen-jian-ge-shi-xiao-yan-class-wen-jian-dui-bu-dui">文件格式校验（class文件对不对）</span><a href="#wen-jian-ge-shi-xiao-yan-class-wen-jian-dui-bu-dui" class="header-anchor">#</a></h3>
+<p><img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652596406384448149.png" alt="image.png"><br>
+注意这里的校验，都是一些最简单的校验，相当于无需做太多的语法分析操作等操作， 都是基于class文件格式定义进行的基础校验。</p>
+<p>然而如果对加载的文件有充分的自信，来源可靠，那么确实可以省去这个步骤，提升连接效率，因此会有一个-Xverify:none的选项供使用。</p>
+<h3><span id="yuan-shu-ju-yan-zheng-wo-de-fu-qin-dui-bu-dui">元数据验证（我的父亲对不对）</span><a href="#yuan-shu-ju-yan-zheng-wo-de-fu-qin-dui-bu-dui" class="header-anchor">#</a></h3>
+<p>这里验证了class文件里面继承特性相关的重要信息，例如继承关系是否合理、是否实现了抽象类或接口的方法<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652596978343390083.png" alt="image.png"></p>
+<p>注意，这个元数据验证的过程，<strong>会触发父类或者接口的解析（加载）操作！</strong><br>
+书上提到了4个解析情况以及流程：</p>
+<ul>
+<li>类解析</li>
+<li>字段解析</li>
+<li>类方法解析</li>
+<li>接口方法解析<br>
+却没有解释这4个解析过程是在哪里发生的。后面我会逐一提到，来真正理解这4个解析过程。</li>
+</ul>
+<h4><span id="yuan-shu-ju-yan-zheng-zhong-de-lei-jie-xi">元数据验证中的类解析</span><a href="#yuan-shu-ju-yan-zheng-zhong-de-lei-jie-xi" class="header-anchor">#</a></h4>
+<p>还记得class文件中，父类是指向一个constant_class_info吗？这个东西当时看就是一个utf字符串，没什么意义。你没法知道父类究竟有什么方法，是不是抽象类。<br>
+因此必须拿到父类的类信息，要么是已经在方法区中，要么需要重新加载。<br>
+而类解析的过程如下：<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652598263182568128.png" alt="image.png"><br>
+可以看到这个过程中也会发生加载，甚至好多次加载。</p>
+<hr>
+<h3><span id="zi-jie-ma-yan-zheng-wo-de-zhi-ling-dui-bu-dui">字节码验证（我的指令对不对）</span><a href="#zi-jie-ma-yan-zheng-wo-de-zhi-ling-dui-bu-dui" class="header-anchor">#</a></h3>
+<p><img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652598525735605413.png" alt="image.png"><br>
+这个验证不要和前面的“文件格式验证”搞混了。<br>
+前面的“元数据验证”都只是针对类、方法、字段等和父类进行确认、校验。<br>
+但是还没有涉及到每个方法里的code属性。</p>
+<p>code属性虽然在编译出来时是正确的，但是无法保证传输过程中被人篡改。<br>
+如果发生操作操作数栈时，栈里没东西，或者试图在局部变量表边界外写入局部变量，就可能导致不可估量的后果。</p>
+<p>因此此刻会进行最基本的指令分析，确认对操作数栈、局部变量表的操作是安全、正确的。</p>
+<p>但是，逐个指令分析，会不会太慢了？如果代码很长的话。</p>
+<p>还记得class文件的code属性中，还包含了一个stackMapTable属性么，估计很多人都跳过了这个属性。<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652598909384718936.png" alt="image.png"><br>
+这个属性就是用在字节码验证这个过程，可以立即让编译器编译出class时，提前把各位置的情况写入stackMap中，jvm加载时只对这个stackMap做校验确认是对的即可。<br>
+但代价就是可能不安全了，因为这个stackMap是可以被篡改的。</p>
+<h3><span id="fu-hao-yin-yong-yan-zheng-wo-de-zhi-ling-diao-yong-de-mu-biao-dui-bu-dui">符号引用验证（我的指令调用的目标对不对）</span><a href="#fu-hao-yin-yong-yan-zheng-wo-de-zhi-ling-diao-yong-de-mu-biao-dui-bu-dui" class="header-anchor">#</a></h3>
+<p>注意前面的“字节码验证”是简单的确认，但不会持有过多的其他类的信息。<br>
+但是方法肯定会涉及对其他类的调用。</p>
+<p><img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652599879633278954.png" alt="image.png"></p>
+<p>此时就会涉及到符号引用验证，确认自己是否拥有对方方法的访问权限。<br>
+那么你就需要找到目标类的类信息存放地址，确认方法权限，或者字段权限。<br>
+于是会在这里触发字段解析、类方法解析或者接口解析！<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652601092434475198.png" alt="image.png"><br>
+书上只提到了这3个解析过程的流程，却没有详细解释其中的一些缘由，我会做更详细的补充。</p>
+<h4><span id="fu-hao-yin-yong-yan-zheng-zhong-de-zi-duan-jie-xi">符号引用验证中的字段解析</span><a href="#fu-hao-yin-yong-yan-zheng-zhong-de-zi-duan-jie-xi" class="header-anchor">#</a></h4>
+<p>class中的constant_filed_info终于露出了它的真面目，原来是用在这个地方，即和字段相关的指令会用到它，并通过字段符号引用， 解析到这个字段真正的定义位置。<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652601973522659730.png" alt="image.png"><br>
+像经常遇到的NoSuchFieldError报错，就是在这个过程中爆出来的。<br>
+而且接口字段的优先级是大于父类的字段的。</p>
+<h4><span id="fu-hao-yin-yong-yan-zheng-zhong-de-lei-fang-fa-jie-xi">符号引用验证中的类方法解析</span><a href="#fu-hao-yin-yong-yan-zheng-zhong-de-lei-fang-fa-jie-xi" class="header-anchor">#</a></h4>
+<p>当调用方法前，需要先确认对象方法是否有权限访问。那么就必须这个类的信息进行确认。<br>
+<strong>注意：这个过程并不是动态分派的那个过程，此刻并没有触发任何的方法调用！仅仅是确认代码中静态类型的访问权限是否正确之类的！</strong><br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652602585506110322.png" alt="image.png"></p>
+<ul>
+<li>对类方法做解析的时候，会判断此时是类还是接口。如果是接口，竟然会报“IncompatibleClassChangeError”。</li>
+<li>还有如果是抽象类，也会报“AbstractMethodError”，因为正常情况下，你的jvm指令调用的方法，必须是实例化的对象所对应的方法，不可能直接调用抽象类方法的。</li>
+</ul>
+<h4><span id="fu-hao-yin-yong-yan-zheng-zhong-de-jie-kou-fang-fa-jie-xi">符号引用验证中的接口方法解析</span><a href="#fu-hao-yin-yong-yan-zheng-zhong-de-jie-kou-fang-fa-jie-xi" class="header-anchor">#</a></h4>
+<p>看起来像是将类方法解析中的接口和方法互换了位置。<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652603187639739722.png" alt="image.png"></p>
+<h5><span id="yi-wen-1-wei-shi-me-jie-kou-fang-fa-huan-yao-jie-xi-jie-kou-li-bu-shi-mei-you-dai-ma-ma">疑问1：为什么接口方法还要解析？接口里不是没有代码吗？</span><a href="#yi-wen-1-wei-shi-me-jie-kou-fang-fa-huan-yao-jie-xi-jie-kou-li-bu-shi-mei-you-dai-ma-ma" class="header-anchor">#</a></h5>
+<p>因为接口类里每个interface方法，本身也是一个方法，只不过没有详细的code属性。但方法的访问修饰符之类的都存在，因此验证阶段还是需要进行校验。</p>
+<h5><span id="yi-wen-2-wei-shi-me-yao-qu-fen-lei-de-fang-fa-he-jie-kou-fang-fa-bu-neng-yong-tong-yi-chong-si-lu-qu-jie-xi-me">疑问2：为什么要区分类的方法和接口方法？不能用同一种思路去解析么？</span><a href="#yi-wen-2-wei-shi-me-yao-qu-fen-lei-de-fang-fa-he-jie-kou-fang-fa-bu-neng-yong-tong-yi-chong-si-lu-qu-jie-xi-me" class="header-anchor">#</a></h5>
+<p>我理解的几个原因：</p>
+<ol>
+<li>向上搜索时的逻辑不同，对于类方法，直接找父类即可， 而接口则需要遍历所有父接口。而且类方法还要考虑抽象类的问题，接口不需要。</li>
+<li>类方法和接口方法本身就是两个不同的符号引用， 一个是constant_method_ref，另一个是constant_interface_ref，用2套逻辑没什么毛病</li>
+<li>如果硬要问为什么要区分这2个符号引用，明明内容都是类索引+描述符索引？<br>
+这是因为后面在实际调用方法时，二者有显著区别，具体见下文的“方法表的准备”。</li>
+</ol>
+<h2><span id="zhun-bei">准备</span><a href="#zhun-bei" class="header-anchor">#</a></h2>
+<p><img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652604139278590043.png" alt="image.png"></p>
+<h3><span id="lei-jing-tai-cheng-yuan-mo-ren-zhi-de-zhun-bei">类静态成员默认值的准备</span><a href="#lei-jing-tai-cheng-yuan-mo-ren-zhi-de-zhun-bei" class="header-anchor">#</a></h3>
+<p>对于准备阶段，大家一般只记得需要对一些非final的类静态成员做默认初始值操作。</p>
+<h3><span id="fang-fa-biao-de-zhun-bei">方法表的准备</span><a href="#fang-fa-biao-de-zhun-bei" class="header-anchor">#</a></h3>
+<p>除了这个默认值赋值，还有一个动作，是准备方法表。<br>
+方法表就是为了多态而生，简化动态分派时频繁的迭代循环带来的不必要消耗：<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652604259330823080.png" alt="image.png"><br>
+通过前面的验证过程，我们已经获知了父类信息。<br>
+因此可以准备一个方法表，把父类方法堆到最前面，自己的方法堆到后面，后面直接根据索引获取方法调用地址即可！</p>
+<h4><span id="chong-yao-wen-ti-interface-de-jie-kou-fang-fa-hui-you-fang-fa-biao-ma">重要问题：interface的接口方法，会有方法表吗？</span><a href="#chong-yao-wen-ti-interface-de-jie-kou-fang-fa-hui-you-fang-fa-biao-ma" class="header-anchor">#</a></h4>
+<p>intefacer接口是不具有方法表的！<br>
+因此这可能也是jvm特地区分了class_inteface_info和class_method_info这2个常量，以及特地用invoke_inteface和invoke_virtual指令来区分2类方法的调用。因为他们的调用逻辑可能大相径庭。</p>
+<h4><span id="wei-shi-me-jie-kou-bu-neng-you-fang-fa-biao">为什么接口不能有方法表？</span><a href="#wei-shi-me-jie-kou-bu-neng-you-fang-fa-biao" class="header-anchor">#</a></h4>
+<p>这是由于Java可以实现多个接口，不同的类可能会实现了多个或者不同的接口，在虚表里该接口所实现方法的索引会不一致。</p>
+<p>假设有A、B、C三个接口类</p>
+<ul>
+<li>类X实现了A、B两个接口，假设A和B接口放在虚表里，那么调用A接口方法我们假设它是在t位置。</li>
+<li>类T实现了B、C、A接口，按照实现顺序，先放B的方法，再放A的方法，最后放C的方法。这样调用接口A时，就不一定是t位置了，我们无法直接确定A里面方法的位置，因为一个类可以实现多个接口，而且顺序可以随意更改！</li>
+</ul>
+<p>这样每次解析的虚表索引都可能会不同，因此不能进行缓存，需要每次都进行重新的解析。<br>
+<strong>因此，接口的方法调用会比普通的子类继承的虚函数调用要慢。</strong></p>
+<h4><span id="java-de-xu-biao-he-c-de-xu-biao-you-shi-me-qu-bie">java的虚表和C++的虚表有什么区别？</span><a href="#java-de-xu-biao-he-c-de-xu-biao-you-shi-me-qu-bie" class="header-anchor">#</a></h4>
+<p>C++：<br>
+当编译器遇到调用虚方法的代码时，是通过vtable指针以及对应方法在虚表里的offset，然后获取对应的函数指针实现的，由于offset在编译过程就已经固定了，这样在执行过程中几乎没有产生任何额外的计算就实现了多态调用，效率相当高。<br>
+<strong>缺点就是当你修改了一个dll链接文件，另一个dll链接文件可能还是用的老的偏移，这导致你即使重启程序了，仍然还是错误的调用。 你必须将两个链接文件都重新编译才可以。</strong></p>
+<p>但对于java而言，只需要替换一个jar包即可， 类之间的方法调用关系，方法偏移，都是可以类加载过程中去生成的。</p>
+<p>换言之，最大的区别就是修改部分方法带来的影响，java是最小的</p>
+<h4><span id="java-xu-biao-de-sheng-cheng-guo-cheng">java虚表的生成过程</span><a href="#java-xu-biao-de-sheng-cheng-guo-cheng" class="header-anchor">#</a></h4>
+<ol>
+<li>在加载该类的时候，常量池的所有<strong>虚函数的签名</strong>（包括调用的以及自身定义的）都会<strong>添加到全局的符号表</strong>（事实上是一个HashTable）。</li>
+<li><strong>首先对字符值进行Hash值计算，然后在全局HashTable进行查找</strong>，如果发现已经存在对应的Hash值，则返回对应的符号指针Symbol *，否则创建新的Symbol并添加到HashTable中，然后返回新创建的Symbol *。这样常量池就把字符串的引用转换成符号的引用。另外这个过程可以确保所有字符串在jvm只存有一个引用。、</li>
+<li>当在某个类对象调用虚方法的时候，通过调用函数的符号和自身定义的符号进行比较（由于这里都是引用全局符号表的唯一符号，因此可以通过内存地址进行快速比较），就会解析出调用虚函数的信息，<strong>通过信息就可以获取虚表的索引，然后调用对应的虚函数字节码</strong></li>
+<li>为了提高调用时的性能，Java采用的是Lazy解析，<strong>第一次解析出虚表的索引后，则会保留到cache里面</strong>，这样下次调用就可以从缓存直接获取索引</li>
+</ol>
+<h2><span id="jie-xi">解析</span><a href="#jie-xi" class="header-anchor">#</a></h2>
+<h3><span id="jie-xi-de-wu-qu-bing-bu-shi-yi-ge-dan-chun-de-jie-duan">解析的误区：并不是一个单纯的阶段</span><a href="#jie-xi-de-wu-qu-bing-bu-shi-yi-ge-dan-chun-de-jie-duan" class="header-anchor">#</a></h3>
+<p>解析其实分为“静态解析”和“动态解析”。<br>
+因此将解析说成是“连接”中的一部分是不严谨的， 只有静态解析，才是“连接”的一部分。</p>
+<p>静态解析在初始化前发生，但动态解析则可能在初始化或者初始化之后才去使用。</p>
+<h3><span id="jing-tai-jie-xi">静态解析</span><a href="#jing-tai-jie-xi" class="header-anchor">#</a></h3>
+<p>静态解析用于解析私有方法、父类构造器、final方法等不存在多态可能的方法。<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652605263696340667.png" alt="image.png"></p>
+<h3><span id="jie-xi-he-fen-pai-de-qu-bie">解析和分派的区别</span><a href="#jie-xi-he-fen-pai-de-qu-bie" class="header-anchor">#</a></h3>
+<p>静态分派、动态分派， 指的是2个方法的不同阶段，他们不存在冲突的关系，即方法会先触发静态分派，再触发动态分派。</p>
+<p>静态分派可以理解为编译器在编写class文件时，通过方法名+描述符+优先级，确定了这个位置调用的是哪个方法。</p>
+<p>但是由于多态的特性，具体执行者可能不同，因此后面还会触发动态分派。</p>
+<p>而静态解析和动态解析是2个不同的解析，前者是默认定死了方法引用位置，后者则必须依赖动态分派，对一个方法而言不可能同时存在动态和静态解析的情况。</p>
+<h1><span id="chu-shi-hua">初始化</span><a href="#chu-shi-hua" class="header-anchor">#</a></h1>
+<h2><span id="cinit-fang-fa-xi-jie-jie-xi">cinit方法细节解析</span><a href="#cinit-fang-fa-xi-jie-jie-xi" class="header-anchor">#</a></h2>
+<p><img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652606173785989291.png" alt="image.png"><br>
+关于初始化时机的解释，在开头就已经阐述过了，这里不再重复解释。</p>
+<h3><span id="yi-wen-1-cinit-fang-fa-zhong-de-dai-ma-shi-ru-he-sheng-cheng-de">疑问1：cinit方法中的代码是如何生成的？</span><a href="#yi-wen-1-cinit-fang-fa-zhong-de-dai-ma-shi-ru-he-sheng-cheng-de" class="header-anchor">#</a></h3>
+<p>cinit方法 是编译器收集所有类静态变量的赋值动作和静态语句块static{}中的语句合并产生，按照顺序收集。<br>
+因此类加载赋值的顺序和类定义顺序有关，原理就取决于cinit生成的原理。</p>
+<h3><span id="yi-wen-2-cinit-lei-chu-shi-hua-shi-xian-cheng-an-quan-de-ma">疑问2：cinit类初始化是线程安全的吗？</span><a href="#yi-wen-2-cinit-lei-chu-shi-hua-shi-xian-cheng-an-quan-de-ma" class="header-anchor">#</a></h3>
+<p>是线程安全的，虚拟机会保证一个类的加载和cinit方法会被正确的加锁、同步。<br>
+因此多线程场景下，同时使用一个之前没初始化过的类，且类初始化过程耗时非常久的话， 且可能会造成线程阻塞。<br>
+而这也是可以利用类初始化+内部类的方式，来做单例模式的实现的原理：</p>
+<h2><span id="chu-shi-hua-zhong-de-dong-tai-jie-xi">初始化中的动态解析</span><a href="#chu-shi-hua-zhong-de-dong-tai-jie-xi" class="header-anchor">#</a></h2>
+<p>而初始化过程中，可能会涉及其他对象实例方法的调用，因此是可能发生动态解析过程的！<br>
+类方法和接口方法的解析过程如下<br>
+类方法的解析可以借助虚方法表简化解析过程。<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652606407501364079.png" alt="image.png"></p>
+<h2><span id="kuo-zhan-invoke-dynamic-shi-shi-me">扩展:invoke_dynamic是什么</span><a href="#kuo-zhan-invoke-dynamic-shi-shi-me" class="header-anchor">#</a></h2>
+<h3><span id="dong-tai-yu-yan-he-jing-tai-yu-yan-de-qu-bie">动态语言和静态语言的区别</span><a href="#dong-tai-yu-yan-he-jing-tai-yu-yan-de-qu-bie" class="header-anchor">#</a></h3>
+<p>动态类型语言： 类型检查的主体是运行期而不是编译器。 例如PHP、Lua\python<br>
+而静态类型语言就是编译器将类型都检查完，比如C++、java</p>
+<p>静态语言的好处：在编译器就能确定类型，可以进行严谨的类型检查， 代价就是代码会很臃肿。<br>
+动态语言编写时更为随意，可以快速开发和运行。</p>
+<h3><span id="java-de-methodhandle-yong-fa">java的MethodHandle用法</span><a href="#java-de-methodhandle-yong-fa" class="header-anchor">#</a></h3>
+<p>jdk1.7之后提供的 MethodHandle， 类似于C/C++里的函数指针， 或者C#里的delegate。<br>
+C里面可以<br>
+sort(list, size,  int (* compare)(int, int))<br>
+即传入一个函数指针，这个函数是哪个类调用的？不知道</p>
+<p>java提供了methodHandle用法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">ClassA</span> &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">println</span><span class="params">(String s)</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;this is a print:&quot;</span> + s);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> MethodHandle <span class="title function_">getPrintlnMethodHandle</span><span class="params">(Object object)</span> <span class="keyword">throws</span> NoSuchMethodException, IllegalAccessException &#123;</span><br><span class="line">        <span class="comment">// 返回值，入参</span></span><br><span class="line">        <span class="type">MethodType</span> <span class="variable">methodType</span> <span class="operator">=</span> MethodType.methodType(<span class="keyword">void</span>.class, String.class);</span><br><span class="line">        <span class="keyword">return</span> MethodHandles.lookup()</span><br><span class="line">                <span class="comment">// 找到对象所对应的类，确认是否存在方法</span></span><br><span class="line">                .findVirtual(object.getClass(), <span class="string">&quot;println&quot;</span>, methodType)</span><br><span class="line">                <span class="comment">// 这个对对象绑定上去调用. java的反射不是也能做到吗》？</span></span><br><span class="line">                .bindTo(object);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">        <span class="type">Solution</span> <span class="variable">solution</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Solution</span>();</span><br><span class="line">        <span class="type">ClassA</span> <span class="variable">classA</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ClassA</span>();</span><br><span class="line">        <span class="comment">// invokeExact：执行并传入参数，classA和System.out不是同一个父类或者接口，但是可以执行相同的方法</span></span><br><span class="line">        getPrintlnMethodHandle(classA).invokeExact(<span class="string">&quot;afdsafds&quot;</span>);</span><br><span class="line">        getPrintlnMethodHandle(System.out).invokeExact(<span class="string">&quot;afdsafds&quot;</span>);</span><br><span class="line">        <span class="comment">// 以后排序就可以这样做了：  sort(list, MethodHandle mt)</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中methodHandle背后就是由invoke_dynamic指令触发的。</p>
+<h3><span id="methodhandle-dian-xing-ying-yong-chang-jing-ru-he-diao-yong-ye-ye-lei-de-xu-fang-fa">methodHandle典型应用场景：如何调用爷爷类的虚方法</span><a href="#methodhandle-dian-xing-ying-yong-chang-jing-ru-he-diao-yong-ye-ye-lei-de-xu-fang-fa" class="header-anchor">#</a></h3>
+<p>如何在儿子类中，分派调用祖父类的虚方法？ 且儿子类和父类都已经实现了这个虚方法。父类不能提供新的方法</p>
+<p>通过loopup().findSpecial(祖父类， “方法名”， MethodHandle.methodType(返回值，入参),  当前类)<br>
+拿到一个方法句柄mh<br>
+然后方法句柄mh.invoke(this)，即可调用祖父类的方法。</p>
+<h3><span id="java-de-methodhandle-ji-zhi-he-reflection-de-fan-she-you-shi-me-qu-bie-ma">java的methodHandle机制和reflection的反射有什么区别吗？</span><a href="#java-de-methodhandle-ji-zhi-he-reflection-de-fan-she-you-shi-me-qu-bie-ma" class="header-anchor">#</a></h3>
+<ol>
+<li>调用指令层面：</li>
+</ol>
+<ul>
+<li>reflection是模拟java代码调用，不关心底层指令</li>
+<li>而methodHandle是模拟了字节码的执行，上面的Loopup().findVirtual，等同于invokevirtual指令（同理还有invokestatic\invokeinteface\invokespecial)</li>
+</ul>
+<ol start="2">
+<li>method对象大小问题</li>
+</ol>
+<ul>
+<li>reflection返回的method对象，包含的信息更多，例如签名、描述、属性等，返回的method比较重量级</li>
+<li>而methodHandle仅包含执行方法相关的信息，是轻量级、</li>
+</ul>
+<ol start="3">
+<li>可以基于methodHandle手动做虚拟机的相关调用优化（例如内联），而反射无法实现。</li>
+<li>从最终设计目的而言，反射只针对java， 而methodHandle的核心目的在于可以将其他无类型的语言运行在java迅即之上！</li>
+</ol>
+<h3><span id="invoke-dynamic-zhi-ling-yuan-li-shi-fou-she-ji-dong-tai-fen-pai-lei-jia-zai-he-jie-xi">invoke_dynamic指令原理。是否涉及动态分派、类加载和解析？</span><a href="#invoke-dynamic-zhi-ling-yuan-li-shi-fou-she-ji-dong-tai-fen-pai-lei-jia-zai-he-jie-xi" class="header-anchor">#</a></h3>
+<p>我们首先看下invoke_dynamic指令调用的dynamic_info常量长什么样的：<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652606577911480954.png" alt="image.png"><br>
+可以看到它只包含了一个方法索引和描述，但似乎没包含方法属于哪个类。</p>
+<p>它的作用是用java实现一些类似于脚本语言的逻辑，脚本语言不关心静态类型，不做编译检查，只关心运行期的内容。所以invoke_dynamic以及constant_dynamic_info应运而生。但书本和工作中对这块的接触都不是太深，因此我的理解也只能局限于此了。</p>
+<p>书上还有句话可以记一下：<strong>除了invokeddynamic动态调用指令， 其他的invokevirual之类的，都会缓存解析结果。</strong></p>
+<hr>
+<h1><span id="zui-hou-de-wan-zheng-da-tu">最后的完整大图</span><a href="#zui-hou-de-wan-zheng-da-tu" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://www.processon.com/view/link/5e7eed6ce4b0ffc4ad43fda8">在线地址</a><br>
+<a target="_blank" rel="noopener" href="https://www.processon.com/view/link/5e7eed6ce4b0ffc4ad43fda8">https://www.processon.com/view/link/5e7eed6ce4b0ffc4ad43fda8</a></p>
+<p><img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/5e7eed6ce4b08b6157409373.png" alt="完整大图"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/05/31/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/05/31/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/" class="post-title-link" itemprop="url">jvm垃圾收集器演进和原理详解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-05-31 07:52:57" itemprop="dateCreated datePublished" datetime="2022-05-31T07:52:57+08:00">2022-05-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-17 22:42:08" itemprop="dateModified" datetime="2022-08-17T22:42:08+08:00">2022-08-17</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">java高级原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/jvm%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">jvm原理</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/05/31/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/05/31/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>重读了一遍《深入理解java虚拟机》， 发现第一遍读垃圾回收器相关的进化历程时，没有细细去研究各自的区别，觉得太多了记不住。<br>
+实际上理解了这个进化过程，这对于我们理解回收器是有很大帮助的。</p>
+<p><strong>看来经典书籍要多读多总结，是有道理的。</strong><br>
+于是在阅读这个章节时，画了一张大的演化图，方便理解变化和区别。</p>
+ <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#serial-old-he-serial-dan-xian-cheng-shou-ji-qi">Serial Old和Serial（单线程收集器）</a>
+<ul>
+<li><a href="#serial-lei-xing-de-shou-ji-qi-bei-tao-tai-liao-ma-ta-huan-you-you-shi-ma">Serial类型的收集器被淘汰了吗？它还有优势吗？</a></li>
+<li><a href="#q-shi-me-shi-hou-ke-yi-hong-fa-stopworld-an-quan-dian-gc-shi-jian-dian">Q: 什么时候可以触发stopWorld？（安全点,GC时间点）</a></li>
+<li><a href="#4-ge-an-quan-dian-de-she-ji-si-lu-shi-shi-me">4个安全点的设计思路是什么？</a></li>
+<li><a href="#q-he-an-quan-dian-dui-ying-de-an-quan-qu-you-shi-shi-me">Q: 和安全点对应的安全区又是什么？</a></li>
+</ul>
+</li>
+<li><a href="#parold-he-parnew-shou-ji-qi-duo-xian-cheng-shou-ji-qi">ParOld和ParNew收集器（多线程收集器）</a></li>
+<li><a href="#parallel-scavenge-shou-ji-qi-dui-hui-shou-shi-jian-de-you-hua-kai-duan">Parallel Scavenge收集器（对回收时间的优化开端）</a>
+<ul>
+<li><a href="#ru-he-li-jie-tun-tu-liang">如何理解吞吐量</a></li>
+<li><a href="#parallel-savenge-shou-ji-qi-shi-ru-he-kong-zhi-tun-tu-liang-de">Parallel Savenge收集器是如何控制吞吐量的</a></li>
+<li><a href="#dai-jie-shi-shi-me">代价是什么？</a></li>
+</ul>
+</li>
+<li><a href="#cms-shou-ji-qi-concurrent-mark-sweep-bing-fa-shou-ji-gai-nian-de-chong-da-ti-chu">CMS收集器（Concurrent Mark Sweep, 并发收集概念的重大提出）</a>
+<ul>
+<li><a href="#cms-jie-duan-1-chu-shi-biao-ji">CMS阶段1：初始标记</a>
+<ul>
+<li><a href="#gcroot-de-xuan-qu-yuan-ze-shi-shi-me">GCRoot的选取原则是什么？</a></li>
+<li><a href="#parnew-nian-qing-dai-shou-ji-shi-xu-yao-bian-li-cms-lao-nian-dai-de-suo-you-gcroot-ma">ParNew年轻代收集时，需要遍历CMS老年代的所有GCROOT吗？</a></li>
+</ul>
+</li>
+<li><a href="#cms-jie-duan-2-bing-fa-biao-ji">CMS阶段2：并发标记</a>
+<ul>
+<li><a href="#bing-fa-biao-ji-yong-liao-zen-yang-de-suan-fa-qu-biao-ji-de">并发标记用了怎样的算法去标记的？</a></li>
+<li><a href="#bing-fa-biao-ji-shi-ru-he-ji-lu-yin-yong-bian-geng">并发标记时如何记录引用变更？</a></li>
+<li><a href="#shi-me-shi-kua-dai-yin-yong">什么是跨代引用？</a></li>
+<li><a href="#ru-he-bi-mian-kua-dai-yin-yong-bao-zhang-bing-fa-biao-ji-an-quan-xie-ping-zhang">如何避免跨代引用，保障并发标记安全（写屏障</a></li>
+</ul>
+</li>
+<li><a href="#cms-jie-duan-3-chong-xin-biao-ji">CMS阶段3：重新标记</a></li>
+<li><a href="#cms-jie-duan-4-bing-fa-qing-chu">CMS阶段4：并发清除</a>
+<ul>
+<li><a href="#wei-shi-me-shi-yao-yong-biao-ji-qing-chu-zhe-me-que-dian-da-de-fang-fa">为什么是要用“标记-清除”这么缺点大的方法？</a></li>
+<li><a href="#cms-ru-he-jie-jue-biao-ji-qing-chu-hou-sui-pian-guo-duo-wu-fa-fang-ru-xin-dui-xiang-de-qing-kuang">CMS如何解决标记-清除后碎片过多，无法放入新对象的情况？</a></li>
+<li><a href="#bing-fa-hui-shou-guo-cheng-zhong-ru-guo-gong-zuo-xian-cheng-tu-ran-sheng-cheng-da-liang-xin-la-ji-dao-zhi-nei-cun-bu-zu-zen-me-ban">并发回收过程中，如果工作线程突然生成大量新垃圾，导致内存不足怎么办？</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#hun-he-shi-yong-shou-ji-qi-cms-parnew">混合使用收集器（CMS+parNew)</a>
+<ul>
+<li><a href="#q-fullgc-he-monorgc-fen-bie-fa-sheng-zai-lao-nian-dai-qu-huan-shi-xin-sheng-dai-qu">Q： fullGC和monorGC分别发生在老年代区还是新生代区？</a></li>
+<li><a href="#q-xin-sheng-dui-xiang-shi-me-shi-hou-ke-yi-chang-shi-jin-ru-lao-nian-dai">Q: 新生对象什么时候可以尝试进入老年代？</a></li>
+<li><a href="#q-eden-nian-qing-dai-qu-he-survivor-qu-de-bi-li-wei-shi-me-shi-8-bi-1-bi-1">Q: Eden年轻代区和survivor区的比例为什么是8比1比1</a></li>
+<li><a href="#q-jiang-yi-xia-lao-nian-dai-de-dan-bao-ce-lue-shi-zuo-shi-me-de">Q: 讲一下老年代的担保策略是做什么的？</a></li>
+<li><a href="#xin-sheng-dai-lao-nian-dai-de-jiao-hu-liu-cheng">新生代、老年代的交互流程：</a></li>
+</ul>
+</li>
+<li><a href="#g1-shou-ji-qi-hui-shou-gai-nian-fa-sheng-zhu-duo-bian-ge-mu-qian-zui-xian-jin-shou-ji-qi">G1收集器（回收概念发生诸多变革，目前最先进收集器）</a>
+<ul>
+<li><a href="#g1-xiang-bi-cms-de-chong-da-sheng-ji-dian">G1相比CMS的重大升级点：</a></li>
+<li><a href="#g1-li-de-region-zhi-jian-du-yao-tong-guo-bfs-bian-li-ma">G1里的region之间都要通过BFS遍历吗？</a></li>
+</ul>
+</li>
+<li><a href="#wan-zheng-da-tu">完整大图</a></li>
+<li><a href="#qi-ta-wen-ti">其他问题</a>
+<ul>
+<li><a href="#q-fang-fa-qu-li-de-class-dui-xiang-ji-lei-dui-xiang-shi-me-shi-hou-hui-bei-hui-shou">Q： 方法区里的class对象（即类对象）什么时候会被回收？</a></li>
+<li><a href="#q-shi-me-shi-hou-hui-diao-yong-dui-xiang-de-finalized-fang-fa">Q： 什么时候会调用对象的finalized方法</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<hr>
+<h1><span id="serial-old-he-serial-dan-xian-cheng-shou-ji-qi">Serial Old和Serial（单线程收集器）</span><a href="#serial-old-he-serial-dan-xian-cheng-shou-ji-qi" class="header-anchor">#</a></h1>
+<p><img src="/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652830465493764891.png" alt="image.png"></p>
+<ul>
+<li>Serial Old指的是老年代收集器，使用标记-整理清理垃圾</li>
+<li>Serial指的是年轻代收集器，使用复制算法清理垃圾。</li>
+</ul>
+<p>Serial就是单线程的意思，不仅代表它使用单线程做回收，<strong>更意味着他会进行stop world暂停工作线程</strong></p>
+<h2><span id="serial-lei-xing-de-shou-ji-qi-bei-tao-tai-liao-ma-ta-huan-you-you-shi-ma">Serial类型的收集器被淘汰了吗？它还有优势吗？</span><a href="#serial-lei-xing-de-shou-ji-qi-bei-tao-tai-liao-ma-ta-huan-you-you-shi-ma" class="header-anchor">#</a></h2>
+<p>没有，它是client模式下默认的收集器。<br>
+优势在于，它具有<strong>最高的单线程收集效率</strong><br>
+而client模式一般不会用于处理大量请求，因此非常适合serial。</p>
+<p>除了client，书上还提了另外2个功能：</p>
+<ul>
+<li>Serial Old收集器会作为CMS的后备预案</li>
+<li>与Parallel Scavenge搭配使用</li>
+</ul>
+<h2><span id="q-shi-me-shi-hou-ke-yi-hong-fa-stopworld-an-quan-dian-gc-shi-jian-dian">Q: 什么时候可以触发stopWorld？（安全点,GC时间点）</span><a href="#q-shi-me-shi-hou-ke-yi-hong-fa-stopworld-an-quan-dian-gc-shi-jian-dian" class="header-anchor">#</a></h2>
+<ul>
+<li>方法返回之前</li>
+<li>调用某个方法之后</li>
+<li>抛出异常的位置</li>
+<li>循环的末尾</li>
+</ul>
+<h2><span id="4-ge-an-quan-dian-de-she-ji-si-lu-shi-shi-me">4个安全点的设计思路是什么？</span><a href="#4-ge-an-quan-dian-de-she-ji-si-lu-shi-shi-me" class="header-anchor">#</a></h2>
+<p>当垃圾收集需要中断用户线程的时候, 不直接对线程操作,而是设置一个标志位.</p>
+<p>各个用户线程执行过程中会轮询这个标志位的状态.</p>
+<p>一旦用户线程轮询到标志位被设置过, 就在最近的安全点主动挂起,所有用户线程都挂起, 垃圾收集真正进行</p>
+<h2><span id="q-he-an-quan-dian-dui-ying-de-an-quan-qu-you-shi-shi-me">Q: 和安全点对应的安全区又是什么？</span><a href="#q-he-an-quan-dian-dui-ying-de-an-quan-qu-you-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A:<br>
+程序可能因为blocked或者sleep，无法到达安全点。<br>
+这是可以设置一个安全区域，这个安全区域对应的代码段，引用关系不会变。JVM检测到程序在安全区域时，可以进行GC。<br>
+程序运行出安全区域时，检测GC没有结束的话，自我中断。</p>
+<h1><span id="parold-he-parnew-shou-ji-qi-duo-xian-cheng-shou-ji-qi">ParOld和ParNew收集器（多线程收集器）</span><a href="#parold-he-parnew-shou-ji-qi-duo-xian-cheng-shou-ji-qi" class="header-anchor">#</a></h1>
+<p><img src="/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652830556269329780.png" alt="image.png"><br>
+Par收集器就是Serial收集器的多线程版本，其他策略则都与serial一致。</p>
+<p><strong>注意， 虽然是多线程收集器，但是用户的工作线程仍然是暂停状态（为了防止收集过程中发生变化导致回收错误</strong></p>
+<p>ParNew收集器可以与CMS收集器配合使用。</p>
+<h1><span id="parallel-scavenge-shou-ji-qi-dui-hui-shou-shi-jian-de-you-hua-kai-duan">Parallel Scavenge收集器（对回收时间的优化开端）</span><a href="#parallel-scavenge-shou-ji-qi-dui-hui-shou-shi-jian-de-you-hua-kai-duan" class="header-anchor">#</a></h1>
+<p><img src="/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652830818239387635.png" alt="image.png"></p>
+<p>Parallel Scavenge 收集器是一个<strong>新生代收集器</strong>，他不包含老年代。<br>
+前两代的收集器，默认必须收集完成，对工作线程影响巨大。<br>
+<strong>这是首次开始关注回收时间对工作线程影响的一代收集器，成为了垃圾收集器升级优化的一个重要开端。</strong></p>
+<h2><span id="ru-he-li-jie-tun-tu-liang">如何理解吞吐量</span><a href="#ru-he-li-jie-tun-tu-liang" class="header-anchor">#</a></h2>
+<p>虚拟机运行了100分钟， 垃圾收集花掉了一分钟，那么吞吐量就是100%。</p>
+<h2><span id="parallel-savenge-shou-ji-qi-shi-ru-he-kong-zhi-tun-tu-liang-de">Parallel Savenge收集器是如何控制吞吐量的</span><a href="#parallel-savenge-shou-ji-qi-shi-ru-he-kong-zhi-tun-tu-liang-de" class="header-anchor">#</a></h2>
+<p>通过控制最大垃圾收集停顿时间的-XX:MaxGCPauseMillis参数，以及直接设置吞吐量大小的-XX:GCTimeRatio参数。<br>
+通过修改这2个参数，jvm可以计算一个合适的新生代空间，<strong>空间越小，回收时间越快</strong>，他的停顿时间便能够满足吞吐量要求。</p>
+<ul>
+<li>换句话说，本质上就是通过你设定的吞吐量或者暂停时间，自适应地得到一个新生代空间大小而已。</li>
+</ul>
+<h2><span id="dai-jie-shi-shi-me">代价是什么？</span><a href="#dai-jie-shi-shi-me" class="header-anchor">#</a></h2>
+<p>新生代越小，那么意味着老年代的空间就越大。</p>
+<p>虽然能做到基本不停顿或者停顿间隔很小，但这样就会<strong>导致新生代频繁发生minorGc，并不断将垃圾扔给老年代收集器</strong>，容易在下一个时间段触发更多的fullGc。<br>
+因此这个策略仅仅是饮鸠止渴，无法真正解决问题。</p>
+<ul>
+<li>注意，这里ParaleelSavenge的吞吐量，指的就是新生代的吞吐量，不代表fullGc占用的时间。</li>
+</ul>
+<h1><span id="cms-shou-ji-qi-concurrent-mark-sweep-bing-fa-shou-ji-gai-nian-de-chong-da-ti-chu">CMS收集器（Concurrent Mark Sweep, 并发收集概念的重大提出）</span><a href="#cms-shou-ji-qi-concurrent-mark-sweep-bing-fa-shou-ji-gai-nian-de-chong-da-ti-chu" class="header-anchor">#</a></h1>
+<p><img src="/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652831748531127900.png" alt="image.png"><br>
+而从这一代开始，jvm终于想到了可以如何尽可能少地暂停工作线程的方式，提出了并发收集的概念。</p>
+<p>首先明确并行收集和并发收集的区别</p>
+<ul>
+<li>并行收集：指用多线程来收集，但是工作线程仍然暂停</li>
+<li>并发收集：收集线程和工作线程允许不冲突地交替并发执行</li>
+</ul>
+<hr>
+<p>CMS是老年代收集器，必须和parNew等结合使用<br>
+使用的是回收-清除算法，有较多碎片。</p>
+<hr>
+<h2><span id="cms-jie-duan-1-chu-shi-biao-ji">CMS阶段1：初始标记</span><a href="#cms-jie-duan-1-chu-shi-biao-ji" class="header-anchor">#</a></h2>
+<p>初始标记就是对GCRoot对象进行标记，以GCroot作为起点。<br>
+GCRoot的那4种经典对象，瞄一眼就好</p>
+<blockquote>
+<blockquote>
+<p>虚拟机栈（栈帧中的本地变量表）中的引用的对象<br>
+方法区中的类静态属性引用的对象<br>
+方法区中的常量引用的对象<br>
+本地方法栈中JNI（Native方法）的引用对象</p>
+</blockquote>
+</blockquote>
+<h3><span id="gcroot-de-xuan-qu-yuan-ze-shi-shi-me">GCRoot的选取原则是什么？</span><a href="#gcroot-de-xuan-qu-yuan-ze-shi-shi-me" class="header-anchor">#</a></h3>
+<p>这个问题很有意思，为什么要这样选择？如果能理解这个问题，也就不需要去死记硬背上面的内容了。</p>
+<p>首先，可能有很多个方法栈，每个栈都有一个栈顶的栈帧，说明这是<strong>正在执行</strong>的方法， 在此刻是一定不需要被回收的！<br>
+因此选取了2种栈的栈顶作为GCRoot选取位置。</p>
+<p>而方法区中的对象一般不会被释放，长期持有，因此方法区中的静态引用对象、常量引用对象也是稳定能被使用的。</p>
+<h3><span id="parnew-nian-qing-dai-shou-ji-shi-xu-yao-bian-li-cms-lao-nian-dai-de-suo-you-gcroot-ma">ParNew年轻代收集时，需要遍历CMS老年代的所有GCROOT吗？</span><a href="#parnew-nian-qing-dai-shou-ji-shi-xu-yao-bian-li-cms-lao-nian-dai-de-suo-you-gcroot-ma" class="header-anchor">#</a></h3>
+<p>CMS是老年代的收集器， 经常要和年轻代收集器例如ParDoNew配合。（因此上面4个阶段都是处理老年代回收的，年轻代内存占用小，不需要那么麻烦）<br>
+那么当ParNew年轻代回收时，是否也要把老年代的所有GCROOT都算上？后面全部遍历的话，时间是不是太久了？</p>
+<p>因此才有了<strong>卡表</strong>的出现！<br>
+卡表作为一个比特位的集合，每一个比特位可以用来表示年老代的某一区域中的所有对象是否持有新生代对象的引用。<br>
+这样新生代在GC时，可以先扫描卡表，只有卡表的标记位为1时，才需要扫描给定区域的年老代对象。而卡表位为0的所在区域的年老代对象，一定不包含有对新生代的引用，从而提高了年轻代的回收效率！</p>
+<h2><span id="cms-jie-duan-2-bing-fa-biao-ji">CMS阶段2：并发标记</span><a href="#cms-jie-duan-2-bing-fa-biao-ji" class="header-anchor">#</a></h2>
+<p>这时候不会做stopWorld。标记线程和工作线程同时进行。</p>
+<h3><span id="bing-fa-biao-ji-yong-liao-zen-yang-de-suan-fa-qu-biao-ji-de">并发标记用了怎样的算法去标记的？</span><a href="#bing-fa-biao-ji-yong-liao-zen-yang-de-suan-fa-qu-biao-ji-de" class="header-anchor">#</a></h3>
+<p>当通过gcRoot做并发标记的时候，是一种bfs搜索。<br>
+有一种三色标记法可以作为参考：</p>
+<ul>
+<li>白色：还没有搜索过的对象（白色对象会被当成垃圾对象）</li>
+<li>灰色：正在搜索的对象</li>
+<li>黑色：搜索完成的对象（不会当成垃圾对象，不会被GC）</li>
+</ul>
+<ol>
+<li>默认起始是白色节点。</li>
+<li>是每次标记当前搜索节点的引用节点（类似于相邻点）为灰色，入队列。</li>
+<li>当相邻点全部入队列完成，则把当前搜索节点置黑色。然后根据队列取队头继续处理灰色节点</li>
+</ol>
+<p>是不是和数据结构的bfs非常类似？</p>
+<h3><span id="bing-fa-biao-ji-shi-ru-he-ji-lu-yin-yong-bian-geng">并发标记时如何记录引用变更？</span><a href="#bing-fa-biao-ji-shi-ru-he-ji-lu-yin-yong-bian-geng" class="header-anchor">#</a></h3>
+<p>对于CMS在并发标记时的引用变更，书上没有细讲，只是一笔带过，个人认为错失了许多精华。<br>
+有些类似的概念确实有在G1收集器里简单阐述，但是很难让人马上和CMS中对应起来。个人认为应该在CMS的章节就提前给出。<br>
+下面以我自己的理解，给出对CMS并发标记过程的理解。</p>
+<h3><span id="shi-me-shi-kua-dai-yin-yong">什么是跨代引用？</span><a href="#shi-me-shi-kua-dai-yin-yong" class="header-anchor">#</a></h3>
+<p>首先基于上面提到的三色标记，给出跨代引用问题的例子和解释。<br>
+假设此时正处于并发标记中，且正好在bfs处理A这个节点。<br>
+<img src="/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652881948481607802.png" alt="image.png"><br>
+这时取消了A对B的引用，以及B对C的引用，同时新增了A对C的引用，变成如图所示：<br>
+<img src="/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652881964705631549.png" alt="image.png"><br>
+那么当继续搜索入队的B时，将无法再走到C，C永远被标记为白色，就会出现严重的后果：误杀了C，从而导致A对C调用时报错！<br>
+<img src="/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652882075127270117.png" alt="image.png"></p>
+<h3><span id="ru-he-bi-mian-kua-dai-yin-yong-bao-zhang-bing-fa-biao-ji-an-quan-xie-ping-zhang">如何避免跨代引用，保障并发标记安全（写屏障</span><a href="#ru-he-bi-mian-kua-dai-yin-yong-bao-zhang-bing-fa-biao-ji-an-quan-xie-ping-zhang" class="header-anchor">#</a></h3>
+<p>CMS引入了一个叫“写屏障”的东西，写屏障工作示意如下：<br>
+<img src="/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652882482680209447.png" alt="image.png"><br>
+而标记栈就会在后面的“重新标记”阶段用上。</p>
+<h2><span id="cms-jie-duan-3-chong-xin-biao-ji">CMS阶段3：重新标记</span><a href="#cms-jie-duan-3-chong-xin-biao-ji" class="header-anchor">#</a></h2>
+<p>前面的写屏障为我们把为标记却被新增引用的对象放入了栈中。<br>
+此时会进入StopWorld，我们可以从栈中取出标记对象进行“重新标记”了。<br>
+<img src="/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652882580296867154.png" alt="image.png"></p>
+<h2><span id="cms-jie-duan-4-bing-fa-qing-chu">CMS阶段4：并发清除</span><a href="#cms-jie-duan-4-bing-fa-qing-chu" class="header-anchor">#</a></h2>
+<p>最后清除的时候，选用了“标记-清除”算法，来进行回收和处理。<br>
+同时采用并发机制，避免影响了工作线程。<br>
+“标记-清除”算法的示意图如下：<br>
+<img src="/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652883305646281243.png" alt="image.png"></p>
+<h3><span id="wei-shi-me-shi-yao-yong-biao-ji-qing-chu-zhe-me-que-dian-da-de-fang-fa">为什么是要用“标记-清除”这么缺点大的方法？</span><a href="#wei-shi-me-shi-yao-yong-biao-ji-qing-chu-zhe-me-que-dian-da-de-fang-fa" class="header-anchor">#</a></h3>
+<p>因为老年代算法，要么是标记-整理，要么是标记-清除<br>
+<strong>而标记-整理算法是无法和工作线程并发执行的</strong><br>
+所以才选择标记-清除，这也导致了碎片带来的隐患</p>
+<h3><span id="cms-ru-he-jie-jue-biao-ji-qing-chu-hou-sui-pian-guo-duo-wu-fa-fang-ru-xin-dui-xiang-de-qing-kuang">CMS如何解决标记-清除后碎片过多，无法放入新对象的情况？</span><a href="#cms-ru-he-jie-jue-biao-ji-qing-chu-hou-sui-pian-guo-duo-wu-fa-fang-ru-xin-dui-xiang-de-qing-kuang" class="header-anchor">#</a></h3>
+<p>当因为碎片过多，无法放入新对象时，会触发fullGC，此时会做1次内存碎片的合并（整理）操作</p>
+<p>还提供了一个参数，设置多少次非合并的fullGC时，可做一次碎片的集中合并和整理。</p>
+<h3><span id="bing-fa-hui-shou-guo-cheng-zhong-ru-guo-gong-zuo-xian-cheng-tu-ran-sheng-cheng-da-liang-xin-la-ji-dao-zhi-nei-cun-bu-zu-zen-me-ban">并发回收过程中，如果工作线程突然生成大量新垃圾，导致内存不足怎么办？</span><a href="#bing-fa-hui-shou-guo-cheng-zhong-ru-guo-gong-zuo-xian-cheng-tu-ran-sheng-cheng-da-liang-xin-la-ji-dao-zhi-nei-cun-bu-zu-zen-me-ban" class="header-anchor">#</a></h3>
+<p>因为并发回收时工作线程还在运行，可能产生大量的对象，导致老年代被填满。<br>
+这时候CMS会触发一个“Concurrent Mod Failure”机制，并紧急替换为SerialOld收集进行stopWorld回收。<br>
+因此，<strong>CMS可能存在临时退化为SerialOld的可能</strong></p>
+<h1><span id="hun-he-shi-yong-shou-ji-qi-cms-parnew">混合使用收集器（CMS+parNew)</span><a href="#hun-he-shi-yong-shou-ji-qi-cms-parnew" class="header-anchor">#</a></h1>
+<p>G1收集器出现之前， 都是老年代和年轻代一起使用， 例如CMS+parNew的组合</p>
+<h2><span id="q-fullgc-he-monorgc-fen-bie-fa-sheng-zai-lao-nian-dai-qu-huan-shi-xin-sheng-dai-qu">Q： fullGC和monorGC分别发生在老年代区还是新生代区？</span><a href="#q-fullgc-he-monorgc-fen-bie-fa-sheng-zai-lao-nian-dai-qu-huan-shi-xin-sheng-dai-qu" class="header-anchor">#</a></h2>
+<p>A:</p>
+<p>fullGC只会发生在老年代区。 会用上CMS那堆很复杂的操作</p>
+<p>相反，minorGC一般发送在新生代区，直接用parNew那种复制算法，很快。</p>
+<h2><span id="q-xin-sheng-dui-xiang-shi-me-shi-hou-ke-yi-chang-shi-jin-ru-lao-nian-dai">Q: 新生对象什么时候可以尝试进入老年代？</span><a href="#q-xin-sheng-dui-xiang-shi-me-shi-hou-ke-yi-chang-shi-jin-ru-lao-nian-dai" class="header-anchor">#</a></h2>
+<ol>
+<li>
+<p>发生minorGC后， E区和survivor区都放不下了</p>
+</li>
+<li>
+<p>在survivor区待的时间过长，gc分代年龄超过阈值</p>
+</li>
+<li>
+<p>该GC分代年龄对象总和大于等于s区的一半</p>
+</li>
+<li>
+<p>新生对象的大小大于某个阈值</p>
+</li>
+</ol>
+<h2><span id="q-eden-nian-qing-dai-qu-he-survivor-qu-de-bi-li-wei-shi-me-shi-8-bi-1-bi-1">Q: Eden年轻代区和survivor区的比例为什么是8比1比1</span><a href="#q-eden-nian-qing-dai-qu-he-survivor-qu-de-bi-li-wei-shi-me-shi-8-bi-1-bi-1" class="header-anchor">#</a></h2>
+<p>A:</p>
+<p>正常预留10%内存空间， 大于90%进行minorGC<br>
+但为了复制算法需要， 得有这10%的复制</p>
+<p>且有-XX:SurvivorRatio=8 这个参数值可以修改</p>
+<h2><span id="q-jiang-yi-xia-lao-nian-dai-de-dan-bao-ce-lue-shi-zuo-shi-me-de">Q:  讲一下老年代的担保策略是做什么的？</span><a href="#q-jiang-yi-xia-lao-nian-dai-de-dan-bao-ce-lue-shi-zuo-shi-me-de" class="header-anchor">#</a></h2>
+<p>用于确认此时到底是做minorGC还是做fullGc。</p>
+<ol>
+<li>在发生Minor GC之前，虚拟机会先检查老年代最大可用的连续空间是否大于新生代所有对象总空间</li>
+<li>如果这个条件成立，那么Minor GC可以确保是安全的。</li>
+<li>如果不成立，则虚拟机会查看HandlePromotionFailure设置值是否允许担保失败。</li>
+<li>如果允许，那么会继续检查老年代最大可用的连续空间是否大于历次晋升到老年代对象的平均大小</li>
+<li>如果大于平均大小，将尝试着进行一次Minor GC，尽管这次Minor GC是有风险的，有可能把老年代搞满（这时候还没有fullGC！）；</li>
+<li>如果小于，或者HandlePromotionFailure设置不允许冒险，那这时也要改为进行一次Full GC即全量GC，而不是minor小gc。</li>
+</ol>
+<p>换言之， 要么选择minorGc，要么选择fullGc， 感觉有风险时，就fullGc。</p>
+<h2><span id="xin-sheng-dai-lao-nian-dai-de-jiao-hu-liu-cheng">新生代、老年代的交互流程：</span><a href="#xin-sheng-dai-lao-nian-dai-de-jiao-hu-liu-cheng" class="header-anchor">#</a></h2>
+<p><img src="/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1660746972644.png" alt="1660746972644"></p>
+<h1><span id="g1-shou-ji-qi-hui-shou-gai-nian-fa-sheng-zhu-duo-bian-ge-mu-qian-zui-xian-jin-shou-ji-qi">G1收集器（回收概念发生诸多变革，目前最先进收集器）</span><a href="#g1-shou-ji-qi-hui-shou-gai-nian-fa-sheng-zhu-duo-bian-ge-mu-qian-zui-xian-jin-shou-ji-qi" class="header-anchor">#</a></h1>
+<p><img src="/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652884348846944605.png" alt="image.png"></p>
+<p>G1收集器，书上感觉并没有讲得特别深，很多概念、区别都没讲好，个人认为是种遗憾，因此我在透彻学习G1之前，我也只能简单写写了。</p>
+<h2><span id="g1-xiang-bi-cms-de-chong-da-sheng-ji-dian">G1相比CMS的重大升级点：</span><a href="#g1-xiang-bi-cms-de-chong-da-sheng-ji-dian" class="header-anchor">#</a></h2>
+<ol>
+<li><strong>回收范围不同</strong>。 CMS是老年代收集器，必须和parNew等结合使用。  G1则可以同时管理老年代和年轻代。</li>
+<li><strong>停顿目标不同</strong>。 CMS会让停顿时间尽可能小， G1则建立了可预测的时间模型。</li>
+<li><strong>清理方式不同</strong>。 CMS是标记-清除，  G1是标记-整理，碎片大大减少。</li>
+<li><strong>G1支持筛选回收</strong> G1可以根据每个region的价值进行回收，CMS则不行。</li>
+<li><strong>并发标记后的最终标记处理方式不同</strong><br>
+这个标记方式的区别讲述起来有点抽象，简而言之就是：</li>
+</ol>
+<ul>
+<li>CMS是希望记录所有新增的引用，并重新做好多次BFS，保证没有疏漏，代价非常大。</li>
+<li>G1则是只更新o = null这种删除引用的情况。对于新增的引用，直接认为那个对象不需要杀。<br>
+换句话说，<strong>CMS更严谨，做细致的重新检查。 而G1为了性能，会漏掉一些本该被回收的对象，但是无关大雅，大不了就下次再回收</strong>。</li>
+</ul>
+<h2><span id="g1-li-de-region-zhi-jian-du-yao-tong-guo-bfs-bian-li-ma">G1里的region之间都要通过BFS遍历吗？</span><a href="#g1-li-de-region-zhi-jian-du-yao-tong-guo-bfs-bian-li-ma" class="header-anchor">#</a></h2>
+<p>这个问题，和之前CMS中回收年轻代时， 是否要走一遍全量的老年代是一个道理。</p>
+<p>G1里用的是一个RememberSet来避免全region扫描的。<br>
+每个G1的region都有一个<strong>记忆集(Rset)</strong><br>
+记忆集会记录下当前这个region中的对象被哪些对象所引用。<br>
+例如，region2中的两个对象分别被region1中的对象和region3中的对象所引用，那么，region2的记忆集记录的就是region1和region3中的引用region2的对象的引用。</p>
+<p>这样一来在回收region2的时候，就不用扫描全部的region了，只需要访问记忆集，就知道当前region2里面的对象被哪些对象所引用，判断其是不是存活对象。</p>
+<p><strong>简单来说，就是标记我这个region被哪些region引用，简化扫描，避免不必要的检索。</strong></p>
+<hr>
+<p>但是书上提到了一句话（P85)：</p>
+<blockquote>
+<blockquote>
+<p>“通过cardTable卡表把相关引用信息记录到被引用对象所属的region的rememberedSet之中”</p>
+</blockquote>
+</blockquote>
+<p>这里我就点没看懂，卡表不是老年代对年轻代的引用么，为什么G1里也有？不是用了记忆集吗？不解，等以后有解答了，再来修改这里的内容。</p>
+<hr>
+<p>Q: G1里的minorGc、 majorGc、mixedGc、fullGc的区别？</p>
+<p>A:</p>
+<ul>
+<li>minorGc也就是youngGc。工作流程很简单：线程跑，然后就进行青年代Region的回收，把需要回收的YoungRegion，放入YoungCSet中，在YGC阶段就进行对年轻代CSet中的Region进行回收。因为大部分都是垃圾，且用了复制回收算法，基本只需要较短时间的STW就能完全回收了。 这里不会触发</li>
+<li>MixedGc等于年轻代+部分老年代gc。当老年代垃圾达到一个阀值的时候，会触发，这里就会用到G1里的并发标记、最终标记、筛选回收等操作。但不会针对所有老年代，只筛选需要处理的老年代。</li>
+<li>FullGc，等于整个堆空间的清理。 当新对象进入老年代时空间不足， G1便会触发担保机制，执行一次STW（stopWorld)式的、单线程的Full GC。Full GC会对整堆做标记清除和压缩，最后将只包含纯粹的存活对象。 注意这时候不会用到并发之类的，直接暂停了。</li>
+</ul>
+<h1><span id="wan-zheng-da-tu">完整大图</span><a href="#wan-zheng-da-tu" class="header-anchor">#</a></h1>
+<p>关于垃圾收集，书上倾向于先将一些基本概念或者基本回收思路，再讲发展流程，同时对G1缺少更细致的解释，这就容易混杂起来，导致垃圾收集器的进化那一章节看得很迷。</p>
+<p>后面找到了一本书，叫做《The Garbage Collection Handbook》，已经收藏，有时间的话可以看看，据说对G1做了非常细致的讲解<br>
+<img src="/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652885621080294993.png" alt="image.png"></p>
+<p>最后送上完整大图：<br>
+<img src="/images/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/5d139636e4b065dc2c6b9a50.png" alt="垃圾收集器大图"></p>
+<h1><span id="qi-ta-wen-ti">其他问题</span><a href="#qi-ta-wen-ti" class="header-anchor">#</a></h1>
+<h2><span id="q-fang-fa-qu-li-de-class-dui-xiang-ji-lei-dui-xiang-shi-me-shi-hou-hui-bei-hui-shou">Q： 方法区里的class对象（即类对象）什么时候会被回收？</span><a href="#q-fang-fa-qu-li-de-class-dui-xiang-ji-lei-dui-xiang-shi-me-shi-hou-hui-bei-hui-shou" class="header-anchor">#</a></h2>
+<p>A： 所有实例都被回收、对应classLoader也被回收、class对象不会再被引用或者反射（这个咋确定？当初书里看到的，没懂）</p>
+<h2><span id="q-shi-me-shi-hou-hui-diao-yong-dui-xiang-de-finalized-fang-fa">Q： 什么时候会调用对象的finalized方法</span><a href="#q-shi-me-shi-hou-hui-diao-yong-dui-xiang-de-finalized-fang-fa" class="header-anchor">#</a></h2>
+<p>A： JVM启动垃圾回收，且该对象要被回收时。</p>
+<p>finalized应该更多是规范吧，很多规范里都要求我们不要自己实现finalized了，毕竟不确定性太大。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/05/29/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/05/29/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">jvm内存区域原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-05-29 14:53:55" itemprop="dateCreated datePublished" datetime="2022-05-29T14:53:55+08:00">2022-05-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-10 00:50:59" itemprop="dateModified" datetime="2022-08-10T00:50:59+08:00">2022-08-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">java高级原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/jvm%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">jvm原理</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/05/29/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/05/29/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>重读了一遍《深入理解java虚拟机》， 发现第一遍读“运行时数据区”相关内容的时候，只关注了最简单的概念部分，对于其中的细节部分没有深入探究，觉得那些东西太底层了，没啥用。<br>
+其实他们背后的原理，和我们平时运行进程时的各种报错息息相关。<br>
+另外如果能理解运行时数据区，也能够对“代码究竟是如何运行的”有更深的理解。</p>
+<p><strong>看来经典书籍要多读多总结，是有道理的。</strong><br>
+于是在阅读这个章节时，针对每个结构，思考了非常多的问题，提出了很多QA，方便进行深度的思考和学习。</p>
+ <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#jvm-quan-ju-jie-gou">jvm全局结构</a></li>
+<li><a href="#java-dui">java堆</a>
+<ul>
+<li><a href="#q-dui-shi-xian-cheng-zhi-jian-gong-yong-de-dan-zhe-yang-hui-dao-zhi-pin-fan-fa-sheng-chong-tu-shi-fou-yao-kao-lu-bing-fa-wen-ti-zen-me-ban">Q: 堆是线程之间共用的，但这样会导致频繁发生冲突，是否要考虑并发问题？怎么办？</a></li>
+<li><a href="#q-dan-shi-ru-guo-qia-qiao-duo-ge-xian-cheng-zai-shi-tu-jing-zheng-tong-yi-ge-tlab-yu-liu-kong-jian-shi-ji-du-zai-shi-tu-kuo-rong-fa-sheng-chong-tu-zen-me-ban">Q: 但是如果恰巧多个线程在试图竞争同一个TLAB预留空间时（即都在试图扩容），发生冲突怎么办？</a></li>
+<li><a href="#q-fen-pei-de-shi-hou-zai-tlab-qu-yu-li-zen-me-zhi-dao-fang-zai-na-ge-wei-zhi-ni">Q: 分配的时候，在TLAB区域里，怎么知道放在哪个位置呢？</a></li>
+</ul>
+</li>
+<li><a href="#cheng-xu-ji-shu-qi">程序计数器</a>
+<ul>
+<li><a href="#q-pc-ji-shu-qi-shi-zheng-ge-jvm-gong-you-de-ma">Q:PC计数器是整个jvm共有的吗？</a></li>
+<li><a href="#q-pc-ji-shu-qi-you-sha-yong-na-ru-guo-mei-you-pc-ji-cun-qi-ni-wo-bu-shi-ye-neng-yi-tiao-tiao-zhi-xing-yu-dao-return-zhi-ling-fan-hui-dui-ying-di-zhi-ji-ke-xu-yao-pc-ji-cun-qi-zuo-sha">Q:PC计数器有啥用？ 那如果没有PC寄存器呢？ 我不是也能一条条执行，遇到return指令，返回对应地址即可，需要PC寄存器做啥？</a></li>
+<li><a href="#q-wei-shi-me-native-fang-fa-de-cheng-xu-ji-shu-qi-wei-0-undefine-ru-guo-fa-sheng-xian-cheng-qie-huan-zen-me-ban">Q:为什么native方法的程序计数器为0（undefine）？如果发生线程切换，怎么办？</a></li>
+<li><a href="#q-pc-ji-shu-qi-li-cun-de-dao-di-shi-sha-shi-zhi-ling-di-zhi-ma">Q: PC计数器里存的到底是啥？是指令地址吗？</a></li>
+<li><a href="#q-na-me-zen-me-zhi-dao-shi-ji-de-zi-jie-ma-wei-zhi">Q: 那么怎么知道实际的字节码位置？</a></li>
+</ul>
+</li>
+<li><a href="#xu-ni-ji-zhan-qu-yu">虚拟机栈区域</a>
+<ul>
+<li><a href="#xian-cheng-zhan-zheng">线程栈帧</a>
+<ul>
+<li><a href="#q-shi-me-shi-zhan-zheng">Q： 什么是栈帧？</a></li>
+<li><a href="#q-zhan-zheng-li-bao-han-shi-me">Q： 栈帧里包含什么？</a></li>
+<li><a href="#q-zhan-zheng-de-da-xiao-shi-me-shi-hou-que-ding">Q: 栈帧的大小什么时候确定？</a></li>
+</ul>
+</li>
+<li><a href="#cao-zuo-shu-zhan">操作数栈</a>
+<ul>
+<li><a href="#q-shi-me-shi-cao-zuo-shu-zhan">Q： 什么是操作数栈</a></li>
+<li><a href="#q-wei-shi-me-yi-ding-yao-you-cao-zuo-shu-zhan">Q: 为什么一定要有操作数栈？</a></li>
+</ul>
+</li>
+<li><a href="#ju-bu-bian-liang-biao">局部变量表</a>
+<ul>
+<li><a href="#q-shi-me-shi-ju-bu-bian-liang-biao">Q: 什么是局部变量表？</a></li>
+<li><a href="#q-ju-bu-bian-liang-de-cao-you-shi-shi-me">Q: 局部变量的槽又是什么？</a></li>
+<li><a href="#q-ju-bu-bian-liang-biao-li-de-returnaddress-he-zhan-zheng-li-de-fan-hui-di-zhi-returnaddress-you-sha-qu-bie">Q: 局部变量表里的returnAddress和栈帧里的返回地址returnAddress有啥区别？</a></li>
+<li><a href="#q-ju-bu-bian-liang-biao-de-slot-ke-yi-bei-fu-gai-ma-zhe-ge-she-ji-you-shi-me-hao-chu">Q: 局部变量表的slot可以被覆盖吗？这个设计有什么好处</a></li>
+<li><a href="#q-she-zhi-null-zhi-jiu-yi-ding-hui-fu-gai-slot-ma">Q: 设置null值，就一定会覆盖slot吗？</a></li>
+<li><a href="#q-wei-shi-me-java-zhong-ju-bu-bian-liang-mei-you-mo-ren-chu-shi">Q:为什么java中局部变量没有默认初始？</a></li>
+<li><a href="#q-zhan-zheng-zhi-jian-ke-neng-cun-zai-gong-xiang-bian-liang-biao-de-qing-kuang-ma">Q: 栈帧之间可能存在共享变量表的情况吗？</a></li>
+</ul>
+</li>
+<li><a href="#dong-tai-lian-jie">动态链接</a>
+<ul>
+<li><a href="#q-zhan-zheng-li-de-dong-tai-lian-jie-you-shi-sha">Q : 栈帧里的动态链接又是啥？</a></li>
+</ul>
+</li>
+<li><a href="#fan-hui-di-zhi">返回地址</a>
+<ul>
+<li><a href="#q-ji-ran-you-pc-ji-cun-qi-zhan-zheng-li-de-fan-hui-di-zhi-de-zuo-yong-shi-shi-me">Q: 既然有PC寄存器，栈帧里的返回地址的作用是什么？</a></li>
+<li><a href="#q-zhan-zheng-zhong-de-fang-fa-tui-chu-shi-hui-hong-fa-na-xie-dong-zuo">Q: 栈帧中的方法退出时，会触发哪些动作？</a></li>
+<li><a href="#q-zhan-zheng-chu-liao-shang-mian-ti-dao-de-ji-ge-huan-you-qi-ta-de-xin-xi-ma">Q: 栈帧除了上面提到的几个，还有其他的信息吗？</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#fang-fa-qu">方法区</a>
+<ul>
+<li><a href="#q-fang-fa-qu-li-cun-de-shi-class-zi-jie-ma-ma">Q: 方法区里存的是class字节码吗？</a></li>
+<li><a href="#q-yuan-kong-jian-yu-yong-jiu-dai-dao-di-shi-zen-me-hui-shi">Q: 元空间与永久代到底是怎么回事？</a></li>
+<li><a href="#q-wei-shi-me-yao-ti-huan-yong-jiu-dai">Q: 为什么要替换永久代</a></li>
+</ul>
+</li>
+<li><a href="#zui-hou-de-gan-xiang">最后的感想</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<hr>
+<h1><span id="jvm-quan-ju-jie-gou">jvm全局结构</span><a href="#jvm-quan-ju-jie-gou" class="header-anchor">#</a></h1>
+<p>首先是一张经典的jvm运行时内存区域划分的图，我自己画了一张：</p>
+<p><img src="/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1653815416671.png" alt="1653815416671"></p>
+<hr>
+<p>Q: 存在多个线程时，刚才提到的5个区域是怎么分布的？<br>
+A:<br>
+每个线程，都有自己独立的虚拟机栈、独立的程序计数器PC。</p>
+<p>而方法区和堆是线程们共用的。</p>
+<hr>
+<h1><span id="java-dui">java堆</span><a href="#java-dui" class="header-anchor">#</a></h1>
+<p>java堆的内容比较多，这里不探究对象分配的原理，后面会补充新的文章。这里只讨论堆的一些其他细节问题。</p>
+<hr>
+<h2><span id="q-dui-shi-xian-cheng-zhi-jian-gong-yong-de-dan-zhe-yang-hui-dao-zhi-pin-fan-fa-sheng-chong-tu-shi-fou-yao-kao-lu-bing-fa-wen-ti-zen-me-ban">Q: 堆是线程之间共用的，但这样会导致频繁发生冲突，是否要考虑并发问题？怎么办？</span><a href="#q-dui-shi-xian-cheng-zhi-jian-gong-yong-de-dan-zhe-yang-hui-dao-zhi-pin-fan-fa-sheng-chong-tu-shi-fou-yao-kao-lu-bing-fa-wen-ti-zen-me-ban" class="header-anchor">#</a></h2>
+<p>A:<br>
+线程分配堆空间时，会先根据TLAB进行独立分配。</p>
+<blockquote>
+<blockquote>
+<p>TLAB ——Thread Local Allocation Buffer， 中文名为线程本地分配缓冲区。<br>
+启用了 TLAB 之后(-XX:+UseTLAB, 默认是开启的)，JVM 会针对每一个线程在 Java 堆中预留一个内存区域。<br>
+一旦某个区域确定划分给某个线程，之后<strong>该线程需要分配内存的时候，会优先在这片区域中申请</strong>。这个区域针对分配内存这个动作而言是该线程私有的，因此在分配的时候不用进行加锁等保护性的操作</p>
+</blockquote>
+</blockquote>
+<hr>
+<h2><span id="q-dan-shi-ru-guo-qia-qiao-duo-ge-xian-cheng-zai-shi-tu-jing-zheng-tong-yi-ge-tlab-yu-liu-kong-jian-shi-ji-du-zai-shi-tu-kuo-rong-fa-sheng-chong-tu-zen-me-ban">Q: 但是如果恰巧多个线程在试图竞争同一个TLAB预留空间时（即都在试图扩容），发生冲突怎么办？</span><a href="#q-dan-shi-ru-guo-qia-qiao-duo-ge-xian-cheng-zai-shi-tu-jing-zheng-tong-yi-ge-tlab-yu-liu-kong-jian-shi-ji-du-zai-shi-tu-kuo-rong-fa-sheng-chong-tu-zen-me-ban" class="header-anchor">#</a></h2>
+<p>A:<br>
+在预留这个动作发生的时候，需要进行加锁或者采用** CAS（compareAndSet) **等操作进行保护，避免多个线程预留同一个区域</p>
+<hr>
+<h2><span id="q-fen-pei-de-shi-hou-zai-tlab-qu-yu-li-zen-me-zhi-dao-fang-zai-na-ge-wei-zhi-ni">Q: 分配的时候，在TLAB区域里，怎么知道放在哪个位置呢？</span><a href="#q-fen-pei-de-shi-hou-zai-tlab-qu-yu-li-zen-me-zhi-dao-fang-zai-na-ge-wei-zhi-ni" class="header-anchor">#</a></h2>
+<p>A:<br>
+具体的分配内存有两种情况（和垃圾回收机制有关）</p>
+<ol>
+<li>第一种情况是内存空间绝对规整。（对应使用回收-整理/复制算法的垃圾回收区）</li>
+<li>第二种情况是内存空间是不连续的。（对应使用回收-清除算法的垃圾回收区）</li>
+</ol>
+<p>对于内存绝对规整的情况相对简单一些，虚拟机只需要在被占用的内存和可用空间之间移动指针即可，这种方式被称为指针碰撞。</p>
+<p>对于内存不规整的情况稍微复杂一点，这时候虚拟机需要维护一个列表，来记录哪些内存是可用的。分配内存的时候需要找到一个可用的内存空间，然后在列表上记录下已被分配，这种方式成为空闲列表。</p>
+<h1><span id="cheng-xu-ji-shu-qi">程序计数器</span><a href="#cheng-xu-ji-shu-qi" class="header-anchor">#</a></h1>
+<h2><span id="q-pc-ji-shu-qi-shi-zheng-ge-jvm-gong-you-de-ma">Q:PC计数器是整个jvm共有的吗？</span><a href="#q-pc-ji-shu-qi-shi-zheng-ge-jvm-gong-you-de-ma" class="header-anchor">#</a></h2>
+<p>A:<br>
+不是的，是每个线程各自有一个， 而且是java自己定义的线程PC， 和CPU里的PC寄存器不同。</p>
+<hr>
+<h2><span id="q-pc-ji-shu-qi-you-sha-yong-na-ru-guo-mei-you-pc-ji-cun-qi-ni-wo-bu-shi-ye-neng-yi-tiao-tiao-zhi-xing-yu-dao-return-zhi-ling-fan-hui-dui-ying-di-zhi-ji-ke-xu-yao-pc-ji-cun-qi-zuo-sha">Q:PC计数器有啥用？ 那如果没有PC寄存器呢？ 我不是也能一条条执行，遇到return指令，返回对应地址即可，需要PC寄存器做啥？</span><a href="#q-pc-ji-shu-qi-you-sha-yong-na-ru-guo-mei-you-pc-ji-cun-qi-ni-wo-bu-shi-ye-neng-yi-tiao-tiao-zhi-xing-yu-dao-return-zhi-ling-fan-hui-dui-ying-di-zhi-ji-ke-xu-yao-pc-ji-cun-qi-zuo-sha" class="header-anchor">#</a></h2>
+<p>A: PC寄存器的作用在于多线程切换的时候，能找到每个线程执行的位置，所以它是线程私有的一个寄存器，知道当前运行到哪了。如果没有，一旦随机切换就不知道咋办了。你总需要一个地方存储这个线程当前执行情况，但又要保持独立性，所以不可能存到其他线程的空间里。</p>
+<hr>
+<h2><span id="q-wei-shi-me-native-fang-fa-de-cheng-xu-ji-shu-qi-wei-0-undefine-ru-guo-fa-sheng-xian-cheng-qie-huan-zen-me-ban">Q:为什么native方法的程序计数器为0（undefine）？如果发生线程切换，怎么办？</span><a href="#q-wei-shi-me-native-fang-fa-de-cheng-xu-ji-shu-qi-wei-0-undefine-ru-guo-fa-sheng-xian-cheng-qie-huan-zen-me-ban" class="header-anchor">#</a></h2>
+<p>A:<br>
+注意，jvm内存结构里的PC计数器是jvm自己定义的“字节码指令”执行寄存器。<br>
+对于native方法，并不在字节码的范围，不指向方法区里的任何指令位置。</p>
+<p>因此native方法其实不是由jvm管理的，如果线程切换，他执行到哪边，取决于OS的底层机器码计数器实现。</p>
+<blockquote>
+<blockquote>
+<p>以HotSpot VM的实现为例，它目前在大多数平台上都使用1:1模型，也就是每个Java线程都直接映射到一个OS线程上执行。此时，native方法就由原生平台直接执行，并不需要理会抽象的JVM层面上的“pc寄存器”概念——原生的CPU上真正的PC寄存器是怎样就是怎样。就像一个用C或C++写的多线程程序，它在线程切换的时候是怎样的，Java的native方法也就是怎样的。</p>
+</blockquote>
+</blockquote>
+<hr>
+<h2><span id="q-pc-ji-shu-qi-li-cun-de-dao-di-shi-sha-shi-zhi-ling-di-zhi-ma">Q: PC计数器里存的到底是啥？是指令地址吗？</span><a href="#q-pc-ji-shu-qi-li-cun-de-dao-di-shi-sha-shi-zhi-ling-di-zhi-ma" class="header-anchor">#</a></h2>
+<p>A:<br>
+错误！ 存的不是地址，而是这个方法的字节码偏移。例如0、1、5、6这种。<br>
+<img src="/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800419071211329.png" alt="image.png"></p>
+<hr>
+<h2><span id="q-na-me-zen-me-zhi-dao-shi-ji-de-zi-jie-ma-wei-zhi">Q: 那么怎么知道实际的字节码位置？</span><a href="#q-na-me-zen-me-zhi-dao-shi-ji-de-zi-jie-ma-wei-zhi" class="header-anchor">#</a></h2>
+<p>A: 这个就要结合下文提到的栈帧中的动态链接，来联合计算实际字节码位置了。</p>
+<h1><span id="xu-ni-ji-zhan-qu-yu">虚拟机栈区域</span><a href="#xu-ni-ji-zhan-qu-yu" class="header-anchor">#</a></h1>
+<hr>
+<h2><span id="xian-cheng-zhan-zheng">线程栈帧</span><a href="#xian-cheng-zhan-zheng" class="header-anchor">#</a></h2>
+<h3><span id="q-shi-me-shi-zhan-zheng">Q： 什么是栈帧？</span><a href="#q-shi-me-shi-zhan-zheng" class="header-anchor">#</a></h3>
+<p>A： 每个线程有一个自己的栈帧，然后运行到每个方法时，每个方法中都会可以理解为是摄影里的一帧。<br>
+<img src="/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800601102172178.png" alt="image.png"></p>
+<hr>
+<h3><span id="q-zhan-zheng-li-bao-han-shi-me">Q： 栈帧里包含什么？</span><a href="#q-zhan-zheng-li-bao-han-shi-me" class="header-anchor">#</a></h3>
+<p>A：</p>
+<ul>
+<li>局部变量表</li>
+<li>操作数栈</li>
+<li>动态链接</li>
+<li>方法返回地址</li>
+</ul>
+<p>其实与上面这4样配合的，还有个上文提到的“程序计数器”，才共同实现了jvm指令的执行。</p>
+<hr>
+<h3><span id="q-zhan-zheng-de-da-xiao-shi-me-shi-hou-que-ding">Q: 栈帧的大小什么时候确定？</span><a href="#q-zhan-zheng-de-da-xiao-shi-me-shi-hou-que-ding" class="header-anchor">#</a></h3>
+<p>A：<br>
+在编译程序代码的时候.<br>
+注意， 图例提到的栈大小，并不是指线程堆栈的最大深度，<br>
+而是指“操作数栈”的最大深度。（注意这个深度存在类文件字节码中对应方法的属性表中）<br>
+<img src="/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800735895914907.png" alt="image.png"></p>
+<p>即jvm能够通过分析代码中可能存在多少个变量以及计算空间，来确定局部变量表和最大操作数栈的一个深度。</p>
+<h2><span id="cao-zuo-shu-zhan">操作数栈</span><a href="#cao-zuo-shu-zhan" class="header-anchor">#</a></h2>
+<h3><span id="q-shi-me-shi-cao-zuo-shu-zhan">Q： 什么是操作数栈</span><a href="#q-shi-me-shi-cao-zuo-shu-zhan" class="header-anchor">#</a></h3>
+<p>A：<br>
+可以理解为jvm做计算时，需要一个临时的寄存器，把需要计算的数据或者传方法的参数放到栈中，然后做计算。<br>
+<img src="/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800699980785954.png" alt="image.png"></p>
+<hr>
+<h3><span id="q-wei-shi-me-yi-ding-yao-you-cao-zuo-shu-zhan">Q: 为什么一定要有操作数栈？</span><a href="#q-wei-shi-me-yi-ding-yao-you-cao-zuo-shu-zhan" class="header-anchor">#</a></h3>
+<p>如果要做a+b,我直接从变量表上取a的值和b的值，加起来不就好了？<br>
+A:<br>
+那我如果是 a + b<em>c呢，  这个b</em>c的值放哪里？<br>
+如果是a+b*(c+d)呢？<br>
+这时候如果你学习过数据结构里栈的应用 ，就会知道 模拟一个计算器，往往需要一个栈。<br>
+而操作数栈就是这个作用。<br>
+当你学习jvm指令时，就会看到有专门的指令就是取栈顶或者把值推送到栈顶的指令。<br>
+这样做加法的时候，也就不用关心变量的地址了，只要你把栈顶的值存好，我直接拿去加就行。</p>
+<hr>
+<h2><span id="ju-bu-bian-liang-biao">局部变量表</span><a href="#ju-bu-bian-liang-biao" class="header-anchor">#</a></h2>
+<h3><span id="q-shi-me-shi-ju-bu-bian-liang-biao">Q: 什么是局部变量表？</span><a href="#q-shi-me-shi-ju-bu-bian-liang-biao" class="header-anchor">#</a></h3>
+<p>A：<br>
+每个线程所在栈帧都会有一个自己的局部变量表，里面存储方法中使用到的局部变量。<br>
+<img src="/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800897811439190.png" alt="image.png"></p>
+<hr>
+<h3><span id="q-ju-bu-bian-liang-de-cao-you-shi-shi-me">Q: 局部变量的槽又是什么？</span><a href="#q-ju-bu-bian-liang-de-cao-you-shi-shi-me" class="header-anchor">#</a></h3>
+<p>A:</p>
+<ul>
+<li>returnAddress类型是为字节码指令jsr、jsr_w和ret服务的，它指向了一条字节码指令的地址。</li>
+<li>局部变量表的容量以变量槽（Slot）为最小单位，32位虚拟机中一个Slot可以存放一个32位以内的数据类型（boolean、byte、char、short、int、float、reference和returnAddress八种）</li>
+<li>slot的长度可以随着处理器、操作系统的不同而变化， 不是绝对的32位。<br>
+jvm概念中说的是”slot一定能存放下1个boolean\byte\int\引用地址\返回地址returnAddress“等不包括long在内的内容。</li>
+<li>如果要访问long，需要做2次局部变量slot的读取，读取n和n+1，不允许单独访问，如果有问题会在字节码校验中报错。</li>
+</ul>
+<hr>
+<h3><span id="q-ju-bu-bian-liang-biao-li-de-returnaddress-he-zhan-zheng-li-de-fan-hui-di-zhi-returnaddress-you-sha-qu-bie">Q: 局部变量表里的returnAddress和栈帧里的返回地址returnAddress有啥区别？</span><a href="#q-ju-bu-bian-liang-biao-li-de-returnaddress-he-zhan-zheng-li-de-fan-hui-di-zhi-returnaddress-you-sha-qu-bie" class="header-anchor">#</a></h3>
+<p>A:<br>
+局部变量表里的的returnAddress，是老版本jvm用于处理异常跳转的（jsr\jsr_w\ret指令，新版本基本都用code里的异常表来代替），而栈帧里的返回地址，是返回到上一层栈帧的代码调用位置，更新PC计数器用的。</p>
+<hr>
+<h3><span id="q-ju-bu-bian-liang-biao-de-slot-ke-yi-bei-fu-gai-ma-zhe-ge-she-ji-you-shi-me-hao-chu">Q: 局部变量表的slot可以被覆盖吗？这个设计有什么好处</span><a href="#q-ju-bu-bian-liang-biao-de-slot-ke-yi-bei-fu-gai-ma-zhe-ge-she-ji-you-shi-me-hao-chu" class="header-anchor">#</a></h3>
+<p>A:</p>
+<ul>
+<li>可以减少局部变量表的空间，通过分析每个局部变量的使用生命周期，在某变量不再被使用后，让其他变量可以覆盖这个槽的位置。</li>
+<li>另一方面，覆盖的机制，可以将一些局部变量上已经不使用的大对象解除引用，例如对一些大的变量做=null的操作，那么可以尽早进行垃圾回收（因为栈帧的局部变量表里的每个slot都是一个gcRoot）</li>
+</ul>
+<hr>
+<h3><span id="q-she-zhi-null-zhi-jiu-yi-ding-hui-fu-gai-slot-ma">Q: 设置null值，就一定会覆盖slot吗？</span><a href="#q-she-zhi-null-zhi-jiu-yi-ding-hui-fu-gai-slot-ma" class="header-anchor">#</a></h3>
+<p>A:<br>
+不一定，有时候JIT编译优化，可能会处理掉这个无用的=null的操作，且能正确处理slot中已经不被使用的变量。<br>
+按照书里的说法，正好有大对象，然后还停留在局部变量表里的概率是比较低的。不建议那么做了</p>
+<hr>
+<h3><span id="q-wei-shi-me-java-zhong-ju-bu-bian-liang-mei-you-mo-ren-chu-shi">Q:为什么java中局部变量没有默认初始？</span><a href="#q-wei-shi-me-java-zhong-ju-bu-bian-liang-mei-you-mo-ren-chu-shi" class="header-anchor">#</a></h3>
+<p>A:<br>
+我的理解，局部变量在局部变量表中，而局部变量表是运行时生成的， 而非在堆上生成，因此不会有堆对象创建时的那个默认值赋值操作。 即jvm定义上， 就是局部变量没有初始化前的’准备‘这个阶段的，也就不存在默认赋值的指令行为。</p>
+<p>如果硬要说为什么，如果每个局部变量都复制，肯定会影响执行效率，因此不如不赋值。，所以必须通过赋值指令在运行时给他赋值。（没找到很好的解释，有更好理解的可以帮忙回答一下，其实就是）</p>
+<p>另外如果每个局部变量都有，那可能指令数量就会变多，因为你需要放入很多赋值指令？</p>
+<p>阅读JMM内存模型时的另一个解释：</p>
+<blockquote>
+<blockquote>
+<p>对于未同步或未正确同步的多线程程序，JMM只提供最小安全性.<br>
+线程执行时读取到的值，要么是之前某个线程写入的值，要么是默认值（0，Null，False），JMM保证线程读操作读取到的值不会无中生有（Out Of Thin Air）的冒出来<br>
+对于全局变量（类对象成员），必须有默认初始化，为了满足多线程环境下的最小安全性。<br>
+但对于局部变量，不存在被多线程使用，因此一定后面可以拼接一个指令，所以不需要默认初始化的动作。</p>
+</blockquote>
+</blockquote>
+<hr>
+<h3><span id="q-zhan-zheng-zhi-jian-ke-neng-cun-zai-gong-xiang-bian-liang-biao-de-qing-kuang-ma">Q: 栈帧之间可能存在共享变量表的情况吗？</span><a href="#q-zhan-zheng-zhi-jian-ke-neng-cun-zai-gong-xiang-bian-liang-biao-de-qing-kuang-ma" class="header-anchor">#</a></h3>
+<p>即执行多次方法，一个栈上有多个栈帧，每个栈帧都有各自的局部变量表和操作数栈，然后上下层之间共享</p>
+<p>A:<br>
+可能存在。即上下两个栈帧之间， 可能有操作数栈可以直接操作另一个栈帧局部变量的情况。这样可以避免额外的参数复制传递。<br>
+什么时候触发？不清楚</p>
+<hr>
+<h2><span id="dong-tai-lian-jie">动态链接</span><a href="#dong-tai-lian-jie" class="header-anchor">#</a></h2>
+<h3><span id="q-zhan-zheng-li-de-dong-tai-lian-jie-you-shi-sha">Q : 栈帧里的动态链接又是啥？</span><a href="#q-zhan-zheng-li-de-dong-tai-lian-jie-you-shi-sha" class="header-anchor">#</a></h3>
+<p>A:<br>
+首先明确一点， 每一个栈帧，不一定是”动态”链接，但一定会有一个指向常量池中方法的引用。</p>
+<p>为什么栈帧里需要存这个指向方法的引用？</p>
+<p>首先，当你进入一个方法，准备生成一个栈帧，放到线程上时，你需要知道你这个代码执行的是什么代码，才能进行后面的操作。</p>
+<p>如果是构造方法、final方法，则会编译器进行静态链接。<br>
+如果是虚方法，则会进行动态链接，运行期只是从类对象中，拿到了一个符号引用，</p>
+<p>但是这个引用指向哪个方法？则通过下面的过程进行定位和寻找，把符号引用转成实际方法的直接引用。<br>
+<img src="/images/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/1652800987016832820.png" alt="image.png"><br>
+因此要提供一个引用，指向常量池里的方法。指向后，就能知道程序位置。<br>
+然后<strong>字节码实际引用位置 + PC计数器偏移</strong>，就能知道当前线程执行到哪个方法的哪一步指令上了。</p>
+<p>（关于动态链接这个名称的由来，是因为“动态分派”的存在，你这个方法位置是不确定的，和实际对象+方法名有关， 所以称为动态链接。）</p>
+<hr>
+<h2><span id="fan-hui-di-zhi">返回地址</span><a href="#fan-hui-di-zhi" class="header-anchor">#</a></h2>
+<h3><span id="q-ji-ran-you-pc-ji-cun-qi-zhan-zheng-li-de-fan-hui-di-zhi-de-zuo-yong-shi-shi-me">Q: 既然有PC寄存器，栈帧里的返回地址的作用是什么？</span><a href="#q-ji-ran-you-pc-ji-cun-qi-zhan-zheng-li-de-fan-hui-di-zhi-de-zuo-yong-shi-shi-me" class="header-anchor">#</a></h3>
+<p>A:<br>
+方法A调用方法B的时候，PC寄存器会跟着移动到B方法去。当B执行完后，要能返回A继续执行，就需要A当时执行到的那条指令的地址。所以，在B的栈帧中保存A当时的指令地址（当时PC寄存器的值），当B执行完后，根据此返回地址跳回A。通过返回地址，从而知道当前线程的上一级应该从PC的第几行偏移开始。</p>
+<p>另外除了正常通过ret指令退出，还可能是出现异常时，如果没有在异常表里被捕捉并处理，也会通过异常完成出口， 使用返回地址返回到上一层。</p>
+<hr>
+<h3><span id="q-zhan-zheng-zhong-de-fang-fa-tui-chu-shi-hui-hong-fa-na-xie-dong-zuo">Q: 栈帧中的方法退出时，会触发哪些动作？</span><a href="#q-zhan-zheng-zhong-de-fang-fa-tui-chu-shi-hui-hong-fa-na-xie-dong-zuo" class="header-anchor">#</a></h3>
+<p>A:</p>
+<ol>
+<li>当前栈帧出栈</li>
+<li>恢复上层方法的局部变量表和操作数栈</li>
+<li>如果有返回值，把返回值压入操作数栈的栈顶（因为马上就要被调用了）</li>
+<li>调整这个线程栈的PC计数器，改成returnAddress对应的那个指令位置地址，然后继续往下调用执行。</li>
+</ol>
+<hr>
+<h3><span id="q-zhan-zheng-chu-liao-shang-mian-ti-dao-de-ji-ge-huan-you-qi-ta-de-xin-xi-ma">Q: 栈帧除了上面提到的几个，还有其他的信息吗？</span><a href="#q-zhan-zheng-chu-liao-shang-mian-ti-dao-de-ji-ge-huan-you-qi-ta-de-xin-xi-ma" class="header-anchor">#</a></h3>
+<p>A:<br>
+有些支持调试的虚拟机，可能会补充很多调试相关的信息。</p>
+<h1><span id="fang-fa-qu">方法区</span><a href="#fang-fa-qu" class="header-anchor">#</a></h1>
+<h2><span id="q-fang-fa-qu-li-cun-de-shi-class-zi-jie-ma-ma">Q: 方法区里存的是class字节码吗？</span><a href="#q-fang-fa-qu-li-cun-de-shi-class-zi-jie-ma-ma" class="header-anchor">#</a></h2>
+<p>A:<br>
+不是。经过类的加载、链接、初始化之后， class字节码对于进程来说就没用了。<br>
+存了以下内容：</p>
+<ul>
+<li>每个类的类型信息：类名、父类类名、修饰符、接口</li>
+<li>字段信息field（域信息）：字段名、字段类型、字段修饰符</li>
+<li>方法信息，包括方法名、类型、参数、修饰符、字节码、一场表<br>
+如下：</li>
+<li>类的静态变量</li>
+<li>常量池，存储常量<br>
+注意，符号引用、类引用、实际类名等信息等都是放在常量池中的。</li>
+</ul>
+<hr>
+<h2><span id="q-yuan-kong-jian-yu-yong-jiu-dai-dao-di-shi-zen-me-hui-shi">Q:  元空间与永久代到底是怎么回事？</span><a href="#q-yuan-kong-jian-yu-yong-jiu-dai-dao-di-shi-zen-me-hui-shi" class="header-anchor">#</a></h2>
+<p>A:<br>
+方法区和“PermGen space”又有着本质的区别。<br>
+<strong>前者是 JVM 的规范，而后者则是 JVM 规范的一种实现</strong><br>
+并且只有 HotSpot 才有 “PermGen space”，而对于其他类型的虚拟机，如 JRockit（Oracle）、J9（IBM） 并没有“PermGen space”。</p>
+<p><strong>元空间与永久代之间最大的区别在于：元空间并不在虚拟机中，而是使用本地内存。因此，默认情况下，元空间的大小仅受本地内存限制，但可以通过以下参数来指定元空间的大小</strong><br>
+-XX:MetaspaceSize和-XX:MaxMetaspaceSize</p>
+<hr>
+<h2><span id="q-wei-shi-me-yao-ti-huan-yong-jiu-dai">Q: 为什么要替换永久代</span><a href="#q-wei-shi-me-yao-ti-huan-yong-jiu-dai" class="header-anchor">#</a></h2>
+<p>A:<br>
+替换永久代的其他原因：</p>
+<ol>
+<li>字符串存在永久代中，容易出现性能问题和内存溢出。</li>
+<li>类及方法的信息等比较难确定其大小，因此对于永久代的大小指定比较困难，太小容易出现永久代溢出，太大则容易导致老年代溢出。</li>
+<li>永久代会为 GC 带来不必要的复杂度，并且回收效率偏低。</li>
+</ol>
+<hr>
+<h1><span id="zui-hou-de-gan-xiang">最后的感想</span><a href="#zui-hou-de-gan-xiang" class="header-anchor">#</a></h1>
+<p>好累，终于写完了，感觉能看到最后的人不会太多，但一通详细地分析和解决中间发现的问题，还是收获了不少。</p>
+<p>关于jvm运行时数据区，最重要的不是去死记硬背，而是试图在脑中构建一个指令运行的逻辑流程。</p>
+<p>且对于很多没有学习过计算机底层原理（例如CSAPP这本书） 的人来说， 是很难接触到计算机是如何执行机器码指令的。<br>
+而java虚拟机栈可以更好理解 指令是如何运行的（虽然这不是机器码，而是jvm字节码）。<br>
+但是通过运行时数据区的各种行为和概念， 我们可以快速对应到java中常见的各种操作。<br>
+这对于很多入门时直奔删减改查的同学来说， 是不可多得的学习底层的机会。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/05/06/%E9%9A%8F%E7%AC%94/sleep/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/05/06/%E9%9A%8F%E7%AC%94/sleep/" class="post-title-link" itemprop="url">解决失眠的科学疗法</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-05-06 23:08:31" itemprop="dateCreated datePublished" datetime="2022-05-06T23:08:31+08:00">2022-05-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-10 23:57:29" itemprop="dateModified" datetime="2022-08-10T23:57:29+08:00">2022-08-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9A%8F%E7%AC%94/" itemprop="url" rel="index"><span itemprop="name">随笔</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">心理</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/05/06/%E9%9A%8F%E7%AC%94/sleep/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/05/06/%E9%9A%8F%E7%AC%94/sleep/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>455</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1><span id="shui-mian-xian-zhi-fa">睡眠限制法</span><a href="#shui-mian-xian-zhi-fa" class="header-anchor">#</a></h1>
+<ul>
+<li>
+<p>首要目标： 增加睡眠时间/卧床时间的占比，建立床=睡眠的潜意识。</p>
+</li>
+<li>
+<p>主要方式： 在无法显著增加睡眠时间的情况下，减少卧床时间。</p>
+</li>
+<li>
+<p>具体措施：</p>
+<ol>
+<li>根据之前往期的入睡统计，安排严格的上床和入睡。例如晚上12点睡，早上6点30起。</li>
+<li>困了就上床，上床后不要玩手机，避免增加无效卧床时间。</li>
+<li>如果在床上不困，就立刻起床，避免增加无效的卧床时间。</li>
+<li>减少午睡甚至不午睡，将困意集中到晚上的时间。</li>
+</ol>
+</li>
+</ul>
+<h1><span id="ru-shui-fen-wei-de-gou-jian">入睡氛围的构建</span><a href="#ru-shui-fen-wei-de-gou-jian" class="header-anchor">#</a></h1>
+<ol>
+<li>睡前不要做需要耗费脑子导致精神集中无法放松的事情， 例如做算法题、高强度学习等。</li>
+<li>提前1h洗澡、洗头，避免上床前才洗。</li>
+<li>手机的新闻、游戏日常任务尽量白天能刷就刷，睡前告诉自己都已经刷过了，不需要再刷了。（可以将自己需要刷的东西列一个清单，睡前看一下自己是不是白天都刷过了）</li>
+</ol>
+<h1><span id="ru-he-chu-li-shui-mian-shi-de-jiao-lu">如何处理睡眠时的焦虑</span><a href="#ru-he-chu-li-shui-mian-shi-de-jiao-lu" class="header-anchor">#</a></h1>
+<ol>
+<li>睡少了 并不等于 第二天会完蛋。大部分人不会从事过于高精密的工作。</li>
+<li>如果有睡眠外的焦虑， 尝试在睡前安排一定的”焦虑时间“，让自己充分将焦虑的想法念出来或者写出来，这样上床后如果还焦虑，可以告诉自己”刚才都已经焦虑过了，也写出来了，现在想也就没意义了“</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/05/06/%E9%9A%8F%E7%AC%94/%E5%A4%B1%E7%9C%A0%E7%96%97%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/05/06/%E9%9A%8F%E7%AC%94/%E5%A4%B1%E7%9C%A0%E7%96%97%E6%B3%95/" class="post-title-link" itemprop="url">解决失眠的科学疗法</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-05-06 23:08:31" itemprop="dateCreated datePublished" datetime="2022-05-06T23:08:31+08:00">2022-05-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-10 00:54:37" itemprop="dateModified" datetime="2022-08-10T00:54:37+08:00">2022-08-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9A%8F%E7%AC%94/" itemprop="url" rel="index"><span itemprop="name">随笔</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">心理</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/05/06/%E9%9A%8F%E7%AC%94/%E5%A4%B1%E7%9C%A0%E7%96%97%E6%B3%95/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/05/06/%E9%9A%8F%E7%AC%94/%E5%A4%B1%E7%9C%A0%E7%96%97%E6%B3%95/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>455</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1><span id="shui-mian-xian-zhi-fa">睡眠限制法</span><a href="#shui-mian-xian-zhi-fa" class="header-anchor">#</a></h1>
+<ul>
+<li>
+<p>首要目标： 增加睡眠时间/卧床时间的占比，建立床=睡眠的潜意识。</p>
+</li>
+<li>
+<p>主要方式： 在无法显著增加睡眠时间的情况下，减少卧床时间。</p>
+</li>
+<li>
+<p>具体措施：</p>
+<ol>
+<li>根据之前往期的入睡统计，安排严格的上床和入睡。例如晚上12点睡，早上6点30起。</li>
+<li>困了就上床，上床后不要玩手机，避免增加无效卧床时间。</li>
+<li>如果在床上不困，就立刻起床，避免增加无效的卧床时间。</li>
+<li>减少午睡甚至不午睡，将困意集中到晚上的时间。</li>
+</ol>
+</li>
+</ul>
+<h1><span id="ru-shui-fen-wei-de-gou-jian">入睡氛围的构建</span><a href="#ru-shui-fen-wei-de-gou-jian" class="header-anchor">#</a></h1>
+<ol>
+<li>睡前不要做需要耗费脑子导致精神集中无法放松的事情， 例如做算法题、高强度学习等。</li>
+<li>提前1h洗澡、洗头，避免上床前才洗。</li>
+<li>手机的新闻、游戏日常任务尽量白天能刷就刷，睡前告诉自己都已经刷过了，不需要再刷了。（可以将自己需要刷的东西列一个清单，睡前看一下自己是不是白天都刷过了）</li>
+</ol>
+<h1><span id="ru-he-chu-li-shui-mian-shi-de-jiao-lu">如何处理睡眠时的焦虑</span><a href="#ru-he-chu-li-shui-mian-shi-de-jiao-lu" class="header-anchor">#</a></h1>
+<ol>
+<li>睡少了 并不等于 第二天会完蛋。大部分人不会从事过于高精密的工作。</li>
+<li>如果有睡眠外的焦虑， 尝试在睡前安排一定的”焦虑时间“，让自己充分将焦虑的想法念出来或者写出来，这样上床后如果还焦虑，可以告诉自己”刚才都已经焦虑过了，也写出来了，现在想也就没意义了“</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/05/04/%E9%9A%8F%E7%AC%94/heart/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1023,676 +2618,10 @@ A:</p>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2021/10/07/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/21%E5%B9%B410%E6%9C%88-22%E5%B9%B45%E6%9C%88/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/10/07/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/21%E5%B9%B410%E6%9C%88-22%E5%B9%B45%E6%9C%88/" class="post-title-link" itemprop="url">21年10月-22年5月</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-10-07 22:12:42" itemprop="dateCreated datePublished" datetime="2021-10-07T22:12:42+08:00">2021-10-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-19 00:27:34" itemprop="dateModified" datetime="2022-08-19T00:27:34+08:00">2022-08-19</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">刷题日记</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022%E5%B9%B47%E6%9C%88%E5%8F%8A%E4%BB%A5%E5%89%8D/" itemprop="url" rel="index"><span itemprop="name">2022年7月及以前</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2021/10/07/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/21%E5%B9%B410%E6%9C%88-22%E5%B9%B45%E6%9C%88/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/10/07/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/21%E5%B9%B410%E6%9C%88-22%E5%B9%B45%E6%9C%88/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>12k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>11 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>[toc]</p>
-  <div class="toc">
-<!-- toc -->
-<!-- tocstop -->
-</div>  
-<p>刷题日记</p>
-<p>😉   😢 😆 😋</p>
-<p>[2022-05-09]</p>
-<ul>
-<li>给一个图，找入度为n、出度为0的唯一点，最少可以通过3n次查找，从0到n通过遍历a-&gt;b，逐步排除不可能的选项，最终只剩1个，然后再通过2次n确认入度和出度。  😄</li>
-</ul>
-<hr>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/guinvg">2022-05-02</a></p>
-<ul>
-<li>s.indexOf(i, “}”) 可以快速得到下一个</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/scvmoj">2022-04-09</a></p>
-<ul>
-<li>要求ty通过反复减tx，要减到小于等于tx的话 那么就是ty%tx的值</li>
-<li>对于自己推导中间过程比较麻烦的题目，就直接写个sout打印中间能很快观察到问题所在</li>
-</ul>
-<ol>
-<li>先写个超时的答案</li>
-<li>打印中间结果，看下哪里浪费了</li>
-<li>对浪费的步骤做优化</li>
-</ol>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/jnxyjz">2022-0405-0406</a></p>
-<ul>
-<li>求1个数字N是否为质数的一个简单方式： 只遍历i=2到i=根号(n)，然后确认能否被整除即可。</li>
-<li>优化1： 求二进制1的个数，没必要手动求解， 直接用Integer.bitCount()即可</li>
-<li>优化2：质数如果总数比较小，可以直接手动大表，这题里最大数字范围为19 ，那么质数可以直接打表得到</li>
-<li>找到一个最小高度的树的根节点，可以用拓扑排序，从最外围往内部逼近</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/ctpdxv/">2022-04-01</a></p>
-<ul>
-<li>n如果是整数，可能直接越界，需要提前强转</li>
-<li>如果状态条件种要求不能连续的问题， 考虑状态是否多加一个,这题的状态方程就是,dp[当前位置][颜色][上一个点是否是该颜色]</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/fgsvki/">2022-0329-0330</a></p>
-<ul>
-<li>知道很多点的大小关系，求整个的大小关系，可用拓扑排序</li>
-<li>Stringbuilder.reverse() 会导致自身翻转，所以切忌不要对搜索变量stringbuidler做翻转，要么记得转回来</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/nnjuyg/">2022-03-28</a></p>
-<ul>
-<li>如果二进制a都是0、1交替的，那么a ^ (a&gt;&gt;1) 则会变成除前置0外，全是1</li>
-<li>如何判断某个二进制a全是1组成？a&amp;(a+1)==0， 则说明全是1</li>
-<li>多个字符串编码成1个字符串，可以用非ascii码的字符做分隔符(char)257</li>
-<li>涉及次数问题的题目，且题目次数一定小于某个总数，则可以考虑计数排序</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/unaalu/">2022-03-27</a></p>
-<ul>
-<li>涉及数字出现次数，求里面某几个特别的次数的数字时，记得使用分类，即想办法把他们分成不同的组，再分别做异或即可。</li>
-<li>x&amp;（-x）是x=110100变000100,  x&amp;(x-1)是x=110100变111000</li>
-<li>如何判断一个图是否是1课树？<br>
-方法1：首先保证边数=节点数-1,然后用bfs保证所有点相连<br>
-方法2：并查集，合并过程不能出现2个根节点相同（说明树内循环连接了），合并完成要求只有1个根节点</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/uwghjd">2022-03-26</a></p>
-<ul>
-<li>一个数组，如何求去掉每个位置时的数组中的最小值<br>
-维护最小值和第二小的值即可<br>
-注意，当更新最小值的时候，同时需要更新第二小的值！</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/mjkleh/">2022-03-24</a></p>
-<ul>
-<li>自定义迭代器注意点：迭代器特点，无论是hasNext还是next,都需要先找到下一个有效的点, 再去判断，而且是通过while循环查找。</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/jrogiy">2022-03-23</a></p>
-<ul>
-<li>int[] 截断成list，可以先转list，再用subList截断.<br>
-ret.subList(0, k);</li>
-<li>寻找num在list中的位置：Collections.binarySearch(list, x);</li>
-<li>用常量空间判断数组是否是二叉搜索树的先序？<br>
-遍历每个点，只测试右边方向的正确性</li>
-<li></li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/ymocky">2022-03-21</a></p>
-<p>*1个有序数组，求2个数字的和满足target，可以用双指针最左和最右，然后根据大小情况移动左边或者右边。为什么不可能往回走？因为你之前已经走过的点，能确认右边那个位置是无法满足的</p>
-<ul>
-<li>中序遍历迭代树， 注意走下一个点时，要么右儿子为空往上走，要么走右儿子后，还得往左边一直走到底，才算是下一个点</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/tnetil">2022-03-19</a></p>
-<ul>
-<li>list[]初始化，直接for循环最简单</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/nweavt">2022-03-18</a></p>
-<ul>
-<li>一个java-stream的小点： 按照key分组并统计每组key的数量<br>
-Map&lt;String, Long&gt; strMap = Arrays.stream(strings)<br>
-.collect(Collectors.groupingBy(s -&gt; s, Collectors.counting()));<br>
-即groupingBy(key-&gt;key, Collectors.counting())<br>
-如果记不起来，马上改成用stream().foreach或者直接循环即可</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/xemgpw">2022-03-17</a></p>
-<ul>
-<li>2个单词在词典中的最短距离，最好方式是用双指针，如果i1&lt;i2，则i1++，这样子</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/dkceba">2022-03-15</a></p>
-<ul>
-<li>unicode形式的字符，尽可能用character对象，一个字符可能是多个字节表示，因此不能用数组下标来简单处理这类字符的哈希问题</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/actdba">2022-03-14</a></p>
-<ul>
-<li>如果求解二叉搜索树的第k个点，要求频繁查询的性能，则事先统计每个子树的节点总数量，即可快速判断在左边还是右边。（如果不平衡则要平衡树）</li>
-<li>p、q最近公共祖先问题，可以不一定用父亲数组遍历2次， 而是用 该树是否包含p或者q的布尔值结果，通过先序遍历，找到第一个左右两边都有p\q的情况（也包括自己是p或者q)</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/elprds">2022-03-13</a></p>
-<ul>
-<li>如果希望使用双端队列而不是栈，请不要用Push和poll了，就用first和last两个语义处理，避免混乱</li>
-<li>LinkedList push 施加在list头部. 等同于addFirst。 add 是加在list尾部。</li>
-<li>如果一个式子中只有+号和-号，无括号，则直接将-号后的数字取负即可</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/aifjbh">2022-03-09</a></p>
-<p>超期优先队列应用</p>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/dapvqa">2022-03-08</a></p>
-<ul>
-<li>如果题目只需要你返回true或者false，即不需要中间所有结果，则考虑到一些情况可以不用过分担忧，如果有影响，则可能直接返回true了</li>
-<li>完全二叉树的节点是否存在，可以用位运算来表示，往left走代表0，往right走代表1.</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/svrgqb">2022-02-20</a></p>
-<ul>
-<li>回文串最简单的判定s = 翻转(s)， 可以考虑字符串哈希等东西，或者KMP前缀后缀判定优化</li>
-<li>字符串哈希，第0位数字不可为0，至少要有数字，因此不需要做s.charAt(i) - 'a’的操作</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/qgdvtd/">2022-02-19</a></p>
-<ul>
-<li>因此股票买卖，要考虑持有或者不持有，然后通过买入扣钱以及卖出加钱来计算</li>
-<li>字典树问题，如果是考虑单词“全匹配”，则必须要在字典树末尾补充isEnd标志。</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/cwnymt">2022-02-18</a></p>
-<ul>
-<li>字符串只有10时，做substring和map.hashcode的时间都是可接受的，可直接用</li>
-<li>子序列对应x进制的滑动窗口问题中，你可以先整体右移动，然后截断第一个位，再加上最后一个，即可。</li>
-<li>如果窗口大小是的2的倍数，则可以继续用位运算，只不过偏移数量要变化<br>
-<img src="/D:/%25E6%259D%258E%25E7%25BB%258D%25E6%2599%2593%25E9%259D%25A2%25E8%25AF%2595%25E5%25AE%259D%25E5%2585%25B8/%25E7%25AE%2597%25E6%25B3%2595/%25E7%25BC%2596%25E7%25A8%258B%25E9%25A2%2598/7897843fc21e6aee738cf9853605db09378a0ef0.png" alt="7897843fc21e6aee738cf9853605db09378a0ef0"></li>
-<li>对于长度固定的窗口，你可以先预处理窗口剩1个， 然后再开始，避免重复判断<br>
-<img src="/D:/%25E6%259D%258E%25E7%25BB%258D%25E6%2599%2593%25E9%259D%25A2%25E8%25AF%2595%25E5%25AE%259D%25E5%2585%25B8/%25E7%25AE%2597%25E6%25B3%2595/%25E7%25BC%2596%25E7%25A8%258B%25E9%25A2%2598/8b5ec292b0898702f3d8c0c1eb08127488982cb7.png" alt="8b5ec292b0898702f3d8c0c1eb08127488982cb7"></li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/juumpq">2022-02-17</a></p>
-<ul>
-<li>如何O(h高度）遍历二叉搜索树？ 利用栈，每次把左左左放入，然后出栈时，右儿子放入后继续左左左放入</li>
-<li>几个数字怎么排列乘一个数字后最大， 只要满足a+b&gt;b+a，那么a就放在前面即可。</li>
-<li>字符串去除前置0的操作：.replaceAll(“^(0+)”, “”)</li>
-<li>字符串a+b和b+a做比较觉得不好，可以改成long整数，分别乘高x10位加另一个数字来比较</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/ysesry">2022-02-16</a></p>
-<ul>
-<li>一个节点的祖先和后代节点集合， 一定包含在他父节点的祖先和后代节点集合</li>
-<li>可根据各节点的祖先和后代节点数量，确认是否是祖先关系，父亲节点是数量最靠近自己的</li>
-<li>后面暂时不做每日一题了，直接按面试高频题进行练习。</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/sndbof/">2022-01-27</a></p>
-<ul>
-<li>注意javaStream.filter中，是满足条件的留下， 而不是剔除。</li>
-<li>边界比较麻烦的问题，要自己写一下UT用例，覆盖边界场景，再写代码，这样就算错了，给人留下的印象也会很不错</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/oswnef/">2022-01-26</a></p>
-<ul>
-<li>快速计算list或者map.values()的最小值方法：Collections.min(collection)</li>
-<li>滑动窗口遵循下面的写法最简单：</li>
-</ul>
-<ol>
-<li>只写一个while循环，即只默认循环加right</li>
-<li>每次都直接把right放入窗口。</li>
-<li>当窗口不满足，则移动左节点直到满足。如果左节点大于右节点，结束左节点的移动。</li>
-<li>计算当前窗口结果。左大于右时，要能算为0</li>
-<li>right++</li>
-</ol>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/riagcz">2022-01-24</a></p>
-<ul>
-<li>求List<integer>的int最大值时，需要先mapToInt， 再求最大值。 如果最大值可能不存在，要用orElse设置默认值</integer></li>
-<li>分子/分母的整除对象做哈希键时，需要做4种处理</li>
-</ul>
-<ol>
-<li>分子必须保证为非负数（如果小于0，则上下都乘-1即可）</li>
-<li>需要求出gcd进行最小约分</li>
-<li>用最大边界来表示这个二维值：（分子/gcd) * 最大边界 + (分母/gcd)</li>
-<li>分子为0，那就简化成（0，1）， 分母为0，那就简化成（1，0）</li>
-</ol>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/bkiugo">2022-01-22</a></p>
-<ul>
-<li>每次提交代码前，必须看一下中间10^5范围的中间结果是否可能超出int范围。</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/qypqat">2022-01-21</a></p>
-<ul>
-<li>对链表题排序， 注意每次排序完部分链表时， 需要更新最后一个节点的next！</li>
-<li>如何对链表做排序，且空间复杂度最小？使用迭代法的归并排序，即自底向上的归并排序。那么就很容易了</li>
-<li>怎么划分2个需要合并的列表?提前把尾部设成null</li>
-<li>合并两个链表时，可以弄一个局部头节点，这种不算空间复杂度，因为是局部变量， 后面会释放掉。</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/vwmdoh/">2022-01-20</a></p>
-<ul>
-<li>无法搜索的博弈论问题，尝试找规律， 当先手选某一步，之后大概率会陷入某类循环中，直到出现胜负。</li>
-<li>不能很快得到公式时，不妨写土方法遍历1下看能否满足循环序列。</li>
-<li>短时间想不到的博弈论问题，直接放弃，博弈论还是比较脑减急转弯的</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/dznylj">2022-01-19</a></p>
-<ul>
-<li>如何避免构建初始滑动窗口的麻烦？可以往右边遍历时，到达某一个边界，才开始删除，就不用构建初始窗口那么麻烦了。</li>
-<li>用迭代模拟递归核心原理：</li>
-</ul>
-<ol>
-<li>node局部变量，指代dfs方法中的node入参。</li>
-<li>当前node还有用，但需要往下搜索时，把自身入栈，再更新node局部变量。</li>
-<li>当stack.pop时，说明已经从dfs(left)或者dfs(right)中走出来了。 则按照递归代码，选择继续走right入栈，还是直接打印自身。</li>
-<li>node=null指代什么？指代必须要用stack.pop，即开始回溯了。当你试图回溯时，不可自己做node=node.right的操作， 而是要通过stack.pop处理</li>
-</ol>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/jngnpk">2022-01-17</a></p>
-<ul>
-<li>因此动规适用于单个结果，不适用于动规路径或者排列。如果需要求路径组合或者一定条件的排列组合，请使用记忆化搜索而不是动态规划。因为记忆化搜索时，只有成功搜索到底部，才会得到记忆化结果</li>
-<li>链表首尾不断相连的解法： 如果涉及从后向前处理的链表，考虑反转链表再操作。 对于中点，使用快慢指针。</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/lqhkby">2022-01-16</a></p>
-<ul>
-<li>感觉不好计算最终数组有几个位置的话，不如直接用list，最后toArrya(new xxx[0])即可<br>
-return results.toArray(new String[0]);</li>
-<li>问题是分配问题，但是却需要你计算一个某最大长度结果，则可以考虑二分法，固定最大长度，再分配。</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/single-number-ii/">2022-01-15</a></p>
-<ul>
-<li>位运算问题，可以考虑“各位的数量&quot;，例如只有1个数字是1个，其他都是3个3个出现，那么可以从每位的1的个数，推断出那个数字（其他肯定要么是1的3倍或者0倍，加起来）</li>
-<li>上一个状态集合是[00,01,10,11]，和数字[0,1]碰撞后,得到一个新的状态集合[x,y…]，则可以画出一个卡诺图， 上一个状态集合看作a\b两个门， 数字[0,1]看作c这个门，从而得到a和b的新状态电路情况<br>
-<img src="/D:/%25E6%259D%258E%25E7%25BB%258D%25E6%2599%2593%25E9%259D%25A2%25E8%25AF%2595%25E5%25AE%259D%25E5%2585%25B8/%25E7%25AE%2597%25E6%25B3%2595/%25E7%25BC%2596%25E7%25A8%258B%25E9%25A2%2598/a8eac0b3823f887071474d90e16e46f2475973e5.png" alt="a8eac0b3823f887071474d90e16e46f2475973e5"></li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/mtrveo">2022-01-14</a></p>
-<ul>
-<li>有时候要求满足复杂规则情况下，求最优结果，则可以考虑拆分成多种规则，取每个位置的最大值或者最小值<br>
-<img src="/D:/%25E6%259D%258E%25E7%25BB%258D%25E6%2599%2593%25E9%259D%25A2%25E8%25AF%2595%25E5%25AE%259D%25E5%2585%25B8/%25E7%25AE%2597%25E6%25B3%2595/%25E7%25BC%2596%25E7%25A8%258B%25E9%25A2%2598/9fc32c38f70bff95f29aa46ba21db777a3362488.png" alt="9fc32c38f70bff95f29aa46ba21db777a3362488"></li>
-</ul>
-<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/gas-station/">2022-01-13</a></p>
-<ul>
-<li>当从i往右滑动到j时，整个过程要求都满足区间和[i, k]大于等于0时， 一旦有[i,j]不满足， 则[i,j]中的任一点都无法作为起点， 因为[i,i]肯定满足&gt;=0，则[i+1,j]肯定变得更小了，以此类推（或者说[i,xxx]这个前缀和肯定都大于0，得到中间任一位置都无法满足）</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/ooypni">2022-01-11</a></p>
-<ul>
-<li>根据障碍数n，计算出一个能围住的最大格数max，如果a能bfs搜到的点大于max，说明没围住。 如果小于，则肯定围住了。<br>
-网格中，障碍个数n能围住的最大格子个数max= n*(n-1)/2</li>
-<li>x=1000000，y=1000000, x<em>y不会超Long， 但是(x+1)</em>(y+1)可能会超</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/cgojnt">2022-01-10</a></p>
-<ul>
-<li>差距某个字母才算相邻的单词相邻问题，可以使用虚拟节点求解。（同理可以作用到数组相邻问题上）<br>
-例如abc可以和bc、ac、ab*这三个虚拟节点相邻。<br>
-其他一样处理， 这样就可以直接连起来<br>
-还要维护id到单词、单词到id的2个映射map。</li>
-<li>双向bfs可以降低空间消耗，但是不能降低过多的时间复杂度</li>
-<li>力扣不支持bigInteger。如果在35位范围内，可以尝试使用Double表示大整数。如果长达几百上千位，就只能自己写string大整数加法了。</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/pspxgi">2022-01-08</a></p>
-<ul>
-<li>力扣竞赛，示例的正确答案在右边，不要看错了</li>
-<li>可以先写一些用例，在跑，减少罚分，养成习惯</li>
-<li>给你一堆固定长宽矩形的左上顶点， 让你判断某个点是否被任一矩形包含，则 可以反向前缀和， 求这个点的左上矩形区间内是否包含矩形顶点即可</li>
-<li>前缀和别写错，注意要-1的都是左上角顶点坐标<br>
-<img src="/D:/%25E6%259D%258E%25E7%25BB%258D%25E6%2599%2593%25E9%259D%25A2%25E8%25AF%2595%25E5%25AE%259D%25E5%2585%25B8/%25E7%25AE%2597%25E6%25B3%2595/%25E7%25BC%2596%25E7%25A8%258B%25E9%25A2%2598/fd9f505ce39b64eaebad16f0e4445fe305526913.png" alt="fd9f505ce39b64eaebad16f0e4445fe305526913"></li>
-</ul>
-<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/pascals-triangle-ii/">2022-01-06</a></p>
-<ul>
-<li>组合数C(n,m)可以用杨辉三角求， 杨辉三角的n行m列等同于C(n,m)</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/swqraj">2022-01-05</a></p>
-<ul>
-<li>遍历小写字母， 用for(c = ‘a’;c&lt;=‘z’;c++)而不是for (j = 0; j &lt; 26; j++) { （char）(j+‘a’)}</li>
-<li>能用spilt分割就用spilt，别自己分割,容易搞错</li>
-<li>当给树添加新的指针，让你做常见遍历，却要你用常数空间时，一定是利用新指针当作线索来做遍历，避免了用栈或者队列。</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/xjzpvn">2022-01-04</a></p>
-<ul>
-<li>树的搜索， 用迭代替代递归的关键点：</li>
-</ul>
-<ol>
-<li>node局部变量等同于dfs(Node node)里的node入参</li>
-<li>while(node = node.left) 等同于走dfs(node.left)</li>
-<li>取栈顶， 等同于if(node==null) return的这个边界</li>
-<li>node.right 入栈， node = node.right 等同于dfs(node.right)</li>
-</ol>
-<ul>
-<li>要求空间复杂度为1的树中序遍历， 考虑利用左子树的最右节点的right空闲指针，指向自己，来快速跳转</li>
-<li>二叉搜索树寻找问题节点， 直接遍历得到list，然后排序，就能找到问题节点了。</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/odfefu">2022-01-03</a></p>
-<ul>
-<li>矩阵最大面积问题，提前想到单调栈，固定自身高度h，左右扩展。</li>
-<li>计算星期几、日期相关题目， 统一用减去1970年12月31日的方式，拿到时隔多少天， 用天数去判断</li>
-<li>子集问题，直接dfs，不要想着骚操作搞for循环，太容易写错了。避免重复，就是那个原则“必须连着选相同的，不能跨着选相同的”</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/ddyvlk">2022-01-01</a></p>
-<ul>
-<li>如果是单调栈的题目，最终肯定只需要使用栈头的元素。 如果你发现需要遍历栈中所有元素，导致高度和宽度全在变化导致无法计算， 可以看一下是不是改变计算思路，固定自身为某个高度，而不是去寻找前面的某个高度。</li>
-<li>把上一组n阶的格雷码集合 都在头部加一个1， 然后倒序加进来即可。（可以理解为先头部加个1跳进去，然后反向走一遍，就肯定能保证走回去了）</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/cxdaku">2021-12-30</a></p>
-<ul>
-<li>不要看到总数为n，分组长度最大为n，就认为自己的双重for循环可能有O(n^2)的复杂度。<br>
-对于会提前结束/退出判断的情况来说， 双重for可能最多就O(n)，循环就会结束了</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/uynbou">2021-12-29</a></p>
-<ul>
-<li>a+b+c=d的等式问题， 可以转化为a+b=d-c问题</li>
-<li>4个点的复杂滑动窗口问题， 可以只滑动中间点， 左边当区间复用历史结果， 右边做遍历。</li>
-<li>从某序列变成某序列的“最短编辑距离”问题， 可以考虑动态规划， 判断从子序列A变成子序列B时，能通过做哪些动作实现部分匹配，再判断剩下子序列a和子序列b的最短距离即可。<br>
-<img src="/D:/%25E6%259D%258E%25E7%25BB%258D%25E6%2599%2593%25E9%259D%25A2%25E8%25AF%2595%25E5%25AE%259D%25E5%2585%25B8/%25E7%25AE%2597%25E6%25B3%2595/%25E7%25BC%2596%25E7%25A8%258B%25E9%25A2%2598/b126300997a64998cce44f429188d3f512dbbed6.png" alt="b126300997a64998cce44f429188d3f512dbbed6"></li>
-</ul>
-<hr>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/btbzyn">2021-12-28</a></p>
-<ul>
-<li>List&lt;int[]&gt; result如何转int[][]?      result.toArray(new int[0][0]);</li>
-<li>问你某某走法的数量，却要求空间限制，无法动态规则，则考虑组合数。</li>
-<li>组合数快速解法：</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C(<span class="number">8</span>,<span class="number">3</span>) = <span class="number">8</span> * <span class="number">7</span> * <span class="number">6</span> /(<span class="number">3</span> * <span class="number">2</span>* <span class="number">1</span>) =( ((((<span class="number">6</span> / <span class="number">1</span>) * <span class="number">7</span>) / <span class="number">2</span>) * <span class="number">8</span>) / <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/friends-of-appropriate-ages/">2021-12-27</a></p>
-<ul>
-<li>当数量很大，但是数值范围很小，却要你做二分、排序或者区间统计时，优先考虑直接用数组做计数排序/计数前缀和。</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/agaioj/">2021-12-26</a></p>
-<ul>
-<li>快速只保留末尾的1，其他全置0： b &amp;(-b)</li>
-<li>快速剔除末尾的1： b &amp;(b-1)</li>
-<li>全排列问题， 直接搜索每个位置能放谁，从0开始遍历+vis数组</li>
-<li>重复问题的剪枝：只能连续插入重复的数字，不能跳跃着放重复数字。因为跳跃了的话，前面完全可以搜过一样的情况</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/longest-duplicate-substring/">2021-12-23</a></p>
-<ul>
-<li>遇到特定长度的<strong>子串/子数组</strong>是否<strong>重复/已存在</strong>的问题，可以考虑用字符串哈希</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/heaters/">2021-12-20</a></p>
-<ul>
-<li>二分的最大right记得想清楚，不确定的话直接Integer.MAX_Value就行</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/pdosib">2021-12-19</a></p>
-<ul>
-<li>问你最少替换几个数字， 可以变成递增序列， 其实 可以变成“求出最长递增子序列后， 剩下的就是要变的数字”。 或者说替换几个东西，可以变成xxxx， 是否可以改成求 最长的xxxxx，然后剩下的就是要改变的东西</li>
-<li>如果设计key-value的value二分， 不要试图用treeMap，因为treeMap是基于key排序的。 做更新操作会恶心死自己，不如直接基于key二分，然后判断value</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/valid-sudoku/">2021-12-14</a></p>
-<ul>
-<li>数独判断的问题记得先写针对区间的check函数，再判断，会简化很多操作。<br>
-<img src="/D:/%25E6%259D%258E%25E7%25BB%258D%25E6%2599%2593%25E9%259D%25A2%25E8%25AF%2595%25E5%25AE%259D%25E5%2585%25B8/%25E7%25AE%2597%25E6%25B3%2595/%25E7%25BC%2596%25E7%25A8%258B%25E9%25A2%2598/9c00e5b295a063c590a4e969521709d8d673cdb4.png" alt="9c00e5b295a063c590a4e969521709d8d673cdb4"></li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/tlehxw">2021-12-13</a></p>
-<ul>
-<li>旋转数组二分问题，每次找有序的那段，再去判断</li>
-<li>旋转数组如果有重复数字，提前处理左右边界都相等的情况，都+1和-1，这样就省了很多复杂场景了</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/maximum-fruits-harvested-after-at-most-k-steps/">2021-12-12</a></p>
-<ul>
-<li>滑动窗口求最大值问题时，不要忘记求初始窗口时的最大值更新。</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/dzqyun">2021-12-11</a></p>
-<ul>
-<li>排序过程如果涉及索引，可以考虑弄一个索引i的数组，对i做排序，不需要带着索引弄个二维数组很麻烦</li>
-<li>Arrays.sort如果要对int[]数组自定义排序， 应该使用Integer[]而不是int[]数组。</li>
-<li>如果滑动窗口如果发现删除点的操作比较麻烦，可以尝试事先利用数组特性预计算一些前缀和等数据，提前算好那个区间的值，而不需要去考虑移动时点的更新。</li>
-<li>bfs时，一定要记得第一个入队的点需要设置vis[x] = true，这个很容易漏！</li>
-</ul>
-<hr>
-<p>这下面的是从旧往前， 而最新的都改成了新的放上面</p>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/waggvn">2021-10-07</a></p>
-<ul>
-<li>复杂字符串解析问题， 尽可能避免边解析边计算，可以分成2步来做，先解析成N个字符串，再依次判断和计算。</li>
-<li>并查集问题，涉及边界相连的情况，可以将边界认为是一种集合。</li>
-<li>二维点问题，尽可能用index = getIndex(y,x) 获取二维索引， 避免大量二维数组操作， 用InArea(y,x)方法减少判断代码。</li>
-</ul>
-<hr>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/nfzhwn">2021-10-08</a></p>
-<ul>
-<li>相连、成环问题，都要想到可能和并查集有关</li>
-<li>对于复杂的模拟过程题目，一定要自己在纸上把几种情况列出来，切忌脑测然后想出一个完全不合理的解决思路。</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/jnvvwv">2021-10-09</a></p>
-<ul>
-<li>字典树的使用和查询过程，切忌偷懒，不要漏了走到null节点结束查询的情况。</li>
-<li>迷宫理论：  总共n种位置，走了2n步，则一定是死循环，无法走出（在博弈题里即平局）</li>
-<li>动态规划，记得步长或者回合数是可以当状态的， 不要漏了这个，不要死脑筋只想着做状态压缩</li>
-<li>位图状态压缩，力扣题几乎都是16位情况的压缩， 几乎不会出现32位以上的，超过这些，则考虑是否可以不需要记录走过的点之类的。</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/fatqmp">2021-10-10</a></p>
-<ul>
-<li>一组数字，如果只能加和减任意x，且要求最终相等， 他们必定互相之间的差值是x的倍数</li>
-<li>求和问题、绝对值问题，注意最好先自己用数学公式推导一下，更容易快速理解思路，切忌胡思乱想</li>
-</ul>
-<hr>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/kvplxk">2021-10-11</a></p>
-<ul>
-<li>交替复制的问题，可以使用双指针来做</li>
-<li>优先队列：a是上面的点，b是下面的点（儿子节点），(a,b)返回大于0的时候，则交换</li>
-<li>涉及排序变化，由数组A变成数组B的问题， 确定一下是否存在 ”稳定排序“，即不会跨相同数字变动， 能确定的话，就可以确定数组B中每个数字是由哪些位置的数字变化而来， 从而找到突破口</li>
-</ul>
-<hr>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/giskpp">2021-10-15</a></p>
-<ul>
-<li>什么情况下Arrays.stream(数组)之后不需要boxed()？ 即不是int[]、long[]这种需要转包装类型才能变成list的情况</li>
-<li>记忆一下.collect(Collectors.toList()))</li>
-<li>滑动窗口， 建议先用for循环移动右边， 确定右边的位置后，再用while移动左边找到满足条件的左边界， 这样可以简化很多判断<br>
-<img src="/D:/%25E6%259D%258E%25E7%25BB%258D%25E6%2599%2593%25E9%259D%25A2%25E8%25AF%2595%25E5%25AE%259D%25E5%2585%25B8/%25E7%25AE%2597%25E6%25B3%2595/%25E7%25BC%2596%25E7%25A8%258B%25E9%25A2%2598/d987e1f51885cc3c4a0c5d2b059a8e2ca5633145.png" alt="d987e1f51885cc3c4a0c5d2b059a8e2ca5633145"></li>
-</ul>
-<hr>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/ibmlji">2021-10-16</a></p>
-<ul>
-<li>数组A和数组B个数相同，B里的每个值要通过+1、-1变成A时，需要的次数为 ”AB分别排序后，每个i位置的Math.abs(a[i] - b[i])总和“</li>
-<li>即使心态不好， 也要仔细审题加看例子，不能不理会用例，错过用例很可能就理解错误导致gg</li>
-<li>边比较少点比较多的情况时，如果要求最短路径， 则用bfs，不需要djkstra</li>
-<li>bfs求最短路径时， 只需要newDis &lt; dis[node],再入队即可，且不需要做很多的vis判断。记住这个bfs求最短路<br>
-<img src="/D:/%25E6%259D%258E%25E7%25BB%258D%25E6%2599%2593%25E9%259D%25A2%25E8%25AF%2595%25E5%25AE%259D%25E5%2585%25B8/%25E7%25AE%2597%25E6%25B3%2595/%25E7%25BC%2596%25E7%25A8%258B%25E9%25A2%2598/3c84111fe71f4a886bab0bd1b28816389c78b017.png" alt="3c84111fe71f4a886bab0bd1b28816389c78b017"></li>
-</ul>
-<hr>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/lubjor">2021-10-17</a></p>
-<ul>
-<li>n个数小于16的时候， 如果题目涉及选或者不选，那么是可以直接暴力枚举出所有的情况的，不需要用dp缓存之类的。<br>
-利用下面的代码求某一位怎么用上，不需要vis数组或者while除2啥的很麻烦的那种</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>;j&lt;len;j++) &#123;</span><br><span class="line">     <span class="comment">// 说明那个数字做过亦或，不需要vis数组</span></span><br><span class="line">     <span class="keyword">if</span> ( (i &amp; (<span class="number">1</span>&lt;&lt;j)) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">         <span class="comment">// 选中了nums[j]， 拿nums[j]做对应的操作;</span></span><br><span class="line">       &#125;</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>某DAG点如果可以重复走，那么当你走到某个位置时，其最小路径和次小路径已可以在出现后确定，后面的情况斗则可以不用考虑。</li>
-</ul>
-<hr>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/xacmxh/">2021-10-22</a></p>
-<ul>
-<li>字符串日期天数问题，可以直接取一个基线例如1971年来计算天数。</li>
-<li>快速将map的key变成list的方式, 注意记忆.collect(Collectors.toList())：</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Character&gt; keyList = map.keySet().stream().collect(Collectors.toList())</span><br></pre></td></tr></table></figure>
-<hr>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/rubjpq">2021-10-23</a></p>
-<ul>
-<li>树的层序遍历打印不一定要用bfs， dfs也行的，就不用存object[]了。</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/jmcdff/">2021-10-24</a></p>
-<ul>
-<li>下次碰到复杂单词校验，如果正则忘记了，则直接上状态机，会简单很多。</li>
-<li>状态变化设置不要放在枚举的构造器里做，初始化可能会出现null，如果顺序不对的话。放static块中做</li>
-<li>注意Arrays.stream()不支持对char[]操作。</li>
-<li>当遇到答案是乘起来或者很多数字加起来的时候， 最好直接改成long做计算，避免溢出。</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/dcugfw">2021-10-29</a></p>
-<ul>
-<li>链表转换题中，注意如果left和right会变化，则你原本想递归的东西可能会变动， 因此要提前缓存</li>
-<li>Math.ceil（） 可以实现向上取整， floor向下取整</li>
-<li>Math.log可以求 Math.log(a) /Math.log(b) 等同于loga（b）</li>
-</ul>
-<hr>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/dcugfw">2021-10-30</a></p>
-<ul>
-<li>教训： 深度搜索时， 主要先确定层级，如果有n个东西必须做某件事，那就拿这东西做层级，中间for循环搜不同情况即可， 东西搜完了就说明符合条件</li>
-<li>注意，涉及按时间在图上走的情况，是可以制造一个三维的图（数组），用时间做某一个维度即可避免冲突或者搞乱。</li>
-</ul>
-<hr>
-<p>2021-11-21</p>
-<ul>
-<li>遇到边界问题很难受，不知道-1还是-0的，自己冷静下来模拟一下</li>
-<li>1-9有9个<em>1位， 10-99的有90个</em>2位，   100-999有900个*3位， 问你第1000位是1-∞中的哪个数字。<br>
-这时候冷静处理闭上列出来    9个  180个  811个<br>
-811个中，分别是  100 101 102 103<br>
-让序号从0开始，则811-1 = 810， 然后用除法和取余即可。</li>
-<li>注意要用到取余判断某位是什么时，记得序号从0开始</li>
-</ul>
-<hr>
-<p>2021-11-22</p>
-<ul>
-<li>洗牌算法： 数组0-n，每次对n随机取余后，将对应位置的数字交换到最后一位，然后减少n，继续操作。</li>
-<li>rand.nextInt()的范围是负无穷到正无穷， 如果rand.nextInt()%M， 则范围为-M 到M。 因此应该改成rand.nextInt(M)， 则范围为0-M-1</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/bsrxpi">2021-11-24</a></p>
-<ul>
-<li>stream中join的用法：.collect(Collectors.joining(“,”))，    而不是直接join</li>
-<li>环形数组如果要求避免头尾相碰，  可以选择去掉头或者去掉尾，做2次， 就能不考虑环的问题了</li>
-<li>动规、个数问题，优先考虑 dp[从i到末尾][某条件]  而非用区间去判断</li>
-</ul>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/boundary-of-binary-tree/submissions/">2021-11-25</a></p>
-<ul>
-<li>树的左边界、叶子、右边界问题，  如果时间紧急，用3次遍历解决即可。  如果追求代码精致， 则用2个标记，不断往下传递，根据情况变化，需要自己考虑好边界条件，慎用。<br>
-<img src="/D:/%25E6%259D%258E%25E7%25BB%258D%25E6%2599%2593%25E9%259D%25A2%25E8%25AF%2595%25E5%25AE%259D%25E5%2585%25B8/%25E7%25AE%2597%25E6%25B3%2595/%25E7%25BC%2596%25E7%25A8%258B%25E9%25A2%2598/e0d7714912cb467741ce63ebb6430b7300a96e1e.png" alt="e0d7714912cb467741ce63ebb6430b7300a96e1e"></li>
-</ul>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/random-flip-matrix/">2021-11-26</a></p>
-<ul>
-<li>如果要求在10000*10000的数字中进行多次不重复的随机选取， 内存不够的情况下， 可以利用map映射，将已被选的数字和末尾数组数字进行映射。<br>
-<img src="/D:/%25E6%259D%258E%25E7%25BB%258D%25E6%2599%2593%25E9%259D%25A2%25E8%25AF%2595%25E5%25AE%259D%25E5%2585%25B8/%25E7%25AE%2597%25E6%25B3%2595/%25E7%25BC%2596%25E7%25A8%258B%25E9%25A2%2598/4cb1e2e718d8888408ecc5093f3ba79375869d08.png" alt="4cb1e2e718d8888408ecc5093f3ba79375869d08"></li>
-</ul>
-<hr>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/kiarwh">2021-11-28</a></p>
-<ul>
-<li>最大最小值问题，一定要注意如果最大最小是同一个值的情况</li>
-<li>Math.abs(a-b)-1 误写成了 Math.abs(a-b-1)， 绝对值计算一定要注意-1是不是写错位置了</li>
-<li>带条件的并查集（即满足条件才能相连）， 应当按时间顺序做尝试性连接， 连完后发现不符合条件，则要重置该节点的parent，避免后面连错。</li>
-<li>并查集结果返回时，返回前的判断应该是 findParent(node) 是否满足而非parent[node]是否满足， 因为可能还没做压缩。</li>
-</ul>
-<hr>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/lkizjq">2021-11-29</a></p>
-<ul>
-<li>迭代法前序遍历树： 往栈里放儿子时，直接倒序放入即可。</li>
-<li>如果前面的信息可以利用，则考虑用滑动窗口，减少空间占用。（删掉一个元素以后全为 1 的最长子数组）</li>
-<li>原地矩阵置0问题， 考虑用第一行和第一列来做临时存储，然后用标记变量判断第一列和第一行是否需要置0。</li>
-</ul>
-<hr>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/vbvqcg/">2021-11-30</a></p>
-<ul>
-<li>数字不相邻排列问题，按数量从大到小插入，插入时先偶数位插入，再奇数位插入，则一定保证题目要求</li>
-<li>统计子串中的唯一字串。碰到某些问x唯一的情况， 想办法从x的角度出发找唯一的串或者子序列。</li>
-<li>想不到的时候，试着换一个维度去，原本是从a推b， 看下能否从b推a</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/number-of-enclaves/">2021-12-01</a></p>
-<ul>
-<li>String自身按照字段序重新组合方法：</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span>[] cs = str.toCharArray();</span><br><span class="line">Arrays.sort(cs);</span><br><span class="line"><span class="type">String</span> <span class="variable">key</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>().append(cs).toString();</span><br></pre></td></tr></table></figure>
-<ul>
-<li>bfs题，注意y\x\ny\ny不要写错，每次写完检查一下<br>
-<img src="/D:/%25E6%259D%258E%25E7%25BB%258D%25E6%2599%2593%25E9%259D%25A2%25E8%25AF%2595%25E5%25AE%259D%25E5%2585%25B8/%25E7%25AE%2597%25E6%25B3%2595/%25E7%25BC%2596%25E7%25A8%258B%25E9%25A2%2598/5f3365c64c94fd12501c5136b52bfca74ad582f6.png" alt="5f3365c64c94fd12501c5136b52bfca74ad582f6"></li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/zwqvwy">2021-12-02</a></p>
-<ul>
-<li>求最长回文子串， 注意  i和前面某中心的对称节点j， 则j的回文长度信息是可以进行利用的。</li>
-<li>全排列不一定要用dfs去搜索。因为 第4位时，它的可能性就是前面3位的可能性总和再拼上第四位。因此一直记录当前result全集， 然后走到第x位时，让第x位和result全集拼接，再生成一个新的result集合</li>
-<li>k的子变量不要用kk， 同理不要用ii作为i的自变量， 很容易写错， 应该是indexK之类的，做到第一位不同，否则很容易写错。</li>
-</ul>
-<hr>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/mvulve/">2021-12-04</a></p>
-<ul>
-<li>如果本来是可以利用哈希表，但要求原地算法的题目， 则可以考虑用数组本身作为哈希表</li>
-<li>数组迭代期间不要试图取更新数组值，因为更新的话迭代的nums是会变的，并不是不变的。</li>
-<li>涉及运算符的题目， 用switch+string的特性即可， 不用搞OP枚举，太容易错了</li>
-<li>二维场景加？：表达式很容易漏加括号<br>
-<img src="/D:/%25E6%259D%258E%25E7%25BB%258D%25E6%2599%2593%25E9%259D%25A2%25E8%25AF%2595%25E5%25AE%259D%25E5%2585%25B8/%25E7%25AE%2597%25E6%25B3%2595/%25E7%25BC%2596%25E7%25A8%258B%25E9%25A2%2598/e0f19882380cf45d20ff05564b14a013cde11b8e.png" alt="e0f19882380cf45d20ff05564b14a013cde11b8e"></li>
-<li>二维场景如果不想加边界判断， 可以用这种扩充边界思路， counts设置成 counts[m+2][n+2]， 然后坐标从1，1开始即可。</li>
-</ul>
-<hr>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/nhyavd">2021-12-05</a></p>
-<ul>
-<li>简单题如果发现要很麻烦的dfs时，直接看下数据范围，确认能否从全集上去直接计算结果，而非从搜索去推导结果。</li>
-<li>求公共祖先或者树点到树点路径， 除了向上求祖先之类的外， 还可以用前缀法， 即求出根到2个点的路径，去除相同前缀即可。</li>
-<li>给一堆边，让你把他连成一条线（一笔画问题），且题目保证有借， 则考虑这是欧拉问题。 起点和终点是能明确的，直接用Hierholzer算法求。 具体见<a href>欧拉路径</a></li>
-<li>即需要边搜索边删除’边’的情况， 可考虑存储边的迭代器引用后，再进行搜索</li>
-</ul>
-<hr>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/cksuqu">2021-12-07</a></p>
-<ul>
-<li>括号的全排列问题， 可以用 (a)b的形式去利用a、b缓存逐步求解，不需要dfs</li>
-<li>treeMap的floor 和celling总是记不清， floor——浮——水——    要找的值在水上，但是只有下面的水key</li>
-</ul>
-<hr>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/ltmjvy">2021-12-09</a></p>
-<ul>
-<li>KMP算法的本质是[前缀-后缀]匹配算法， 后缀不匹配时，快速找到之前匹配部分的前缀位置。</li>
-<li>是否可按线性跳跃到某点的问题，如果发现从后往前不好判断，会超时，则试着从前往后，根据当前最远到达位置判断， 有点类似于bfs。</li>
-<li>a+b&gt;c时如果a+b可能溢出，则改成减法 a&gt;b-c</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="http://doc.minidown.cn/ppidmj/">2021-12-10</a></p>
-<ul>
-<li>不要做这种map.get()==map.get()的操作，高危操作。 Integer的==是引用。 要用equals。</li>
-<li>滑动窗口中的个数匹配问题，用下面这种if-else去判断是+1还是-1。<br>
-<img src="69541d637f6c32d66f7415fe3ea1026572937dd6.png" alt="69541d637f6c32d66f7415fe3ea1026572937dd6"></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/home/page/6/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/home/">1</a><span class="space">&hellip;</span><a class="page-number" href="/home/page/6/">6</a><span class="page-number current">7</span>
+    <a class="extend prev" rel="prev" href="/home/page/6/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/home/">1</a><span class="space">&hellip;</span><a class="page-number" href="/home/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/home/page/8/">8</a><a class="extend next" rel="next" href="/home/page/8/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1760,7 +2689,7 @@ return results.toArray(new String[0]);</li>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">66</span>
+          <span class="site-state-item-count">71</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1831,7 +2760,7 @@ return results.toArray(new String[0]);</li>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共153.9k字</span>
+  <span class="post-count">博客全站共161.7k字</span>
 </div>
 
         
