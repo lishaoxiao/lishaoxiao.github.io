@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="客户端的双向流调用 服务端的处理方式：     [toc] http:&#x2F;&#x2F;doc.oschina.net&#x2F;grpc?t&#x3D;60134 一个 双向流式 RPC 是双方使用读写流去发送一个消息序列。 两个流独立操作，因此客户端和服务器 可以以任意喜欢的顺序读写： 比如， 服务器可以在写入响应前等待接收所有的客户端消息 或者可以交替 的读取和写入消息 或者其他读写的组合。 每个流中的消息顺序被预留。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="grpc双向流及应用">
+<meta property="og:url" content="http://breakdawncoder.com/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%8F%8C%E5%90%91%E6%B5%81%E5%8F%8A%E5%BA%94%E7%94%A8/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="客户端的双向流调用 服务端的处理方式：     [toc] http:&#x2F;&#x2F;doc.oschina.net&#x2F;grpc?t&#x3D;60134 一个 双向流式 RPC 是双方使用读写流去发送一个消息序列。 两个流独立操作，因此客户端和服务器 可以以任意喜欢的顺序读写： 比如， 服务器可以在写入响应前等待接收所有的客户端消息 或者可以交替 的读取和写入消息 或者其他读写的组合。 每个流中的消息顺序被预留。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-08-25T15:47:49.000Z">
+<meta property="article:modified_time" content="2022-08-25T16:29:56.582Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="开源代码,grpc">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://breakdawncoder.com/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%8F%8C%E5%90%91%E6%B5%81%E5%8F%8A%E5%BA%94%E7%94%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>grpc双向流及应用 | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%8F%8C%E5%90%91%E6%B5%81%E5%8F%8A%E5%BA%94%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          grpc双向流及应用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-25 23:47:49" itemprop="dateCreated datePublished" datetime="2022-08-25T23:47:49+08:00">2022-08-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-26 00:29:56" itemprop="dateModified" datetime="2022-08-26T00:29:56+08:00">2022-08-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/" itemprop="url" rel="index"><span itemprop="name">开源代码</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index"><span itemprop="name">grpc远程调用框架</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%8F%8C%E5%90%91%E6%B5%81%E5%8F%8A%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%8F%8C%E5%90%91%E6%B5%81%E5%8F%8A%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#ke-hu-duan-de-shuang-xiang-liu-diao-yong">客户端的双向流调用</a></li>
+<li><a href="#fu-wu-duan-de-chu-li-fang-shi">服务端的处理方式：</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<p><a target="_blank" rel="noopener" href="http://doc.oschina.net/grpc?t=60134">http://doc.oschina.net/grpc?t=60134</a><br>
+一个 双向流式 RPC 是双方使用读写流去发送一个消息序列。<br>
+两个流独立操作，因此客户端和服务器 可以以任意喜欢的顺序读写：<br>
+比如， 服务器可以在写入响应前等待接收所有的客户端消息<br>
+或者可以交替 的读取和写入消息<br>
+或者其他读写的组合。</p>
+<p>每个流中的消息顺序被预留。你可以通过在请求和响应前加 stream 关键字去制定方法的类型。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Accepts a stream of RouteNotes sent while a route is being traversed,</span></span><br><span class="line"><span class="comment">// while receiving other RouteNotes (e.g. from other users).</span></span><br><span class="line">rpc <span class="title function_">RouteChat</span><span class="params">(stream RouteNote)</span> returns (stream RouteNote) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h1><span id="ke-hu-duan-de-shuang-xiang-liu-diao-yong">客户端的双向流调用</span><a href="#ke-hu-duan-de-shuang-xiang-liu-diao-yong" class="header-anchor">#</a></h1>
+<ol>
+<li>定义一个reponseOberserver， 即响应观察者，用于定义如何处理服务端返回的消息。 一般都是把消息放到一个某个阻塞队列或者单容量队列SettableFuture中。</li>
+<li>调用stub.sendMessage(reponseOberserver)，  即告诉grpc框架， 我要用这个reponseOberserver去处理sendMessage消息的响应。<br>
+注意，这个sendMesage方法名，取决于我们的proto中怎么定义的。</li>
+<li>然后stub.sendMessage()方法回返回给我们一个requestObserver，让我们用这个观察者.onNext()去发送请求，可以任意发多次，都是立刻返回的。</li>
+<li>当不需要再发送时，可以调用onCompleted告知对方可以结束了</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">routeChat</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">   info(<span class="string">&quot;*** RoutChat&quot;</span>);</span><br><span class="line">   <span class="keyword">final</span> SettableFuture&lt;Void&gt; finishFuture = SettableFuture.create();</span><br><span class="line">   <span class="comment">// 定义了如何处理收到的返回消息观察者</span></span><br><span class="line"><span class="type">StreamObserver</span> <span class="variable">reponseObserver</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StreamObserver</span>&lt;RouteNote&gt;() &#123;</span><br><span class="line">         <span class="meta">@Override</span></span><br><span class="line">         <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNext</span><span class="params">(RouteNote note)</span> &#123;</span><br><span class="line">           info(<span class="string">&quot;Got message \&quot;&#123;0&#125;\&quot; at &#123;1&#125;, &#123;2&#125;&quot;</span>, note.getMessage(), note.getLocation()</span><br><span class="line">               .getLatitude(), note.getLocation().getLongitude());</span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">         <span class="meta">@Override</span></span><br><span class="line">         <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onError</span><span class="params">(Throwable t)</span> &#123;</span><br><span class="line">           finishFuture.setException(t);</span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">         <span class="meta">@Override</span></span><br><span class="line">         <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onCompleted</span><span class="params">()</span> &#123;</span><br><span class="line">		<span class="comment">// 往finishFuture设置空时，说明完成了消息流关闭了</span></span><br><span class="line">           finishFuture.set(<span class="literal">null</span>);</span><br><span class="line">         &#125;</span><br><span class="line">       &#125;;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 框架返回给我一个请求流观察者，让我用这个观察者.onNext（message）去发请求， 返回结果和我传给他的responseServer绑定了。</span></span><br><span class="line">   StreamObserver&lt;RouteNote&gt; requestObserver =</span><br><span class="line">       asyncStub.routeChat();</span><br><span class="line"></span><br><span class="line">   <span class="keyword">try</span> &#123;</span><br><span class="line">     RouteNote[] requests =</span><br><span class="line">         &#123;newNote(<span class="string">&quot;First message&quot;</span>, <span class="number">0</span>, <span class="number">0</span>), newNote(<span class="string">&quot;Second message&quot;</span>, <span class="number">0</span>, <span class="number">1</span>),</span><br><span class="line">             newNote(<span class="string">&quot;Third message&quot;</span>, <span class="number">1</span>, <span class="number">0</span>), newNote(<span class="string">&quot;Fourth message&quot;</span>, <span class="number">1</span>, <span class="number">1</span>)&#125;;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">for</span> (RouteNote request : requests) &#123;</span><br><span class="line">       info(<span class="string">&quot;Sending message \&quot;&#123;0&#125;\&quot; at &#123;1&#125;, &#123;2&#125;&quot;</span>, request.getMessage(), request.getLocation()</span><br><span class="line">           .getLatitude(), request.getLocation().getLongitude());</span><br><span class="line">       requestObserver.onNext(request);</span><br><span class="line">     &#125;</span><br><span class="line">     requestObserver.onCompleted();</span><br><span class="line"></span><br><span class="line">     finishFuture.get();</span><br><span class="line">     info(<span class="string">&quot;Finished RouteChat&quot;</span>);</span><br><span class="line">   &#125; <span class="keyword">catch</span> (Exception t) &#123;</span><br><span class="line">     requestObserver.onError(t);</span><br><span class="line">     logger.log(Level.WARNING, <span class="string">&quot;RouteChat Failed&quot;</span>, t);</span><br><span class="line">     <span class="keyword">throw</span> t;</span><br><span class="line">   &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<h1><span id="fu-wu-duan-de-chu-li-fang-shi">服务端的处理方式：</span><a href="#fu-wu-duan-de-chu-li-fang-shi" class="header-anchor">#</a></h1>
+<ol>
+<li>我们建立服务端的时候，需要调用nettyServer，建立netty服务，并绑定一个xxxServiceImpl抽象类。 这个xxxServiceImpl就是我们在proto中定义的server结构，支持处理我们定义的消息。</li>
+<li>xxxServiceImpl中， 有很多需要覆写的方法， 需要你定义如何处理收到的请求， 以及如何给客户端发送响应。发送响应的动作就是参数里的requestObserver.onNext(响应消息)</li>
+<li>返回的xxxService类，会在第一步提供给netty以及grpc框架，  收到消息时，会通过他的异步机制，分隔网络线程和业务线程，走到这边执行的地方。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span>	<span class="title class_">xxxService</span> extend   xxxServiceImpl&#123;</span><br><span class="line">     <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">listFeatures</span><span class="params">(Rectangle request, StreamObserver&lt;Feature&gt; responseObserver)</span> &#123;</span><br><span class="line">      <span class="type">int</span> <span class="variable">left</span> <span class="operator">=</span> min(request.getLo().getLongitude(), request.getHi().getLongitude());</span><br><span class="line">      <span class="type">int</span> <span class="variable">right</span> <span class="operator">=</span> max(request.getLo().getLongitude(), request.getHi().getLongitude());</span><br><span class="line">      <span class="type">int</span> <span class="variable">top</span> <span class="operator">=</span> max(request.getLo().getLatitude(), request.getHi().getLatitude());</span><br><span class="line">      <span class="type">int</span> <span class="variable">bottom</span> <span class="operator">=</span> min(request.getLo().getLatitude(), request.getHi().getLatitude());</span><br><span class="line"></span><br><span class="line">      <span class="keyword">for</span> (Feature feature : features) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!RouteGuideUtil.exists(feature)) &#123;</span><br><span class="line">          <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> <span class="variable">lat</span> <span class="operator">=</span> feature.getLocation().getLatitude();</span><br><span class="line">        <span class="type">int</span> <span class="variable">lon</span> <span class="operator">=</span> feature.getLocation().getLongitude();</span><br><span class="line">        <span class="keyword">if</span> (lon &gt;= left &amp;&amp; lon &lt;= right &amp;&amp; lat &gt;= bottom &amp;&amp; lat &lt;= top) &#123;</span><br><span class="line">          responseObserver.onNext(feature);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      responseObserver.onCompleted();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%8F%8C%E5%90%91%E6%B5%81%E5%8F%8A%E5%BA%94%E7%94%A8/" title="grpc双向流及应用">http://breakdawncoder.com/2022/08/25/知识库/开源代码/grpc/grpc双向流及应用/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81-grpc/" rel="tag"># 开源代码,grpc</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/08/25/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-25/" rel="prev" title="2022-0825">
+      <i class="fa fa-chevron-left"></i> 2022-0825
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/08/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" rel="next" title="grpc底层原理">
+      grpc底层原理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">客户端的双向流调用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">服务端的处理方式：</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">84</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共189.4k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

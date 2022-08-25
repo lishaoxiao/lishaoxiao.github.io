@@ -18,7 +18,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="HTTPS防护常见问题  Q: 讲一下HTTPS双向认证的过程？ Q: 为什么不使用非对称密钥加密 传输数据， 而要用对称密钥这样绕一大圈？ Q: 为什么数据开始传输之后不需要再做验签， 难道者中间的数据就不会再被人篡改或者替换吗？ Q: CA根证书可能被造假吗？ Q: 黑客把这个服务端返回的证书， 保存下来，然后下次别人访问黑客的钓鱼网站时， 黑客把这个证书原封不动发回去，会通过验证吗？">
@@ -107,6 +107,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -126,11 +127,38 @@
     <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -387,12 +415,12 @@ token进行加密处理，将请求 URL、时间戳、加密后的token、 三�
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2022/08/20/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/log4j%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/" rel="prev" title="log4j远程调用漏洞详解">
-      <i class="fa fa-chevron-left"></i> log4j远程调用漏洞详解
+    <a href="/2022/08/19/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-19/" rel="prev" title="2022-0819">
+      <i class="fa fa-chevron-left"></i> 2022-0819
     </a></div>
       <div class="post-nav-item">
-    <a href="/2022/08/20/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/" rel="next" title="第86场双周赛-376名-4题">
-      第86场双周赛-376名-4题 <i class="fa fa-chevron-right"></i>
+    <a href="/2022/08/20/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/log4j%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/" rel="next" title="log4j远程调用漏洞详解">
+      log4j远程调用漏洞详解 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -469,18 +497,18 @@ token进行加密处理，将请求 URL、时间戳、加密后的token、 三�
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">80</span>
+          <span class="site-state-item-count">84</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -540,7 +568,7 @@ token进行加密处理，将请求 URL、时间戳、加密后的token、 三�
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共185.3k字</span>
+  <span class="post-count">博客全站共189.4k字</span>
 </div>
 
         
@@ -594,11 +622,17 @@ token进行加密处理，将请求 URL、时间戳、加密后的token、 三�
 <script src="/js/next-boot.js"></script>
 
 
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
 
 
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 

@@ -18,7 +18,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="睡眠限制法#   首要目标： 增加睡眠时间&#x2F;卧床时间的占比，建立床&#x3D;睡眠的潜意识。   主要方式： 在无法显著增加睡眠时间的情况下，减少卧床时间。   具体措施：  根据之前往期的入睡统计，安排严格的上床和入睡。例如晚上12点睡，早上6点30起。 困了就上床，上床后不要玩手机，避免增加无效卧床时间。 如果在床上不困，就立刻起床，避免增加无效的卧床时间。 减少午睡甚至不午睡，将困意集中到晚上的时间。">
@@ -104,6 +104,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -123,11 +124,38 @@
     <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -304,12 +332,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2022/05/04/%E9%9A%8F%E7%AC%94/%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5%E5%BF%83%E7%90%86%E6%88%90%E9%95%BF%E6%84%9F%E6%82%9F/" rel="prev" title="第一阶段心理成长感悟">
-      <i class="fa fa-chevron-left"></i> 第一阶段心理成长感悟
+    <a href="/2022/05/06/%E9%9A%8F%E7%AC%94/%E5%A4%B1%E7%9C%A0%E7%96%97%E6%B3%95/" rel="prev" title="解决失眠的科学疗法">
+      <i class="fa fa-chevron-left"></i> 解决失眠的科学疗法
     </a></div>
       <div class="post-nav-item">
-    <a href="/2022/05/06/%E9%9A%8F%E7%AC%94/%E5%A4%B1%E7%9C%A0%E7%96%97%E6%B3%95/" rel="next" title="解决失眠的科学疗法">
-      解决失眠的科学疗法 <i class="fa fa-chevron-right"></i>
+    <a href="/2022/05/29/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/jvm%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%8E%9F%E7%90%86/" rel="next" title="jvm内存区域原理">
+      jvm内存区域原理 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -386,18 +414,18 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">80</span>
+          <span class="site-state-item-count">84</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -457,7 +485,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共185.3k字</span>
+  <span class="post-count">博客全站共189.4k字</span>
 </div>
 
         
@@ -511,11 +539,17 @@
 <script src="/js/next-boot.js"></script>
 
 
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
 
 
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 
