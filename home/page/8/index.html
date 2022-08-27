@@ -176,6 +176,300 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/06/08/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/06/08/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">volatile和CPU-MESI协议底层原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-06-08 07:29:34" itemprop="dateCreated datePublished" datetime="2022-06-08T07:29:34+08:00">2022-06-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-10 00:49:30" itemprop="dateModified" datetime="2022-08-10T00:49:30+08:00">2022-08-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">java高级原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/08/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/08/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>《深入理解Java虚拟机》第二版中，关于volatile的原理，特地先讲述了如下图所示的JMM内存模型：<br>
+<img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652969587838877545.png" alt="image.png"><br>
+它用了8种内存操作，以及多种规则，来告诉你特定情况下线程间的数据会如何同步。<br>
+<strong>然而这个模型实际上已经在JDK5之后的虚拟机规范中被废弃了。</strong><br>
+最新官方文档中是采用“happens-before”模型来帮助java程序员分析多线程环境下的运行情况。<br>
+关于happends-before模型的详细解释，建议阅读《java并发编程的艺术》一书的第三章节。<br>
+本文并不讨论happends-before模型，只讨论底层原理，希望借着理解volatile，去理解一下它和CPU之间的关系。关于这部分内容，网上其实有很多错误的解读，根本原因在于没有从真正底层运行的原理考虑，导致了很多误区的产生。</p>
+<p>本文将为你解答一下三大误区问题：</p>
+<ol>
+<li>MESI缓存一致性，为什么要设置4种状态这么复杂？是否都是同步、阻塞地保证缓存一致？</li>
+<li>更新变量后，另一个线程真的永远不可见吗？多线程问题的本质是什么？</li>
+<li>volatile保证一致性的真正底层运行逻辑是什么？</li>
+</ol>
+<p>以上问题，我将从CPU的层面，以超长图解和文字的形式，为你完整呈现。</p>
+<div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#jmm-nei-cun-mo-xing-he-cpu">JMM内存模型和CPU</a>
+<ul>
+<li><a href="#wei-shi-me-xu-yao-zhe-ge-jmm-mo-xing-yong-lai-zuo-shi-me-de">为什么需要这个JMM模型？用来做什么的？</a></li>
+<li><a href="#shang-shu-mo-xing-he-bei-hou-cao-zuo-xi-tong-cpu-shi-xian-you-shi-me-guan-xi-gong-zuo-nei-cun-dui-ying-shi-me-zhu-nei-cun-dui-ying-shi-me">上述模型和背后操作系统、CPU实现有什么关系？工作内存对应什么，主内存对应什么？</a></li>
+<li><a href="#shi-me-shi-cpu-huan-cun-cpu-huan-cun-chang-shi-me-yang">什么是CPU缓存？CPU缓存长什么样？</a></li>
+<li><a href="#2-ge-cpu-tong-shi-geng-xin-shu-ju-shi-you-shi-me-ban-fa-bi-mian-tong-shi-xiu-gai-zhu-cun">2个CPU同时更新数据时，有什么办法避免同时修改主存？</a></li>
+</ul>
+</li>
+<li><a href="#mesi-xie-yi-chao-ji-xiang-jie">MESI协议超级详解</a>
+<ul>
+<li><a href="#wei-shi-me-yao-she-ji-du-zhan-zhuang-tai">为什么要设计独占状态？</a></li>
+<li><a href="#wei-shi-me-cpu2-dui-a-zhi-de-huo-qu-neng-gou-xiu-gai-cpu1-de-zhuang-tai">为什么CPU2对a值的获取，能够修改CPU1的状态？</a></li>
+<li><a href="#xiu-gai-wan-m-zhuang-tai-hou-fa-sheng-liao-shi-me-shi-zhi-jie-tong-bu-hui-nei-cun-ma">修改完M状态后，发生了什么？是直接同步回内存吗？</a></li>
+<li><a href="#bu-ke-jian-de-wu-qu-li-zi">不可见的误区例子</a></li>
+</ul>
+</li>
+<li><a href="#chong-tou-xi-you-mesi-bao-zheng-ke-jian-xing-de-xia-wei-shi-me-huan-you-hui-duo-xian-cheng-wen-ti">重头戏：有MESI保证可见性的下，为什么还有会多线程问题？</a>
+<ul>
+<li><a href="#cpu1-deng-dai-qi-ta-cpu-qing-kong-huan-cun-de-zu-sai-deng-dai-xing-wei-hui-bu-hui-tai-man-liao">CPU1等待其他CPU清空缓存的阻塞等待行为会不会太慢了？</a></li>
+<li><a href="#you-shi-me-ban-fa-neng-jia-kuai-xiang-ying-su-du-invalid-xiao-xi-de-xiang-ying-su-du-ni">有什么办法能加快响应速度Invalid消息的响应速度呢？</a></li>
+<li><a href="#duo-xian-cheng-wen-ti-yu-storebuffer-invalid-queue-zhi-jian-de-guan-xi">多线程问题与StoreBuffer、Invalid-Queue之间的关系</a></li>
+</ul>
+</li>
+<li><a href="#volatile-you-shi-ru-he-bi-mian-cpu-geng-xin-yan-chi-wen-ti-de">volatile又是如何避免CPU更新延迟问题的？</a></li>
+<li><a href="#tu-jie-zong-jie">图解总结</a></li>
+</ul>
+<!-- tocstop -->
+</div>
+<hr>
+<p>[toc]</p>
+<h1><span id="jmm-nei-cun-mo-xing-he-cpu">JMM内存模型和CPU</span><a href="#jmm-nei-cun-mo-xing-he-cpu" class="header-anchor">#</a></h1>
+<h2><span id="wei-shi-me-xu-yao-zhe-ge-jmm-mo-xing-yong-lai-zuo-shi-me-de">为什么需要这个JMM模型？用来做什么的？</span><a href="#wei-shi-me-xu-yao-zhe-ge-jmm-mo-xing-yong-lai-zuo-shi-me-de" class="header-anchor">#</a></h2>
+<p>这是为了给java开发者提供屏蔽平台差异性的、统一的多线程执行语义<br>
+不同的操作系统或者不同的CPU，其对多线程并发问题的支持情况是不同的，但jvm尽量在背后将其实现成一套统一的逻辑。<br>
+<strong>即你按照我的关键字操作，就可以像JMM模型里那样运作，不需要关心背后的CPU怎么跑的</strong></p>
+<h2><span id="shang-shu-mo-xing-he-bei-hou-cao-zuo-xi-tong-cpu-shi-xian-you-shi-me-guan-xi-gong-zuo-nei-cun-dui-ying-shi-me-zhu-nei-cun-dui-ying-shi-me">上述模型和背后操作系统、CPU实现有什么关系？工作内存对应什么，主内存对应什么？</span><a href="#shang-shu-mo-xing-he-bei-hou-cao-zuo-xi-tong-cpu-shi-xian-you-shi-me-guan-xi-gong-zuo-nei-cun-dui-ying-shi-me-zhu-nei-cun-dui-ying-shi-me" class="header-anchor">#</a></h2>
+<p><img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652969950678545272.png" alt="image.png"></p>
+<ul>
+<li>主内存对应于java堆中的对象实例部分（物理硬件的内存）</li>
+<li>工作内存对应于虚拟机栈中的部分区域（ 寄存器，高速缓存， 线程主要访问读写的都是工作内存）</li>
+</ul>
+<h2><span id="shi-me-shi-cpu-huan-cun-cpu-huan-cun-chang-shi-me-yang">什么是CPU缓存？CPU缓存长什么样？</span><a href="#shi-me-shi-cpu-huan-cun-cpu-huan-cun-chang-shi-me-yang" class="header-anchor">#</a></h2>
+<p>CPU缓存可以理解为一个容量有限的哈希表。<br>
+将某地址数据根据地址做哈希，映射到缓存的某一行，并且有替换的情况。<br>
+而划分两列，则是避免一出现hash冲突，就马上淘汰原内容的情况。<br>
+因此增加了备用列。通过这样一个多行两列的结构，根据内存地址实现了缓存的功能。<br>
+<img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652970057734778836.png" alt="image.png"></p>
+<h2><span id="2-ge-cpu-tong-shi-geng-xin-shu-ju-shi-you-shi-me-ban-fa-bi-mian-tong-shi-xiu-gai-zhu-cun">2个CPU同时更新数据时，有什么办法避免同时修改主存？</span><a href="#2-ge-cpu-tong-shi-geng-xin-shu-ju-shi-you-shi-me-ban-fa-bi-mian-tong-shi-xiu-gai-zhu-cun" class="header-anchor">#</a></h2>
+<ul>
+<li>一种方式是使用总线锁：确保CPU在持有总线锁期间，处理器可以独占任何共享内存。</li>
+</ul>
+<p>总线锁的代价是开销很大，其他CPU会一直在等待总线释放，读和写操作都无法处理。</p>
+<ul>
+<li>另一种方式是缓存锁，锁住各自的缓存，并<strong>通过缓存一致性协议MESI来进行和主存的同步。</strong></li>
+</ul>
+<h1><span id="mesi-xie-yi-chao-ji-xiang-jie">MESI协议超级详解</span><a href="#mesi-xie-yi-chao-ji-xiang-jie" class="header-anchor">#</a></h1>
+<p>画了很多张图，顺便带上很多文字，来解释MESI协议的原理：<br>
+首先，CPU1和CPU2中的缓存都是空的， 因此缓存状态位是“I”（Invalid）<br>
+后面会相继提到各个状态的变化。<br>
+<img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652970611412999019.png" alt="image.png"></p>
+<hr>
+<p>此时主存会将a的数据返回给CPU1， 并把CPU1的缓存状态<strong>设置为独占E（Exclude)</strong><br>
+<img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652970706864127998.png" alt="image.png"></p>
+<h2><span id="wei-shi-me-yao-she-ji-du-zhan-zhuang-tai">为什么要设计独占状态？</span><a href="#wei-shi-me-yao-she-ji-du-zhan-zhuang-tai" class="header-anchor">#</a></h2>
+<p>目的是为了<strong>减少不必要的全局同步消息。</strong><br>
+当这个a变量只有CPU1使用时，无论CPU1怎么修改，也只有CPU1在查看，没必要把信息同步给其他CPU，从而提升了效率， 对于一些不参与竞争的变量来说，非常有用。</p>
+<hr>
+<p>好，独占的问题搞定，那么当CPU2也读取时，会发生什么？<br>
+此时就会不再是独占状态了，2个CPU同时被修改为共享状态S（Share）<br>
+<img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652971231021900637.png" alt="image.png"></p>
+<h2><span id="wei-shi-me-cpu2-dui-a-zhi-de-huo-qu-neng-gou-xiu-gai-cpu1-de-zhuang-tai">为什么CPU2对a值的获取，能够修改CPU1的状态？</span><a href="#wei-shi-me-cpu2-dui-a-zhi-de-huo-qu-neng-gou-xiu-gai-cpu1-de-zhuang-tai" class="header-anchor">#</a></h2>
+<p>这是因为CPU可以通过总线广播+监听消息来变更状态， 也称嗅探机制。<br>
+<strong>即CPU核心都会经常监听总线上的广播事件，根据事件（消息）类型，来做不同的应对。</strong><br>
+因此当CPU2更改后，总线会广播read消息，当CPU1收到read消息，并确认这个数据的地址和自己缓存中的地址是一致的时候，就会修改状态为S了。</p>
+<hr>
+<p>上述问题搞定，再看最关键的<strong>修改缓存</strong>的部分了！</p>
+<ol>
+<li>当CPU1触发对a变量的修改时，会先发送一个Invalid消息。</li>
+<li>CPU1此时会等待不动，停止任何操作，类似于阻塞了，它在等待其他CPU给他回应。</li>
+<li>当其他的CPU收到Invalid消息时，会将缓存中的a变量修改为I（Invalid）无效状态</li>
+<li>当所有CPU都处理完成时，总线为CPU1返回Invalid ack消息，CPU1才放心的将S状态修改为了M（modify）状态。<br>
+结合下面的图进行阅读更佳，注意图中的序号：<br>
+<img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652971828729412023.png" alt="image.png"><br>
+很容易想到， 要将其他CPU设置为无效的原因，是为了保证其他CPU后面再次试图取a值时，取到的是最新的，而不是缓存的错误数据。</li>
+</ol>
+<h2><span id="xiu-gai-wan-m-zhuang-tai-hou-fa-sheng-liao-shi-me-shi-zhi-jie-tong-bu-hui-nei-cun-ma">修改完M状态后，发生了什么？是直接同步回内存吗？</span><a href="#xiu-gai-wan-m-zhuang-tai-hou-fa-sheng-liao-shi-me-shi-zhi-jie-tong-bu-hui-nei-cun-ma" class="header-anchor">#</a></h2>
+<p>不是的！M状态此时就像“独占状态”一样，贪婪地占有这个缓存，后续的修改、读取，都直接读这个缓存，不再走任何总线</p>
+<p>其目的和独占状态E一样，都是为了减少非竞争情况下不必要的总线消耗<br>
+<img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652972577879290980.png" alt="image.png"></p>
+<hr>
+<p>那么什么时候Modify状态会变化呢？<br>
+当其他的CPU试图获取a值，就会发生变化。其过程与 Exclude独占状态到Share状态 是类似的<br>
+<img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652972743188732799.png" alt="image.png"><br>
+<img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652972759885249610.png" alt="image.png"></p>
+<p>上面的内容给我一种感觉，MESI协议中，一直在给我们传达一个信息：<strong>MESI设置那么多状态，主要是为了避免每次都竞争。竞争只是偶然发生的，我们要尽可能少地乱锁总线！</strong></p>
+<h2><span id="bu-ke-jian-de-wu-qu-li-zi">不可见的误区例子</span><a href="#bu-ke-jian-de-wu-qu-li-zi" class="header-anchor">#</a></h2>
+<p>从上面可以看到，当我们修改缓存时，会通过触发对其他缓存的无效化，达到变量对其他线程“可见”的效果。<br>
+因此，<strong>MESI缓存一致性协议已经实现了缓存的可见性</strong>，<br>
+下面这种例子中，当flag=true时， 其他CPU通过MESI协议，是能够感知到flag的变化的，因为缓存一定会在那个时刻被设置为无效，从而获取最新的数据。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="type">boolean</span> <span class="variable">flag</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="type">int</span> <span class="variable">num</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(()-&gt;&#123;</span><br><span class="line">            <span class="keyword">while</span> (!flag)&#123;</span><br><span class="line">               num++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).start();</span><br><span class="line">        flag = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="comment">//输出结果</span></span><br><span class="line">	<span class="number">1255362997</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1><span id="chong-tou-xi-you-mesi-bao-zheng-ke-jian-xing-de-xia-wei-shi-me-huan-you-hui-duo-xian-cheng-wen-ti">重头戏：有MESI保证可见性的下，为什么还有会多线程问题？</span><a href="#chong-tou-xi-you-mesi-bao-zheng-ke-jian-xing-de-xia-wei-shi-me-huan-you-hui-duo-xian-cheng-wen-ti" class="header-anchor">#</a></h1>
+<p>首先可以看这个知乎问题的回答，如果看不懂，可以看我为你整理的详细解释：<br>
+<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/277395220">https://www.zhihu.com/question/277395220</a></p>
+<hr>
+<p>每个java线程有自己的寄存器。<br>
+线程寄存器和CPU缓存的关系？</p>
+<hr>
+<p>上面的MESI协议图中，其实缺少了2个关键的优化，这2个优化点，也成了可见性问题的根源。<br>
+为了好好讲清楚这2个优化点带来的影响，我特地放到这里才讲述，也将会帮助你大大理解“可见性”问题的本质！</p>
+<p>首先我们回到CPU1修改a值时的那张图：<br>
+<img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652973240336374790.png" alt="image.png"></p>
+<p>里面提到，CPU1会等待所有CPU都将状态位置为I（无效）后，才开始修改状态并更新。那么有个问题：</p>
+<h2><span id="cpu1-deng-dai-qi-ta-cpu-qing-kong-huan-cun-de-zu-sai-deng-dai-xing-wei-hui-bu-hui-tai-man-liao">CPU1等待其他CPU清空缓存的阻塞等待行为会不会太慢了？</span><a href="#cpu1-deng-dai-qi-ta-cpu-qing-kong-huan-cun-de-zu-sai-deng-dai-xing-wei-hui-bu-hui-tai-man-liao" class="header-anchor">#</a></h2>
+<p>如果CPU1后面有好几条和a无关的指令（例如b=3,d=e等)，都在为了等待a的更新而不执行，未免太浪费时间了！</p>
+<p>因此MESI设计了一个叫做 <strong>“StoreBuffer”</strong> 的东西，它会接收CPU1的修改动作，并由StoreBuffer来触发“阻塞等待-&gt;全部收到-&gt;修改状态M”的动作。<br>
+而CPU1则继续管自己去执行后续与a无关的指令。<br>
+因此<strong>StoreBuffer就像是一个异步的“生产者消息队列”。</strong>，如下所示：<br>
+<img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652973451807966252.png" alt="image.png"></p>
+<p>但是还有个问题，因为是等待所有CPU将a状态改为I，这个修改动作是需要时间的。<br>
+如果有一个CPU修改的比较慢，可能会导致 StoreBuffer这个生产者队列出现队满的情况，于是继续引发了阻塞。</p>
+<h2><span id="you-shi-me-ban-fa-neng-jia-kuai-xiang-ying-su-du-invalid-xiao-xi-de-xiang-ying-su-du-ni">有什么办法能加快响应速度Invalid消息的响应速度呢？</span><a href="#you-shi-me-ban-fa-neng-jia-kuai-xiang-ying-su-du-invalid-xiao-xi-de-xiang-ying-su-du-ni" class="header-anchor">#</a></h2>
+<p>那就是<strong>再引入一个“异步的消费者队列”，名叫Invalid Queue</strong><br>
+这样其他CPU收到消息时，先别急着处理，而是存到这个Queue中，然后直接返回Invalid消息，这样响应就变快了！ 也就是更新动作，和失效消息的接收，都加了一个队列！<br>
+如下图所示：<br>
+<img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1652973806095977745.png" alt="image.png"></p>
+<h2><span id="duo-xian-cheng-wen-ti-yu-storebuffer-invalid-queue-zhi-jian-de-guan-xi">多线程问题与StoreBuffer、Invalid-Queue之间的关系</span><a href="#duo-xian-cheng-wen-ti-yu-storebuffer-invalid-queue-zhi-jian-de-guan-xi" class="header-anchor">#</a></h2>
+<p>终于来到了关键的部分了。<br>
+从刚才的描述中，可以看到CPU引入了2个异步的队列，来处理数据的更新动作。<br>
+那么就可能存在赋值的动作被放入异步队列，导致延迟触发的情况。<br>
+而正是这个延迟放入的动作，可能导致数据延迟修改，<strong>即使没有发生指令重排序。</strong><br>
+这样干讲比较难懂，还是需要结合代码和图解。<br>
+首先是这个经典的多线程代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ReorderExample</span> &#123;</span><br><span class="line">       <span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">       <span class="type">boolean</span> <span class="variable">flag</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line">       <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">writer</span><span class="params">()</span> &#123;</span><br><span class="line">           a = <span class="number">1</span>;                  <span class="comment">// 1</span></span><br><span class="line">           flag = <span class="literal">true</span>;            <span class="comment">// 2</span></span><br><span class="line">       &#125;</span><br><span class="line">       Public <span class="keyword">void</span> <span class="title function_">reader</span><span class="params">()</span> &#123;</span><br><span class="line">           <span class="keyword">while</span> (flag != <span class="literal">true</span>) &#123;            <span class="comment">// 3</span></span><br><span class="line">             ;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="type">int</span> <span class="variable">c</span> <span class="operator">=</span>  a * <span class="number">2</span>;     <span class="comment">// 4</span></span><br><span class="line">           …………</span><br><span class="line">       &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>按照设想，程序员本是希望有如下的表现：<br>
+<img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1653490107416809220.png" alt="image.png"><br>
+但是事与愿违，当reader方法中离开了flag循环时，a的值仍然是初始化值0，导致c的值为0。</p>
+<p>那么在了解了刚才的CPU原理后，我们终于可以开始分析这段代码为什么会发生这种问题了：</p>
+<ol>
+<li>
+<p>当线程writer执行a=1时，CPU要做更新，会通过上面提到的异步机制进行更新。如果这个CPU此时堆积了很多的写操作，会导致a=1这个动作在异步队列中处于等待。<br>
+<img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1653492190388870916.png" alt="image.png"></p>
+</li>
+<li>
+<p>时间片切换，线程writer切到了另一个CPU上<br>
+<img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1653492292075803742.png" alt="image.png"><br>
+注意一个很重要的点：<br>
+<strong>线程执行指令，并非只在1个CPU上运行，是可以通过时间片轮转切换的。因此CPU和线程并非完全绑定的关系</strong></p>
+</li>
+<li>
+<p>flag=true动作在CPU2上迅速响应，很快完成了缓存一致性<br>
+<img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1653492398662891252.png" alt="image.png"></p>
+</li>
+</ol>
+<p>4.reader线程读到了最新的flag，却没有读到新的a，导致了a还在用旧的值。<br>
+<img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1653492531372457392.png" alt="image.png"></p>
+<p>因此可以看到，<strong>正是CPU之间缓存更新的延迟，导致了多线程不同步问题的发生</strong></p>
+<h1><span id="volatile-you-shi-ru-he-bi-mian-cpu-geng-xin-yan-chi-wen-ti-de">volatile又是如何避免CPU更新延迟问题的？</span><a href="#volatile-you-shi-ru-he-bi-mian-cpu-geng-xin-yan-chi-wen-ti-de" class="header-anchor">#</a></h1>
+<p>这里不谈论那让人费解的内存屏障， 只要记住一点：<br>
+<strong>对于volatile变量，一旦更新，不会走CPU异步更新，而是在这个CPU阻塞住，直到写动作完整完成，才会继续下一个指令的运行</strong><br>
+本质上是利用的#LOCK指令。<br>
+它的作用就是必须等待该变量的storeBuffer的清空，读取时也必须等待InvalidQueue的清空，才能去做写和读。从而保证不会出现因异步导致的多线程不同步问题</p>
+<hr>
+<h1><span id="tu-jie-zong-jie">图解总结</span><a href="#tu-jie-zong-jie" class="header-anchor">#</a></h1>
+<p>写文章不容易，学习也不容易，给我点个关注点个赞，未来会持续更新具有思考深度的学习文章。欢迎在华为云社区共同交流和学习。</p>
+<p>MESI缓存一致性原理图解如下：<br>
+<img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/625af1a7e0b34d1a88113212.png" alt="image.png"></p>
+<p>多线程同步问题如下：<br>
+<img src="/images/volatile%E5%92%8CCPU-MESI%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/1653492544846491616.png" alt="image.png"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/06/05/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC301%E5%9C%BA%E5%91%A8%E8%B5%9B-808%E5%90%8D-3%E9%A2%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -285,6 +579,157 @@
 </li>
 </ol>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="variable">MOD</span> <span class="operator">=</span> <span class="number">1000000007</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// c[n][m],数组下标就是m，n-1是固定的了</span></span><br><span class="line"><span class="type">long</span>[][] c;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 关键点1：预处理的话，如果C（n,m)的m比较小，就用杨辉三角来预处理，记住杨辉三角特点，纵轴是n，横轴是m</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getC</span><span class="params">(<span class="type">int</span> n, <span class="type">int</span> m)</span> &#123;</span><br><span class="line">    c = <span class="keyword">new</span> <span class="title class_">long</span>[n+<span class="number">1</span>][m+<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>;i&lt;=n;i++) &#123;</span><br><span class="line">        c[i][<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">        <span class="comment">// 注意这里判断</span></span><br><span class="line">        <span class="keyword">if</span> (i &lt;=m) &#123;</span><br><span class="line">            c[i][i] = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">1</span>;j&lt;m &amp;&amp; j &lt; i;j++) &#123;</span><br><span class="line">            c[i][j] = c[i-<span class="number">1</span>][j-<span class="number">1</span>] + c[i-<span class="number">1</span>][j];</span><br><span class="line">            c[i][j] %= MOD;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">idealArrays</span><span class="params">(<span class="type">int</span> n, <span class="type">int</span> maxValue)</span> &#123;</span><br><span class="line">    Set&lt;Integer&gt;[] divNums = <span class="keyword">new</span> <span class="title class_">Set</span>[maxValue+<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>;i&lt;=maxValue;i++) &#123;</span><br><span class="line">        divNums[i]= <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">value</span> <span class="operator">=</span> <span class="number">2</span>;value&lt;=maxValue;value++) &#123;</span><br><span class="line">        divNums[value].add(<span class="number">1</span>);</span><br><span class="line">        <span class="comment">// 关键点：求除数，只需要根号(value)即可求解出来，不需要遍历整个value</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">div</span> <span class="operator">=</span> <span class="number">2</span>; div  * div &lt;= value;div++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (value % div == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="comment">// 注意加上value/div</span></span><br><span class="line">                divNums[value].add(div);</span><br><span class="line">                divNums[value].add(value/div);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如何快速求log2?</span></span><br><span class="line">    <span class="comment">// 关键点：x-&gt;y-&gt;z-&gt;maxValue， 最大变化长度为log2(mavValue)，其他数字全是相同的</span></span><br><span class="line">    <span class="comment">// 因此不需要以n做动态规划</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">maxDivCount</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span> <span class="variable">value</span> <span class="operator">=</span> maxValue;</span><br><span class="line">    <span class="keyword">while</span> (value &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        value /= <span class="number">2</span>;</span><br><span class="line">        maxDivCount++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">long</span>[][] dp = <span class="keyword">new</span> <span class="title class_">long</span>[maxDivCount+<span class="number">1</span>][maxValue+<span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 以变换点个数做数组长度进行动态规划</span></span><br><span class="line">    <span class="keyword">for</span> (value = <span class="number">0</span>; value &lt;=maxValue;value++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;=maxDivCount;i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (i==<span class="number">1</span>) &#123;</span><br><span class="line">                dp[i][value] = <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> div : divNums[value]) &#123;</span><br><span class="line">                dp[i][value] += dp[i-<span class="number">1</span>][div];</span><br><span class="line">                dp[i][value] %= MOD;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 组合数</span></span><br><span class="line">    getC(n-<span class="number">1</span>, maxDivCount);</span><br><span class="line"></span><br><span class="line">    <span class="type">long</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (value = <span class="number">1</span>;value &lt;= maxValue;value++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">divCount</span> <span class="operator">=</span> <span class="number">1</span>; divCount &lt;=maxDivCount;divCount++) &#123;</span><br><span class="line">            <span class="comment">// value作为末尾点，长度为divCount，不相同时的方案数，  乘上(n-1)里面选(divCount-1）的组合数</span></span><br><span class="line">            sum += c[n-<span class="number">1</span>][divCount-<span class="number">1</span>] * dp[divCount][value];</span><br><span class="line">            sum %= MOD;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> (<span class="type">int</span>)sum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/06/05/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC296%E5%9C%BA%E5%91%A8%E8%B5%9B-209%E5%90%8D-36%E5%88%86%E9%92%9F4%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/06/05/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC296%E5%9C%BA%E5%91%A8%E8%B5%9B-209%E5%90%8D-36%E5%88%86%E9%92%9F4%E9%A2%98/" class="post-title-link" itemprop="url">第296场周赛-209名-36分钟4题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 22:12:42 / 修改时间：22:37:45" itemprop="dateCreated datePublished" datetime="2022-06-05T22:12:42+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">力扣周赛记录</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC296%E5%9C%BA%E5%91%A8%E8%B5%9B-209%E5%90%8D-36%E5%88%86%E9%92%9F4%E9%A2%98/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC296%E5%9C%BA%E5%91%A8%E8%B5%9B-209%E5%90%8D-36%E5%88%86%E9%92%9F4%E9%A2%98/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><img src="/images/%E7%AC%AC296%E5%9C%BA%E5%91%A8%E8%B5%9B-209%E5%90%8D-36%E5%88%86%E9%92%9F4%E9%A2%98/1654438529701.png" alt="1654438529701"></p>
+ <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#zong-jie">总结：</a></li>
+<li><a href="#di-yi-ti-jian-dan-bian-li-ti">第一题：简单遍历题</a></li>
+<li><a href="#di-er-ti-pai-xu-yu-chu-li">第二题：排序预处理</a></li>
+<li><a href="#di-san-ti">第三题</a></li>
+<li><a href="#di-si-ti-lian-biao-mo-ni-zui-you-ze-shi-zhan-mo-ni">第四题：链表模拟，最优则是栈模拟</a>
+<ul>
+<li><a href="#lian-biao-mo-ni">链表模拟：</a></li>
+<li><a href="#shi-yong-zhan-shi-xian-5-fen-zhong-xie-wan">使用栈实现，5分钟写完：</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<p>题目简单， 速度不够快。</p>
+<h1><span id="zong-jie">总结：</span><a href="#zong-jie" class="header-anchor">#</a></h1>
+<ol>
+<li>
+<p>再提升1分钟的速度即可进前200</p>
+</li>
+<li>
+<p>这种光标左右移动的题目，只划分左右两边的情况，使用双栈会比链表更合适。</p>
+</li>
+</ol>
+<h1><span id="di-yi-ti-jian-dan-bian-li-ti">第一题：简单遍历题</span><a href="#di-yi-ti-jian-dan-bian-li-ti" class="header-anchor">#</a></h1>
+<p><img src="/images/%E7%AC%AC296%E5%9C%BA%E5%91%A8%E8%B5%9B-209%E5%90%8D-36%E5%88%86%E9%92%9F4%E9%A2%98/1654438568104.png" alt="1654438568104"></p>
+<p>重点在于能否快速理解并迅速编写，用一个递归可以快速搞定。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">minMaxGame</span><span class="params">(<span class="type">int</span>[] nums)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> nums[<span class="number">0</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">int</span>[] newNums = <span class="keyword">new</span> <span class="title class_">int</span>[nums.length/<span class="number">2</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>;i&lt;newNums.length;i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (i%<span class="number">2</span>==<span class="number">0</span>) &#123;</span><br><span class="line">            newNums[i] = Math.min(nums[<span class="number">2</span>*i], nums[<span class="number">2</span>*i+<span class="number">1</span>]);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            newNums[i] = Math.max(nums[<span class="number">2</span>*i], nums[<span class="number">2</span>*i+<span class="number">1</span>]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> minMaxGame(newNums);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1><span id="di-er-ti-pai-xu-yu-chu-li">第二题：排序预处理</span><a href="#di-er-ti-pai-xu-yu-chu-li" class="header-anchor">#</a></h1>
+<p><img src="/images/%E7%AC%AC296%E5%9C%BA%E5%91%A8%E8%B5%9B-209%E5%90%8D-36%E5%88%86%E9%92%9F4%E9%A2%98/1654438642853.png" alt="1654438642853"></p>
+<p>题目说是子序列（即可以不连在一起），然后要求每个序列内差值尽可能满足小于k。</p>
+<p>那很容易想到先排序，再选取即可，就是预处理的思想</p>
+<p>可惜这里还是思考的慢了点，用了5分钟才做完</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">partitionArray</span><span class="params">(<span class="type">int</span>[] nums, <span class="type">int</span> k)</span> &#123;</span><br><span class="line">    Arrays.sort(nums);</span><br><span class="line">    <span class="type">int</span> <span class="variable">lastNum</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span> <span class="variable">result</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>;i &lt; nums.length;i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (i == <span class="number">0</span>) &#123;</span><br><span class="line">            lastNum = nums[i];</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (nums[i]  - lastNum &gt; k) &#123;</span><br><span class="line">            result++;</span><br><span class="line">            lastNum = nums[i];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    result++;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1><span id="di-san-ti">第三题</span><a href="#di-san-ti" class="header-anchor">#</a></h1>
+<p><img src="/images/%E7%AC%AC296%E5%9C%BA%E5%91%A8%E8%B5%9B-209%E5%90%8D-36%E5%88%86%E9%92%9F4%E9%A2%98/1654438926785.png" alt="1654438926785"></p>
+<p>这里如果能快速理解不需要考虑相同的整数，无论如何替换都是保证数组中互不相同的话，那就非常简单了，直接使用1个map进行处理即可。</p>
+<p><img src="/images/%E7%AC%AC296%E5%9C%BA%E5%91%A8%E8%B5%9B-209%E5%90%8D-36%E5%88%86%E9%92%9F4%E9%A2%98/1654438971349.png" alt="1654438971349"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">int</span>[] arrayChange(<span class="type">int</span>[] nums, <span class="type">int</span>[][] operations) &#123;</span><br><span class="line">    Map&lt;Integer, Integer&gt; numToIndexMap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span><span class="number">0</span>;i&lt;nums.length;i++) &#123;</span><br><span class="line">        numToIndexMap.put(nums[i], i);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span>[] op : operations) &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> op[<span class="number">0</span>];</span><br><span class="line">        <span class="type">int</span> <span class="variable">b</span> <span class="operator">=</span> op[<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">if</span> (numToIndexMap.containsKey(a)) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> numToIndexMap.get(a);</span><br><span class="line">            numToIndexMap.remove(a);</span><br><span class="line">            nums[index] = b;</span><br><span class="line">            numToIndexMap.put(b, index);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> nums;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1><span id="di-si-ti-lian-biao-mo-ni-zui-you-ze-shi-zhan-mo-ni">第四题：链表模拟，最优则是栈模拟</span><a href="#di-si-ti-lian-biao-mo-ni-zui-you-ze-shi-zhan-mo-ni" class="header-anchor">#</a></h1>
+<p><img src="/images/%E7%AC%AC296%E5%9C%BA%E5%91%A8%E8%B5%9B-209%E5%90%8D-36%E5%88%86%E9%92%9F4%E9%A2%98/1654439021956.png" alt="1654439021956"></p>
+<p>想了5分钟，决定模拟一个链表，  很久没写了，写得很慢，每次还得画图。</p>
+<h2><span id="lian-biao-mo-ni">链表模拟：</span><a href="#lian-biao-mo-ni" class="header-anchor">#</a></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">TextEditor</span> &#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Node</span> &#123;</span><br><span class="line">            <span class="type">char</span> c;</span><br><span class="line">            Node last;</span><br><span class="line">            Node next;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">public</span> <span class="title function_">Node</span><span class="params">(<span class="type">char</span> c)</span> &#123;</span><br><span class="line">                <span class="built_in">this</span>.c = c;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Node cursorNode;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="title function_">TextEditor</span><span class="params">()</span> &#123;</span><br><span class="line">            cursorNode = <span class="keyword">new</span> <span class="title class_">Node</span>(<span class="string">&#x27;|&#x27;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">addText</span><span class="params">(String text)</span> &#123;</span><br><span class="line">            <span class="type">Node</span> <span class="variable">lastNode</span> <span class="operator">=</span> cursorNode.last;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">char</span> c:text.toCharArray()) &#123;</span><br><span class="line">                <span class="type">Node</span> <span class="variable">node</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Node</span>(c);</span><br><span class="line">                node.last = lastNode;</span><br><span class="line">                node.next = cursorNode;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (lastNode != <span class="literal">null</span>) &#123;</span><br><span class="line">                    lastNode.next = node;</span><br><span class="line">                &#125;</span><br><span class="line">                cursorNode.last = node;</span><br><span class="line">                lastNode = node;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">deleteText</span><span class="params">(<span class="type">int</span> k)</span> &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">deleCount</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span> (cursorNode.last != <span class="literal">null</span> &amp;&amp; k-- &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="type">Node</span> <span class="variable">deleNode</span> <span class="operator">=</span> cursorNode.last;</span><br><span class="line">                <span class="type">Node</span> <span class="variable">lastNode</span> <span class="operator">=</span> deleNode.last;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (lastNode != <span class="literal">null</span>) &#123;</span><br><span class="line">                    lastNode.next = cursorNode;</span><br><span class="line">                &#125;</span><br><span class="line">                cursorNode.last = lastNode;</span><br><span class="line">                deleCount++;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> deleCount;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> String <span class="title function_">cursorLeft</span><span class="params">(<span class="type">int</span> k)</span> &#123;</span><br><span class="line">            <span class="keyword">while</span>(cursorNode.last != <span class="literal">null</span> &amp;&amp; k-- &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="type">Node</span> <span class="variable">lastNode</span> <span class="operator">=</span> cursorNode.last;</span><br><span class="line">                <span class="type">Node</span> <span class="variable">nextNode</span> <span class="operator">=</span> cursorNode.next;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (lastNode != <span class="literal">null</span>) &#123;</span><br><span class="line">                    lastNode.next = nextNode;</span><br><span class="line">                    <span class="keyword">if</span> (lastNode.last != <span class="literal">null</span>) &#123;</span><br><span class="line">                        lastNode.last.next = cursorNode;</span><br><span class="line">                    &#125;</span><br><span class="line">                    cursorNode.last = lastNode.last;</span><br><span class="line">                    cursorNode.next = lastNode;</span><br><span class="line">                    lastNode.last = cursorNode;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (nextNode != <span class="literal">null</span>) &#123;</span><br><span class="line">                    nextNode.last = lastNode;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> getLeftStr();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> String <span class="title function_">getLeftStr</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="type">Node</span> <span class="variable">lastNode</span> <span class="operator">=</span> cursorNode.last;</span><br><span class="line">            <span class="type">int</span> <span class="variable">k</span> <span class="operator">=</span> <span class="number">10</span>;</span><br><span class="line">            <span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">            <span class="keyword">while</span>(lastNode != <span class="literal">null</span> &amp;&amp; k-- &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                sb.append(lastNode.c);</span><br><span class="line">                lastNode = lastNode.last;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> sb.reverse().toString();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> String <span class="title function_">cursorRight</span><span class="params">(<span class="type">int</span> k)</span> &#123;</span><br><span class="line">            <span class="keyword">while</span>(cursorNode.next != <span class="literal">null</span> &amp;&amp; k-- &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="type">Node</span> <span class="variable">lastNode</span> <span class="operator">=</span> cursorNode.last;</span><br><span class="line">                <span class="type">Node</span> <span class="variable">nextNode</span> <span class="operator">=</span> cursorNode.next;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (nextNode != <span class="literal">null</span>) &#123;</span><br><span class="line">                    nextNode.last = lastNode;</span><br><span class="line">                    <span class="keyword">if</span> (nextNode.next != <span class="literal">null</span>) &#123;</span><br><span class="line">                        nextNode.next.last = cursorNode;</span><br><span class="line">                    &#125;</span><br><span class="line">                    cursorNode.next = nextNode.next;</span><br><span class="line">                    cursorNode.last = nextNode;</span><br><span class="line">                    nextNode.next = cursorNode;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (lastNode != <span class="literal">null</span>) &#123;</span><br><span class="line">                    lastNode.next = nextNode;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> getLeftStr();</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Your TextEditor object will be instantiated and called as such:</span></span><br><span class="line"><span class="comment"> * TextEditor obj = new TextEditor();</span></span><br><span class="line"><span class="comment"> * obj.addText(text);</span></span><br><span class="line"><span class="comment"> * int param_2 = obj.deleteText(k);</span></span><br><span class="line"><span class="comment"> * String param_3 = obj.cursorLeft(k);</span></span><br><span class="line"><span class="comment"> * String param_4 = obj.cursorRight(k);</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+<p>关于这一题，更好的做法是用2个栈，因为始终只划分左右两边，且都是相邻移动，不会直接跳转，用2个栈是更合适的一种实现。</p>
+<h2><span id="shi-yong-zhan-shi-xian-5-fen-zhong-xie-wan">使用栈实现，5分钟写完：</span><a href="#shi-yong-zhan-shi-xian-5-fen-zhong-xie-wan" class="header-anchor">#</a></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">TextEditor</span> &#123;</span><br><span class="line"></span><br><span class="line">    Deque&lt;Character&gt; leftStack = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;&gt;();</span><br><span class="line">    Deque&lt;Character&gt; rightStack = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">TextEditor</span><span class="params">()</span> &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">addText</span><span class="params">(String text)</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">char</span> c : text.toCharArray()) &#123;</span><br><span class="line">            leftStack.push(c);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">deleteText</span><span class="params">(<span class="type">int</span> k)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">deleCount</span> <span class="operator">=</span> Math.min(k, leftStack.size());</span><br><span class="line">        <span class="keyword">while</span> (!leftStack.isEmpty() &amp;&amp; k-- &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            leftStack.pop();    </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> deleCount;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">cursorLeft</span><span class="params">(<span class="type">int</span> k)</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (!leftStack.isEmpty() &amp;&amp; k--&gt;<span class="number">0</span>) &#123;</span><br><span class="line">            rightStack.push(leftStack.pop());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> getLeftStr();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getLeftStr</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">k</span> <span class="operator">=</span> <span class="number">10</span>;</span><br><span class="line">        <span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">        <span class="keyword">while</span> (!leftStack.isEmpty() &amp;&amp; k--&gt;<span class="number">0</span>) &#123;</span><br><span class="line">            sb.append(leftStack.pop());                </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">String</span> <span class="variable">result</span> <span class="operator">=</span> sb.reverse().toString();</span><br><span class="line">        addText(result);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">cursorRight</span><span class="params">(<span class="type">int</span> k)</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (!rightStack.isEmpty() &amp;&amp; k--&gt;<span class="number">0</span>) &#123;</span><br><span class="line">            leftStack.push(rightStack.pop());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> getLeftStr();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Your TextEditor object will be instantiated and called as such:</span></span><br><span class="line"><span class="comment"> * TextEditor obj = new TextEditor();</span></span><br><span class="line"><span class="comment"> * obj.addText(text);</span></span><br><span class="line"><span class="comment"> * int param_2 = obj.deleteText(k);</span></span><br><span class="line"><span class="comment"> * String param_3 = obj.cursorLeft(k);</span></span><br><span class="line"><span class="comment"> * String param_4 = obj.cursorRight(k);</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -2209,140 +2654,6 @@ jvm概念中说的是”slot一定能存放下1个boolean\byte\int\引用地址\
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/05/06/%E9%9A%8F%E7%AC%94/sleep/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/05/06/%E9%9A%8F%E7%AC%94/sleep/" class="post-title-link" itemprop="url">解决失眠的科学疗法</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-05-06 23:08:31" itemprop="dateCreated datePublished" datetime="2022-05-06T23:08:31+08:00">2022-05-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-10 23:57:29" itemprop="dateModified" datetime="2022-08-10T23:57:29+08:00">2022-08-10</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9A%8F%E7%AC%94/" itemprop="url" rel="index"><span itemprop="name">随笔</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">心理</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/05/06/%E9%9A%8F%E7%AC%94/sleep/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/05/06/%E9%9A%8F%E7%AC%94/sleep/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>455</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1><span id="shui-mian-xian-zhi-fa">睡眠限制法</span><a href="#shui-mian-xian-zhi-fa" class="header-anchor">#</a></h1>
-<ul>
-<li>
-<p>首要目标： 增加睡眠时间/卧床时间的占比，建立床=睡眠的潜意识。</p>
-</li>
-<li>
-<p>主要方式： 在无法显著增加睡眠时间的情况下，减少卧床时间。</p>
-</li>
-<li>
-<p>具体措施：</p>
-<ol>
-<li>根据之前往期的入睡统计，安排严格的上床和入睡。例如晚上12点睡，早上6点30起。</li>
-<li>困了就上床，上床后不要玩手机，避免增加无效卧床时间。</li>
-<li>如果在床上不困，就立刻起床，避免增加无效的卧床时间。</li>
-<li>减少午睡甚至不午睡，将困意集中到晚上的时间。</li>
-</ol>
-</li>
-</ul>
-<h1><span id="ru-shui-fen-wei-de-gou-jian">入睡氛围的构建</span><a href="#ru-shui-fen-wei-de-gou-jian" class="header-anchor">#</a></h1>
-<ol>
-<li>睡前不要做需要耗费脑子导致精神集中无法放松的事情， 例如做算法题、高强度学习等。</li>
-<li>提前1h洗澡、洗头，避免上床前才洗。</li>
-<li>手机的新闻、游戏日常任务尽量白天能刷就刷，睡前告诉自己都已经刷过了，不需要再刷了。（可以将自己需要刷的东西列一个清单，睡前看一下自己是不是白天都刷过了）</li>
-</ol>
-<h1><span id="ru-he-chu-li-shui-mian-shi-de-jiao-lu">如何处理睡眠时的焦虑</span><a href="#ru-he-chu-li-shui-mian-shi-de-jiao-lu" class="header-anchor">#</a></h1>
-<ol>
-<li>睡少了 并不等于 第二天会完蛋。大部分人不会从事过于高精密的工作。</li>
-<li>如果有睡眠外的焦虑， 尝试在睡前安排一定的”焦虑时间“，让自己充分将焦虑的想法念出来或者写出来，这样上床后如果还焦虑，可以告诉自己”刚才都已经焦虑过了，也写出来了，现在想也就没意义了“</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/05/06/%E9%9A%8F%E7%AC%94/%E5%A4%B1%E7%9C%A0%E7%96%97%E6%B3%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2477,7 +2788,7 @@ jvm概念中说的是”slot一定能存放下1个boolean\byte\int\引用地址\
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/05/04/%E9%9A%8F%E7%AC%94/heart/">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/05/06/%E9%9A%8F%E7%AC%94/sleep/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/abd.png">
@@ -2491,7 +2802,7 @@ jvm概念中说的是”slot一定能存放下1个boolean\byte\int\引用地址\
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/05/04/%E9%9A%8F%E7%AC%94/heart/" class="post-title-link" itemprop="url">心理成长感悟</a>
+            <a href="/2022/05/06/%E9%9A%8F%E7%AC%94/sleep/" class="post-title-link" itemprop="url">解决失眠的科学疗法</a>
         </h2>
 
         <div class="post-meta">
@@ -2501,14 +2812,14 @@ jvm概念中说的是”slot一定能存放下1个boolean\byte\int\引用地址\
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-05-04 23:35:22" itemprop="dateCreated datePublished" datetime="2022-05-04T23:35:22+08:00">2022-05-04</time>
+              <time title="创建时间：2022-05-06 23:08:31" itemprop="dateCreated datePublished" datetime="2022-05-06T23:08:31+08:00">2022-05-06</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-10 23:57:33" itemprop="dateModified" datetime="2022-08-10T23:57:33+08:00">2022-08-10</time>
+                <time title="修改时间：2022-08-10 23:57:29" itemprop="dateModified" datetime="2022-08-10T23:57:29+08:00">2022-08-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2533,8 +2844,8 @@ jvm概念中说的是”slot一定能存放下1个boolean\byte\int\引用地址\
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2022/05/04/%E9%9A%8F%E7%AC%94/heart/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/05/04/%E9%9A%8F%E7%AC%94/heart/" itemprop="commentCount"></span>
+    <a title="valine" href="/2022/05/06/%E9%9A%8F%E7%AC%94/sleep/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/05/06/%E9%9A%8F%E7%AC%94/sleep/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -2544,14 +2855,14 @@ jvm概念中说的是”slot一定能存放下1个boolean\byte\int\引用地址\
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.7k</span>
+              <span>455</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>1 分钟</span>
             </span>
 
         </div>
@@ -2563,273 +2874,35 @@ jvm概念中说的是”slot一定能存放下1个boolean\byte\int\引用地址\
     <div class="post-body" itemprop="articleBody">
 
       
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#zun-chong-ge-ren-nei-xin-de-gan-shou">尊重个人内心的感受</a></li>
-<li><a href="#ji-hua-he-xing-dong">计划和行动</a></li>
-<li><a href="#biao-da-nei-xin">表达内心</a></li>
-<li><a href="#he-ren-gou-tong-jue-de-bu-shu-fu-shi">和人沟通觉得不舒服时</a></li>
-<li><a href="#zuo-jue-ding-zuo-jue-ze">做决定/做抉择</a></li>
-<li><a href="#gong-zuo-zhi-wai-de-xing-qu-chang-shi">工作之外的兴趣、尝试</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h2><span id="zun-chong-ge-ren-nei-xin-de-gan-shou">尊重个人内心的感受</span><a href="#zun-chong-ge-ren-nei-xin-de-gan-shou" class="header-anchor">#</a></h2>
+          <h1><span id="shui-mian-xian-zhi-fa">睡眠限制法</span><a href="#shui-mian-xian-zhi-fa" class="header-anchor">#</a></h1>
 <ul>
 <li>
-<p>有时候，他人对你的疑问，例如“天气这么好，你怎么没出去玩呢？” ，<strong>也许仅仅只是他寒暄时提出的一个观点而已，并非对你做职责或者命令</strong>。 以此类推， 对于其他的一些疑问，不要过于恶意地揣测或者做过多想象。</p>
+<p>首要目标： 增加睡眠时间/卧床时间的占比，建立床=睡眠的潜意识。</p>
 </li>
 <li>
-<p>不要因为身边大部分人做了什么就感到焦虑，他们的行为可以是你的参考，但并非是最适合你的。<strong>你需要清楚自己内心想要的是什么，内心的感受是怎样的，并尊重和理解自己的感受，坚持自己的那份个性</strong>，而不是为了迎合他人去隐瞒自己的喜好、感受或者真实想法。 无论是假期活动还是工作待遇等，都是如此。</p>
+<p>主要方式： 在无法显著增加睡眠时间的情况下，减少卧床时间。</p>
 </li>
 <li>
-<p>“我想逃避”也是一种感受， 逃避是一种可以被理解的行为，但可能是一种不合时宜的行为，因为逃避更像是儿童时期做出的避险行为。<strong>自己需要意识到自己当前的行为模式是否是陈旧的</strong>，以及是否应当稍微找起来，尝试做点和儿童时期不一样的事情。</p>
-</li>
-</ul>
-<h2><span id="ji-hua-he-xing-dong">计划和行动</span><a href="#ji-hua-he-xing-dong" class="header-anchor">#</a></h2>
-<ul>
-<li>
-<p><strong>不要通过幻想，来给自己设定过于严苛的计划或者目的</strong>。 后果就是一旦发生阻碍或者完不成，挫败感会很重，以后做计划也会愈发纠结和犹豫。   因此尽量千万不要定“我xx月前必须怎么怎么”、“我必须每天xxx”，这样对意外情况容错性会降低，或者一次没成，后面就可能直接不再考虑 。</p>
-</li>
-<li>
-<p><strong>想要做一件事， 核心不在于计划， 而在于是否开始逐步行动</strong>，这个行动是可以很小的，但只要你开了头，就相当于获取了这件事的入门门槛。 无论是写博客、跑步、学习、刷题，都是如此。不要把时间浪费在纠结上， 与其纠结，还不如先拆分好之后，随便挑一件做。</p>
-<p>对于跑步，应该是“我想跑的时候就跑，这次简单跑个500米试试，并非要周三或者周五，只是想开个头而已”</p>
-<p>例如博客，我想写的时候就写一下， 今天空，正好想做，就做了</p>
-<p>例如去哪个地方，那就先提前做些小的准备，当你准备充分了，自然也就有选择的余地，而不是强行设置期限，导致自己陷入焦虑之中。</p>
-</li>
-<li>
-<p>当很多想做的事情交叉重叠，<strong>先做影响最近的</strong>，例如洗澡、扫地、拖地，再做比较久远影响的。</p>
-</li>
-</ul>
-<h2><span id="biao-da-nei-xin">表达内心</span><a href="#biao-da-nei-xin" class="header-anchor">#</a></h2>
-<ul>
-<li>尽可能真实地表达你的想法或者目的，并付诸以该想法为最首要的行为。以下是解释：</li>
-</ul>
+<p>具体措施：</p>
 <ol>
-<li>要避免为了掩盖想法，找别的理由去掩饰**</li>
+<li>根据之前往期的入睡统计，安排严格的上床和入睡。例如晚上12点睡，早上6点30起。</li>
+<li>困了就上床，上床后不要玩手机，避免增加无效卧床时间。</li>
+<li>如果在床上不困，就立刻起床，避免增加无效的卧床时间。</li>
+<li>减少午睡甚至不午睡，将困意集中到晚上的时间。</li>
 </ol>
-<p>例如你想送人笔记本电脑，却总是说不出”我想送你笔记本让你改善你的生活质量“这句话，特地找了  一堆理由，例如”我在公司看到一个便宜的内购“、”我多买了一台笔记本，不要了给你吧“， 却刻意掩埋 了自己的想法。</p>
-<ol start="2">
-<li>
-<p>要避免因为过分考虑后果，导致对”行为“频繁地做调整，当你试图期望让该‘行为’能适配所有的后果时，你的行为本身就不太符合根本目的了</p>
-<p>例如你要送人一台新的笔记本电脑，却总是考虑被拒绝的后果，于是换成了一台旧电脑并自己装好系统，以准备被拒绝时可以转交给父母使用。   这样会导致收到礼物的对方并不会觉得开心和尊重。</p>
 </li>
-</ol>
-<p><strong>实际上被拒绝后的事，应该是一种预案，但不能改变行为本身，偏离核心目的</strong>，例如被拒绝了，那你和父母说等你回来再安装即可，或者提供其他的措施，而不是为了后果，直接改变了礼物本身，偏离了希望交好的目的。</p>
-<h2><span id="he-ren-gou-tong-jue-de-bu-shu-fu-shi">和人沟通觉得不舒服时</span><a href="#he-ren-gou-tong-jue-de-bu-shu-fu-shi" class="header-anchor">#</a></h2>
+</ul>
+<h1><span id="ru-shui-fen-wei-de-gou-jian">入睡氛围的构建</span><a href="#ru-shui-fen-wei-de-gou-jian" class="header-anchor">#</a></h1>
 <ol>
-<li>切忌二极管思维， <strong>不能一味的赞同别人或者听从别人， 也不能一味地要求别人听从自己的一切要求</strong>。前者是懦弱儿童思维，后者是霸道父亲思维，都是不可取的</li>
-<li>不能因为别人不满足我的要求，<strong>就立刻在内心觉得不爽或者不舒服</strong>， 在产生一定的情绪前，先思考对方为什么会这么说/这么做，搞清楚原因后，再决定是发泄情绪还是做应对措施，<strong>“内心默默不爽”对于事情解决是没有任何意义的</strong></li>
+<li>睡前不要做需要耗费脑子导致精神集中无法放松的事情， 例如做算法题、高强度学习等。</li>
+<li>提前1h洗澡、洗头，避免上床前才洗。</li>
+<li>手机的新闻、游戏日常任务尽量白天能刷就刷，睡前告诉自己都已经刷过了，不需要再刷了。（可以将自己需要刷的东西列一个清单，睡前看一下自己是不是白天都刷过了）</li>
 </ol>
-<h2><span id="zuo-jue-ding-zuo-jue-ze">做决定/做抉择</span><a href="#zuo-jue-ding-zuo-jue-ze" class="header-anchor">#</a></h2>
+<h1><span id="ru-he-chu-li-shui-mian-shi-de-jiao-lu">如何处理睡眠时的焦虑</span><a href="#ru-he-chu-li-shui-mian-shi-de-jiao-lu" class="header-anchor">#</a></h1>
 <ol>
-<li>不做决定本身就是一种选择， 这种选择会浪费你的时间和机会成本。</li>
-<li>当实在决定不了，先尝试性在2个决定上做一些前置工作，至少保证事情在推进。</li>
-<li></li>
+<li>睡少了 并不等于 第二天会完蛋。大部分人不会从事过于高精密的工作。</li>
+<li>如果有睡眠外的焦虑， 尝试在睡前安排一定的”焦虑时间“，让自己充分将焦虑的想法念出来或者写出来，这样上床后如果还焦虑，可以告诉自己”刚才都已经焦虑过了，也写出来了，现在想也就没意义了“</li>
 </ol>
-<h2><span id="gong-zuo-zhi-wai-de-xing-qu-chang-shi">工作之外的兴趣、尝试</span><a href="#gong-zuo-zhi-wai-de-xing-qu-chang-shi" class="header-anchor">#</a></h2>
-<ul>
-<li>
-<p>工作之内的事情一般会有目标和绩效。工作之外的事情，则要注意不要带入工作思维。</p>
-</li>
-<li>
-<p>避免定过于高的目标，例如一定要完成xxxx，一定要达到xxx， 而忽略了做这件事的意义。</p>
-</li>
-<li>
-<p>不如先开始做，做一部分，如果真的不喜欢就不要勉强</p>
-</li>
-<li>
-<p>注意并不是只有工作技能上的提升才叫提升或者成长， 个人心理、生理状态等进步都是一种提升，因此不要只看这一周工作上有没有学习或者进步之类的。  如果人的焦虑、恐惧症状比前几周有改善，或者开始关注到自己的感受和内心想法，那么也是一种进步。</p>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/05/04/%E9%9A%8F%E7%AC%94/%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5%E5%BF%83%E7%90%86%E6%88%90%E9%95%BF%E6%84%9F%E6%82%9F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/05/04/%E9%9A%8F%E7%AC%94/%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5%E5%BF%83%E7%90%86%E6%88%90%E9%95%BF%E6%84%9F%E6%82%9F/" class="post-title-link" itemprop="url">第一阶段心理成长感悟</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-05-04 23:35:22" itemprop="dateCreated datePublished" datetime="2022-05-04T23:35:22+08:00">2022-05-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-10 00:55:38" itemprop="dateModified" datetime="2022-08-10T00:55:38+08:00">2022-08-10</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9A%8F%E7%AC%94/" itemprop="url" rel="index"><span itemprop="name">随笔</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">心理</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/05/04/%E9%9A%8F%E7%AC%94/%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5%E5%BF%83%E7%90%86%E6%88%90%E9%95%BF%E6%84%9F%E6%82%9F/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/05/04/%E9%9A%8F%E7%AC%94/%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5%E5%BF%83%E7%90%86%E6%88%90%E9%95%BF%E6%84%9F%E6%82%9F/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.7k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#zun-chong-ge-ren-nei-xin-de-gan-shou">尊重个人内心的感受</a></li>
-<li><a href="#ji-hua-he-xing-dong">计划和行动</a></li>
-<li><a href="#biao-da-nei-xin">表达内心</a></li>
-<li><a href="#he-ren-gou-tong-jue-de-bu-shu-fu-shi">和人沟通觉得不舒服时</a></li>
-<li><a href="#zuo-jue-ding-zuo-jue-ze">做决定/做抉择</a></li>
-<li><a href="#gong-zuo-zhi-wai-de-xing-qu-chang-shi">工作之外的兴趣、尝试</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h2><span id="zun-chong-ge-ren-nei-xin-de-gan-shou">尊重个人内心的感受</span><a href="#zun-chong-ge-ren-nei-xin-de-gan-shou" class="header-anchor">#</a></h2>
-<ul>
-<li>
-<p>有时候，他人对你的疑问，例如“天气这么好，你怎么没出去玩呢？” ，<strong>也许仅仅只是他寒暄时提出的一个观点而已，并非对你做职责或者命令</strong>。 以此类推， 对于其他的一些疑问，不要过于恶意地揣测或者做过多想象。</p>
-</li>
-<li>
-<p>不要因为身边大部分人做了什么就感到焦虑，他们的行为可以是你的参考，但并非是最适合你的。<strong>你需要清楚自己内心想要的是什么，内心的感受是怎样的，并尊重和理解自己的感受，坚持自己的那份个性</strong>，而不是为了迎合他人去隐瞒自己的喜好、感受或者真实想法。 无论是假期活动还是工作待遇等，都是如此。</p>
-</li>
-<li>
-<p>“我想逃避”也是一种感受， 逃避是一种可以被理解的行为，但可能是一种不合时宜的行为，因为逃避更像是儿童时期做出的避险行为。<strong>自己需要意识到自己当前的行为模式是否是陈旧的</strong>，以及是否应当稍微找起来，尝试做点和儿童时期不一样的事情。</p>
-</li>
-</ul>
-<h2><span id="ji-hua-he-xing-dong">计划和行动</span><a href="#ji-hua-he-xing-dong" class="header-anchor">#</a></h2>
-<ul>
-<li>
-<p><strong>不要通过幻想，来给自己设定过于严苛的计划或者目的</strong>。 后果就是一旦发生阻碍或者完不成，挫败感会很重，以后做计划也会愈发纠结和犹豫。   因此尽量千万不要定“我xx月前必须怎么怎么”、“我必须每天xxx”，这样对意外情况容错性会降低，或者一次没成，后面就可能直接不再考虑 。</p>
-</li>
-<li>
-<p><strong>想要做一件事， 核心不在于计划， 而在于是否开始逐步行动</strong>，这个行动是可以很小的，但只要你开了头，就相当于获取了这件事的入门门槛。 无论是写博客、跑步、学习、刷题，都是如此。不要把时间浪费在纠结上， 与其纠结，还不如先拆分好之后，随便挑一件做。</p>
-<p>对于跑步，应该是“我想跑的时候就跑，这次简单跑个500米试试，并非要周三或者周五，只是想开个头而已”</p>
-<p>例如博客，我想写的时候就写一下， 今天空，正好想做，就做了</p>
-<p>例如去哪个地方，那就先提前做些小的准备，当你准备充分了，自然也就有选择的余地，而不是强行设置期限，导致自己陷入焦虑之中。</p>
-</li>
-<li>
-<p>当很多想做的事情交叉重叠，<strong>先做影响最近的</strong>，例如洗澡、扫地、拖地，再做比较久远影响的。</p>
-</li>
-</ul>
-<h2><span id="biao-da-nei-xin">表达内心</span><a href="#biao-da-nei-xin" class="header-anchor">#</a></h2>
-<ul>
-<li>尽可能真实地表达你的想法或者目的，并付诸以该想法为最首要的行为。以下是解释：</li>
-</ul>
-<ol>
-<li>要避免为了掩盖想法，找别的理由去掩饰**</li>
-</ol>
-<p>例如你想送人笔记本电脑，却总是说不出”我想送你笔记本让你改善你的生活质量“这句话，特地找了  一堆理由，例如”我在公司看到一个便宜的内购“、”我多买了一台笔记本，不要了给你吧“， 却刻意掩埋 了自己的想法。</p>
-<ol start="2">
-<li>
-<p>要避免因为过分考虑后果，导致对”行为“频繁地做调整，当你试图期望让该‘行为’能适配所有的后果时，你的行为本身就不太符合根本目的了</p>
-<p>例如你要送人一台新的笔记本电脑，却总是考虑被拒绝的后果，于是换成了一台旧电脑并自己装好系统，以准备被拒绝时可以转交给父母使用。   这样会导致收到礼物的对方并不会觉得开心和尊重。</p>
-</li>
-</ol>
-<p><strong>实际上被拒绝后的事，应该是一种预案，但不能改变行为本身，偏离核心目的</strong>，例如被拒绝了，那你和父母说等你回来再安装即可，或者提供其他的措施，而不是为了后果，直接改变了礼物本身，偏离了希望交好的目的。</p>
-<h2><span id="he-ren-gou-tong-jue-de-bu-shu-fu-shi">和人沟通觉得不舒服时</span><a href="#he-ren-gou-tong-jue-de-bu-shu-fu-shi" class="header-anchor">#</a></h2>
-<ol>
-<li>切忌二极管思维， <strong>不能一味的赞同别人或者听从别人， 也不能一味地要求别人听从自己的一切要求</strong>。前者是懦弱儿童思维，后者是霸道父亲思维，都是不可取的</li>
-<li>不能因为别人不满足我的要求，<strong>就立刻在内心觉得不爽或者不舒服</strong>， 在产生一定的情绪前，先思考对方为什么会这么说/这么做，搞清楚原因后，再决定是发泄情绪还是做应对措施，<strong>“内心默默不爽”对于事情解决是没有任何意义的</strong></li>
-</ol>
-<h2><span id="zuo-jue-ding-zuo-jue-ze">做决定/做抉择</span><a href="#zuo-jue-ding-zuo-jue-ze" class="header-anchor">#</a></h2>
-<ol>
-<li>不做决定本身就是一种选择， 这种选择会浪费你的时间和机会成本。</li>
-<li>当实在决定不了，先尝试性在2个决定上做一些前置工作，至少保证事情在推进。</li>
-<li></li>
-</ol>
-<h2><span id="gong-zuo-zhi-wai-de-xing-qu-chang-shi">工作之外的兴趣、尝试</span><a href="#gong-zuo-zhi-wai-de-xing-qu-chang-shi" class="header-anchor">#</a></h2>
-<ul>
-<li>
-<p>工作之内的事情一般会有目标和绩效。工作之外的事情，则要注意不要带入工作思维。</p>
-</li>
-<li>
-<p>避免定过于高的目标，例如一定要完成xxxx，一定要达到xxx， 而忽略了做这件事的意义。</p>
-</li>
-<li>
-<p>不如先开始做，做一部分，如果真的不喜欢就不要勉强</p>
-</li>
-<li>
-<p>注意并不是只有工作技能上的提升才叫提升或者成长， 个人心理、生理状态等进步都是一种提升，因此不要只看这一周工作上有没有学习或者进步之类的。  如果人的焦虑、恐惧症状比前几周有改善，或者开始关注到自己的感受和内心想法，那么也是一种进步。</p>
-</li>
-</ul>
 
       
     </div>
@@ -2916,7 +2989,7 @@ jvm概念中说的是”slot一定能存放下1个boolean\byte\int\引用地址\
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">84</span>
+          <span class="site-state-item-count">86</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -2987,7 +3060,7 @@ jvm概念中说的是”slot一定能存放下1个boolean\byte\int\引用地址\
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共189.4k字</span>
+  <span class="post-count">博客全站共190.7k字</span>
 </div>
 
         
