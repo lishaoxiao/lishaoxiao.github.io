@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="选择数据类型的原则： 整数类型： 实数类型（带小数点的类型） 字符串类型  varchar char binary 和varbinary   BLOB和TEXT 枚举enum 日期和时间类型  DATETIME TIMESTAMP   位类型  bit（n) set   主键的选择 schema设计时的陷阱 范式的考量 查询的缓存 alter table性能问题 分区的限制     [toc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MYSQL表字段定义和优化建议">
+<meta property="og:url" content="http://breakdawncoder.com/2022/08/23/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E8%A1%A8%E5%AD%97%E6%AE%B5%E5%AE%9A%E4%B9%89%E5%92%8C%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="选择数据类型的原则： 整数类型： 实数类型（带小数点的类型） 字符串类型  varchar char binary 和varbinary   BLOB和TEXT 枚举enum 日期和时间类型  DATETIME TIMESTAMP   位类型  bit（n) set   主键的选择 schema设计时的陷阱 范式的考量 查询的缓存 alter table性能问题 分区的限制     [toc">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-08-23T14:47:49.000Z">
+<meta property="article:modified_time" content="2022-08-23T16:12:29.408Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="后台开发,SQL数据库">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://breakdawncoder.com/2022/08/23/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E8%A1%A8%E5%AD%97%E6%AE%B5%E5%AE%9A%E4%B9%89%E5%92%8C%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MYSQL表字段定义和优化建议 | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/23/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E8%A1%A8%E5%AD%97%E6%AE%B5%E5%AE%9A%E4%B9%89%E5%92%8C%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MYSQL表字段定义和优化建议
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-23 22:47:49" itemprop="dateCreated datePublished" datetime="2022-08-23T22:47:49+08:00">2022-08-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-24 00:12:29" itemprop="dateModified" datetime="2022-08-24T00:12:29+08:00">2022-08-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/SQL%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">SQL数据库</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/23/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E8%A1%A8%E5%AD%97%E6%AE%B5%E5%AE%9A%E4%B9%89%E5%92%8C%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/23/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E8%A1%A8%E5%AD%97%E6%AE%B5%E5%AE%9A%E4%B9%89%E5%92%8C%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#xuan-ze-shu-ju-lei-xing-de-yuan-ze">选择数据类型的原则：</a></li>
+<li><a href="#zheng-shu-lei-xing">整数类型：</a></li>
+<li><a href="#shi-shu-lei-xing-dai-xiao-shu-dian-de-lei-xing">实数类型（带小数点的类型）</a></li>
+<li><a href="#zi-fu-chuan-lei-xing">字符串类型</a>
+<ul>
+<li><a href="#varchar">varchar</a></li>
+<li><a href="#char">char</a></li>
+<li><a href="#binary-he-varbinary">binary 和varbinary</a></li>
+</ul>
+</li>
+<li><a href="#blob-he-text">BLOB和TEXT</a></li>
+<li><a href="#mei-ju-enum">枚举enum</a></li>
+<li><a href="#ri-qi-he-shi-jian-lei-xing">日期和时间类型</a>
+<ul>
+<li><a href="#datetime">DATETIME</a></li>
+<li><a href="#timestamp">TIMESTAMP</a></li>
+</ul>
+</li>
+<li><a href="#wei-lei-xing">位类型</a>
+<ul>
+<li><a href="#bit-n">bit（n)</a></li>
+<li><a href="#set">set</a></li>
+</ul>
+</li>
+<li><a href="#zhu-jian-de-xuan-ze">主键的选择</a></li>
+<li><a href="#schema-she-ji-shi-de-xian-jing">schema设计时的陷阱</a></li>
+<li><a href="#fan-shi-de-kao-liang">范式的考量</a></li>
+<li><a href="#cha-xun-de-huan-cun">查询的缓存</a></li>
+<li><a href="#alter-table-xing-neng-wen-ti">alter table性能问题</a></li>
+<li><a href="#fen-qu-de-xian-zhi">分区的限制</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="xuan-ze-shu-ju-lei-xing-de-yuan-ze">选择数据类型的原则：</span><a href="#xuan-ze-shu-ju-lei-xing-de-yuan-ze" class="header-anchor">#</a></h1>
+<ul>
+<li>越小越好。 如果后续因为业务需求要alter增大范围， 会很耗时。</li>
+<li>简单数据类型， 比如用整数而不是字符串去存ip。</li>
+<li>尽量NOT NULL。原因:索引列如果存在null， 会需要一个额外的字节，? ?索引统计也变复杂了。</li>
+</ul>
+<h1><span id="zheng-shu-lei-xing">整数类型：</span><a href="#zheng-shu-lei-xing" class="header-anchor">#</a></h1>
+<ul>
+<li>mediumint是24位的， 其他分别是8、16、32、64对应tiny、small、int、big</li>
+<li>支持unsigned属性</li>
+<li>int(11)不代表用11位存储， 限定只是在客户端工具中只显示11位字符。</li>
+</ul>
+<h1><span id="shi-shu-lei-xing-dai-xiao-shu-dian-de-lei-xing">实数类型（带小数点的类型）</span><a href="#shi-shu-lei-xing-dai-xiao-shu-dian-de-lei-xing" class="header-anchor">#</a></h1>
+<ul>
+<li>有时候不一定是为了小数才选实数。  比如选decima而不是bigint是因为decimal可以存储比bigint还要大的数字</li>
+<li>float和double就是标准的16、32浮点运算</li>
+<li>decimal存储精确的小数和精确计算（精确计算只在mysql5.0之后）</li>
+<li>浮点比decimal要的存储空间更小， decimal(18.9）会用掉9个字节（4小数点前+4小数点后+1小数点本身）</li>
+<li>只有精确计算才用到decimal， 如果数据太多，为了节省空间， 可以改成用bigint（只要把小数点部分乘10的倍数，去掉小数点即可），毕竟decimal比较耗空间。</li>
+</ul>
+<h1><span id="zi-fu-chuan-lei-xing">字符串类型</span><a href="#zi-fu-chuan-lei-xing" class="header-anchor">#</a></h1>
+<h2><span id="varchar">varchar</span><a href="#varchar" class="header-anchor">#</a></h2>
+<ul>
+<li>存储可变长字符串。（例外： 用ROW_FORMAT=FIXED创建的话，varchar的空间会固定）</li>
+<li>可变长的概念：<br>
+char是固定长度的，例如你定义了12，插入了&quot;aa&quot;，后面它会给你补10个空。如果是varchar，那么&quot;aa&quot;就是&quot;aa&quot;不会给你补</li>
+<li>varchar(N)代表的N是最大长度</li>
+<li>需要1-2个额外字节， 来保存字符串长度<br>
+varchar(n）需要的最大存储空间长度=  n + (n&lt;=255?1:2)</li>
+<li>2种情况不适合用varchar</li>
+</ul>
+<ol>
+<li>最大长度比平均长度要大</li>
+<li>列的更新很少</li>
+</ol>
+<ul>
+<li>varchar(5)相比于varchar(200)的优势：  mysql会分配固定大小的内存块来保存内部值。尤其是使用内存临时表进行排序或者操作时会特别糟糕？？ 不懂</li>
+</ul>
+<h2><span id="char">char</span><a href="#char" class="header-anchor">#</a></h2>
+<ul>
+<li>char是定长的，因此总是会预留足够的空间</li>
+<li>char存储时，会删除字符串末尾的空格。 即’  abc  ‘存入后，会变成’  abc’</li>
+<li>char相比varchar的优势： 字符串很短时， 需要的空间比varchar少(varchar需要额外空间存储长度)</li>
+</ul>
+<h2><span id="binary-he-varbinary">binary 和varbinary</span><a href="#binary-he-varbinary" class="header-anchor">#</a></h2>
+<ul>
+<li>存储的是二进制字符串（字节码，0x77那种）</li>
+<li>binary 采用\0而不是空格来填充</li>
+<li>二进制字节码比较的速度比字符快</li>
+</ul>
+<h1><span id="blob-he-text">BLOB和TEXT</span><a href="#blob-he-text" class="header-anchor">#</a></h1>
+<ul>
+<li>为了存储超大的数据而设计的字符串类型</li>
+<li>mysql把他们当作独立的对象处理，专门使用外部的存储区域来存储， 内部存储指针。</li>
+<li>BLOB和TEXT的区别： 一个是二进制，一个带有字符集规则</li>
+<li>mysql对这2个类型做排序时， 只对前max_sort_length字节做排序</li>
+<li>因此不能将这2个类型的字段做索引</li>
+</ul>
+<h1><span id="mei-ju-enum">枚举enum</span><a href="#mei-ju-enum" class="header-anchor">#</a></h1>
+<p>create table enum_test(e ENUM(‘a’,‘b’,‘c’) NOT NULL)</p>
+<ul>
+<li>实际上存储的不是’a’这个字符串，而是1\2\3 这类数字</li>
+<li>按照定义顺序分配数字</li>
+<li>排序时也按照实际数字排序，而不是枚举的字典序</li>
+<li>枚举作为主键也优于字符串， 毕竟她本质是数字。但是比数字会差一点。</li>
+</ul>
+<h1><span id="ri-qi-he-shi-jian-lei-xing">日期和时间类型</span><a href="#ri-qi-he-shi-jian-lei-xing" class="header-anchor">#</a></h1>
+<h2><span id="datetime">DATETIME</span><a href="#datetime" class="header-anchor">#</a></h2>
+<ul>
+<li>从1001到9999年， 精度为秒</li>
+<li>与时区无关</li>
+<li>使用8个字节存储</li>
+</ul>
+<h2><span id="timestamp">TIMESTAMP</span><a href="#timestamp" class="header-anchor">#</a></h2>
+<ul>
+<li>从1970.1.1至今的秒数</li>
+<li>只使用4个字节</li>
+<li>显示依赖时区，服务端、客户端都需要配置时区，然后timeStamp的展示就会不同。</li>
+<li>TIMESTAMP默认为NOT NULL</li>
+<li>插入时会自动设置这个列的值为“当前时间”</li>
+</ul>
+<p>如果想存毫秒怎么办？ 可以使用bigint来存储毫秒级时间戳。</p>
+<h1><span id="wei-lei-xing">位类型</span><a href="#wei-lei-xing" class="header-anchor">#</a></h1>
+<p>通常用于存储acl权限</p>
+<h2><span id="bit-n">bit（n)</span><a href="#bit-n" class="header-anchor">#</a></h2>
+<ul>
+<li>mysql把bit当作字符串而不是数字类型</li>
+<li>存储00111001并且检索时， 得到的ASCII为57的字符串（即’9’)。  在数字上下文场景却是数字57</li>
+<li>因为这个特性，慎用bit</li>
+</ul>
+<h2><span id="set">set</span><a href="#set" class="header-anchor">#</a></h2>
+<ul>
+<li>如果字段内容就是一堆true或者false的位，可以放到set类型种</li>
+<li>替代方式： 用tinyint类型来替代， 就是比太好理解。</li>
+</ul>
+<hr>
+<h1><span id="zhu-jian-de-xuan-ze">主键的选择</span><a href="#zhu-jian-de-xuan-ze" class="header-anchor">#</a></h1>
+<ul>
+<li>整数是坠好的</li>
+<li>enum和set是糟糕的选择。</li>
+<li>字符串类型也尽量避免。空间大，检索慢</li>
+<li>避免随机生成的主键字符串，原因:</li>
+</ul>
+<ol>
+<li>插入值会随机写到索引的不同位置</li>
+<li>select语句会变慢</li>
+<li>随机值导致缓存失效( 局部性原理gg）<br>
+因此最好不要用string类型的UUID，  而是转为数字。</li>
+</ol>
+<hr>
+<h1><span id="schema-she-ji-shi-de-xian-jing">schema设计时的陷阱</span><a href="#schema-she-ji-shi-de-xian-jing" class="header-anchor">#</a></h1>
+<ul>
+<li>太长的列且列中有变长的字段， 可能会导致转换成行数据结构时要消耗很大的CPU。（从行缓冲种将编码过的列转成行数据的缘故）</li>
+<li>表的关联表太多会有问题。 建议查询最好在12个表内做关联。</li>
+<li>防止过度使用枚举。 枚举的缺点:<br>
+① 可能会有人搞一个enum(‘-1’,‘0’,‘1’,‘2’)这种误导人的枚举<br>
+② 每次要新增枚举必须alter table，会阻塞表</li>
+<li>set中的元素如果每次只能出现一个， 应该改成枚举。</li>
+<li>mysql会在索引中存储null，但是oracle不会。</li>
+<li>尽量不要用null，而是用空字符串、默认值替代，除非没有可以用的默认值，宁愿用null去引起调用方注意</li>
+</ul>
+<hr>
+<h1><span id="fan-shi-de-kao-liang">范式的考量</span><a href="#fan-shi-de-kao-liang" class="header-anchor">#</a></h1>
+<p>范式设计： 每个数据一般只会出现一次，没有冗余或者重复数据<br>
+反范式： 与范式相反。</p>
+<p>范式的优点：</p>
+<ul>
+<li>更新操作快，因为重复的记录少</li>
+<li>表更小，可以更好地放到内存里</li>
+<li>很少需要做distinct、groupby， 因此一般都是1对1的关系</li>
+</ul>
+<p>缺点：<br>
+查询时经常需要关联，当关联后的另外一个表需要做条件判断，可能会消耗一定性能</p>
+<p>反范式的优缺点和范式正好相反。</p>
+<hr>
+<h1><span id="cha-xun-de-huan-cun">查询的缓存</span><a href="#cha-xun-de-huan-cun" class="header-anchor">#</a></h1>
+<ul>
+<li>有时候会弄一个叫缓存表或者汇总表的东西， 避免每次查询所有记录来得到一个区间的结果</li>
+<li>计数器表，如果表里只有1行，可能导致并发效率低。 可以弄100行，然后大家更新时随机更新。  统计结果时直接sum即可</li>
+</ul>
+<hr>
+<h1><span id="alter-table-xing-neng-wen-ti">alter table性能问题</span><a href="#alter-table-xing-neng-wen-ti" class="header-anchor">#</a></h1>
+<ul>
+<li>mysql中，  alter table的原理一般是  用新的结构创建一个新表，然后把数据导入到新表中。</li>
+<li>有一些操作可以只修改表的.frm文件来达到修改结构的作用。<br>
+比如 alter column修改默认值，  移除列的auto_increment属性， 或者修改enum、set的常量 （可以通过弄一个新表，然后只修改新表的属性，接着进入数据库后端直接替换tablename.frm文件</li>
+</ul>
+<h1><span id="fen-qu-de-xian-zhi">分区的限制</span><a href="#fen-qu-de-xian-zhi" class="header-anchor">#</a></h1>
+<p>MySQL分区的限制</p>
+<ul>
+<li>
+<p>一个表最多只能有1024个分区。</p>
+</li>
+<li>
+<p>MySQL5.1中，分区表达式必须是整数，或者返回整数的表达式。在MySQL5.5中提供了非整数表达式分区的支持。</p>
+</li>
+<li>
+<p>如果分区字段中有主键或者唯一索引的列，那么多有主键列和唯一索引列都必须包含进来。即：分区字段要么不包含主键或者索引列，要么包含全部主键和索引列。</p>
+</li>
+<li>
+<p>分区表中无法使用外键约束。</p>
+</li>
+<li>
+<p>MySQL的分区适用于一个表的所有数据和索引，不能只对表数据分区而不对索引分区，也不能只对索引分区而不对表分区，也不能只对表的一部分数据分区。</p>
+</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_35190486/article/details/108758205">分区详细用法</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/2022/08/23/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E8%A1%A8%E5%AD%97%E6%AE%B5%E5%AE%9A%E4%B9%89%E5%92%8C%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE/" title="MYSQL表字段定义和优化建议">http://breakdawncoder.com/2022/08/23/知识库/后台开发应用/关系型数据库/MYSQL表字段定义和优化建议/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91-SQL%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 后台开发,SQL数据库</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/08/23/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E8%AF%AD%E5%8F%A5%E8%B0%83%E4%BC%98%E6%89%8B%E6%AE%B5/" rel="prev" title="MYSQL语句调优手段">
+      <i class="fa fa-chevron-left"></i> MYSQL语句调优手段
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/08/23/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-23/" rel="next" title="2022-0823">
+      2022-0823 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">选择数据类型的原则：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">整数类型：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">实数类型（带小数点的类型）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">字符串类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">varchar</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.2.</span> <span class="nav-text">char</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.3.</span> <span class="nav-text">binary 和varbinary</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">BLOB和TEXT</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">枚举enum</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">日期和时间类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">7.1.</span> <span class="nav-text">DATETIME</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">7.2.</span> <span class="nav-text">TIMESTAMP</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">8.</span> <span class="nav-text">位类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">8.1.</span> <span class="nav-text">bit（n)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">8.2.</span> <span class="nav-text">set</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">9.</span> <span class="nav-text">主键的选择</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">10.</span> <span class="nav-text">schema设计时的陷阱</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">11.</span> <span class="nav-text">范式的考量</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">12.</span> <span class="nav-text">查询的缓存</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">13.</span> <span class="nav-text">alter table性能问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">14.</span> <span class="nav-text">分区的限制</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共194.5k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

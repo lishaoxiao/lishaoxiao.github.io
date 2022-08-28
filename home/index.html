@@ -176,6 +176,513 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/28/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%8B%93%E6%89%91%E6%8E%92%E5%BA%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/28/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%8B%93%E6%89%91%E6%8E%92%E5%BA%8F/" class="post-title-link" itemprop="url">拓扑排序</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-28 23:12:42 / 修改时间：23:56:17" itemprop="dateCreated datePublished" datetime="2022-08-28T23:12:42+08:00">2022-08-28</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">算法大全</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%8E%92%E5%BA%8F/" itemprop="url" rel="index"><span itemprop="name">排序</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/28/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%8B%93%E6%89%91%E6%8E%92%E5%BA%8F/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/28/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%8B%93%E6%89%91%E6%8E%92%E5%BA%8F/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#gai-nian-he-chang-jing">概念和场景</a></li>
+<li><a href="#zuo-fa">做法</a></li>
+<li><a href="#mo-ban">模板</a>
+<ul>
+<li><a href="#jian-yi-ban-ben-n-1000">简易版本（n&lt;=1000)</a></li>
+<li><a href="#dai-dui-lie-de-gao-xing-neng-ban-ben-dan-rong-yi-xie-cuo">带队列的高性能版本（但容易写错）</a></li>
+</ul>
+</li>
+<li><a href="#xiang-guan-ti-mu">相关题目</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="gai-nian-he-chang-jing">概念和场景</span><a href="#gai-nian-he-chang-jing" class="header-anchor">#</a></h1>
+<h1><span id="zuo-fa">做法</span><a href="#zuo-fa" class="header-anchor">#</a></h1>
+<p>拓扑排序算法步骤：</p>
+<ol>
+<li>得到所有节点的相邻点列表</li>
+<li>得到所有节点的入度数量数组（切记，不可用相邻点列表代替入度数量，会炸的，因为过程中会改变，很麻烦的）</li>
+<li>每次选入度为0的点做处理，对相邻点的入度数量做更新，减1</li>
+<li>如果每次选很费时间，可以引入队列，队列时，每次要把队列里的全取出来再处理，而不是依次处理。每次出队的那一堆都是临时答案。</li>
+</ol>
+<h1><span id="mo-ban">模板</span><a href="#mo-ban" class="header-anchor">#</a></h1>
+<h2><span id="jian-yi-ban-ben-n-lt-1000">简易版本（n&lt;=1000)</span><a href="#jian-yi-ban-ben-n-lt-1000" class="header-anchor">#</a></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>[] inCount = <span class="keyword">new</span> <span class="title class_">int</span>[k+<span class="number">1</span>];</span><br><span class="line">List&lt;Integer&gt;[] outLists = <span class="keyword">new</span> <span class="title class_">List</span>[k+<span class="number">1</span>];</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;=k;i++) &#123;</span><br><span class="line">    outLists[i] = <span class="keyword">new</span> <span class="title class_">ArrayList</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span>[] row : rowConditions) &#123;</span><br><span class="line">    inCount[row[<span class="number">1</span>]]++;</span><br><span class="line">    outLists[row[<span class="number">0</span>]].add(row[<span class="number">1</span>]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="variable">y</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"><span class="type">boolean</span>[] vis = <span class="keyword">new</span> <span class="title class_">boolean</span>[k+<span class="number">1</span>];</span><br><span class="line"><span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> inCount.length; </span><br><span class="line"><span class="keyword">while</span> (n--&gt;<span class="number">0</span>) &#123;</span><br><span class="line">    <span class="type">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= k; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (inCount[i]  &gt; <span class="number">0</span> || vis[i]) &#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        vis[i] = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> out : outLists[i]) &#123;</span><br><span class="line">            inCount[out]--;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 记录这个点</span></span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2><span id="dai-dui-lie-de-gao-xing-neng-ban-ben-dan-rong-yi-xie-cuo">带队列的高性能版本（但容易写错）</span><a href="#dai-dui-lie-de-gao-xing-neng-ban-ben-dan-rong-yi-xie-cuo" class="header-anchor">#</a></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Integer&gt; result = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line"><span class="keyword">while</span>(!queue.isEmpty()) &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">size</span> <span class="operator">=</span> queue.size();</span><br><span class="line">    List&lt;Integer&gt; needDeleteNodes = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    needDeleteNodes.addAll(queue);</span><br><span class="line">    queue.clear();</span><br><span class="line">    <span class="comment">// 要每次都更新这个result</span></span><br><span class="line">    result = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> needDeleNode : needDeleteNodes) &#123;</span><br><span class="line">        result.add(needDeleNode);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> nextNode : nextNodes[needDeleNode]) &#123;</span><br><span class="line">            <span class="comment">// 不能delete</span></span><br><span class="line">            edgCounts[nextNode]--;</span><br><span class="line">            <span class="keyword">if</span> (edgCounts[nextNode] == <span class="number">1</span>) &#123;</span><br><span class="line">                queue.offer(nextNode);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1><span id="xiang-guan-ti-mu">相关题目</span><a href="#xiang-guan-ti-mu" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/minimum-height-trees/">310. 最小高度树 - 力扣（LeetCode）</a></p>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/build-a-matrix-with-conditions/">6163. 给定条件下构造矩阵 - 力扣（LeetCode）</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/28/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC308%E5%9C%BA%E5%91%A8%E8%B5%9B-357%E5%90%8D-4%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/28/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC308%E5%9C%BA%E5%91%A8%E8%B5%9B-357%E5%90%8D-4%E9%A2%98/" class="post-title-link" itemprop="url">第308场周赛-357名-4题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-28 22:12:42 / 修改时间：23:51:26" itemprop="dateCreated datePublished" datetime="2022-08-28T22:12:42+08:00">2022-08-28</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">力扣周赛记录</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/28/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC308%E5%9C%BA%E5%91%A8%E8%B5%9B-357%E5%90%8D-4%E9%A2%98/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/28/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC308%E5%9C%BA%E5%91%A8%E8%B5%9B-357%E5%90%8D-4%E9%A2%98/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><img src="/images/%E7%AC%AC308%E5%9C%BA%E5%91%A8%E8%B5%9B-357%E5%90%8D-4%E9%A2%98/1661701435825.png" alt="1661701435825"></p>
+<h2><span id="ben-qi-zong-jie">本期总结：</span><a href="#ben-qi-zong-jie" class="header-anchor">#</a></h2>
+<ol>
+<li>注意拓扑排序的板子，别写错了重复判断的问题，别瞎搞一个inCount[i] = -1这种，不如老实弄个vis</li>
+</ol>
+<hr>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/longest-subsequence-with-limited-sum/">6160. 和有限的最长子序列 - 力扣（LeetCode）</a></p>
+<p>排个序就好了，没啥难的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span>[] answerQueries(<span class="type">int</span>[] nums, <span class="type">int</span>[] queries) &#123;</span><br><span class="line">        Arrays.sort(nums);</span><br><span class="line">        <span class="type">int</span>[] res = <span class="keyword">new</span> <span class="title class_">int</span>[queries.length];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; queries.length;i++) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="type">int</span> <span class="variable">len</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>;j&lt;nums.length;j++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (sum + nums[j] &gt; queries[i]) &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                sum += nums[j];</span><br><span class="line">                len++;</span><br><span class="line">            &#125;</span><br><span class="line">            res[i] = len;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/removing-stars-from-a-string/">6161. 从字符串中移除星号 - 力扣（LeetCode）</a></p>
+<p><img src="/images/%E7%AC%AC308%E5%9C%BA%E5%91%A8%E8%B5%9B-357%E5%90%8D-4%E9%A2%98/1661701444253.png" alt="1661701444253"></p>
+<p>既然每次要移除最左边， 我就从右往左边遍历， 碰到星号，说明下次碰到字母时要变星号，记录一个数字即可</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">removeStars</span><span class="params">(String s)</span> &#123;</span><br><span class="line">        <span class="type">boolean</span>[] bs = <span class="keyword">new</span> <span class="title class_">boolean</span>[s.length()];</span><br><span class="line">        <span class="type">int</span> <span class="variable">needDeduceCount</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> s.length()-<span class="number">1</span>;i&gt;=<span class="number">0</span>;i--) &#123;</span><br><span class="line">            <span class="keyword">if</span> (s.charAt(i) == <span class="string">&#x27;*&#x27;</span>) &#123;</span><br><span class="line">                needDeduceCount++;</span><br><span class="line">                bs[i] = <span class="literal">true</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (needDeduceCount &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                needDeduceCount--;</span><br><span class="line">                bs[i] = <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; s.length();i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (bs[i]) &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            sb.append(s.charAt(i));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sb.toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/minimum-amount-of-time-to-collect-garbage/">6162. 收集垃圾的最少总时间 - 力扣（LeetCode）</a></p>
+<p><img src="/images/%E7%AC%AC308%E5%9C%BA%E5%91%A8%E8%B5%9B-357%E5%90%8D-4%E9%A2%98/1661701543477.png" alt="1661701543477"></p>
+<p>这种题目啥情况，啥算法也不用，直接3次遍历即可，主要是得计算到最后一个有这个垃圾的房子时就要截至了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">garbageCollection</span><span class="params">(String[] garbage, <span class="type">int</span>[] travel)</span> &#123;</span><br><span class="line">        <span class="type">char</span>[] cs = <span class="keyword">new</span> <span class="title class_">char</span>[]&#123;<span class="string">&#x27;G&#x27;</span>, <span class="string">&#x27;P&#x27;</span>, <span class="string">&#x27;M&#x27;</span>&#125;;</span><br><span class="line">        <span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">char</span> c : cs) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="type">int</span> <span class="variable">realSum</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; garbage.length; i++) &#123;</span><br><span class="line">                <span class="type">String</span> <span class="variable">garba</span> <span class="operator">=</span> garbage[i];</span><br><span class="line">                <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">char</span> g : garba.toCharArray()) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (g == c) &#123;</span><br><span class="line">                        count++;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (count &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                    sum += count;</span><br><span class="line">                    realSum = sum;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (i != garbage.length-<span class="number">1</span>) &#123;</span><br><span class="line">                    sum += travel[i];</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            res += realSum;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/build-a-matrix-with-conditions/">6163. 给定条件下构造矩阵 - 力扣（LeetCode）</a></p>
+<p><img src="/images/%E7%AC%AC308%E5%9C%BA%E5%91%A8%E8%B5%9B-357%E5%90%8D-4%E9%A2%98/1661701601482.png" alt="1661701601482"></p>
+<p><img src="/images/%E7%AC%AC308%E5%9C%BA%E5%91%A8%E8%B5%9B-357%E5%90%8D-4%E9%A2%98/1661701607970.png" alt="1661701607970"></p>
+<p>想了半太天才意识到是拓扑排序，  越是叶子的，越可以放前面， 越是根的，越可以放后面</p>
+<p>早点想到的话应该20分钟就做出来了，拓扑还是很简单的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span> <span class="type">int</span>[][] buildMatrix(<span class="type">int</span> k, <span class="type">int</span>[][] rowConditions, <span class="type">int</span>[][] colConditions) &#123;</span><br><span class="line">        <span class="type">int</span>[] rows = <span class="keyword">new</span> <span class="title class_">int</span>[k+<span class="number">1</span>];</span><br><span class="line">        <span class="type">int</span>[] cols = <span class="keyword">new</span> <span class="title class_">int</span>[k+<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">if</span> (!sort(k, rowConditions, rows) </span><br><span class="line">                ||  !sort(k, colConditions, cols)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">int</span>[][]&#123;&#125;;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="type">int</span>[][] res = <span class="keyword">new</span> <span class="title class_">int</span>[k][k];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;=k;i++) &#123;</span><br><span class="line">            res[rows[i]][cols[i]] = i;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> <span class="title function_">sort</span><span class="params">(<span class="type">int</span> k, <span class="type">int</span>[][] rowConditions, <span class="type">int</span>[] rows)</span> &#123;</span><br><span class="line">        <span class="type">int</span>[] inCount = <span class="keyword">new</span> <span class="title class_">int</span>[k+<span class="number">1</span>];</span><br><span class="line">        List&lt;Integer&gt;[] outLists = <span class="keyword">new</span> <span class="title class_">List</span>[k+<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;=k;i++) &#123;</span><br><span class="line">            outLists[i] = <span class="keyword">new</span> <span class="title class_">ArrayList</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span>[] row : rowConditions) &#123;</span><br><span class="line">            inCount[row[<span class="number">1</span>]]++;</span><br><span class="line">            outLists[row[<span class="number">0</span>]].add(row[<span class="number">1</span>]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> <span class="variable">y</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">boolean</span>[] vis = <span class="keyword">new</span> <span class="title class_">boolean</span>[k+<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">            <span class="type">int</span> i;</span><br><span class="line">            <span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= k; i++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (inCount[i]  &gt; <span class="number">0</span> || vis[i]) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                vis[i] = <span class="literal">true</span>;</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> out : outLists[i]) &#123;</span><br><span class="line">                    inCount[out]--;</span><br><span class="line">                &#125;</span><br><span class="line">                rows[i] = y;</span><br><span class="line">                y++;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(i == k+<span class="number">1</span>) &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>;i&lt;=k;i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (inCount[i] &gt;<span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/28/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/Ioc%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/28/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/Ioc%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">Ioc基本概念和原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-28 00:30:12" itemprop="dateCreated datePublished" datetime="2022-08-28T00:30:12+08:00">2022-08-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-29 00:09:34" itemprop="dateModified" datetime="2022-08-29T00:09:34+08:00">2022-08-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/spring%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">spring原理</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/28/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/Ioc%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E5%8E%9F%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/28/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/Ioc%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E5%8E%9F%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#wei-shi-me-wo-men-xu-yao-ioc">为什么我们需要IOC</a></li>
+<li><a href="#3-chong-zhu-ru-fang-shi">3种注入方式：</a>
+<ul>
+<li><a href="#q-gou-zao-zhu-ru-he-set-zhu-ru-na-ge-geng-hao-wei-shi-me">Q: 构造注入和set注入，哪个更好，为什么？</a></li>
+<li><a href="#q-spring-jie-jue-xun-huan-yi-lai-de-guo-cheng">Q: spring解决循环依赖的过程？</a></li>
+</ul>
+</li>
+<li><a href="#ioc-serviceprovider">IOC ServiceProvider</a></li>
+<li><a href="#ioc-seviceproverdier-de-3-chong-guan-li-fang-shi">IOC SeviceProverdier的3种管理方式：</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="wei-shi-me-wo-men-xu-yao-ioc">为什么我们需要IOC</span><a href="#wei-shi-me-wo-men-xu-yao-ioc" class="header-anchor">#</a></h1>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>IoC是随着近年来轻量级容器（Lightweight Container)的兴起而逐渐被很多人提起的一个名词，它 的全称为Inversion of Control，中文通常翻译为“控制反转”，它还有一个别名叫做依赖注入（Dependency Injection）</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>本质上就是：<br>
+如果某个Java对象里有一些成员<br>
+那么尽量不要把这些成员写死（例如某个成员的类型是A， 不要写死成A=new A1()或者A=new A2()）<br>
+而要通过 构造器 或者get、set来注入进来</p>
+<p>换句话说，<strong>在这个对象的实现中，我们看不到成员对象的具体赋值， 一切都通过外部来决定恒成员是什么</strong></p>
+<p>而在Spring里，这个构造器和get、set都通过IOC SerivceProvider来提供<br>
+这个图很经典<br>
+<img src="/images/Ioc%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E5%8E%9F%E7%90%86/20201130000819415.png" alt="在这里插入图片描述"></p>
+<h1><span id="3-chong-zhu-ru-fang-shi">3种注入方式：</span><a href="#3-chong-zhu-ru-fang-shi" class="header-anchor">#</a></h1>
+<ul>
+<li>
+<p>构造方法注入：Ioc用构造方法去注入。<br>
+好处是一旦构造好了，就可以马上用。 而且只需要对应类名和参数列表。缺点是参数多的话会很麻烦。</p>
+</li>
+<li>
+<p>setter方法注入： Ioc用setXXX去注入成员。<br>
+良好。易扩展。通过set去设置成员。</p>
+</li>
+<li>
+<p>接口注入： 必须要实现接口，然后接口里方法的参数为真正传入的成员对象。这个方式不提倡，有侵入性，一旦新增，其他全要开</p>
+</li>
+</ul>
+<p>接口注入看了好几遍才想明白是啥意思，换个通俗易懂的解释:</p>
+<ul>
+<li>构造方法注入：  Ioc只要知道类名和构造参数， 即可给你用反射传进去，。</li>
+<li>set方法注入: Ioc只要类名和你有哪些成员， 即可写反射的代码给你注入，都是setXXX，处理方式不会有变动。</li>
+<li>接口方注入： Ioc <strong>必须知道你有哪些注入接口</strong>，才能给你注入。 比如你用Init(A a)来注入， 于是Ioc必须也指定init这个方法， 再加参数，才给给你注入<br>
+明显接口注入，如果init方法改名了，可能会造成大面积的注入修改（因为其他地方可能都用了Init去构造了，然后爆炸）<br>
+而构造和set方式几乎都是相同的注入操作，只要改入参和类名即可。</li>
+</ul>
+<hr>
+<h2><span id="q-gou-zao-zhu-ru-he-set-zhu-ru-na-ge-geng-hao-wei-shi-me">Q: 构造注入和set注入，哪个更好，为什么？</span><a href="#q-gou-zao-zhu-ru-he-set-zhu-ru-na-ge-geng-hao-wei-shi-me" class="header-anchor">#</a></h2>
+<p>A:<br>
+set注入更好。因为可以解决循环依赖问题<br>
+A中有成员B， B中有成员A，  如果都用构造方法注入，则A和B new的过程就存在循环依赖。<br>
+但是用set的话，就可以先生成A和B的实体，再分别通过set注入到成员中。</p>
+<hr>
+<h2><span id="q-spring-jie-jue-xun-huan-yi-lai-de-guo-cheng">Q:  spring解决循环依赖的过程？</span><a href="#q-spring-jie-jue-xun-huan-yi-lai-de-guo-cheng" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ol>
+<li>
+<p>开始初始化对象A	<br>
+singletonFactories：（刚构造完，也没人用过）<br>
+earlySingletonObjects：(如果构造过且被别人依赖过，都放进ealy中）<br>
+singletonObjects：（已经完全构建和注入完成）<br>
+这3个缓存选取的优先顺序是从下往上。</p>
+</li>
+<li>
+<p>调用A的构造，把A放入singletonFactories	<br>
+singletonFactories：A<br>
+earlySingletonObjects：<br>
+singletonObjects：</p>
+</li>
+<li>
+<p>开始注入A的依赖，发现A依赖对象B</p>
+</li>
+<li>
+<p>开始初始化对象B</p>
+</li>
+<li>
+<p>调用B的构造，把B放入singletonFactories	<br>
+singletonFactories：A,B<br>
+earlySingletonObjects：<br>
+singletonObjects：</p>
+</li>
+<li>
+<p>开始注入B的依赖，发现B依赖对象A</p>
+</li>
+<li>
+<p>开始初始化对象A，发现A在singletonFactories里有，则直接获取A，<br>
+并把A放入earlySingletonObjects，把A从singletonFactories删除<br>
+singletonFactories：B<br>
+earlySingletonObjects：A<br>
+singletonObjects：</p>
+</li>
+<li>
+<p>对象B刚才拿到了A对象，依赖注入完成</p>
+</li>
+<li>
+<p>对象B创建完成，把B放入singletonObjects(即完成创建了），<br>
+singletonFactories：<br>
+earlySingletonObjects：A<br>
+singletonObjects：B</p>
+</li>
+<li>
+<p>对象B注入给A，继续注入A的其他依赖，直到A注入完成</p>
+</li>
+<li>
+<p>对象A创建完成，把A放入singletonObjects，<br>
+singletonFactories：<br>
+earlySingletonObjects：<br>
+singletonObjects：A,B</p>
+</li>
+<li>
+<p>循环依赖处理结束，A和B都初始化和注入完成	<br>
+(Spring解决循环依赖的方法)[<a target="_blank" rel="noopener" href="https://blog.csdn.net/lkforce/article/details/97183065">https://blog.csdn.net/lkforce/article/details/97183065</a>]</p>
+</li>
+</ol>
+<h1><span id="ioc-serviceprovider">IOC ServiceProvider</span><a href="#ioc-serviceprovider" class="header-anchor">#</a></h1>
+<p><img src="/images/Ioc%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E5%8E%9F%E7%90%86/2020113000205555.png" alt="在这里插入图片描述"></p>
+<p>就是如何相当于服务员<br>
+对于业务类，不需要知道自己的成员具体是谁<br>
+而如何确定自己的真正成员，来自于IOC SeviceProverdier</p>
+<p>。它可以是一段代码，也可以是一组相关的类，甚至可以是比较通用的IoC框架或 者IoC容器实现<br>
+。Spring 的IoC容器就是一个提供依赖注入服务的IoC Service Provider</p>
+<p>IOCSP的职责：<br>
+业务对象的构建管理，即怎么创建依赖对象<br>
+业务对象间 的依赖绑定， 即怎么确定谁依赖谁。</p>
+<h1><span id="ioc-seviceproverdier-de-3-chong-guan-li-fang-shi">IOC SeviceProverdier的3种管理方式：</span><a href="#ioc-seviceproverdier-de-3-chong-guan-li-fang-shi" class="header-anchor">#</a></h1>
+<pre><code>1. 
+</code></pre>
+<p>直接编码，例如写1个map来做   类-&gt;具体子类的对应关系。然后在写map.put. get之类的代码来自己主动注入<br>
+2.<br>
+文本文件（xml、配置文件），然后自己去getXMl或者getPropetris解析<br>
+3.<br>
+注解， 相当于不用自己写map的put、get，  而是通过某个框架的注解，确定注入方式，然后去在那个框架对应的代码或者配置文件中写就行了。 其实就是1、2的升级版，不用自己去做解析和存储操作，你只要去框架那里写对应依赖关系即可。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/27/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-27/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1224,696 +1731,6 @@ IP层路由概念的设计，简直是图算法的完美应用常见：</p>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E7%89%A9%E7%90%86%E5%B1%82%E8%AF%A6%E8%A7%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E7%89%A9%E7%90%86%E5%B1%82%E8%AF%A6%E8%A7%A3/" class="post-title-link" itemprop="url">计网之物理层详解</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-24 23:47:49" itemprop="dateCreated datePublished" datetime="2022-08-24T23:47:49+08:00">2022-08-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-25 00:01:21" itemprop="dateModified" datetime="2022-08-25T00:01:21+08:00">2022-08-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E7%89%A9%E7%90%86%E5%B1%82%E8%AF%A6%E8%A7%A3/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E7%89%A9%E7%90%86%E5%B1%82%E8%AF%A6%E8%A7%A3/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>642</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#wu-li-ceng-zuo-yong">物理层作用</a></li>
-<li><a href="#ru-he-ping-jie-wu-li-ceng-jie-kou-hao-pi">如何评价物理层接口好坏</a></li>
-<li><a href="#chuan-shu-mei-ti">传输媒体</a>
-<ul>
-<li><a href="#dao-yin-xing-chuan-shu-gu-ti-chuan-bo">导引型传输（固体传播）</a>
-<ul>
-<li><a href="#shuang-jiao-xian">双绞线</a></li>
-<li><a href="#tong-zhou-dian-lan">同轴电缆</a></li>
-<li><a href="#guang-lan">光缆</a></li>
-<li><a href="#fei-dao-yin">非导引</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#qi-ta-te-xing">其他特性</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="wu-li-ceng-zuo-yong">物理层作用</span><a href="#wu-li-ceng-zuo-yong" class="header-anchor">#</a></h1>
-<ul>
-<li>在传输媒体上传输比特流</li>
-<li>对链路层而言， 不需要关心通信手段、传输媒体的差异，因为这些东西都由物理层去处理</li>
-<li>这个层面怎么优化？</li>
-</ul>
-<ol>
-<li>提升线路质量，提升带宽</li>
-<li>通信原理应用，如何设计电平传输波形， 频分、波分、码分</li>
-</ol>
-<h1><span id="ru-he-ping-jie-wu-li-ceng-jie-kou-hao-pi">如何评价物理层接口好坏</span><a href="#ru-he-ping-jie-wu-li-ceng-jie-kou-hao-pi" class="header-anchor">#</a></h1>
-<ul>
-<li>机械特性： 接线器大小、尺寸</li>
-<li>电气特性： 电压范围高低</li>
-<li>功能特性：某电平对应某个功能， 信号线。</li>
-<li>过程特性：各事件顺序</li>
-<li>传输方式转换</li>
-</ul>
-<h1><span id="chuan-shu-mei-ti">传输媒体</span><a href="#chuan-shu-mei-ti" class="header-anchor">#</a></h1>
-<h2><span id="dao-yin-xing-chuan-shu-gu-ti-chuan-bo">导引型传输（固体传播）</span><a href="#dao-yin-xing-chuan-shu-gu-ti-chuan-bo" class="header-anchor">#</a></h2>
-<h3><span id="shuang-jiao-xian">双绞线</span><a href="#shuang-jiao-xian" class="header-anchor">#</a></h3>
-<ul>
-<li>2根绝缘铜线并排校合，可以减少电磁干扰</li>
-<li>电话到交换机就是这个</li>
-<li>线要接的距离太长怎么办。总是衰减？</li>
-</ul>
-<ol>
-<li>放大器——模拟电路方式，对信号简单放大，噪音也会变大</li>
-<li>中继器（转发器)——数字电路方式， 对信号做再生， 扩大网络规模</li>
-<li>多款口中继器： 一个输入，转发到其他所有端口<br>
-集线器Hub属于多款口中继器<br>
-可以和交换器连接</li>
-</ol>
-<h3><span id="tong-zhou-dian-lan">同轴电缆</span><a href="#tong-zhou-dian-lan" class="header-anchor">#</a></h3>
-<ul>
-<li>有线电视用这个</li>
-<li>比双绞线要厚，抗干扰更强</li>
-<li>包含内导体线、绝缘层、外导体屏蔽、保护外层</li>
-</ul>
-<h3><span id="guang-lan">光缆</span><a href="#guang-lan" class="header-anchor">#</a></h3>
-<ul>
-<li>抗雷抗噪</li>
-<li>带宽大，100G/bits!</li>
-<li>核心是那个反射率超低的包层，全反射</li>
-<li>分为单模（细，远，贵）和多模（便宜，反射率比单模高一点，所以容易失真）</li>
-</ul>
-<h3><span id="fei-dao-yin">非导引</span><a href="#fei-dao-yin" class="header-anchor">#</a></h3>
-<ul>
-<li>短波/微波： 通过电离层反射</li>
-<li>无线电微波： 卫星</li>
-</ul>
-<h1><span id="qi-ta-te-xing">其他特性</span><a href="#qi-ta-te-xing" class="header-anchor">#</a></h1>
-<ul>
-<li>通信原理相关性质和应用都在物理层体现</li>
-<li>什么香农公式、奈式准则之类的</li>
-<li>信息交换3种方式</li>
-</ul>
-<ol>
-<li>电路交换： 类似拨号， 始终占用固定带宽， 拨号结束则才挂断</li>
-<li>报文交换： 报文可以很大， 大报文会占据一整片带宽</li>
-<li>分组交换：报文拆成分组发送，可以大家一起传。</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E9%93%BE%E8%B7%AF%E5%B1%82%E8%AF%A6%E8%A7%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E9%93%BE%E8%B7%AF%E5%B1%82%E8%AF%A6%E8%A7%A3/" class="post-title-link" itemprop="url">计网之链路层详解</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-24 23:47:49" itemprop="dateCreated datePublished" datetime="2022-08-24T23:47:49+08:00">2022-08-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-25 00:03:21" itemprop="dateModified" datetime="2022-08-25T00:03:21+08:00">2022-08-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E9%93%BE%E8%B7%AF%E5%B1%82%E8%AF%A6%E8%A7%A3/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E9%93%BE%E8%B7%AF%E5%B1%82%E8%AF%A6%E8%A7%A3/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.9k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#1-lian-lu-ceng-gai-nian">1.链路层概念</a>
-<ul>
-<li><a href="#1-1-lian-lu-ceng-de-gong-neng">1.1链路层的功能</a></li>
-<li><a href="#1-2-lian-lu-ceng-xie-yi-she-ji-de-3-ge-chong-yao-gai-nian">1.2链路层协议设计的3个重要概念</a></li>
-</ul>
-</li>
-<li><a href="#2-chang-jian-xie-yi">2 常见协议</a>
-<ul>
-<li><a href="#2-1-ppp-xie-yi">2.1 PPP协议</a>
-<ul>
-<li><a href="#2-1-1-ppp-ru-he-jie-jue-zheng-ding-jie">2.1.1 PPP如何解决帧定界？</a></li>
-<li><a href="#2-2-2-ppp-ru-he-jie-jue-tou-ming-chuan-shu">2.2.2 PPP如何解决透明传输？</a></li>
-<li><a href="#2-1-3-ppp-ru-he-jie-jue-chai-cuo-kong-zhi">2.1.3 PPP如何解决差错控制？</a></li>
-</ul>
-</li>
-<li><a href="#2-2-hdlc-gao-ji-lian-lu-kong-zhi-xie-yi">2.2 HDLC高级链路控制协议</a></li>
-<li><a href="#2-3-csma-cd-xie-yi-yi-tai-wang">2.3 CSMA/CD协议（以太网）</a>
-<ul>
-<li><a href="#2-3-1-fang-chong-tu-ji-zhi">2.3.1 防冲突机制</a></li>
-<li><a href="#2-3-2-yi-tai-wang-bao-wen">2.3.2 以太网报文</a></li>
-<li><a href="#2-3-3-mac-ying-jian-di-zhi-gai-nian">2.3.3 mac硬件地址概念</a></li>
-<li><a href="#2-3-4-yi-tai-wang-jiao-huan-ji">2.3.4 以太网交换机</a></li>
-<li><a href="#2-3-5-xu-ni-ju-yu-wang-vlan">2.3.5 虚拟局域网VLAN</a></li>
-</ul>
-</li>
-<li><a href="#2-4-csma-ca-wu-xian-wang">2.4 CSMA/CA（无线网）</a></li>
-<li><a href="#2-5-pppoe">2.5 PPPOE</a></li>
-</ul>
-</li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="1-lian-lu-ceng-gai-nian">1.链路层概念</span><a href="#1-lian-lu-ceng-gai-nian" class="header-anchor">#</a></h1>
-<h2><span id="1-1-lian-lu-ceng-de-gong-neng">1.1链路层的功能</span><a href="#1-1-lian-lu-ceng-de-gong-neng" class="header-anchor">#</a></h2>
-<ol>
-<li>控制物理介质访问，把传输协议加到链路上</li>
-<li>对传输的数据可做管理和控制，避免因为电平出错导致数据错误却无法发现</li>
-</ol>
-<h2><span id="1-2-lian-lu-ceng-xie-yi-she-ji-de-3-ge-chong-yao-gai-nian">1.2链路层协议设计的3个重要概念</span><a href="#1-2-lian-lu-ceng-xie-yi-she-ji-de-3-ge-chong-yao-gai-nian" class="header-anchor">#</a></h2>
-<ol>
-<li>
-<p>帧定界问题<br>
-通过添加首部和尾部（例如SOH 0x01或者E OH0x04， 也称做界限符），把数据封装成一帧。<br>
-帧的最大帧长度叫MTU</p>
-</li>
-<li>
-<p>透明传输问题<br>
-为了避免帧中数据也存在首部尾部导致获取时出错， 填充字符时，界限符需要做转义</p>
-</li>
-<li>
-<p>差错控制问题<br>
-纠错：<br>
-为了避免传输过程因为电路波动存在问题，需要做检查。</p>
-<ul>
-<li>循环冗余CRC校验（ARQ方式中使用）</li>
-<li>海明码纠错</li>
-</ul>
-</li>
-</ol>
-<p>防丢失：超时重发<br>
-防重复：编号</p>
-<h1><span id="2-chang-jian-xie-yi">2 常见协议</span><a href="#2-chang-jian-xie-yi" class="header-anchor">#</a></h1>
-<h2><span id="2-1-ppp-xie-yi">2.1 PPP协议</span><a href="#2-1-ppp-xie-yi" class="header-anchor">#</a></h2>
-<p>用于与ISP通信所用协议<br>
-用来通过拨号或专线方式建立点对点连接发送数据,使其成为各种主机、网桥和路由器之间简单连接的一种共通的解决方案<br>
-只可全双工</p>
-<p>PPP也要解决上面提到的3个问题</p>
-<h3><span id="2-1-1-ppp-ru-he-jie-jue-zheng-ding-jie">2.1.1 PPP如何解决帧定界？</span><a href="#2-1-1-ppp-ru-he-jie-jue-zheng-ding-jie" class="header-anchor">#</a></h3>
-<p>PPP协议的帧格式如下：</p>
-<table>
-<thead>
-<tr>
-<th>7E</th>
-<th>FF</th>
-<th>03</th>
-<th>0021/C021/8021</th>
-<th>xxxx</th>
-<th>???</th>
-<th>7E</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>帧首</td>
-<td>地址地段</td>
-<td>控制字段</td>
-<td>协议，IP/LCP/NCP三选一</td>
-<td>数据报部分</td>
-<td>FCS校验码部分</td>
-<td>帧尾</td>
-</tr>
-</tbody>
-</table>
-<p>从上面可以看到以下几点：</p>
-<ul>
-<li>PPP协议的帧首和帧尾都是7E(01111110)</li>
-<li>地址字段和控制字段都是固定值，相当于已经废弃了（PPP是点对点协议，所以不需要MAC地址，因此地址字段是一个固定值）</li>
-<li>PPP不止支持IP协议，海支持LCP\NCP</li>
-</ul>
-<h3><span id="2-2-2-ppp-ru-he-jie-jue-tou-ming-chuan-shu">2.2.2 PPP如何解决透明传输？</span><a href="#2-2-2-ppp-ru-he-jie-jue-tou-ming-chuan-shu" class="header-anchor">#</a></h3>
-<p>有2种方式：</p>
-<ol>
-<li>异步传输时， 使用字节填充的方式：</li>
-</ol>
-<ul>
-<li>当数据报部分出现0x7E时， 转成0x7D+0x5E</li>
-<li>当出现0x7D时， 转成0x7D+0x5D</li>
-<li>出现ASCll码的控制字符（即数值小于0x20的字符），则在该字符前面要加入一个0x7D字节，同时将该字符的编码加以改变。<br>
-可以看到异步传输是用0x7D来识别和转义可能误解的字符， 拆解时根据0x7D去反转</li>
-</ul>
-<ol start="2">
-<li>同步传输时，使用零比特填充<br>
-帧首和帧尾都是0x7E(01111110）， 即6个1)<br>
-当数据报部分出现5个1时，会马上填充1个0（这样数据报中永远不会存在连续的6个1）<br>
-当拆解时， 发现连续的5个1，就会删除后面的1个0来恢复</li>
-</ol>
-<h3><span id="2-1-3-ppp-ru-he-jie-jue-chai-cuo-kong-zhi">2.1.3 PPP如何解决差错控制？</span><a href="#2-1-3-ppp-ru-he-jie-jue-chai-cuo-kong-zhi" class="header-anchor">#</a></h3>
-<p>使用末尾的FCS校验码校验数据是否有0、1不正确。具体见CRC纠错原理。</p>
-<h2><span id="2-2-hdlc-gao-ji-lian-lu-kong-zhi-xie-yi">2.2 HDLC高级链路控制协议</span><a href="#2-2-hdlc-gao-ji-lian-lu-kong-zhi-xie-yi" class="header-anchor">#</a></h2>
-<p>HDLC是面向位协议，用&quot;数据位&quot;定义字段类型，而不用控制字符，通过帧中用&quot;位&quot;的组<br>
-合进行管理和控制。<br>
-帧格式为：<br>
-字段：开始标志 地址字段 控制字段 信息字段 校验序列 结束标志</p>
-<p><em><strong>广域网使用PPP和HDLC协议进行远距离数据传输</strong></em></p>
-<h2><span id="2-3-csma-cd-xie-yi-yi-tai-wang">2.3 CSMA/CD协议（以太网）</span><a href="#2-3-csma-cd-xie-yi-yi-tai-wang" class="header-anchor">#</a></h2>
-<h3><span id="2-3-1-fang-chong-tu-ji-zhi">2.3.1 防冲突机制</span><a href="#2-3-1-fang-chong-tu-ji-zhi" class="header-anchor">#</a></h3>
-<p><em><strong>以太网是采用CSMA/CD访问方法的局域网</strong></em></p>
-<ul>
-<li>
-<p>无连接的工作方式，发出去就完事了</p>
-</li>
-<li>
-<p>地理范围和站点数量有限</p>
-</li>
-<li>
-<p>共用总线发送</p>
-</li>
-<li>
-<p>为了避免同一时间多个电平碰撞引发数据混乱，使用了碰撞检测<br>
-其实就是看在争用期内，是否连续收到2端数据，如果收到了说明存在冲突，数据有问题。<br>
-争用期概念：</p>
-</li>
-</ul>
-<blockquote>
-<blockquote>
-<p>以太网的端到端往返时延 2a 称为争用期，或碰撞窗口。通常，取 51.2 us 为争用期的长度。对于 10 Mb/s 以太网，在争用期内可发送512 bit，即 64 字节。以太网在发送数据时，若前 64 字节未发生冲突，则后续的数据就不会发生冲突。如果发生冲突，就一定是在发送的前 64 字节之内。由于一检测到冲突就立即中止发送，这时已经发送出去的数据一定小于 64 字节。以太网规定了最短有效帧长为 64 字节，凡长度小于 64 字节的帧都是由于冲突而异常中止的无效帧。</p>
-</blockquote>
-</blockquote>
-<ul>
-<li>
-<p>发现碰撞，会重传,等待重传的时间使用二进制指数退避方法</p>
-</li>
-<li>
-<p>存在最短帧长（64字节），就是为了能有效做碰撞检测，不足就会填充空白</p>
-</li>
-<li>
-<p>使用<a target="_blank" rel="noopener" href="https://blog.csdn.net/colesky/article/details/78788820">曼彻斯特编码</a></p>
-</li>
-</ul>
-<p>详细见“<br>
-<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43941364/article/details/105639195">https://blog.csdn.net/weixin_43941364/article/details/105639195</a></p>
-<h3><span id="2-3-2-yi-tai-wang-bao-wen">2.3.2 以太网报文</span><a href="#2-3-2-yi-tai-wang-bao-wen" class="header-anchor">#</a></h3>
-<table>
-<thead>
-<tr>
-<th>界限符</th>
-<th>时钟同步码</th>
-<th>目的地址</th>
-<th>源地址</th>
-<th>类型</th>
-<th>数据报</th>
-<th>FCS校验</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>0xAB</td>
-<td>7字节，与适配器时钟同步</td>
-<td>6字节</td>
-<td>6字节</td>
-<td>2字节</td>
-<td>最短46字节</td>
-<td>4字节（CRC）</td>
-</tr>
-</tbody>
-</table>
-<p>从这个报文看到以下几点：</p>
-<ol>
-<li>最短数据报文字节46， 是由  64 - 16 得到的， 64是之前提到的最短帧长（为了做冲突检测）</li>
-<li>不需要帧结束符（不会连续存在，如果连续存在那可能就是发生冲突）</li>
-<li>数据报文可能会填充很多空白的</li>
-<li>无效帧判定： FCS错误、 帧长不在64~1518范围内</li>
-</ol>
-<p>注意：快速以太网的最短帧总长46B</p>
-<h3><span id="2-3-3-mac-ying-jian-di-zhi-gai-nian">2.3.3 mac硬件地址概念</span><a href="#2-3-3-mac-ying-jian-di-zhi-gai-nian" class="header-anchor">#</a></h3>
-<ul>
-<li>mac地址固化在ROM的地址中（网络适配器）。 如果更换适配器，则地址改变。 更换局域网，mac地址不变。</li>
-<li>若一个网中有2个相同mac地址，则无法正常通信</li>
-<li>1个路由器或者主机中可以配置多个mac地址</li>
-<li>mac地址总共6个字节，前3个字节伪注册管理机构分配（第一位判断是单站还是组地址，最低第二位判断是全球管理还是本地管理）</li>
-<li>后3个字节才是真正的地址</li>
-</ul>
-<h3><span id="2-3-4-yi-tai-wang-jiao-huan-ji">2.3.4 以太网交换机</span><a href="#2-3-4-yi-tai-wang-jiao-huan-ji" class="header-anchor">#</a></h3>
-<ul>
-<li>用于局域网，做多主机之间的数据交换，属于链路层的扩展道具</li>
-<li>具有自学习功能：<br>
-第一次使用，内部无mac缓存，拿到未知mac时会给所有端口发，拿到响应后就会记录下来，后续直接转发<br>
-mac缓存有有效时间，不会一直存在</li>
-<li>交换机可以分割冲突域（物理层）,但无法分隔广播域</li>
-</ul>
-<blockquote>
-<blockquote>
-<p>广播域就是说如果站点发出一个广播信号后能接收到这个信号的范围。通常来说一个局域网就是一个广播域。<br>
-冲突域指一个站点向另一个站点发出信号。除目的站点外，有多少站点能收到这个信号。这些站点就构成一个冲突域。<br>
-冲突域通过集线器连接，广播域则通过交换机。</p>
-</blockquote>
-</blockquote>
-<h3><span id="2-3-5-xu-ni-ju-yu-wang-vlan">2.3.5 虚拟局域网VLAN</span><a href="#2-3-5-xu-ni-ju-yu-wang-vlan" class="header-anchor">#</a></h3>
-<ul>
-<li>可隔离广播域和冲突域</li>
-</ul>
-<h2><span id="2-4-csma-ca-wu-xian-wang">2.4 CSMA/CA（无线网）</span><a href="#2-4-csma-ca-wu-xian-wang" class="header-anchor">#</a></h2>
-<ul>
-<li></li>
-<li>会事先避免冲突，会先侦听信道，等到预约到信道了再进入征用端口。</li>
-</ul>
-<p>存在自动重传请求ARQ机制，有3种方式：</p>
-<ol>
-<li>单帧滑动-停止等待协议
-<ul>
-<li>一次只发一帧，1次只收一帧，并确认占有信道后才继续</li>
-<li>发送端：收到ack确认后，才会发下一个，每个都有个定时器</li>
-<li>接收端：序号不匹配递增的话都会丢弃。</li>
-</ul>
-</li>
-<li>后退N帧GBN
-<ul>
-<li>发送端：连续发送，无需等待上一帧完成，每个帧有个定时器判断ack超时</li>
-<li>接收端：有序接收，1次只收1个，如果希望收4，却收到5，则丢弃，发送端会超时重发4</li>
-</ul>
-</li>
-<li>选择重传SR
-<ul>
-<li>发送端： 和2一样， 无需等待， 每个帧有定时器</li>
-<li>接收端：乱序接收，存在窗口缓存，如果收到了2，而且缓存里有3和8，则会合并上交后，发ack8</li>
-</ul>
-</li>
-</ol>
-<h2><span id="2-5-pppoe">2.5 PPPOE</span><a href="#2-5-pppoe" class="header-anchor">#</a></h2>
-<ul>
-<li>属于PPP协议和以太网的结合，是将点对点协议（PPP）封装在以太网（Ethernet）框架中的一种网络隧道协议。</li>
-<li>我们的电脑宽带接入大网很多都是基于PPPOE的<br>
-<a target="_blank" rel="noopener" href="https://blog.csdn.net/u011857683/article/details/84703669">https://blog.csdn.net/u011857683/article/details/84703669</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/24/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-24/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/24/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-24/" class="post-title-link" itemprop="url">2022-0824</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-08-24 23:12:42 / 修改时间：23:50:01" itemprop="dateCreated datePublished" datetime="2022-08-24T23:12:42+08:00">2022-08-24</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">刷题日记</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022%E5%B9%B48%E6%9C%88/" itemprop="url" rel="index"><span itemprop="name">2022年8月</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/24/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-24/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/24/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-24/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#di-yi-ti-quan-pai-lie-wen-ti-zi-fu-chuan-chu-li-ma-fan">第一题：全排列问题，字符串处理麻烦</a></li>
-<li><a href="#di-er-ti-jian-dan-dong-tai-gui-hua">第二题：简单动态规划</a></li>
-<li><a href="#di-san-ti-tong-guo-shu-ju-fan-wei-jue-ding-yong-dong-tai-gui-hua-er-bu-shi-sou-suo">第三题：通过数据范围决定用动态规划而不是搜索</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="di-yi-ti-quan-pai-lie-wen-ti-zi-fu-chuan-chu-li-ma-fan">第一题：全排列问题，字符串处理麻烦</span><a href="#di-yi-ti-quan-pai-lie-wen-ti-zi-fu-chuan-chu-li-ma-fan" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/brace-expansion/">1087. 花括号展开 - 力扣（LeetCode）</a></p>
-<p><img src="/images/2022-08-24/1661355892528.png" alt="1661355892528"></p>
-<p>很常见的搜索全排列题</p>
-<p>但是处理这个字符串折腾了我好久,看我下面这个也太麻烦了</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">List&lt;<span class="type">char</span>[]&gt; lists = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">String[] split = ss.split(<span class="string">&quot;,&quot;</span>);</span><br><span class="line"><span class="type">char</span>[] cs = <span class="keyword">new</span> <span class="title class_">char</span>[split.length];</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>; j &lt; split.length;j++)&#123;</span><br><span class="line">    cs[j] = split[j].charAt(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line">lists.add(cs);</span><br></pre></td></tr></table></figure>
-<p>看看答案怎么做的，好像其他人都是逐个判断的。</p>
-<p><img src="/images/2022-08-24/1661356015380.png" alt="1661356015380"></p>
-<p>也是，频繁substring还是很耗时间的，不建议</p>
-<p>我的答案：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">   <span class="keyword">public</span> String[] expand(String s) &#123;</span><br><span class="line">        List&lt;<span class="type">char</span>[]&gt; lists = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; s.length();i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (s.charAt(i) != <span class="string">&#x27;&#123;&#x27;</span>) &#123;</span><br><span class="line">                lists.add(<span class="keyword">new</span> <span class="title class_">char</span>[]&#123;s.charAt(i)&#125;);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">end</span> <span class="operator">=</span> s.indexOf(<span class="string">&quot;&#125;&quot;</span>, i);</span><br><span class="line">                <span class="type">String</span> <span class="variable">ss</span> <span class="operator">=</span> s.substring(i+<span class="number">1</span>, end);</span><br><span class="line">                <span class="comment">// todo:看下答案这里怎么取的比较好</span></span><br><span class="line">                String[] split = ss.split(<span class="string">&quot;,&quot;</span>);</span><br><span class="line">                <span class="type">char</span>[] cs = <span class="keyword">new</span> <span class="title class_">char</span>[split.length];</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>; j &lt; split.length;j++)&#123;</span><br><span class="line">                    cs[j] = split[j].charAt(<span class="number">0</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                lists.add(cs);</span><br><span class="line">                i = end;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        List&lt;String&gt; res = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">        dfs(lists, <span class="number">0</span>, <span class="keyword">new</span> <span class="title class_">StringBuilder</span>(), res);</span><br><span class="line">        Collections.sort(res);</span><br><span class="line">        <span class="keyword">return</span> res.toArray(<span class="keyword">new</span> <span class="title class_">String</span>[<span class="number">0</span>]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">dfs</span><span class="params">(List&lt;<span class="type">char</span>[]&gt; lists, <span class="type">int</span> index, StringBuilder sb, List&lt;String&gt; res)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (index == lists.size()) &#123;</span><br><span class="line">            res.add(sb.toString());</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">char</span> c : lists.get(index)) &#123;</span><br><span class="line">            sb.append(c);</span><br><span class="line">            dfs(lists, index+<span class="number">1</span>, sb, res);</span><br><span class="line">            sb.deleteCharAt(sb.length()-<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<h1><span id="di-er-ti-jian-dan-dong-tai-gui-hua">第二题：简单动态规划</span><a href="#di-er-ti-jian-dan-dong-tai-gui-hua" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/minimum-rounds-to-complete-all-tasks/">2244. 完成所有任务需要的最少轮数 - 力扣（LeetCode）</a></p>
-<p><img src="/images/2022-08-24/1661356069871.png" alt="1661356069871"></p>
-<p>一眼想到动态规划，但就是要注意题意得先排序,还要注意溢出的问题</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">minimumRounds</span><span class="params">(<span class="type">int</span>[] tasks)</span> &#123;</span><br><span class="line">        <span class="type">long</span>[] dp = <span class="keyword">new</span> <span class="title class_">long</span>[tasks.length];</span><br><span class="line">        Arrays.sort(tasks);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; dp.length;i++) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">task</span> <span class="operator">=</span> tasks[i];</span><br><span class="line">            dp[i] = Integer.MAX_VALUE;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> i-<span class="number">1</span>;j&gt;=i-<span class="number">2</span> &amp;&amp; j &gt;=<span class="number">0</span>;j--) &#123;</span><br><span class="line">                <span class="keyword">if</span> (tasks[j] != task) &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                dp[i] = Math.min(dp[i], <span class="number">1</span> + (j-<span class="number">1</span>&gt;=<span class="number">0</span>?dp[j-<span class="number">1</span>]:<span class="number">0</span>));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dp[tasks.length-<span class="number">1</span>] &gt;=Integer.MAX_VALUE ? -<span class="number">1</span> : (<span class="type">int</span>)dp[tasks.length-<span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<h1><span id="di-san-ti-tong-guo-shu-ju-fan-wei-jue-ding-yong-dong-tai-gui-hua-er-bu-shi-sou-suo">第三题：通过数据范围决定用动态规划而不是搜索</span><a href="#di-san-ti-tong-guo-shu-ju-fan-wei-jue-ding-yong-dong-tai-gui-hua-er-bu-shi-sou-suo" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/D0F0SV/">剑指 Offer II 104. 排列的数目 - 力扣（LeetCode）</a></p>
-<p><img src="/images/2022-08-24/1661356141861.png" alt="1661356141861"></p>
-<p>看起来以为要搜索，结果一看数据范围：</p>
-<p><img src="/images/2022-08-24/1661356155356.png" alt="1661356155356"></p>
-<p>target最大1000，且都是正数，那么可以直接基于总和做动态规划了，因为不会有超过target的情况出现</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">combinationSum4</span><span class="params">(<span class="type">int</span>[] nums, <span class="type">int</span> target)</span> &#123;</span><br><span class="line">        <span class="type">int</span>[] dp = <span class="keyword">new</span> <span class="title class_">int</span>[target+<span class="number">1</span>];</span><br><span class="line">        dp[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="number">1</span>; sum &lt;= target;sum++ ) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> num : nums) &#123;</span><br><span class="line">                <span class="keyword">if</span> (sum - num &lt; <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                dp[sum] += dp[sum - num];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dp[target];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1985,18 +1802,18 @@ mac缓存有有效时间，不会一直存在</li>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-count">90</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-count">28</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">18</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -2056,7 +1873,7 @@ mac缓存有有效时间，不会一直存在</li>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共190.7k字</span>
+  <span class="post-count">博客全站共194.5k字</span>
 </div>
 
         

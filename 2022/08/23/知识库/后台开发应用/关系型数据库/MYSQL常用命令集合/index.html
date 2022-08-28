@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="SHOW命令  显示当前所有的可用数据库 显示当前数据库内可用表 显示某个表中的所有属性信息   检索命令  检索单个列 检索多个列 检索所有列 检索出不重复的行 返回某些行   排序命令  按单列排序 按多个列排序 降序排序   条件查询  找出price&#x3D;2的人 不匹配检查： 给出id不是1003的人制造的产品 范围值检查： 空值检查 多个过滤条件（AND是且， OR是或） AND和OR">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MYSQL常用命令集合">
+<meta property="og:url" content="http://breakdawncoder.com/2022/08/23/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E9%9B%86%E5%90%88/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="SHOW命令  显示当前所有的可用数据库 显示当前数据库内可用表 显示某个表中的所有属性信息   检索命令  检索单个列 检索多个列 检索所有列 检索出不重复的行 返回某些行   排序命令  按单列排序 按多个列排序 降序排序   条件查询  找出price&#x3D;2的人 不匹配检查： 给出id不是1003的人制造的产品 范围值检查： 空值检查 多个过滤条件（AND是且， OR是或） AND和OR">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-08-23T15:47:49.000Z">
+<meta property="article:modified_time" content="2022-08-23T16:16:36.524Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="后台开发,SQL数据库">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://breakdawncoder.com/2022/08/23/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E9%9B%86%E5%90%88/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MYSQL常用命令集合 | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/23/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E9%9B%86%E5%90%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MYSQL常用命令集合
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-23 23:47:49" itemprop="dateCreated datePublished" datetime="2022-08-23T23:47:49+08:00">2022-08-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-24 00:16:36" itemprop="dateModified" datetime="2022-08-24T00:16:36+08:00">2022-08-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/SQL%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">SQL数据库</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/23/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E9%9B%86%E5%90%88/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/23/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E9%9B%86%E5%90%88/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#show-ming-ling">SHOW命令</a>
+<ul>
+<li><a href="#xian-shi-dang-qian-suo-you-de-ke-yong-shu-ju-ku">显示当前所有的可用数据库</a></li>
+<li><a href="#xian-shi-dang-qian-shu-ju-ku-nei-ke-yong-biao">显示当前数据库内可用表</a></li>
+<li><a href="#xian-shi-mou-ge-biao-zhong-de-suo-you-shu-xing-xin-xi">显示某个表中的所有属性信息</a></li>
+</ul>
+</li>
+<li><a href="#jian-suo-ming-ling">检索命令</a>
+<ul>
+<li><a href="#jian-suo-dan-ge-lie">检索单个列</a></li>
+<li><a href="#jian-suo-duo-ge-lie">检索多个列</a></li>
+<li><a href="#jian-suo-suo-you-lie">检索所有列</a></li>
+<li><a href="#jian-suo-chu-bu-chong-fu-de-xing">检索出不重复的行</a></li>
+<li><a href="#fan-hui-mou-xie-xing">返回某些行</a></li>
+</ul>
+</li>
+<li><a href="#pai-xu-ming-ling">排序命令</a>
+<ul>
+<li><a href="#an-dan-lie-pai-xu">按单列排序</a></li>
+<li><a href="#an-duo-ge-lie-pai-xu">按多个列排序</a></li>
+<li><a href="#jiang-xu-pai-xu">降序排序</a></li>
+</ul>
+</li>
+<li><a href="#tiao-jian-cha-xun">条件查询</a>
+<ul>
+<li><a href="#zhao-chu-price-2-de-ren">找出price=2的人</a></li>
+<li><a href="#bu-pi-pei-jian-cha-gei-chu-id-bu-shi-1003-de-ren-zhi-zao-de-chan-pin">不匹配检查： 给出id不是1003的人制造的产品</a></li>
+<li><a href="#fan-wei-zhi-jian-cha">范围值检查：</a></li>
+<li><a href="#kong-zhi-jian-cha">空值检查</a></li>
+<li><a href="#duo-ge-guo-lu-tiao-jian-and-shi-qie-or-shi-huo">多个过滤条件（AND是且， OR是或）</a></li>
+<li><a href="#and-he-or-de-zu-he">AND和OR的组合</a></li>
+<li><a href="#qu-te-ding-zhi-ji-id-1002-1003-1004-de-zhi-jie-ke">取特定值，即id=1002、1003、1004的值皆可</a></li>
+<li><a href="#fou-ding-tiao-jian-not-tiao-jian-ze-qu-bu-man-zu-zhe-ge-tiao-jian-de-xing">否定条件 NOT 条件，  则取不满足这个条件的行</a></li>
+</ul>
+</li>
+<li><a href="#tong-pei-fu">通配符</a>
+<ul>
+<li><a href="#pei-he-zi-fu-chuan-pi-pei-he-like-shi-yong">配合字符串匹配和LIKE使用</a></li>
+<li><a href="#xia-hua-xian-tong-pei-fu-gai-fu-hao-zhi-neng-dai-biao-1-ge-ren-yi-zi-fu">下划线通配符， 该符号只能代表1个任意字符</a></li>
+<li><a href="#shi-yong-tong-pei-fu-de-zhu-yi-shi-xiang">使用通配符的注意事项</a></li>
+<li><a href="#zheng-ze-biao-da-shi-ban-sui-zhao-regexp-shi-yong">正则表达式，伴随着REGEXP使用</a></li>
+</ul>
+</li>
+<li><a href="#te-shu-udf">特殊UDF</a>
+<ul>
+<li><a href="#fen-zu-ju-he">分组+聚合</a></li>
+<li><a href="#fan-hui-jie-ge-de-ping-jun-zhi">返回价格的平均值</a></li>
+<li><a href="#ji-suan-de-shu-liang-bao-gua-null">计算的数量，包括NULL</a></li>
+<li><a href="#zhi-ding-bu-tong-yuan-su-de-tong-ji">指定不同元素的统计</a></li>
+<li><a href="#fen-chu-5-ge-id-ji-suan-ge-id-dui-ying-chan-pin-de-shu-liang">分出5个id，计算各id对应产品的数量</a></li>
+<li><a href="#guo-lu-fen-zu">过滤分组</a></li>
+<li><a href="#lie-chu-ju-you-2-ge-yi-shang-jie-ge-wei-10-de-chan-pin">列出具有2个以上价格为10的产品</a></li>
+</ul>
+</li>
+<li><a href="#zi-cha-xun">子查询</a>
+<ul>
+<li><a href="#zhao-chu-ding-gou-liao-wu-pin-tnt2-de-suo-you-ke-hu-id">找出订购了物品TNT2的所有客户id</a></li>
+</ul>
+</li>
+<li><a href="#ddl">DDL</a>
+<ul>
+<li><a href="#chuang-jian-biao">创建表：</a></li>
+<li><a href="#tian-jia-lie">添加列：</a></li>
+<li><a href="#shan-chu-lie">删除列：</a></li>
+<li><a href="#shan-chu-biao">删除表：</a></li>
+<li><a href="#chong-ming-ming-biao">重命名表：</a></li>
+<li><a href="#cha-ru-xing">插入行：</a></li>
+<li><a href="#shan-chu-shu-ju">删除数据：</a></li>
+<li><a href="#biao-zhong-shan-chu-zhu-jian-wei">表中删除主键为：</a></li>
+<li><a href="#biao-zhong-zeng-jia-zhu-jian-wei">表中增加主键为：</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="show-ming-ling">SHOW命令</span><a href="#show-ming-ling" class="header-anchor">#</a></h1>
+<h2><span id="xian-shi-dang-qian-suo-you-de-ke-yong-shu-ju-ku">显示当前所有的可用数据库</span><a href="#xian-shi-dang-qian-suo-you-de-ke-yong-shu-ju-ku" class="header-anchor">#</a></h2>
+<p>SHOW DATABASE;</p>
+<hr>
+<h2><span id="xian-shi-dang-qian-shu-ju-ku-nei-ke-yong-biao">显示当前数据库内可用表</span><a href="#xian-shi-dang-qian-shu-ju-ku-nei-ke-yong-biao" class="header-anchor">#</a></h2>
+<p>SHOW TABLES ;</p>
+<hr>
+<h2><span id="xian-shi-mou-ge-biao-zhong-de-suo-you-shu-xing-xin-xi">显示某个表中的所有属性信息</span><a href="#xian-shi-mou-ge-biao-zhong-de-suo-you-shu-xing-xin-xi" class="header-anchor">#</a></h2>
+<p>SHOW COLUMNS FORM 表名</p>
+<p>SHOW STATUS 显示广泛的服务器状态<br>
+SHOW CREATE DATABASE/TABLE  显示创建库或表的SQL语句是啥<br>
+SHOW GRANTS 显示授权用户<br>
+SHOW ERRORS SHOW WARNINGS  显示服务器错误或警告消息</p>
+<hr>
+<h1><span id="jian-suo-ming-ling">检索命令</span><a href="#jian-suo-ming-ling" class="header-anchor">#</a></h1>
+<h2><span id="jian-suo-dan-ge-lie">检索单个列</span><a href="#jian-suo-dan-ge-lie" class="header-anchor">#</a></h2>
+<p>SELECT prod_name<br>
+FROM products</p>
+<hr>
+<h2><span id="jian-suo-duo-ge-lie">检索多个列</span><a href="#jian-suo-duo-ge-lie" class="header-anchor">#</a></h2>
+<p>SELECT id,name,price<br>
+FROM products</p>
+<hr>
+<h2><span id="jian-suo-suo-you-lie">检索所有列</span><a href="#jian-suo-suo-you-lie" class="header-anchor">#</a></h2>
+<p>SELECT *<br>
+FROM products</p>
+<hr>
+<h2><span id="jian-suo-chu-bu-chong-fu-de-xing">检索出不重复的行</span><a href="#jian-suo-chu-bu-chong-fu-de-xing" class="header-anchor">#</a></h2>
+<p>SELECT DISTINCT id<br>
+FROM products</p>
+<hr>
+<h2><span id="fan-hui-mou-xie-xing">返回某些行</span><a href="#fan-hui-mou-xie-xing" class="header-anchor">#</a></h2>
+<p>SELECT name<br>
+FROM products<br>
+LIMIT  begin,len  //即开始行，和行数<br>
+注意： 行从0开始，  故LIMIT1，返回的是第二行</p>
+<hr>
+<h1><span id="pai-xu-ming-ling">排序命令</span><a href="#pai-xu-ming-ling" class="header-anchor">#</a></h1>
+<h2><span id="an-dan-lie-pai-xu">按单列排序</span><a href="#an-dan-lie-pai-xu" class="header-anchor">#</a></h2>
+<p>SELECT name,age<br>
+FROM products<br>
+ORDER BY age<br>
+找出年龄最小的？ 加个LIMIT 1即可</p>
+<hr>
+<h2><span id="an-duo-ge-lie-pai-xu">按多个列排序</span><a href="#an-duo-ge-lie-pai-xu" class="header-anchor">#</a></h2>
+<p>先按price排，再按name排<br>
+SELECT id,price,name<br>
+FROM products<br>
+ORDER BY price, name</p>
+<hr>
+<h2><span id="jiang-xu-pai-xu">降序排序</span><a href="#jiang-xu-pai-xu" class="header-anchor">#</a></h2>
+<p>按price降序排，再按name升序排<br>
+SELECT id,price,name<br>
+FROM products<br>
+ORDER BY price DEC, name</p>
+<hr>
+<h1><span id="tiao-jian-cha-xun">条件查询</span><a href="#tiao-jian-cha-xun" class="header-anchor">#</a></h1>
+<h2><span id="zhao-chu-price-2-de-ren">找出price=2的人</span><a href="#zhao-chu-price-2-de-ren" class="header-anchor">#</a></h2>
+<p>SELECT name, price<br>
+FROM products<br>
+WHERE price = 2<br>
+注意： ORDER BY 排序语句应该放在WHERE的后面</p>
+<p>SQL做where字符匹配时，不区分大小写。</p>
+<hr>
+<h2><span id="bu-pi-pei-jian-cha-gei-chu-id-bu-shi-1003-de-ren-zhi-zao-de-chan-pin">不匹配检查： 给出id不是1003的人制造的产品</span><a href="#bu-pi-pei-jian-cha-gei-chu-id-bu-shi-1003-de-ren-zhi-zao-de-chan-pin" class="header-anchor">#</a></h2>
+<p>SELECT id,name<br>
+FROM products<br>
+WHERE id &lt;&gt; 1003;   //或者 id != 1003</p>
+<hr>
+<h2><span id="fan-wei-zhi-jian-cha">范围值检查：</span><a href="#fan-wei-zhi-jian-cha" class="header-anchor">#</a></h2>
+<p>SELECT name,price<br>
+FROM products<br>
+WHERE price BETWEEN 5 AND 10</p>
+<hr>
+<h2><span id="kong-zhi-jian-cha">空值检查</span><a href="#kong-zhi-jian-cha" class="header-anchor">#</a></h2>
+<p>WHERE price IS NULL</p>
+<hr>
+<h2><span id="duo-ge-guo-lu-tiao-jian-and-shi-qie-or-shi-huo">多个过滤条件（AND是且， OR是或）</span><a href="#duo-ge-guo-lu-tiao-jian-and-shi-qie-or-shi-huo" class="header-anchor">#</a></h2>
+<p>WHERE id=1003 AND price &lt;10 AND age &lt; 18</p>
+<hr>
+<h2><span id="and-he-or-de-zu-he">AND和OR的组合</span><a href="#and-he-or-de-zu-he" class="header-anchor">#</a></h2>
+<p>WHERE id=1002 OR id=1003 AND price&gt;10<br>
+根据SQL的规则， AND优先于OR，变成了<br>
+WHERE id=1002 OR （id=1003 AND price&gt;10）<br>
+所以最好在OR和AND组合时，加上括号<br>
+WHERE （id=1002 OR id=1003） AND price&gt;10</p>
+<hr>
+<h2><span id="qu-te-ding-zhi-ji-id-1002-1003-1004-de-zhi-jie-ke">取特定值，即id=1002、1003、1004的值皆可</span><a href="#qu-te-ding-zhi-ji-id-1002-1003-1004-de-zhi-jie-ke" class="header-anchor">#</a></h2>
+<p>WHERE id IN (1002,1003,1004)</p>
+<hr>
+<h2><span id="fou-ding-tiao-jian-not-tiao-jian-ze-qu-bu-man-zu-zhe-ge-tiao-jian-de-xing">否定条件       NOT 条件，  则取不满足这个条件的行</span><a href="#fou-ding-tiao-jian-not-tiao-jian-ze-qu-bu-man-zu-zhe-ge-tiao-jian-de-xing" class="header-anchor">#</a></h2>
+<p>WHERE id NOT IN (1002,1003,1004)</p>
+<hr>
+<h1><span id="tong-pei-fu">通配符</span><a href="#tong-pei-fu" class="header-anchor">#</a></h1>
+<h2><span id="pei-he-zi-fu-chuan-pi-pei-he-like-shi-yong">配合字符串匹配和LIKE使用</span><a href="#pei-he-zi-fu-chuan-pi-pei-he-like-shi-yong" class="header-anchor">#</a></h2>
+<p>百分号通配符，查找以jet开头的任何名字<br>
+WHERE name LIKE  ‘jet%’<br>
+包含有anvil的名字<br>
+WHERE name LIKE  ‘%anvil%’<br>
+查找以s起头，e结尾的所有名字<br>
+WHERE name LIKE ‘s%e’</p>
+<hr>
+<h2><span id="xia-hua-xian-tong-pei-fu-gai-fu-hao-zhi-neng-dai-biao-1-ge-ren-yi-zi-fu">下划线通配符， 该符号只能代表1个任意字符</span><a href="#xia-hua-xian-tong-pei-fu-gai-fu-hao-zhi-neng-dai-biao-1-ge-ren-yi-zi-fu" class="header-anchor">#</a></h2>
+<p>不能匹配0个字符，即该处必须有1个字符<br>
+WHERE name LIKE ‘_ton anvil’</p>
+<hr>
+<h2><span id="shi-yong-tong-pei-fu-de-zhu-yi-shi-xiang">使用通配符的注意事项</span><a href="#shi-yong-tong-pei-fu-de-zhu-yi-shi-xiang" class="header-anchor">#</a></h2>
+<p>1.不要过度使用通配符<br>
+2.不要把通配符用在搜索模式的开始处<br>
+3.注意通配符的位置</p>
+<hr>
+<h2><span id="zheng-ze-biao-da-shi-ban-sui-zhao-regexp-shi-yong">正则表达式，伴随着REGEXP使用</span><a href="#zheng-ze-biao-da-shi-ban-sui-zhao-regexp-shi-yong" class="header-anchor">#</a></h2>
+<p>LIKE匹配的是整个串，REGEXP只要出现了类似的即可，即有子串即可<br>
+例如LIKE ‘abc’ ，只能返回abc。<br>
+REGEXP ‘abc’， 则可以返回 abcd</p>
+<hr>
+<p>.可以匹配任意一个字符<br>
+WHERE name REGEXP ‘.000’</p>
+<hr>
+<p>搜索2个串, |类似于或OR<br>
+WHERE name REGEXP ‘1000|2000’<br>
+注意：  ‘1|2|3 Ton’ 指代的是1或2或3 Ton， 故不要连续用|后又跟字符，而应该用[]</p>
+<hr>
+<p>匹配几个字符中的一个即可<br>
+WHERE name REGEXP ‘[123] TON’<br>
+则可返回  1 Ton 和 2 Ton</p>
+<hr>
+<p>匹配1-9加a-z<br>
+WHERE name REGEXP  ‘[1-9] [a-z]’</p>
+<hr>
+<p>匹配 正则符号模样的特殊字符<br>
+用\作为前导<br>
+WHERE name REGEXP ‘\.’<br>
+则找到匹配.的， 此时.不代表任意字符</p>
+<hr>
+<p>匹配某个字符的0个或1个<br>
+WHERE name REGEXP ‘sticks?’<br>
+则可匹配stick或者sticks</p>
+<hr>
+<p>指定匹配数目 {n}<br>
+不少于指定数目的匹配 {n,}<br>
+匹配n到m数目的匹配 {n,m}</p>
+<hr>
+<p>WHERE name REGEXP ‘[[:digit:]]{4}’<br>
+则匹配4个任意数字</p>
+<hr>
+<p>^定位为文本的开始，$定位为文本的结束<br>
+注意： ^有另外一个用途，可以用来否定集合[]</p>
+<hr>
+<h1><span id="te-shu-udf">特殊UDF</span><a href="#te-shu-udf" class="header-anchor">#</a></h1>
+<p>在SQL中测试自己写的正则表达式对不对<br>
+SELECT ‘hello’ REGEXP ‘abc’<br>
+若正确，则返回1，否则返回0。 显然这个例子返回0</p>
+<hr>
+<p>计算字段<br>
+SELECT Concat(name, ‘(’ , country, ‘)’ )</p>
+<hr>
+<p>则返回的行里的每个值为<br>
+LSX(CHINA)<br>
+CRISTINA(USA)</p>
+<hr>
+<p>RTrim(name)可以删除name中多余的右边空格，常可以用在拼接中</p>
+<hr>
+<p>给计算字段取别名<br>
+SELECT Concat(name, ‘(’ , country, ‘)’ ) AS newtitle<br>
+则列名叫newtitle</p>
+<hr>
+<p>执行算数计算<br>
+SELECT id, num, price, num*price AS sumProfit<br>
+则多返回一个列，叫做总利润</p>
+<hr>
+<p>测试拼接字段<br>
+SELECT 3*2+5,  则返回11<br>
+SELECT Now(),  则返回数据库的当前时间</p>
+<hr>
+<p>数据处理函数<br>
+Select name, Upper(name) AS upcase_name       都转为大写</p>
+<hr>
+<h2><span id="fen-zu-ju-he">分组+聚合</span><a href="#fen-zu-ju-he" class="header-anchor">#</a></h2>
+<h2><span id="fan-hui-jie-ge-de-ping-jun-zhi">返回价格的平均值</span><a href="#fan-hui-jie-ge-de-ping-jun-zhi" class="header-anchor">#</a></h2>
+<p>SELECT AVG(price) AS avg_price<br>
+FROM products<br>
+WHERE id = 1003</p>
+<hr>
+<h2><span id="ji-suan-de-shu-liang-bao-gua-null">计算的数量，包括NULL</span><a href="#ji-suan-de-shu-liang-bao-gua-null" class="header-anchor">#</a></h2>
+<p>SELECT COUNT（*） AS num_cust<br>
+计算num的数量，不包括NULL<br>
+SELECT COUTN（num） AS num_cust<br>
+还有MAX,MIN,SUM</p>
+<hr>
+<h2><span id="zhi-ding-bu-tong-yuan-su-de-tong-ji">指定不同元素的统计</span><a href="#zhi-ding-bu-tong-yuan-su-de-tong-ji" class="header-anchor">#</a></h2>
+<p>SELECT AVG（DISTINCT price） AS avg_price</p>
+<hr>
+<h2><span id="fen-chu-5-ge-id-ji-suan-ge-id-dui-ying-chan-pin-de-shu-liang">分出5个id，计算各id对应产品的数量</span><a href="#fen-chu-5-ge-id-ji-suan-ge-id-dui-ying-chan-pin-de-shu-liang" class="header-anchor">#</a></h2>
+<p>SELECT id, COUNT(*) AS id_num<br>
+FROM products<br>
+GROUP BY id<br>
+1.除了聚集计算语句外， SELECT中出现的每个列都必须出现在GROUP BY中<br>
+2.GROUP BY 必须出在 ORDER BY 之前</p>
+<hr>
+<h2><span id="guo-lu-fen-zu">过滤分组</span><a href="#guo-lu-fen-zu" class="header-anchor">#</a></h2>
+<p>SELECT id， COUNT(<em>) AD orders<br>
+FROM orders<br>
+GROUP BY id<br>
+HAVING COUNT(</em>) &gt;= 2</p>
+<hr>
+<h2><span id="lie-chu-ju-you-2-ge-yi-shang-jie-ge-wei-10-de-chan-pin">列出具有2个以上价格为10的产品</span><a href="#lie-chu-ju-you-2-ge-yi-shang-jie-ge-wei-10-de-chan-pin" class="header-anchor">#</a></h2>
+<p>SELECT id, COUNT(<em>) AS  num<br>
+FROM products<br>
+WHERE price &gt;= 10<br>
+GROUP BY id<br>
+HAVING COUNT(</em>) &gt;=2<br>
+顺序：先WHERE过滤， 在COUNT过滤</p>
+<blockquote>
+<blockquote>
+<p>语句使用顺序<br>
+SELECT<br>
+FROM<br>
+WHERE<br>
+GROUP BY<br>
+HAVING<br>
+ORDER BY<br>
+LIMIT</p>
+</blockquote>
+</blockquote>
+<h1><span id="zi-cha-xun">子查询</span><a href="#zi-cha-xun" class="header-anchor">#</a></h1>
+<h2><span id="zhao-chu-ding-gou-liao-wu-pin-tnt2-de-suo-you-ke-hu-id">找出订购了物品TNT2的所有客户id</span><a href="#zhao-chu-ding-gou-liao-wu-pin-tnt2-de-suo-you-ke-hu-id" class="header-anchor">#</a></h2>
+<p>SELECT cus_id<br>
+FROM orders<br>
+WHERE sail_id IN （SELECT sail_id<br>
+FROM orderitem<br>
+WHERE prod_id = ‘TNT2’）<br>
+即先从产品表中，找到产品id为INT2的所有订单<br>
+再从订单表中，找到订单id匹配的所有客户。</p>
+<p>检索出上述客户id的所有信息<br>
+SELECT cus_name, cus_age<br>
+FROM customer<br>
+WHERE  cus_id IN (SELECT cus_id<br>
+FROM orders<br>
+WHERE sail_id IN （SELECT sail_id<br>
+FROM orderitem<br>
+WHERE prod_id = ‘TNT2’））<br>
+显示每个客户的订单总数<br>
+SELECT name, state, (SELECT COUNT(*)<br>
+FROM orders<br>
+WHERE orders.cus_id = cus.cus_id ) AS orders<br>
+FROM customers<br>
+ORDER BY name<br>
+对于customer中的每一个客户id， 都从订单表中进行检索，找出每个id的订单数量。</p>
+<h1><span id="ddl">DDL</span><a href="#ddl" class="header-anchor">#</a></h1>
+<h2><span id="chuang-jian-biao">创建表：</span><a href="#chuang-jian-biao" class="header-anchor">#</a></h2>
+<p>CREATE TABLE 表名<br>
+（<br>
+列名   数据类型   列属性<br>
+……<br>
+PRIMARY KEY (主键列1，主键列2……)<br>
+）ENGINE=InnoDB</p>
+<h2><span id="tian-jia-lie">添加列：</span><a href="#tian-jia-lie" class="header-anchor">#</a></h2>
+<p>ALTER TABLE 表名<br>
+ADD 列名 数据类型</p>
+<h2><span id="shan-chu-lie">删除列：</span><a href="#shan-chu-lie" class="header-anchor">#</a></h2>
+<p>ALTER TABLE 表名<br>
+DROP COLUMN 列名</p>
+<h2><span id="shan-chu-biao">删除表：</span><a href="#shan-chu-biao" class="header-anchor">#</a></h2>
+<p>DROP TABLE 表名</p>
+<h2><span id="chong-ming-ming-biao">重命名表：</span><a href="#chong-ming-ming-biao" class="header-anchor">#</a></h2>
+<p>RENAME TABLE 旧表名 TO 新表名</p>
+<h2><span id="cha-ru-xing">插入行：</span><a href="#cha-ru-xing" class="header-anchor">#</a></h2>
+<p>INSERT INTO 表名(<br>
+列名1<br>
+列名2<br>
+……<br>
+)<br>
+VALUES（<br>
+数据1<br>
+数据2<br>
+……<br>
+），<br>
+（<br>
+数据3<br>
+数据4<br>
+）;<br>
+这样就插入了2行</p>
+<p>更新数据：<br>
+UPDATE 表名<br>
+SET  列名1=数据1<br>
+列名2=数据2<br>
+WHERE 查询条件</p>
+<h2><span id="shan-chu-shu-ju">删除数据：</span><a href="#shan-chu-shu-ju" class="header-anchor">#</a></h2>
+<p>DELETE FROM 表名<br>
+WHERE 查询条件</p>
+<h2><span id="biao-zhong-shan-chu-zhu-jian-wei">表中删除主键为：</span><a href="#biao-zhong-shan-chu-zhu-jian-wei" class="header-anchor">#</a></h2>
+<p>alert table table_test drop primary key;</p>
+<h2><span id="biao-zhong-zeng-jia-zhu-jian-wei">表中增加主键为：</span><a href="#biao-zhong-zeng-jia-zhu-jian-wei" class="header-anchor">#</a></h2>
+<p>alert table table_test add primary key(id);</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/2022/08/23/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E9%9B%86%E5%90%88/" title="MYSQL常用命令集合">http://breakdawncoder.com/2022/08/23/知识库/后台开发应用/关系型数据库/MYSQL常用命令集合/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91-SQL%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 后台开发,SQL数据库</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/08/23/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-23/" rel="prev" title="2022-0823">
+      <i class="fa fa-chevron-left"></i> 2022-0823
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%8A%9B%E6%89%A3%E7%BB%83%E4%B9%A0%E9%A2%98%E9%9B%86%E5%90%88/" rel="next" title="MYSQL力扣练习题集合">
+      MYSQL力扣练习题集合 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">SHOW命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">显示当前所有的可用数据库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">显示当前数据库内可用表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">显示某个表中的所有属性信息</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">检索命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">检索单个列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">检索多个列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">检索所有列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.4.</span> <span class="nav-text">检索出不重复的行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.5.</span> <span class="nav-text">返回某些行</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">排序命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">按单列排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">按多个列排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">降序排序</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">条件查询</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">找出price&#x3D;2的人</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.2.</span> <span class="nav-text">不匹配检查： 给出id不是1003的人制造的产品</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.3.</span> <span class="nav-text">范围值检查：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.4.</span> <span class="nav-text">空值检查</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.5.</span> <span class="nav-text">多个过滤条件（AND是且， OR是或）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.6.</span> <span class="nav-text">AND和OR的组合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.7.</span> <span class="nav-text">取特定值，即id&#x3D;1002、1003、1004的值皆可</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.8.</span> <span class="nav-text">否定条件       NOT 条件，  则取不满足这个条件的行</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">通配符</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.1.</span> <span class="nav-text">配合字符串匹配和LIKE使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.2.</span> <span class="nav-text">下划线通配符， 该符号只能代表1个任意字符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.3.</span> <span class="nav-text">使用通配符的注意事项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.4.</span> <span class="nav-text">正则表达式，伴随着REGEXP使用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">特殊UDF</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.1.</span> <span class="nav-text">分组+聚合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.2.</span> <span class="nav-text">返回价格的平均值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.3.</span> <span class="nav-text">计算的数量，包括NULL</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.4.</span> <span class="nav-text">指定不同元素的统计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.5.</span> <span class="nav-text">分出5个id，计算各id对应产品的数量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.6.</span> <span class="nav-text">过滤分组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.7.</span> <span class="nav-text">列出具有2个以上价格为10的产品</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">子查询</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">7.1.</span> <span class="nav-text">找出订购了物品TNT2的所有客户id</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">8.</span> <span class="nav-text">DDL</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">8.1.</span> <span class="nav-text">创建表：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">8.2.</span> <span class="nav-text">添加列：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">8.3.</span> <span class="nav-text">删除列：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">8.4.</span> <span class="nav-text">删除表：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">8.5.</span> <span class="nav-text">重命名表：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">8.6.</span> <span class="nav-text">插入行：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">8.7.</span> <span class="nav-text">删除数据：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">8.8.</span> <span class="nav-text">表中删除主键为：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">8.9.</span> <span class="nav-text">表中增加主键为：</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共194.5k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
