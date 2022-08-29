@@ -176,6 +176,668 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/22/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E7%BB%84%E5%90%88%E6%95%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/22/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E7%BB%84%E5%90%88%E6%95%B0/" class="post-title-link" itemprop="url">组合数（排列组合）</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-22 23:12:42" itemprop="dateCreated datePublished" datetime="2022-08-22T23:12:42+08:00">2022-08-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-30 00:58:33" itemprop="dateModified" datetime="2022-08-30T00:58:33+08:00">2022-08-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">算法大全</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%95%B0%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">数学</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/22/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E7%BB%84%E5%90%88%E6%95%B0/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/22/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E7%BB%84%E5%90%88%E6%95%B0/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>705</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#c-k-n-de-o-min-k-n-k-jie-fa">C（k,n)的O(Min(k,n-k)）解法：</a></li>
+<li><a href="#yang-hui-san-jiao-da-biao-fa">杨辉三角打表法：</a>
+<ul>
+<li><a href="#ru-guo-yong-o-n-de-fu-za-du-o-1-de-kong-jian-qiu-jie-c-n-m">如果用O(N)的复杂度，O（1）的空间求解C(n,m)?</a></li>
+</ul>
+</li>
+<li><a href="#chao-da-zu-he-shu-she-ji-qu-yu">超大组合数（涉及取余）</a></li>
+<li><a href="#xiang-guan-ti-mu">相关题目</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="c-k-n-de-o-min-k-n-k-jie-fa">C（k,n)的O(Min(k,n-k)）解法：</span><a href="#c-k-n-de-o-min-k-n-k-jie-fa" class="header-anchor">#</a></h1>
+<p>快速回想组合数解法：<br>
+C(8,3) = 8 * 7 * 6 /(321) = 6 / 1 * 7 / 2 * 8 / 3<br>
+即分子和分母的个数是一样的<br>
+然后你要从小的开始逐步做乘和除的操作，就能求出来了，且一定能保证整除</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">c</span><span class="params">(<span class="type">int</span> k, <span class="type">int</span> n)</span> &#123;</span><br><span class="line">    <span class="type">long</span> <span class="variable">result</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// y/x * (y+1)/(x+1)</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">y</span> <span class="operator">=</span> k+<span class="number">1</span>, x= <span class="number">1</span>;y&lt;=n &amp;&amp; x&lt;=k;y++,x++) &#123;</span><br><span class="line">        <span class="comment">// (result*y)一定能被x整除</span></span><br><span class="line">        result = (result * y) / x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (<span class="type">int</span>)result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1><span id="yang-hui-san-jiao-da-biao-fa">杨辉三角打表法：</span><a href="#yang-hui-san-jiao-da-biao-fa" class="header-anchor">#</a></h1>
+<p>如果空间没要求， 但是要求每次快速获取，则可以用杨辉三角提前打表<br>
+<img src="/images/%E7%BB%84%E5%90%88%E6%95%B0/5f59a1dcf0b46aa3f87ac7f2be142b73b028938a.png" alt="5f59a1dcf0b46aa3f87ac7f2be142b73b028938a"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;=n;i++)&#123;</span><br><span class="line">	c[i][<span class="number">0</span>]=c[i][i]=<span class="number">1</span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> j=<span class="number">1</span>;j&lt;i;j++)</span><br><span class="line">		c[i][j]=(c[i-<span class="number">1</span>][j]+c[i-<span class="number">1</span>][j-<span class="number">1</span>])%mod;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>``</p>
+<h2><span id="ru-guo-yong-o-n-de-fu-za-du-o-1-de-kong-jian-qiu-jie-c-n-m">如果用O(N)的复杂度，O（1）的空间求解C(n,m)?</span><a href="#ru-guo-yong-o-n-de-fu-za-du-o-1-de-kong-jian-qiu-jie-c-n-m" class="header-anchor">#</a></h2>
+<p>杨辉三角里，某行某列的值等同于C(n,m)<br>
+<img src="/images/%E7%BB%84%E5%90%88%E6%95%B0/bfd6af87785723cdb1ec6016b0af14e01ccc863a.png" alt="bfd6af87785723cdb1ec6016b0af14e01ccc863a"><br>
+<img src="/images/%E7%BB%84%E5%90%88%E6%95%B0/8fb6b5d2b9e4533c76fab309ba111ce6762fab7b.png" alt="8fb6b5d2b9e4533c76fab309ba111ce6762fab7b"></p>
+<p>因此可以很短的复杂度得到值<br>
+也可以缓存<br>
+<img src="/images/%E7%BB%84%E5%90%88%E6%95%B0/38d0ada716a6c8ab7289296c68d19f3c264c86db.png" alt="38d0ada716a6c8ab7289296c68d19f3c264c86db"></p>
+<h1><span id="chao-da-zu-he-shu-she-ji-qu-yu">超大组合数（涉及取余）</span><a href="#chao-da-zu-he-shu-she-ji-qu-yu" class="header-anchor">#</a></h1>
+<p>超纲题</p>
+<ul>
+<li>乘法逆元+快速幂+阶乘</li>
+<li>Lucas定理</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_45404210/article/details/96422543">总结组合数的几种求法（模板）</a></p>
+<hr>
+<h1><span id="xiang-guan-ti-mu">相关题目</span><a href="#xiang-guan-ti-mu" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/unique-paths/">62. 不同路径 需要空间为1时，必须用组合数</a><br>
+<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/pascals-triangle-ii/">119. 杨辉三角 II O(1)空间求某行某列，用组合数性质</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/21/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/21/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/" class="post-title-link" itemprop="url">数据库索引详解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-21 23:46:49 / 修改时间：23:56:11" itemprop="dateCreated datePublished" datetime="2022-08-21T23:46:49+08:00">2022-08-21</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/SQL%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">SQL数据库</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/21/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/21/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#suo-yin-de-ji-ben-gai-nian">索引的基本概念</a>
+<ul>
+<li><a href="#suo-yin-de-you-dian">索引的优点</a></li>
+<li><a href="#suo-yin-lei-xing">索引类型</a>
+<ul>
+<li><a href="#ha-xi-suo-yin">哈希索引</a>
+<ul>
+<li><a href="#zi-ding-yi-ha-xi-suo-yin">自定义哈希索引</a></li>
+</ul>
+</li>
+<li><a href="#kong-jian-shu-ju-suo-yin-r-tree">空间数据索引（R-Tree)</a></li>
+<li><a href="#quan-wen-suo-yin">全文索引</a></li>
+</ul>
+</li>
+<li><a href="#san-xing-suo-yin-de-ping-jie">三星索引的评价</a></li>
+</ul>
+</li>
+<li><a href="#suo-yin-yuan-li">索引原理</a>
+<ul>
+<li><a href="#b-tree-shi-xian">B+ tree实现</a></li>
+<li><a href="#q-wei-shi-me-bu-xuan-ze-shi-yong-b-shu-er-shi-shi-yong-b-shu">Q: 为什么不选择使用B树， 而是使用B+树？</a></li>
+<li><a href="#q-na-wei-shi-me-bu-xuan-yong-hong-hei-shu">Q: 那为什么不选用红黑树？</a></li>
+<li><a href="#q-na-wei-shi-me-bu-yong-ha-xi-biao">Q: 那为什么不用哈希表？</a></li>
+</ul>
+</li>
+<li><a href="#gao-xing-neng-de-suo-yin-ce-lue">高性能的索引策略</a>
+<ul>
+<li><a href="#du-li-de-lie-de-wen-ti">独立的列的问题</a></li>
+<li><a href="#qian-zhui-suo-yin-you-hua">前缀索引优化</a>
+<ul>
+<li><a href="#qian-zhui-suo-yin-de-chuang-jian">前缀索引的创建</a></li>
+<li><a href="#que-ding-qian-zhui-chang-du">确定前缀长度</a></li>
+<li><a href="#ru-he-zuo-hou-zhui-suo-yin">如何做后缀索引？</a></li>
+</ul>
+</li>
+<li><a href="#duo-lie-suo-yin">多列索引</a></li>
+<li><a href="#ru-he-que-ding-suo-yin-lie-shun-xu">如何确定索引列顺序</a></li>
+</ul>
+</li>
+<li><a href="#ju-cu-suo-yin">聚簇索引</a>
+<ul>
+<li><a href="#ju-cu-he-fei-ju-cu-de-qu-bie">聚簇和非聚簇的区别</a></li>
+<li><a href="#ju-cu-de-you-dian">聚簇的优点</a></li>
+<li><a href="#ju-cu-de-que-dian">聚簇的缺点</a></li>
+<li><a href="#ju-cu-he-fei-ju-cu-de-dui-bi">聚簇和非聚簇的对比</a></li>
+<li><a href="#q-shi-me-shi-hui-biao">Q: 什么是回表？</a></li>
+<li><a href="#q-na-me-dang-fa-sheng-hui-biao-shi-zen-me-bi-mian-ni">Q: 那么当发生回表时，怎么避免呢？</a></li>
+<li><a href="#q-fei-zhu-jian-suo-yin-a-zuo-where-a-3-shi-neng-chong-fen-li-yong-suo-yin-zuo-jian-dan-de-fan-wei-du-qu-me">Q: 非主键索引a， 做where a&gt;3时， 能充分利用索引做简单的范围读取么？</a></li>
+<li><a href="#er-ji-suo-yin-he-zhu-jian">二级索引和主键</a></li>
+<li><a href="#q-zhu-jian-suo-yin-he-wei-yi-suo-yin-you-shi-me-qu-bie-ni">Q: 主键索引和唯一索引有什么区别呢？</a></li>
+<li><a href="#q-que-ding-bu-neng-you-duo-ge-zhu-jian-suo-yin-ma-na-fan-shi-li-ti-dao-de-duo-ge-zhu-jian-shi-zen-me-hui-shi-ni">Q: 确定不能有多个主键索引吗？那泛式里提到的多个主键是怎么回事呢？</a></li>
+</ul>
+</li>
+<li><a href="#suo-yin-de-cha-ru">索引的插入</a>
+<ul>
+<li><a href="#suo-yin-cha-ru-de-gui-fan">索引插入的规范</a></li>
+<li><a href="#q-wei-shi-me-zi-zeng-id-ke-neng-hui-chu-xian-bu-lian-xu-de-qing-kuang">Q: 为什么自增id可能会出现不连续的情况？</a></li>
+<li><a href="#q-wei-shi-me-zi-zeng-id-bu-neng-hui-gun-ni">Q: 为什么自增id不能回滚呢？</a></li>
+</ul>
+</li>
+<li><a href="#qi-ta-suo-yin">其他索引</a>
+<ul>
+<li><a href="#fu-gai-suo-yin">覆盖索引</a></li>
+<li><a href="#yong-suo-yin-zuo-pai-xu">用索引做排序</a></li>
+<li><a href="#ya-suo-qian-zhui-suo-yin">压缩（前缀索引）</a></li>
+<li><a href="#chong-fu-suo-yin">重复索引</a></li>
+<li><a href="#rong-yu-suo-yin">冗余索引</a></li>
+<li><a href="#wei-shi-yong-de-suo-yin">未使用的索引</a></li>
+<li><a href="#suo-yin-he-suo">索引和锁</a></li>
+</ul>
+</li>
+<li><a href="#suo-yin-ying-yong">索引应用</a>
+<ul>
+<li><a href="#duo-chong-guo-lu-tiao-jian-you-hua">多种过滤条件优化</a></li>
+<li><a href="#bi-mian-duo-ge-fan-wei-tiao-jian">避免多个范围条件</a></li>
+<li><a href="#q-xie-ru-biao-de-shi-hou-wei-shi-me-yi-ban-jian-yi-zi-zeng-de-zhu-jian-id-lai-xie-ru">Q: 写入表的时候， 为什么一般建议自增的主键id来写入？</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="suo-yin-de-ji-ben-gai-nian">索引的基本概念</span><a href="#suo-yin-de-ji-ben-gai-nian" class="header-anchor">#</a></h1>
+<h2><span id="suo-yin-de-you-dian">索引的优点</span><a href="#suo-yin-de-you-dian" class="header-anchor">#</a></h2>
+<ol>
+<li>大大减少服务器需要扫描的数据量（本来O(n)的扫描，在B-Tree或者哈希索引的帮助下， 变成O(logn)或者O(1)）</li>
+<li>避免了不必要的排序或者临时表（order by和排序需要先弄一个临时存储的表）</li>
+<li>把随机IO改成为了顺序IO，IO速度加快</li>
+</ol>
+<h2><span id="suo-yin-lei-xing">索引类型</span><a href="#suo-yin-lei-xing" class="header-anchor">#</a></h2>
+<hr>
+<ul>
+<li>支持的类型</li>
+</ul>
+<ol>
+<li>全值匹配——key中所有索引列全部匹配中，单个的</li>
+<li>匹配最左索引——匹配key中的第一个索引值</li>
+<li>匹配列前缀——可以只匹配某个索引的前缀（适用于字符串的情况）</li>
+<li>可以匹配最左索引+列前缀——可以只匹配  索引1、索引2加上索引3的前缀。</li>
+</ol>
+<ul>
+<li>注意上面的匹配，都是从左往右的匹配， 因此不支持只匹配中间那个索引的情况。</li>
+<li>如果有一列索引用了范围， 那么后面的列都不能再用来匹配了。</li>
+<li>B-Tree也可用于排序或者group by key，会加快速度，毕竟默认都是排好序的了。</li>
+</ul>
+<h3><span id="ha-xi-suo-yin">哈希索引</span><a href="#ha-xi-suo-yin" class="header-anchor">#</a></h3>
+<ul>
+<li>指的是把 索引列计算出一个哈希值， 存到一个哈希表中， key是哈希值，val是行指针。</li>
+<li>只有Memory引擎支持（key using hash(索引值） ）， inndb不支持。</li>
+<li>因为不是按照顺序存的， 所以不可用于优化排序， 只能优化查询。</li>
+<li>不支持部分索引匹配， 因为哈希值是根据全索引计算的。</li>
+<li>也不支持范围。</li>
+<li>如果有哈希冲突，且很多，就可能造成性能变慢，</li>
+</ul>
+<h4><span id="zi-ding-yi-ha-xi-suo-yin">自定义哈希索引</span><a href="#zi-ding-yi-ha-xi-suo-yin" class="header-anchor">#</a></h4>
+<ul>
+<li>可以利用B-tree弄一个自定义的哈希索引</li>
+<li>例如想哈希的列是url， 于是我弄了一个hash_url的列,  里面的值是url经过CRC32(url）后的值， 然后把hash_url这一列作为索引。</li>
+<li>然后select语句的时候，  where url = ‘xx’ and hash_url=CRC32(‘xx’)  ，即可 快速定位。</li>
+<li>hash_url的值可以通过insert触发器，每次插入url的时候进行更新</li>
+<li>查询时必须带上哈希前原本的值（就是上面的url = ‘xxx’)，否则可能会因为哈希冲突返回多行。</li>
+<li>不可用SHA1和MDK做哈希函数。</li>
+</ul>
+<h3><span id="kong-jian-shu-ju-suo-yin-r-tree">空间数据索引（R-Tree)</span><a href="#kong-jian-shu-ju-suo-yin-r-tree" class="header-anchor">#</a></h3>
+<ul>
+<li>只有MyISAM才支持</li>
+<li>从所有维度来索引数据，用于地理信息存储之类的</li>
+</ul>
+<h3><span id="quan-wen-suo-yin">全文索引</span><a href="#quan-wen-suo-yin" class="header-anchor">#</a></h3>
+<ul>
+<li>查找文本中的关键词</li>
+<li>可以同时创建全文索引和基于值的B-Tree索引</li>
+</ul>
+<h2><span id="san-xing-suo-yin-de-ping-jie">三星索引的评价</span><a href="#san-xing-suo-yin-de-ping-jie" class="header-anchor">#</a></h2>
+<ul>
+<li>一星：需要拿的记录都放到同一行（即不用再关联其他表）</li>
+<li>二星：索引数据顺序和查找顺序一致</li>
+<li>三星: 索引的列包含了查询中需要的全部的列（即不用去返回行中所有顺序，直接返回key就好了）</li>
+</ul>
+<h1><span id="suo-yin-yuan-li">索引原理</span><a href="#suo-yin-yuan-li" class="header-anchor">#</a></h1>
+<h2><span id="b-tree-shi-xian">B+ tree实现</span><a href="#b-tree-shi-xian" class="header-anchor">#</a></h2>
+<ul>
+<li>如果没有指明类型，基本上都是用的B+ tree索引</li>
+<li>B+ tree结构</li>
+</ul>
+<p><img src="/images/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/6969d29b8468739b7480fa2315ed0478c0ad46d3.png" alt="6969d29b8468739b7480fa2315ed0478c0ad46d3"><br>
+里面的key就是 你选定的索引值<br>
+然后按照范围，指向后面其他的范围，直到定位到具体的叶子节点即行所对应的值。<br>
+同时因为最后叶子都是按照顺序连起来的，所以也很适合按照范围返回数据。</p>
+<ul>
+<li>B+tree里的key可以包含多个列的值， 并且这些列匹配时有顺序关系，按照定义key时的优先级来排序。（就是说可以多个key组成一个节点，里面自定义了对应的判定顺序）<br>
+<img src="/images/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/0856365975e56e39b87ec59c6e52c6c2260027e1.png" alt="0856365975e56e39b87ec59c6e52c6c2260027e1"></li>
+</ul>
+<hr>
+<h2><span id="q-wei-shi-me-bu-xuan-ze-shi-yong-b-shu-er-shi-shi-yong-b-shu">Q: 为什么不选择使用B树， 而是使用B+树？</span><a href="#q-wei-shi-me-bu-xuan-ze-shi-yong-b-shu-er-shi-shi-yong-b-shu" class="header-anchor">#</a></h2>
+<p>A:<br>
+数据库索引采用B+树的主要原因是 B树在提高了磁盘IO性能的同时并没有解决元素遍历的效率低下的问题<br>
+正是为了解决这个问题，B+树应运而生。B+树只要遍历叶子节点就可以实现整棵树的遍历<br>
+在数据库中基于范围的查询是非常频繁的，而B树不支持这样的操作，或者说效率太低。</p>
+<p>另外B树的索引节点上也存了数据，导致搜索过程种读了很多不必要的数据，加大了磁盘IO时间</p>
+<hr>
+<h2><span id="q-na-wei-shi-me-bu-xuan-yong-hong-hei-shu">Q: 那为什么不选用红黑树？</span><a href="#q-na-wei-shi-me-bu-xuan-yong-hong-hei-shu" class="header-anchor">#</a></h2>
+<p>A:<br>
+红黑树往往出现由于树的深度过大。<br>
+磁盘IO代价主要花费在查找所需的柱面上，树的深度过大会造成磁盘IO频繁读写</p>
+<hr>
+<h2><span id="q-na-wei-shi-me-bu-yong-ha-xi-biao">Q: 那为什么不用哈希表？</span><a href="#q-na-wei-shi-me-bu-yong-ha-xi-biao" class="header-anchor">#</a></h2>
+<p>A:<br>
+哈希表没法做范围查询以及前缀索引匹配查询。</p>
+<hr>
+<h1><span id="gao-xing-neng-de-suo-yin-ce-lue">高性能的索引策略</span><a href="#gao-xing-neng-de-suo-yin-ce-lue" class="header-anchor">#</a></h1>
+<h2><span id="du-li-de-lie-de-wen-ti">独立的列的问题</span><a href="#du-li-de-lie-de-wen-ti" class="header-anchor">#</a></h2>
+<ul>
+<li>索引列不可以作为表达式的一部分， 必须是独立的<br>
+例如 where id+1=5 或者 where Func(id) &lt; 5 都是错误的<br>
+应该改成<br>
+where id = 5-1 或者  where id &lt; uFunc(5)</li>
+</ul>
+<h2><span id="qian-zhui-suo-yin-you-hua">前缀索引优化</span><a href="#qian-zhui-suo-yin-you-hua" class="header-anchor">#</a></h2>
+<ul>
+<li>索引列如果是text之类特别长的，必须使用前缀索引， 不可以用完整长度去做索引，mysql不支持。</li>
+</ul>
+<h4><span id="qian-zhui-suo-yin-de-chuang-jian">前缀索引的创建</span><a href="#qian-zhui-suo-yin-de-chuang-jian" class="header-anchor">#</a></h4>
+<p>… KEY(city(7)),   那么你按照city去where时，就会用city的前缀去索引了。</p>
+<h4><span id="que-ding-qian-zhui-chang-du">确定前缀长度</span><a href="#que-ding-qian-zhui-chang-du" class="header-anchor">#</a></h4>
+<ul>
+<li>前缀索引的选择性 =   不重复的个数/记录总数</li>
+<li>如何确定较优的前缀长度？</li>
+</ul>
+<p>全列选择性：</p>
+<p>SELECT COUNT(DISTINCT column_name) / COUNT(*) FROM table_name;</p>
+<p>某一长度前缀的选择性：</p>
+<p>SELECT COUNT(DISTINCT LEFT(column_name, prefix_length)) / COUNT(*) FROM table_name;</p>
+<p>当你不断调整prefix_length，让前缀的选择性越接近全列选择性的时候，索引效果越好。如果发现继续增加prefi_length，变动幅度不大了，则选取那个值</p>
+<ul>
+<li>也要注意前缀最大值， 例如该长度n下，平均选择性不高，但是有1-2个前缀数量特别大，也不行。</li>
+</ul>
+<h4><span id="ru-he-zuo-hou-zhui-suo-yin">如何做后缀索引？</span><a href="#ru-he-zuo-hou-zhui-suo-yin" class="header-anchor">#</a></h4>
+<p>存储的时候把字符串 <em><strong>翻转</strong></em> 存进表里，然后再做前缀索引</p>
+<h2><span id="duo-lie-suo-yin">多列索引</span><a href="#duo-lie-suo-yin" class="header-anchor">#</a></h2>
+<ul>
+<li>多列索引指的是 多个独立的索引。就是给表定义了Key(a), key(b) ， 而不是Key(a,b)</li>
+<li>如果在多列索引的情况下，要where a=1 or b= 2， 且要性能好， 需要改成  union(a,b) 即查询union的形式。 mysql5.0之后都会优化成union， 简称 <em><strong>索引合并</strong></em></li>
+<li>上述默认优化的缺点:  联合操作会耗费大量的CPU和内存。 可是统计时间时又不会统计进来，导致低估时间成本。</li>
+<li>可以通过explanin sql语句， 查看extra中是否有using union(a,b)来判断是否有索引合并的情况</li>
+</ul>
+<h2><span id="ru-he-que-ding-suo-yin-lie-shun-xu">如何确定索引列顺序</span><a href="#ru-he-que-ding-suo-yin-lie-shun-xu" class="header-anchor">#</a></h2>
+<ul>
+<li>这里指的是如何确定key(a,b,c)里abc的顺序</li>
+<li>通用法则：把选择性最高的那个列放前面</li>
+<li>选择性计算：  distinct(列)/count(*)  越大，选择性越好。</li>
+<li>因为这样的话，可以减少在叶子节点上的遍历。</li>
+<li>特殊情况：  某场景下突然表里的username都变成了一样的用户名， 然后对username索引做查询时， 就很慢， 因为相当于在叶子节点上遍历去查了，O(n)的复杂度。</li>
+<li>对于特殊场景，要尽量在数据输入避免， 或者查询避免（例如避免在那个时间段去查询那个统一的username）</li>
+</ul>
+<hr>
+<h1><span id="ju-cu-suo-yin">聚簇索引</span><a href="#ju-cu-suo-yin" class="header-anchor">#</a></h1>
+<ul>
+<li>聚簇索引是一种存储结构，而不是索引类型。</li>
+<li>InnoDb默认使用主键列做聚簇索引</li>
+<li>如果没有主键，则用第一个非空not NULL unique的索引作为聚簇索引</li>
+<li>如果没主键没索引，则会创建一个隐藏的行id作为聚簇索引（毕竟他总要搞一个B+树)</li>
+</ul>
+<h2><span id="ju-cu-he-fei-ju-cu-de-qu-bie">聚簇和非聚簇的区别</span><a href="#ju-cu-he-fei-ju-cu-de-qu-bie" class="header-anchor">#</a></h2>
+<ul>
+<li>聚簇索引其实就是指，当你搜索到B+树的叶子之后， 叶子里存的就是数据行了，因此叶子的左右都是与自己索引值相邻的数据行，可以串起来直接一起获取。</li>
+<li>而非聚簇索引时， 当你搜到叶子时， 叶子里依然只有索引值， 而后面的指针才指向真正的位置， 这意味着数据行的存放是不连续的， 没有办法用一根线串起来。</li>
+</ul>
+<h2><span id="ju-cu-de-you-dian">聚簇的优点</span><a href="#ju-cu-de-you-dian" class="header-anchor">#</a></h2>
+<ol>
+<li>可以一次性读取到 某主键范围的所有行，减少磁盘IO</li>
+<li>相比非聚簇，少跑一层（就是最后一层）。</li>
+</ol>
+<h2><span id="ju-cu-de-que-dian">聚簇的缺点</span><a href="#ju-cu-de-que-dian" class="header-anchor">#</a></h2>
+<ol>
+<li>如果数据都放在内存中，就没优势了，毕竟非聚簇通过指针一样很快。</li>
+<li>更新聚簇索引会很慢，因为会重新组织B+树重新移动。</li>
+<li>B+树插入新行时，可能导致叶子节点的页出现分裂，导致更多的空间。（聚簇索引的叶子非常大！）<br>
+非聚簇的话都是指针，数据不放在叶子中，也就不会出现那种大叶子的分裂。</li>
+</ol>
+<h2><span id="ju-cu-he-fei-ju-cu-de-dui-bi">聚簇和非聚簇的对比</span><a href="#ju-cu-he-fei-ju-cu-de-dui-bi" class="header-anchor">#</a></h2>
+<p>Innodb都是聚簇索引，叶子节点一般就是数据，数据按顺序存储了。<br>
+MyIsam都是非聚簇索引， 叶子节点还是索引，凌乱指向存储位置。<br>
+<img src="/images/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/c29493c31974255e9ce7dbb32c788130b5de1b76.png" alt="c29493c31974255e9ce7dbb32c788130b5de1b76"></p>
+<hr>
+<h2><span id="q-shi-me-shi-hui-biao">Q:  什么是回表？</span><a href="#q-shi-me-shi-hui-biao" class="header-anchor">#</a></h2>
+<p>A:<br>
+非聚簇索引查询时， 因为最终只查到的是主键值，最终还需要经过聚簇索引找到数据行<br>
+<img src="/images/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/93d013b61925f7f744e0aad9bdb1062b32874881.png" alt="93d013b61925f7f744e0aad9bdb1062b32874881"><br>
+如粉红色路径，需要扫码两遍索引树：</p>
+<ol>
+<li>先通过普通索引定位到主键值id=5；</li>
+<li>在通过聚集索引定位到行记录；<br>
+这就是所谓的回表查询，先定位主键值，再定位行记录，它的性能较扫一遍索引树更低</li>
+</ol>
+<hr>
+<h2><span id="q-na-me-dang-fa-sheng-hui-biao-shi-zen-me-bi-mian-ni">Q: 那么当发生回表时，怎么避免呢？</span><a href="#q-na-me-dang-fa-sheng-hui-biao-shi-zen-me-bi-mian-ni" class="header-anchor">#</a></h2>
+<p>A:<br>
+把普通索引列升级到联合主键中。<br>
+例如将单列索引(name)升级为联合索引(name, sex)，即可避免回表(代价是name要放到第一个，或者sex in ‘男，女’）</p>
+<hr>
+<h2><span id="q-fei-zhu-jian-suo-yin-a-zuo-where-a-gt-3-shi-neng-chong-fen-li-yong-suo-yin-zuo-jian-dan-de-fan-wei-du-qu-me">Q: 非主键索引a， 做where a&gt;3时， 能充分利用索引做简单的范围读取么？</span><a href="#q-fei-zhu-jian-suo-yin-a-zuo-where-a-gt-3-shi-neng-chong-fen-li-yong-suo-yin-zuo-jian-dan-de-fan-wei-du-qu-me" class="header-anchor">#</a></h2>
+<p>A:<br>
+不能。<br>
+因为非主键索引最终还是要做回表， 到主键（聚簇）索引树中进行查询。此时a&gt;3是无法直接取出一堆数据的。</p>
+<p>mysql5.5之前， 是每个a&gt;3的记录都进行随机回表读取数据。<br>
+mysql5.5之后，做了一个MR2优化</p>
+<ol>
+<li>当a&gt;3的记录不是很多时， 会读取到内存中</li>
+<li>接着按照主键id（聚簇索引）进行排序</li>
+<li>然后根据id排序后的情况进行回表， 如果有一堆id都是挤在一起的，就对这一批id进行范围查询。</li>
+</ol>
+<hr>
+<h2><span id="er-ji-suo-yin-he-zhu-jian">二级索引和主键</span><a href="#er-ji-suo-yin-he-zhu-jian" class="header-anchor">#</a></h2>
+<ul>
+<li>注意， 如果有1个key(xx)加一个primKey(yy)，  相当于有2个索引（主键默认索引）<br>
+而这2个索引的意思是指：<br>
+<em><strong>建立了2个B+树！！</strong></em><br>
+对于主键的B+树， 数据就放在叶子<br>
+而对于另一个索引的B+树， 叶子节点是主键+索引，  后面才是指向数据</li>
+<li>即对于聚簇索引，如果存在主键和二级索引，则选择主键做聚簇， 二级索引和非聚簇索引的B+树没两样。</li>
+</ul>
+<hr>
+<h2><span id="q-zhu-jian-suo-yin-he-wei-yi-suo-yin-you-shi-me-qu-bie-ni">Q:  主键索引和唯一索引有什么区别呢？</span><a href="#q-zhu-jian-suo-yin-he-wei-yi-suo-yin-you-shi-me-qu-bie-ni" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ol>
+<li>主键索引一定是唯一索引， 但唯一索引不一定是主键。</li>
+<li>主键索引列默认不支持空值，  而唯一索引本身没有这个限制。</li>
+<li>主键产生唯一的聚集索引（即聚集索引和主键相关），非主键唯一索引产生唯一的非聚集索引</li>
+<li>唯一索引可以有多个， 但是主键只能有一个。</li>
+</ol>
+<hr>
+<h2><span id="q-que-ding-bu-neng-you-duo-ge-zhu-jian-suo-yin-ma-na-fan-shi-li-ti-dao-de-duo-ge-zhu-jian-shi-zen-me-hui-shi-ni">Q:  确定不能有多个主键索引吗？那泛式里提到的多个主键是怎么回事呢？</span><a href="#q-que-ding-bu-neng-you-duo-ge-zhu-jian-suo-yin-ma-na-fan-shi-li-ti-dao-de-duo-ge-zhu-jian-shi-zen-me-hui-shi-ni" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ol>
+<li>
+<p>数据库的每张表只能有一个主键，不可能有多个主键。</p>
+</li>
+<li>
+<p>所谓的一张表多个主键，我们称之为联合主键。</p>
+</li>
+</ol>
+<p>注：联合主键：就是用多个字段一起作为一张表的主键。</p>
+<ol start="3">
+<li>主键的主键的作用是保证数据的唯一性和完整性，同时通过主键检索表能够增加检索速度。</li>
+</ol>
+<hr>
+<h1><span id="suo-yin-de-cha-ru">索引的插入</span><a href="#suo-yin-de-cha-ru" class="header-anchor">#</a></h1>
+<h2><span id="suo-yin-cha-ru-de-gui-fan">索引插入的规范</span><a href="#suo-yin-cha-ru-de-gui-fan" class="header-anchor">#</a></h2>
+<ul>
+<li>尽量保证在插入时是按索引的顺序插入的</li>
+<li>如果没按顺序插入，会导致经常性的中间分页，移动数据。性能可以差距四倍以上。</li>
+<li>所以尽量选用自增的id做索引，尽量不要用随机的UUID做大批量插入的操作。</li>
+<li>如果用了UUID做插入，插入之后还要要用一个命令<br>
+Optimize Table 表名<br>
+来重建表并优化页的填充</li>
+<li>什么时候顺序主键的插入是不好的？<br>
+同一时刻并发插入（非单线程插入）的情况<br>
+这会导致在 数据表末尾发生激烈的竞争冲突（如果是随机的反而可以避免这个情况） P171</li>
+</ul>
+<hr>
+<h2><span id="q-wei-shi-me-zi-zeng-id-ke-neng-hui-chu-xian-bu-lian-xu-de-qing-kuang">Q: 为什么自增id可能会出现不连续的情况？</span><a href="#q-wei-shi-me-zi-zeng-id-ke-neng-hui-chu-xian-bu-lian-xu-de-qing-kuang" class="header-anchor">#</a></h2>
+<p>A:<br>
+插入时，如果insert语句中不包含id，但是id设成了自增<br>
+mysql此时就会从某个自增表中申请一个主键，当申请成功之后，就会拿着这个主键+1去做真实的Insert操作。（注意，是先申请，再插入）<br>
+如果主键/唯一键冲突，或者事务回滚， <em><strong>这个自增id不会回滚</strong></em>。 下一次会继续主键+1使用。<br>
+因此</p>
+<hr>
+<h2><span id="q-wei-shi-me-zi-zeng-id-bu-neng-hui-gun-ni">Q: 为什么自增id不能回滚呢？</span><a href="#q-wei-shi-me-zi-zeng-id-bu-neng-hui-gun-ni" class="header-anchor">#</a></h2>
+<p>A:<br>
+为什么不回退，是避免回退导致重复的冲突，也为了避免太大范围的锁</p>
+<ul>
+<li>避免回退导致多个id同时插入引发重复的冲突，也为了避免太大范围的锁</li>
+<li>自增主键比较大的作用是避免页分割，我们只需要数据是递增而无需连续</li>
+</ul>
+<hr>
+<hr>
+<h1><span id="qi-ta-suo-yin">其他索引</span><a href="#qi-ta-suo-yin" class="header-anchor">#</a></h1>
+<h2><span id="fu-gai-suo-yin">覆盖索引</span><a href="#fu-gai-suo-yin" class="header-anchor">#</a></h2>
+<p>指查询语句中 只有索引相关的列。</p>
+<ul>
+<li>这样的话，可以不需要回表访问聚簇索引树了， 直接拿索引节点里的索引结果返回，效率非常高。</li>
+<li>全覆盖的情况比较少见，一般用于<br>
+先用覆盖索引的查询语句得到一个小表<br>
+再利用这个小表的结果对原表做查询（相当于省去了一些条件里的判断）</li>
+<li>Explanin 解析时，如果extra显示 using index，则说明使用了覆盖索引。</li>
+</ul>
+<h2><span id="yong-suo-yin-zuo-pai-xu">用索引做排序</span><a href="#yong-suo-yin-zuo-pai-xu" class="header-anchor">#</a></h2>
+<ul>
+<li>索引和排序语句写对的话，可以不需要弄临时表做排序，直接按照顺序取出返回即可。</li>
+<li>索引列的顺序， 必须和order by中声明的索引顺序一致</li>
+<li>即你的key是(a,b,c)， 那么oder by a b c才行，不能打乱顺序</li>
+<li>order by 索引满足 前缀定理，  即必须是  a 或者 a+b或者  a+b前缀</li>
+<li>特例： 如果where中定义了a=‘某个常量’，  那么order by中只需要b和c也满足 前缀定义。</li>
+<li>如果是范围就不行了</li>
+</ul>
+<h2><span id="ya-suo-qian-zhui-suo-yin">压缩（前缀索引）</span><a href="#ya-suo-qian-zhui-suo-yin" class="header-anchor">#</a></h2>
+<ul>
+<li>就是把索引在存储的做压缩，减少字节数</li>
+<li>例如第一个索引是perform， 第二个是performance， 那么第二个存储的时候就表示为7,ance</li>
+<li>可以在Create Table语句中指定PACK_KEYS来控制索引压缩</li>
+<li>压缩索引主要是为了减少磁盘和内存占用量， 但因为压缩了，每次到节点时要先解开压缩再计算（即只有用到才解压），再去查找，会降低性能。</li>
+</ul>
+<h2><span id="chong-fu-suo-yin">重复索引</span><a href="#chong-fu-suo-yin" class="header-anchor">#</a></h2>
+<p>primary key、 unique(key)、 index(key）这3个本质上都会形成索引，很容易有人定义了主键后， 又给主键加个索引， 这就会出现多个相同的B+树。</p>
+<h2><span id="rong-yu-suo-yin">冗余索引</span><a href="#rong-yu-suo-yin" class="header-anchor">#</a></h2>
+<ul>
+<li>创建了索引（A，B）之后， 又创建了（A）， 那么就是冗余， 因为（A，B） 可以实现单独A的索引功能。</li>
+<li>所以尽量修改索引，而不是去新增索引， 新增索引容易出现冗余索引。</li>
+<li>修改索引的缺陷:  可能导致一些老的查询语句的性能下降。<br>
+例如本来是用索引（A） + 主键ID排序做查询，  那个脚本一直在跑很正常， 后来改成了索引（A.B）  + 主键ID排序， 于是原先的脚本性能GG， 因为A和ID被B分开了（只是我们看不到ID放在我们定义的key里）</li>
+</ul>
+<h2><span id="wei-shi-yong-de-suo-yin">未使用的索引</span><a href="#wei-shi-yong-de-suo-yin" class="header-anchor">#</a></h2>
+<ul>
+<li>就是定义了但是平时不用的索引！</li>
+<li>定位未使用索引的方法：  打开userstates变量， 然后让服务器运行几天之后， 查询INFORMATION_SCHEMA.INDEX_STATISTICS用来查看索引的使用频率。</li>
+<li>具体见P188</li>
+</ul>
+<h2><span id="suo-yin-he-suo">索引和锁</span><a href="#suo-yin-he-suo" class="header-anchor">#</a></h2>
+<ul>
+<li>索引能够减少访问的行数，从而减少锁的数量</li>
+</ul>
+<hr>
+<h1><span id="suo-yin-ying-yong">索引应用</span><a href="#suo-yin-ying-yong" class="header-anchor">#</a></h1>
+<h2><span id="duo-chong-guo-lu-tiao-jian-you-hua">多种过滤条件优化</span><a href="#duo-chong-guo-lu-tiao-jian-you-hua" class="header-anchor">#</a></h2>
+<ul>
+<li>如果我们的索引是 sex country age， 但是我们的查询里不关心sex，怎么办？ 如果不走sex，索引就失效了<br>
+可以在where中加入  sex in (‘m’,‘f’)  这样就能用到sex了</li>
+<li>原则1：<br>
+枚举少的放前面， 这样可以用in方式来处理</li>
+<li>原则2：<br>
+经常范围性查询的索引列放后面 ，例如age， 毕竟范围查的话，后面的索引就肯定用不了了。</li>
+</ul>
+<h2><span id="bi-mian-duo-ge-fan-wei-tiao-jian">避免多个范围条件</span><a href="#bi-mian-duo-ge-fan-wei-tiao-jian" class="header-anchor">#</a></h2>
+<ul>
+<li>mysql会把in(1,2,3)和 &gt;1 and &lt; 3 都认为是range的type，  不过在索引的使用，  in之后还可以接其他索引，  但是大于1小于3就不行了</li>
+<li>如果出现了  lastoneline  &gt; xxx  and age  between x and y<br>
+这种2个范围的索引查询，就会导致age索引失效</li>
+<li>一种优化的办法：  如果lastoneline &gt; xxx 仅仅是表示 这个用户是否未过期，则可以新增一个经常维护的字段active，来吧lasttime&gt;xxx的这个条件转成true和false这两种值。</li>
+<li>那么后面就可以改成lastline = true and age between… 了， 用等值的话，就不会影响后面的索引</li>
+</ul>
+<hr>
+<h2><span id="q-xie-ru-biao-de-shi-hou-wei-shi-me-yi-ban-jian-yi-zi-zeng-de-zhu-jian-id-lai-xie-ru">Q: 写入表的时候， 为什么一般建议自增的主键id来写入？</span><a href="#q-xie-ru-biao-de-shi-hou-wei-shi-me-yi-ban-jian-yi-zi-zeng-de-zhu-jian-id-lai-xie-ru" class="header-anchor">#</a></h2>
+<p>A:<br>
+因为底层的索引本质上是B+树<br>
+有页分裂<br>
+如果id随机，则写入时会碎片化，无法做到顺序写</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/21/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC307%E5%9C%BA%E5%91%A8%E8%B5%9B-1232%E5%90%8D-3%E9%A2%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -489,7 +1151,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-21 00:50:12" itemprop="dateModified" datetime="2022-08-21T00:50:12+08:00">2022-08-21</time>
+                <time title="修改时间：2022-08-30 00:58:25" itemprop="dateModified" datetime="2022-08-30T00:58:25+08:00">2022-08-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -502,6 +1164,10 @@
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">算法大全</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%9B%BE/" itemprop="url" rel="index"><span itemprop="name">图</span></a>
                 </span>
             </span>
 
@@ -1369,201 +2035,6 @@ RMI， Remote Method Invocation。<br>
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E4%BB%8E%E5%B0%8F%E5%88%B0%E5%A4%A7%E6%BC%94%E5%8F%98%E8%BF%87%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E4%BB%8E%E5%B0%8F%E5%88%B0%E5%A4%A7%E6%BC%94%E5%8F%98%E8%BF%87%E7%A8%8B/" class="post-title-link" itemprop="url">服务架构从小到大演变过程</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-19 00:30:12" itemprop="dateCreated datePublished" datetime="2022-08-19T00:30:12+08:00">2022-08-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-29 00:04:54" itemprop="dateModified" datetime="2022-08-29T00:04:54+08:00">2022-08-29</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">系统设计</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E4%BB%8E%E5%B0%8F%E5%88%B0%E5%A4%A7%E6%BC%94%E5%8F%98%E8%BF%87%E7%A8%8B/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E4%BB%8E%E5%B0%8F%E5%88%B0%E5%A4%A7%E6%BC%94%E5%8F%98%E8%BF%87%E7%A8%8B/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#1-dan-ji-jia-gou">1、 单机架构</a></li>
-<li><a href="#2-ji-qun-jia-gou-shui-ping-kuo-chong">2、 集群架构（水平扩充）</a></li>
-<li><a href="#3-chui-zhi-chai-fen">3、 垂直拆分</a>
-<ul>
-<li><a href="#q-ye-wu-luo-ji-quan-bu-ou-he-zai-yi-ge-fu-wu-zhong-you-shi-me-que-dian">Q: 业务逻辑全部耦合在一个服务中有什么缺点？</a></li>
-<li><a href="#da-xing-dian-shang-de-chai-fen-luo-ji-ju-li">大型电商的拆分逻辑举例</a></li>
-<li><a href="#q-ye-wu-chai-fen-de-yue-xi-yue-hao-ma-hui-you-shi-me-wen-ti">Q: 业务拆分得越细越好吗， 会有什么问题？</a></li>
-</ul>
-</li>
-<li><a href="#4-fu-wu-hua-jia-gou">4、服务化架构</a>
-<ul>
-<li><a href="#shi-me-shi-fu-wu-hua">什么是服务化？</a></li>
-<li><a href="#mian-xiang-fu-wu-de-jia-gou">面向服务的架构</a></li>
-<li><a href="#q-ji-qun-he-fen-bu-shi-de-qu-bie-shi-shi-me">Q: 集群和分布式的区别是什么？</a></li>
-<li><a href="#q-wei-fu-wu-he-fen-bu-shi-de-qu-bie-shi-shi-me">Q: 微服务和分布式的区别是什么？</a></li>
-<li><a href="#q-apig-wang-guan-jie-ru-ceng-de-zuo-yong-shi-shi-me">Q: APIG网关接入层的作用是什么？</a></li>
-</ul>
-</li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="1-dan-ji-jia-gou">1、 单机架构</span><a href="#1-dan-ji-jia-gou" class="header-anchor">#</a></h1>
-<p>server、文件、mysql都在同一台物理服务器上。<br>
-用于前期研发测试、或者访问量较小的内部管理页网站等。</p>
-<h1><span id="2-ji-qun-jia-gou-shui-ping-kuo-chong">2、 集群架构（水平扩充）</span><a href="#2-ji-qun-jia-gou-shui-ping-kuo-chong" class="header-anchor">#</a></h1>
-<p>这里的集群，是指各节点服务的处理能力完全一致，单纯提升业务的水平处理能力。</p>
-<p>集群架构需要做以下重点改造：</p>
-<ol>
-<li>业务处理服务器 server 无状态化+集群化， 部署多台对等节点。</li>
-<li>设置负载均衡调度服务，用于专门的负载均衡，例如ngnix自带负载均衡设置</li>
-<li>负载均衡调度服务也要可靠， 可利用公共的公网流量接入组件（apig、elb、slb）来负责做负载均衡服务的dns轮询。</li>
-<li>缓存使用设置分布式redis</li>
-<li>mysql数据库做到主从分离。</li>
-<li>静态文件下放到cdn节点， 由ISP互联网服务提供商进行下发，提升响应速度。</li>
-</ol>
-<h1><span id="3-chui-zhi-chai-fen">3、 垂直拆分</span><a href="#3-chui-zhi-chai-fen" class="header-anchor">#</a></h1>
-<h2><span id="q-ye-wu-luo-ji-quan-bu-ou-he-zai-yi-ge-fu-wu-zhong-you-shi-me-que-dian">Q: 业务逻辑全部耦合在一个服务中有什么缺点？</span><a href="#q-ye-wu-luo-ji-quan-bu-ou-he-zai-yi-ge-fu-wu-zhong-you-shi-me-que-dian" class="header-anchor">#</a></h2>
-<p>A：某个无关紧要的业务，可能因为请求量突然过大，导致影响了所有业务的使用 。  例如ths的cs里同时包含了用户埋点数据采集转发的业务逻辑， 如果这块流量突然过大， 可能导致正常行情数据都无法使用。</p>
-<hr>
-<h2><span id="da-xing-dian-shang-de-chai-fen-luo-ji-ju-li">大型电商的拆分逻辑举例</span><a href="#da-xing-dian-shang-de-chai-fen-luo-ji-ju-li" class="header-anchor">#</a></h2>
-<p>首页、用户、搜索、广告、购物、订单、商品、收益结算<br>
-<img src="/images/%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E4%BB%8E%E5%B0%8F%E5%88%B0%E5%A4%A7%E6%BC%94%E5%8F%98%E8%BF%87%E7%A8%8B/2bf084dadd4bdf645c9643d71b5a8d76e11a7855.png" alt="2bf084dadd4bdf645c9643d71b5a8d76e11a7855"></p>
-<hr>
-<h2><span id="q-ye-wu-chai-fen-de-yue-xi-yue-hao-ma-hui-you-shi-me-wen-ti">Q: 业务拆分得越细越好吗， 会有什么问题？</span><a href="#q-ye-wu-chai-fen-de-yue-xi-yue-hao-ma-hui-you-shi-me-wen-ti" class="header-anchor">#</a></h2>
-<p>A:<br>
-维护成本会很大，并且数据库改造等都需要跟上，有时候要考虑工期进度、以及必要性等。</p>
-<h1><span id="4-fu-wu-hua-jia-gou">4、服务化架构</span><a href="#4-fu-wu-hua-jia-gou" class="header-anchor">#</a></h1>
-<h2><span id="shi-me-shi-fu-wu-hua">什么是服务化？</span><a href="#shi-me-shi-fu-wu-hua" class="header-anchor">#</a></h2>
-<p>Service-Oriented Architecture  SOA架构</p>
-<h2><span id="mian-xiang-fu-wu-de-jia-gou">面向服务的架构</span><a href="#mian-xiang-fu-wu-de-jia-gou" class="header-anchor">#</a></h2>
-<p>可以理解为将原本的 controller- service- dao 这个过程再做拆分， 抽出公共的数据或者业务提供服务，  提供给其他服务使用。</p>
-<p>从mvc上理解时，可以是将dao层独立成一个服务， 其他服务不再需要自己重复写dao代码，而是直接调数据获取接口即可。 这样数据获取的逻辑只要改单个服务即可，不需要多个服务同时修改。</p>
-<p>代价就是服务间存在大量依赖关系，需要引入服务治理能力。<br>
-<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/42061683?sort=created">如何通俗易懂地解释什么是SOA</a></p>
-<hr>
-<h2><span id="q-ji-qun-he-fen-bu-shi-de-qu-bie-shi-shi-me">Q:  集群和分布式的区别是什么？</span><a href="#q-ji-qun-he-fen-bu-shi-de-qu-bie-shi-shi-me" class="header-anchor">#</a></h2>
-<p>A:<br>
-集群是把多台服务器集中在一起， 目的是实现同一个业务。<br>
-分布式是把不同的业务分布在不同的地方， 目的是实现不同的业务。</p>
-<p>分布式中的每个节点都可以构成一个集群<br>
-但是集群却不一定是分布式的。</p>
-<hr>
-<h2><span id="q-wei-fu-wu-he-fen-bu-shi-de-qu-bie-shi-shi-me">Q: 微服务和分布式的区别是什么？</span><a href="#q-wei-fu-wu-he-fen-bu-shi-de-qu-bie-shi-shi-me" class="header-anchor">#</a></h2>
-<p>A:<br>
-微服务是“架构设计”方式，分布式是“系统部署”方式，两者概念不同</p>
-<p>微服务是指很小的服务，可以小到只完成一个功能，这个服务可以单独部署运行，不同服务之间通过rpc调用。</p>
-<p>分布式是指服务部署在不同的机器上，一个服务可以提供一个或多个功能，服务之间也是通过rpc来交互或者是webservice来交互的。</p>
-<p>两者的关系是，系统应用部署在“超过一台”服务器或虚拟机上，且各分开部署的部分彼此通过各种通讯协议交互信息，就可算作分布式部署<br>
-生产环境下的微服务肯定是分布式部署的，分布式部署的应用不一定是微服务架构的，比如集群部署，它是把相同应用复制到不同服务器上，但是逻辑功能上还是单体应用。</p>
-<p>简答来说</p>
-<ul>
-<li>微服务——拆出多种业务，不管几台机器</li>
-<li>集群——1种业务，拆到多台机器</li>
-<li>分布式—— x种业务，拆到1台以上，且业务之间有关联。  分布式不一定是微服务，集群也不一定是分布式， 但是分布式一定满足集群，因为机器数量肯定大于1。</li>
-</ul>
-<hr>
-<h2><span id="q-apig-wang-guan-jie-ru-ceng-de-zuo-yong-shi-shi-me">Q:  APIG网关接入层的作用是什么？</span><a href="#q-apig-wang-guan-jie-ru-ceng-de-zuo-yong-shi-shi-me" class="header-anchor">#</a></h2>
-<p>A:</p>
-<ul>
-<li>当业务拆分复杂时， 可通过APIG网关确定转发逻辑， 不用维护webServer的公共逻辑。</li>
-<li>灰度发布（配置白名单或者正则，将部分用户请求导入到灰度环境）</li>
-<li>流控</li>
-<li>安全防护</li>
-</ul>
-<p>避免webServer做过多的安全修复和改造，通过网关保证外部输入安全。</p>
-<hr>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1777,157 +2248,10 @@ CA证书的机构笑了笑，说：“你只管提供就好了，顾客们自有
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/18/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-18/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/18/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-18/" class="post-title-link" itemprop="url">2022-0818</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-18 23:12:42" itemprop="dateCreated datePublished" datetime="2022-08-18T23:12:42+08:00">2022-08-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-19 00:26:57" itemprop="dateModified" datetime="2022-08-19T00:26:57+08:00">2022-08-19</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">刷题日记</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022%E5%B9%B48%E6%9C%88/" itemprop="url" rel="index"><span itemprop="name">2022年8月</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/18/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-18/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/18/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-18/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<!-- tocstop -->
-</div> 
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/sort-array-by-increasing-frequency/">1636. 按照频率将数组升序排序 - 力扣（LeetCode）</a></p>
-<p><img src="/images/2022-08-18/1660838816939.png" alt="1660838816939"></p>
-<p>先统计个数，然后按照个数进行排序</p>
-<p>注意：</p>
-<p>对于int[]，不可以直接进行Arrays.sort(nums, (a,b)-&gt;a-b);</p>
-<p>要么先转成Integer[]</p>
-<p>要么用</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Arrays.stream(nums).boxed().sorted((a,b)-&gt;</span><br><span class="line">                (counts[a] - counts[b) ).mapToInt(Integer::intValue).toArray()</span><br></pre></td></tr></table></figure>
-<p>来实现，先stream然后boxed最后还要mapToInt才能toArray</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span>[] frequencySort(<span class="type">int</span>[] nums) &#123;</span><br><span class="line">        <span class="type">int</span>[] counts = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">201</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> num : nums) &#123;</span><br><span class="line">            counts[num + <span class="number">100</span>]++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// int[]数组不可以直接自定义排序</span></span><br><span class="line">        <span class="comment">// Arrays.sort(nums, (a,b)-&gt;a-b);</span></span><br><span class="line">        <span class="keyword">return</span> Arrays.stream(nums).boxed().sorted((a,b)-&gt;</span><br><span class="line">                counts[a+<span class="number">100</span>] != counts[b+<span class="number">100</span>] ? (counts[a+<span class="number">100</span>] - counts[b+<span class="number">100</span>]) : (b-a)).mapToInt(Integer::intValue).toArray();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/bao-han-minhan-shu-de-zhan-lcof/submissions/">剑指 Offer 30. 包含min函数的栈 - 力扣（LeetCode）</a></p>
-<p><img src="/images/2022-08-18/1660838926999.png" alt="1660838926999"></p>
-<p>维护2个数组即可，stack数组和min数组（毕竟往栈底看过去的最小值一定是确定的）</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MinStack</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** initialize your data structure here. */</span></span><br><span class="line">    <span class="type">int</span>[] min = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">20001</span>];</span><br><span class="line">    <span class="type">int</span>[] stack = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">20001</span>];</span><br><span class="line">    <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">MinStack</span><span class="params">()</span> &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">push</span><span class="params">(<span class="type">int</span> x)</span> &#123;</span><br><span class="line">        min[index] = Math.min(x, index-<span class="number">1</span>&gt;=<span class="number">0</span> ? min[index-<span class="number">1</span>] : Integer.MAX_VALUE);</span><br><span class="line">        stack[index++] = x;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">pop</span><span class="params">()</span> &#123;</span><br><span class="line">        min[index-<span class="number">1</span>] = Integer.MAX_VALUE;</span><br><span class="line">        index--;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">top</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> stack[index-<span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">min</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> min[index-<span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/coin-change/">322. 零钱兑换 - 力扣（LeetCode）</a></p>
-<p><img src="/images/2022-08-18/1660838978323.png" alt="1660838978323"></p>
-<p>时间很紧，先是相当了bfs并用记忆化处理，每次出队硬币个数最少的，类似于走迷宫了。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">coinChange</span><span class="params">(<span class="type">int</span>[] coins, <span class="type">int</span> amount)</span> &#123;</span><br><span class="line">        Queue&lt;<span class="type">int</span>[]&gt; queue = <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>&lt;&gt;((a,b)-&gt;(a[<span class="number">0</span>]-b[<span class="number">0</span>]));</span><br><span class="line">    </span><br><span class="line">        queue.offer(<span class="keyword">new</span> <span class="title class_">int</span>[]&#123;<span class="number">0</span>,<span class="number">0</span>&#125;);</span><br><span class="line">        Set&lt;Integer&gt; vis = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">        vis.add(<span class="number">0</span>);</span><br><span class="line">        <span class="keyword">while</span>(!queue.isEmpty()) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> queue.peek()[<span class="number">0</span>];</span><br><span class="line">            <span class="type">int</span> <span class="variable">am</span> <span class="operator">=</span> queue.poll()[<span class="number">1</span>];</span><br><span class="line">            <span class="keyword">if</span> (am == amount) &#123;</span><br><span class="line">                <span class="keyword">return</span> count;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> coin : coins) &#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">newAmount</span> <span class="operator">=</span> am + coin;</span><br><span class="line">                <span class="keyword">if</span> (newAmount &gt; amount) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (vis.contains(newAmount)) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                vis.add(newAmount);</span><br><span class="line">                queue.offer(<span class="keyword">new</span> <span class="title class_">int</span>[]&#123;count+<span class="number">1</span>, newAmount&#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="/images/2022-08-18/1660839037340.png" alt="1660839037340"></p>
-<p>性能太差了</p>
-<p>看了答案想起来这个完全可以动态规划</p>
-<p>因为amount的范围是0~10<sup>4而非10</sup>9，完全可以把amount作为一个dp状态处理， 且coin的数量也只有12个</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">coinChange</span><span class="params">(<span class="type">int</span>[] coins, <span class="type">int</span> amount)</span> &#123;</span><br><span class="line">        <span class="type">long</span>[] dp = <span class="keyword">new</span> <span class="title class_">long</span>[amount+<span class="number">1</span>];</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="type">long</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>; a &lt;= amount;a++) &#123;</span><br><span class="line">            dp[(<span class="type">int</span>)a] = Integer.MAX_VALUE;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> coin : coins) &#123;</span><br><span class="line">                <span class="keyword">if</span> (a - coin &lt; <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                dp[(<span class="type">int</span>)a] = Math.min(dp[(<span class="type">int</span>)a], dp[(<span class="type">int</span>)a-coin] + <span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> (<span class="type">int</span>)dp[amount] == Integer.MAX_VALUE ? -<span class="number">1</span> : (<span class="type">int</span>)dp[amount];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="/images/2022-08-18/1660839089263.png" alt="1660839089263"></p>
-<p>性能一下子就上去了</p>
-<p>再做一下优化，根据数据范围，去除long和int的强转</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">coinChange</span><span class="params">(<span class="type">int</span>[] coins, <span class="type">int</span> amount)</span> &#123;</span><br><span class="line">        <span class="type">int</span>[] dp = <span class="keyword">new</span> <span class="title class_">int</span>[amount+<span class="number">1</span>];</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>; a &lt;= amount;a++) &#123;</span><br><span class="line">            dp[a] = <span class="number">10001</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> coin : coins) &#123;</span><br><span class="line">                <span class="keyword">if</span> (a &lt; coin) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                dp[a] = Math.min(dp[a], dp[a-coin] + <span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dp[amount] == <span class="number">10001</span> ? -<span class="number">1</span> : dp[amount];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="/images/2022-08-18/1660839698405.png" alt="1660839698405"></p>
-<p>提升到11ms了</p>
-<p>另外有个很奇怪的，下面这个的性能始终慢2ms，我感觉明明过滤了很多不必要的coins循环才对</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">coinChange</span><span class="params">(<span class="type">int</span>[] coins, <span class="type">int</span> amount)</span> &#123;</span><br><span class="line">        <span class="type">int</span>[] dp = <span class="keyword">new</span> <span class="title class_">int</span>[amount+<span class="number">1</span>];</span><br><span class="line">        <span class="type">int</span> <span class="variable">minCoin</span> <span class="operator">=</span> coins[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt; coins.length;i++) &#123;</span><br><span class="line">            minCoin= Math.min(minCoin, coins[i]);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Arrays.sort(coins);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>; a &lt;= amount;a++) &#123;</span><br><span class="line">            dp[a] = <span class="number">10001</span>;</span><br><span class="line">            <span class="keyword">if</span> (a &lt; minCoin) &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> coin : coins) &#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">lastCoinSum</span> <span class="operator">=</span> a-coin;</span><br><span class="line">                <span class="keyword">if</span> (lastCoinSum &lt; <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                dp[a] = Math.min(dp[a], dp[lastCoinSum] + <span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dp[amount] == <span class="number">10001</span> ? -<span class="number">1</span> : dp[amount];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="/images/2022-08-18/1660839823484.png" alt="1660839823484"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/home/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/home/">1</a><span class="space">&hellip;</span><a class="page-number" href="/home/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/home/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/home/page/9/">9</a><a class="extend next" rel="next" href="/home/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/home/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/home/">1</a><span class="space">&hellip;</span><a class="page-number" href="/home/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/home/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/home/page/10/">10</a><a class="extend next" rel="next" href="/home/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1995,14 +2319,14 @@ CA证书的机构笑了笑，说：“你只管提供就好了，顾客们自有
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-count">30</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -2066,7 +2390,7 @@ CA证书的机构笑了笑，说：“你只管提供就好了，顾客们自有
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共194.5k字</span>
+  <span class="post-count">博客全站共195.7k字</span>
 </div>
 
         

@@ -176,6 +176,340 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" class="post-title-link" itemprop="url">grpc基础概念</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-25 22:47:49" itemprop="dateCreated datePublished" datetime="2022-08-25T22:47:49+08:00">2022-08-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-26 00:28:25" itemprop="dateModified" datetime="2022-08-26T00:28:25+08:00">2022-08-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/" itemprop="url" rel="index"><span itemprop="name">开源代码</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index"><span itemprop="name">grpc远程调用框架</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#q-grpc-xiang-bi-http-de-you-shi">Q: GRPC相比HTTP的优势？</a></li>
+<li><a href="#q-gang-cai-jiang-dao-liao-http2-neng-xiang-xi-shuo-xia-qu-bie-ma">Q: 刚才讲到了HTTP2/，能详细说下区别吗？</a></li>
+<li><a href="#q-wei-shi-me-http-1-1-bu-neng-shi-xian-duo-lu-fu-yong-er-http2-0-ke-yi">Q: 为什么http/1.1不能实现多路复用而http2.0可以？ -</a></li>
+<li><a href="#q-wei-shi-me-shuo-protobuf-bi-json-kuai">Q: 为什么说protobuf比json快？</a></li>
+<li><a href="#q-grep-he-dubbo-zhe-ge-grpc-kuang-jia-de-dui-bi-na-ge-hao">Q: grep和dubbo这个grpc框架的对比？哪个好？</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<p>RPC全程 Remote Procedure Call ，远程过程调用<br>
+gRpc是使用protobuf协议的RPC框架。</p>
+<p>在服务端，服务器应用实现方法并启动一个gRPC服务器来处理客户端调用。<br>
+在客户端，客户端有一个叫做stub的组件（在很多语言中称为客户端），提供和服务端一致的方法。<br>
+<img src="/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/c8d8584b41419d707fe757fa64e38706b0219f5e.png" alt="c8d8584b41419d707fe757fa64e38706b0219f5e"></p>
+<p>服务service器代码和stub客户端代码都可以通过protobuf自动生成。</p>
+<p>因为使用protobuf做协议交换， 因此多语言都可以支持， python、java、golang、C++都有protobuf的实现。</p>
+<hr>
+<h1><span id="q-grpc-xiang-bi-http-de-you-shi">Q: GRPC相比HTTP的优势？</span><a href="#q-grpc-xiang-bi-http-de-you-shi" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ol>
+<li>底层使用HTTP/2协议， HTTP/2的长期实时通信支持比HTTP要好。、</li>
+<li>，用的protocBuf对数据进行序列化，  是一种轻量级的消息格式， 成本是json是要小的。</li>
+<li>多语言通用， python、C++、</li>
+<li>逻辑上支持双向流，简化了操作便携度。</li>
+<li>支持tcp多路复用，避免了频繁的tcp连接建立。</li>
+</ol>
+<hr>
+<h1><span id="q-gang-cai-jiang-dao-liao-http2-neng-xiang-xi-shuo-xia-qu-bie-ma">Q: 刚才讲到了HTTP2/，能详细说下区别吗？</span><a href="#q-gang-cai-jiang-dao-liao-http2-neng-xiang-xi-shuo-xia-qu-bie-ma" class="header-anchor">#</a></h1>
+<p>A;</p>
+<ul>
+<li>HTTP / 1.1使用文本数据，这通常在网络上效率较低。而HTTP / 2是二进制数据。</li>
+<li>HTTP / 1.1的标头没有压缩，而HTTP / 2的标头是gzip压缩的。</li>
+<li>在HTTP / 1.1中，服务器必须以接收请求的相同顺序发送响应。而，HTTP / 2是异步处理响应的</li>
+<li>HTTP / 2允许同时在同一（单个）连接上发送多个请求和响应消息（多路复用）。某个请求任务耗时严重，不会影响到其它连接的正常执行</li>
+<li>HTTP/2可以不需要响应必须先接请求，  而是可以自己响应（服务端主动推送）<br>
+比如你需要两个文件1.html,1.css，如果是http1.0则需要请求两次，服务端返回两次。但是http2.0则可以客户端请求一次，然后服务端直接回吐两次</li>
+</ul>
+<hr>
+<h1><span id="q-wei-shi-me-http-1-1-bu-neng-shi-xian-duo-lu-fu-yong-er-http2-0-ke-yi">Q: 为什么http/1.1不能实现多路复用而http2.0可以？ -</span><a href="#q-wei-shi-me-http-1-1-bu-neng-shi-xian-duo-lu-fu-yong-er-http2-0-ke-yi" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>在二进制分帧层上，HTTP 2.0 会将所有传输的信息分割为更小的消息和帧,并对它们采用二进制格式的编码 ，</li>
+<li>这样分帧以后这些帧就可以乱序发送，然后根据每个帧首部的流标识符号进行组装</li>
+<li>对比http/1.1， 因为http1.1是基于文本以换行符分割每一条key：value，则会有以下问题：</li>
+</ul>
+<ol>
+<li>一次只能处理一个请求或者响应，因为这种以分隔符分割消息的数据，在完成之前不能停止解析</li>
+<li>解析这种数据无法预知需要多少内存，会给服务端有很大压力</li>
+</ol>
+<hr>
+<hr>
+<h1><span id="q-wei-shi-me-shuo-protobuf-bi-json-kuai">Q: 为什么说protobuf比json快？</span><a href="#q-wei-shi-me-shuo-protobuf-bi-json-kuai" class="header-anchor">#</a></h1>
+<p>A:<br>
+protobuf比json快6倍，原因如下：</p>
+<ul>
+<li>protobuf的存储格式为 tag-length-value，通过tag+length能快速对value进行解码。</li>
+<li>通过length控制长度，不需要分隔符（逗号，双引号等）就能分隔字段</li>
+<li>空字段会省略</li>
+</ul>
+<hr>
+<h1><span id="q-grep-he-dubbo-zhe-ge-grpc-kuang-jia-de-dui-bi-na-ge-hao">Q: grep和dubbo这个grpc框架的对比？哪个好？</span><a href="#q-grep-he-dubbo-zhe-ge-grpc-kuang-jia-de-dui-bi-na-ge-hao" class="header-anchor">#</a></h1>
+<p>A:<br>
+dubbo适合需要完整管理体系、高可靠性的分布式微服务调用体系。 它的配置方式多、负载均衡方式多、容错多、支持4种注册中心。</p>
+<p>grep的话， 负载均衡和注册中心都要自己扩展实现，但有提供插拔接口等。<br>
+grpc只有api（代码配置）的方式，只有failover。<br>
+和dubbo相比， grpc的亮点在于http/2的高性能，以及protobuf的多语言兼容。<br>
+<img src="/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/146220bbd653f4c601a5ae989065ee0c1d01bd2b.png" alt="146220bbd653f4c601a5ae989065ee0c1d01bd2b"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BB%AC%E8%A6%81%E5%AD%A6%E4%B9%A0TCP-IP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BB%AC%E8%A6%81%E5%AD%A6%E4%B9%A0TCP-IP/" class="post-title-link" itemprop="url">为什么我们要学习TCP-IP</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-25 22:47:49 / 修改时间：00:21:37" itemprop="dateCreated datePublished" datetime="2022-08-25T22:47:49+08:00">2022-08-25</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BB%AC%E8%A6%81%E5%AD%A6%E4%B9%A0TCP-IP/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BB%AC%E8%A6%81%E5%AD%A6%E4%B9%A0TCP-IP/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#chun-jie-hou-de-1-ci-xiao-wen-ti">春节后的1次小问题</a></li>
+<li><a href="#fan-si">反思</a></li>
+<li><a href="#yi-xue-xi-xie-yi-ge-shi-de-chang-jian-she-ji-si-lu">一、学习协议格式的常见设计思路</a></li>
+<li><a href="#er-xue-xi-tu-suan-fa-de-ying-yong">二、学习图算法的应用</a></li>
+<li><a href="#san-xue-xi-ke-kao-xing-liu-cheng-de-she-ji">三、学习可靠性流程的设计</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="chun-jie-hou-de-1-ci-xiao-wen-ti">春节后的1次小问题</span><a href="#chun-jie-hou-de-1-ci-xiao-wen-ti" class="header-anchor">#</a></h1>
+<p>春节假期之后，我回到工位，发现开发用的3台实验机器中，有1台使用EIP（外网ip）登不上了， 只能使用vpn去连接小网ip登录。<br>
+咨询了一下物理机管理员，说假期因为实验室维护,  重启了机器，线路正常， 应该是机器的网络配置之前只临时生效，重启后就没了，让我自己查查看。<br>
+<img src="/images/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BB%AC%E8%A6%81%E5%AD%A6%E4%B9%A0TCP-IP/20210315002844629.png" alt="在这里插入图片描述"></p>
+<p>于是只能努力从大脑里挖掘有关计算机网络的回忆， 发现没啥好思路，去内网搜了下类似问题，才知道路由会影响eip， 对比了1下失效机器 和其他正常机器的路由表配置， 才发现缺少到NAT网关的路由，导致报文无法往回发。<br>
+<img src="/images/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BB%AC%E8%A6%81%E5%AD%A6%E4%B9%A0TCP-IP/20210315003852233.png" alt="在这里插入图片描述"><br>
+修改了一波路由配置后 便通了。</p>
+<h1><span id="fan-si">反思</span><a href="#fan-si" class="header-anchor">#</a></h1>
+<p>这时候我才发现删减改查的业务做得多了，很多经典知识都忘记了。<br>
+心想要不要去找本书系统回忆下网络知识？</p>
+<p>但是又懒得去番以前的教材，谢老的《计算机网络》?<br>
+算了，学生时代它那从物理层开始，再到链路层的超长阴影记忆尤新。<br>
+<img src="/images/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BB%AC%E8%A6%81%E5%AD%A6%E4%B9%A0TCP-IP/20210315002324250.png" alt="在这里插入图片描述"></p>
+<p>于是整了本经典的《TCP/IP详解》，抱着学习者的心态重新学习了1下。<br>
+<img src="/images/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BB%AC%E8%A6%81%E5%AD%A6%E4%B9%A0TCP-IP/20210315000102277.png" alt="在这里插入图片描述"></p>
+<p>可是，决定开始看之前，又犹豫了一下：<br>
+业务需求写完了吗？sql性能优化到最佳了吗？ 模块可信、稳健了吗？有必要费时间看这些烂大街的，应届生们面经必背的常见知识？</p>
+<p>换言之，作为浮于业务应用上层的java开发小兵，我需要去思考1个问题：<strong>当我们学习TCP/IP时，我们在学什么？</strong></p>
+<p>抛去以往的功利、应试等心态，我抱着这个问题看完了全书，给了我自己的几个思考</p>
+<h1><span id="yi-xue-xi-xie-yi-ge-shi-de-chang-jian-she-ji-si-lu">一、学习协议格式的常见设计思路</span><a href="#yi-xue-xi-xie-yi-ge-shi-de-chang-jian-she-ji-si-lu" class="header-anchor">#</a></h1>
+<p>IP和TCP的章节里，分别花了大章节，讲述协议首部内容。<br>
+学生时代很反感这个东西，感觉就是为了出计算题和记忆题， 我们又不去改报文，看这啥用。<br>
+然而工作后，发现这是计算机初学者们，最早能接触到的通讯协议格式设计思想了。<br>
+以IP报文格式为例，  可以看到<br>
+有  首部长度、总长度，， 还有用于处理报文切分的字段，， 以及校验字段，避免首部错误。<br>
+<img src="/images/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BB%AC%E8%A6%81%E5%AD%A6%E4%B9%A0TCP-IP/20210315005616676.png" alt="在这里插入图片描述"><br>
+而如果自己需要设计一套以二进制流为基础的应用层通信协议，很大概率，也要包含以上的内容。<br>
+例如我们怎么确定数据多长，怎么保证数据不被篡改，怎么分多次而保证不会乱， 这些都是常见的协议设计重点问题。   而这些问题的解决思路，就可以从TCP、IP等经典协议中初见端倪。</p>
+<h1><span id="er-xue-xi-tu-suan-fa-de-ying-yong">二、学习图算法的应用</span><a href="#er-xue-xi-tu-suan-fa-de-ying-yong" class="header-anchor">#</a></h1>
+<p>数据结构里，最让很多人头疼的就是图那章了。然而图的内容却是应用最强力的东西。<br>
+IP层路由概念的设计，简直是图算法的完美应用常见：</p>
+<ul>
+<li>路由表就是很经典的图数据结构设计。</li>
+<li>如何动态更新最短路， RIP和OSPF协议也分别给了我们思路</li>
+</ul>
+<p>甚至路由表里对子网最长匹配的应用，也用到了前缀树算法（线索树），让人感觉oj网站上算法题都亲切了不少。</p>
+<h1><span id="san-xue-xi-ke-kao-xing-liu-cheng-de-she-ji">三、学习可靠性流程的设计</span><a href="#san-xue-xi-ke-kao-xing-liu-cheng-de-she-ji" class="header-anchor">#</a></h1>
+<p>当重看TCP协议的握手挥手设计，以及重连机制，我还是会感到惊叹连连。<br>
+于是给自己提了个问题，如果不考虑TCP的可靠性，基于应用层，设计一套能稳定可靠的消息交互程序，我能想到有哪些要考虑的地方吗？基于那章，我大概想到了是以下几点</p>
+<ol>
+<li>如何能确保对方收到了我的信息？——TCP引入了ack响应</li>
+<li>怎样算两边开始正式交互？——能够证明两边的网络通道都能通，所以你我各需要1次ack响应来相互证明。</li>
+<li>怎么直到我的消息丢了？——每次消息发出，都有个定时器检查，超时时间内没收到，就会重发，直到到达次数上限，则认为超时</li>
+<li>超时时间怎么确定？——根据每次的时间样本定时更新</li>
+<li>超时后怎么办？——拥塞避免算法</li>
+<li>发少了太慢，发多了会阻塞，怎么确定1次可以发多少？——慢启动算法</li>
+</ol>
+<p>可以看到TCP协议里，基本把上述可靠性的设计问题都考虑到了，而且到了及其细致的地步。当你有这类需求时，不妨第一时间回忆下TCP的优秀之处</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E7%89%A9%E7%90%86%E5%B1%82%E8%AF%A6%E8%A7%A3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2646,762 +2980,10 @@ RTP(实时传输协议)<br>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%B1%82%E8%AF%A6%E8%A7%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%B1%82%E8%AF%A6%E8%A7%A3/" class="post-title-link" itemprop="url">计网之网络层（IP协议）详解</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-24 00:47:49" itemprop="dateCreated datePublished" datetime="2022-08-24T00:47:49+08:00">2022-08-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-25 00:06:15" itemprop="dateModified" datetime="2022-08-25T00:06:15+08:00">2022-08-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%B1%82%E8%AF%A6%E8%A7%A3/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%B1%82%E8%AF%A6%E8%A7%A3/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>6.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#1-ip-di-zhi">1.IP地址</a>
-<ul>
-<li><a href="#1-1-fen-lei-biao-shi-fa">1.1 分类表示法：</a>
-<ul>
-<li><a href="#1-1-2-fen-lei-biao-shi-di-zhi-de-qi-ta-shuo-ming">1.1.2 分类表示地址的其他说明</a></li>
-</ul>
-</li>
-<li><a href="#1-2-wu-fen-lei-bian-zhi-cidr">1.2 无分类编址CIDR</a></li>
-</ul>
-</li>
-<li><a href="#2-ip-shu-ju-bao-wen-ge-shi">2 IP数据报文格式</a>
-<ul>
-<li><a href="#q-ip-bao-wen-li-you-shi-me-ke-yi-bu-an-shun-xu-huo-zhe-zi-jie-lai-jiang-yi-jiang">Q: IP报文里有什么？可以不按顺序或者字节来讲一讲</a></li>
-</ul>
-</li>
-<li><a href="#3-lu-you-gai-nian">3.路由概念</a>
-<ul>
-<li><a href="#3-1-lu-you-biao">3.1 路由表</a></li>
-<li><a href="#3-2-lu-you-wang-luo-pi-pei">3.2 路由网络匹配</a></li>
-<li><a href="#3-3-arp-jie-xi">3.3 ARP解析</a></li>
-<li><a href="#3-4-rarp-ni-di-zhi-jie-xi-xie-yi">3.4 RARP逆地址解析协议</a></li>
-</ul>
-</li>
-<li><a href="#4-icmp-xie-yi">4 ICMP协议</a></li>
-<li><a href="#5-dhcp-xie-yi">5 DHCP协议</a></li>
-<li><a href="#6-lu-you-biao-de-zui-you-xia-yi-tiao-di-zhi-ru-he-ji-suan">6.路由表的最优下一跳地址如何计算？</a>
-<ul>
-<li><a href="#6-1-rip-xie-yi">6.1 RIP协议</a></li>
-<li><a href="#6-2-ospf-xie-yi">6.2 OSPF协议</a></li>
-<li><a href="#6-3-bgp-xie-yi">6.3 BGP协议</a></li>
-<li><a href="#q-rip-xie-yi-xia-lu-you-biao-shi-me-shi-hou-geng-xin">Q: RIP协议下路由表什么时候更新？</a></li>
-<li><a href="#q-lu-you-zhong-du-shi-shi-me">Q: 路由中毒是什么？</a></li>
-<li><a href="#q-shou-dao-zhong-du-lu-you-de-lu-you-qi-hui-zen-me-zuo">Q: 收到中毒路由的路由器会怎么做？</a></li>
-</ul>
-</li>
-<li><a href="#7-duo-bo">7 多播</a>
-<ul>
-<li><a href="#7-1-igmp-xie-yi">7.1 IGMP协议</a></li>
-<li><a href="#7-2-mospf-duo-bo-lu-you-xuan-ze-xie-yi">7.2 MOSPF多播路由选择协议</a></li>
-</ul>
-</li>
-<li><a href="#8-qi-ta-wang-luo-ceng-gai-nian">8 其他网络层概念</a>
-<ul>
-<li><a href="#8-1-vpn">8.1 VPN</a></li>
-<li><a href="#8-2-nat">8.2 NAT</a></li>
-<li><a href="#8-3-yi-dong-ip">8.3 移动IP</a></li>
-</ul>
-</li>
-<li><a href="#9-chang-jian-wang-luo-ceng-ming-ling">9 常见网络层命令</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="1-ip-di-zhi">1.IP地址</span><a href="#1-ip-di-zhi" class="header-anchor">#</a></h1>
-<h2><span id="1-1-fen-lei-biao-shi-fa">1.1 分类表示法：</span><a href="#1-1-fen-lei-biao-shi-fa" class="header-anchor">#</a></h2>
-<p>分类表示法已经不常用了。</p>
-<ul>
-<li>A类地址：<br>
-格式为<br>
-1[7位网络号][24位主机号]<br>
-网络号全0指本网络<br>
-网络号全1用于环回地址（127.0.0.1）<br>
-主机号全0时指本住机所在网络<br>
-全1时指本网络所有主机（广播地址）<br>
-因此A类地址实际可选范围为1.x.x.x ~ 126.x.x.x</li>
-</ul>
-<hr>
-<ul>
-<li>B类地址<br>
-格式为<br>
-10[14位网络号][16位主机号]<br>
-网络号不可全0，但可以全1<br>
-范围为128.x.x.x~191.x.x.x</li>
-</ul>
-<hr>
-<ul>
-<li>C类地址<br>
-格式为<br>
-110[21位网络号][8位主机号]<br>
-网络号不可全0<br>
-范围为192.x.x.x~223.x.x.x</li>
-</ul>
-<hr>
-<ul>
-<li>D类地址（多播地址）<br>
-格式为<br>
-1110[28位多播地址]<br>
-范围为224.x.x.x~239.x.x.x<br>
-因此看到224以上的ip要注意</li>
-</ul>
-<hr>
-<ul>
-<li>E类地址<br>
-格式为11110[保留]<br>
-用于实验用，因此看到240以上的认定不是正常节点ip</li>
-</ul>
-<h3><span id="1-1-2-fen-lei-biao-shi-di-zhi-de-qi-ta-shuo-ming">1.1.2 分类表示地址的其他说明</span><a href="#1-1-2-fen-lei-biao-shi-di-zhi-de-qi-ta-shuo-ming" class="header-anchor">#</a></h3>
-<ul>
-<li>
-<p>网络号全0，但主机号非全0的某个ip就是指本网络的某个主机</p>
-</li>
-<li>
-<p>网络号不为全1，但主机号为1的ip，则指某个网络的广播地址</p>
-</li>
-<li>
-<p>全0，指本网络的本主机</p>
-</li>
-<li>
-<p>全1，指本网络的广播地址</p>
-</li>
-<li>
-<p>环回地址，指127.0.0.1，在同一台主机上进行网络传输</p>
-</li>
-<li>
-<p>私有地址，指不会参与路由器转发的地址,， 只会参与本局域网，发给本局域网的交换机：<br>
-A类： 10.0.0.0-10.25.255.255<br>
-B类： 172.16.0.0-172.31.0.0<br>
-C类： 192.168.0.0-192.168.255.255</p>
-</li>
-</ul>
-<h2><span id="1-2-wu-fen-lei-bian-zhi-cidr">1.2 无分类编址CIDR</span><a href="#1-2-wu-fen-lei-bian-zhi-cidr" class="header-anchor">#</a></h2>
-<p>Classless Inter-Domain Routing 无类型域间选路</p>
-<ul>
-<li>CIDR将路由集中起来，使一个IP地址代表主要骨干提供商服务的几千个IP地址，从而减轻Internet路由器的负担。</li>
-<li>该编址用于子网划分，子网号和上面提到的网络号是不同的。</li>
-<li>IP地址 ::= {&lt;网络号&gt;， &lt;子网号&gt;， &lt;主机号&gt;}</li>
-</ul>
-<p>CIDR有三种编址方式：</p>
-<ul>
-<li>128.14.35.7/20  ， 完整ip加子网位数</li>
-<li>10.0.0.0/10 -&gt; 10/10， 可省略末尾的0</li>
-<li>00010100*， 即用星号代替子网后的主机号</li>
-</ul>
-<p>对于CIDR编址<br>
-子网号的全0和全1没有特殊含义，但不可设置成全0或者全1。<br>
-主机号的全0指本网络， 全1指广播。（网络号仍然遵从ABCD地址的规则）</p>
-<ul>
-<li>子网掩码：<br>
-值1的位置指该ip中该位置是网络号和子网号区域<br>
-值0的位置指该ip中该位置是主机号区域。<br>
-例子：111111100000000…， 那么前面8个1就是网络号+子网号，后面都代表了主机号</li>
-<li>路由寻址时，一般先比较网络号，再比较子网号，再比较主机。<br>
-子网掩码可以简化先比网络再比子网的过程。</li>
-</ul>
-<h1><span id="2-ip-shu-ju-bao-wen-ge-shi">2 IP数据报文格式</span><a href="#2-ip-shu-ju-bao-wen-ge-shi" class="header-anchor">#</a></h1>
-<p>IP报文的首部至少有20个字节（160位），首部如下：</p>
-<table>
-<thead>
-<tr>
-<th>位数</th>
-<th>含义</th>
-<th>详情</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>4</td>
-<td>版本</td>
-<td>IPV4或者IPV6</td>
-</tr>
-<tr>
-<td>4</td>
-<td>首部长度</td>
-<td>单位是字（4字节</td>
-</tr>
-<tr>
-<td>8</td>
-<td>区分服务</td>
-<td>设置服务的时延、吞吐量、可靠性，一般不用</td>
-</tr>
-<tr>
-<td>16</td>
-<td>IP报文总长度</td>
-<td>单位字节</td>
-</tr>
-<tr>
-<td>16</td>
-<td>报文标识</td>
-<td>用于分片后的同报文组装。相同报文的不同分片，该值相同</td>
-</tr>
-<tr>
-<td>3</td>
-<td>分片标志</td>
-<td>判断是否可分片或者是否是分配最后一个</td>
-</tr>
-<tr>
-<td>13</td>
-<td>片偏移</td>
-<td>用于按顺序组装同报文的分片</td>
-</tr>
-<tr>
-<td>8</td>
-<td>生存时间TTL</td>
-<td>该报文最大跳数，每经过一次转发就减一</td>
-</tr>
-<tr>
-<td>8</td>
-<td>协议类型</td>
-<td>ICMP/IGMP/TCP/UDP</td>
-</tr>
-<tr>
-<td>16</td>
-<td>首部校验和</td>
-<td>用于和首部做校验，看首部是否正确</td>
-</tr>
-<tr>
-<td>32</td>
-<td>源IP地址</td>
-<td></td>
-</tr>
-<tr>
-<td>32</td>
-<td>目的IP地址</td>
-<td></td>
-</tr>
-<tr>
-<td>？</td>
-<td>任选项</td>
-<td>很少被使用，最多40字节</td>
-</tr>
-</tbody>
-</table>
-<p>上面可以看到IP报文的以下限制：</p>
-<ol>
-<li>首部长度字段可以看出首部长度最多可以位60字节，所以任选项最多40字节</li>
-<li>报文总长度最大为65535， 但是由于MTU的限制（链路层防冲突机制导致的），一般都要做分片， 分片后就会用上分片标识和片偏移了。</li>
-</ol>
-<hr>
-<h2><span id="q-ip-bao-wen-li-you-shi-me-ke-yi-bu-an-shun-xu-huo-zhe-zi-jie-lai-jiang-yi-jiang">Q: IP报文里有什么？可以不按顺序或者字节来讲一讲</span><a href="#q-ip-bao-wen-li-you-shi-me-ke-yi-bu-an-shun-xu-huo-zhe-zi-jie-lai-jiang-yi-jiang" class="header-anchor">#</a></h2>
-<p>A:</p>
-<ul>
-<li>首先要知道报文多长，  首部长度+报文长度</li>
-<li>为了校验首部，还需要校验首部和</li>
-<li>很重要的源ip 目的ip<br>
-那么如何确定ip类型？这就需要 ipv版本，来确认是ip4还是ip6。</li>
-<li>ip支持分片，那么就需要<br>
-分片id、是否是最后分片标记、分片偏移</li>
-<li>协议类型（icmp、igmp）</li>
-<li>TTL生存</li>
-<li>其他任选项（40字节）</li>
-</ul>
-<h1><span id="3-lu-you-gai-nian">3.路由概念</span><a href="#3-lu-you-gai-nian" class="header-anchor">#</a></h1>
-<ul>
-<li>路由器可分隔广播域，指的是不同网络号的地址，路由器不会转发广播报文</li>
-</ul>
-<blockquote>
-<blockquote>
-<p>Hub集线器在同一个冲突域通信无法分割；交换机在同一个广播域通信，可分割冲突域；路由器实现不同广播域间通信，可分隔广播域。</p>
-</blockquote>
-</blockquote>
-<ul>
-<li>IP报文在传输中不会被改变，但是链路层报文的mac地址会不断变化。</li>
-<li>当2个主机在不同的子网时，必须要借助路由才能通信</li>
-</ul>
-<h2><span id="3-1-lu-you-biao">3.1 路由表</span><a href="#3-1-lu-you-biao" class="header-anchor">#</a></h2>
-<p>假设某个路由器在N1网络，他的路由表如下：</p>
-<table>
-<thead>
-<tr>
-<th>目的网络</th>
-<th>下一跳地址</th>
-<th>解释</th>
-<th>到目的网络距离</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>N1</td>
-<td>0.0.0.0</td>
-<td>假设目的网络就是路由器所在网络，说明可以直接交付给本网络的主机了，不用再转发，所以地址为全0</td>
-<td>0</td>
-</tr>
-<tr>
-<td>N2</td>
-<td>R2</td>
-<td>如果为N2，则会发给R2路由</td>
-<td>4</td>
-</tr>
-<tr>
-<td>0.0.0.0</td>
-<td>R1默认路由</td>
-<td>如果路由表找不到目的网络，则会默认转给R1处理，0.0.0.0是默认转发网络的标识</td>
-<td>？</td>
-</tr>
-<tr>
-<td>特定IP地址</td>
-<td>R3</td>
-<td>这种特定地址的选择是管理员配置的</td>
-<td>3</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>特定IP地址的子网掩码为全1，所以一般都是x.x.x.x/32</li>
-<li>DNS服务器一般会配置在路由表中的特定IP地址</li>
-<li>未知网络在路由表里的目的网络被写为0.0.0.0， 如果么有，则就是未设置默认路由</li>
-<li>路由器不会转发私有地址。</li>
-<li>距离指的是跨越路由器的数量，而不是实际长度单位</li>
-</ul>
-<h2><span id="3-2-lu-you-wang-luo-pi-pei">3.2 路由网络匹配</span><a href="#3-2-lu-you-wang-luo-pi-pei" class="header-anchor">#</a></h2>
-<p>如果路由表中的目的网络由很多，怎么确定IP和路由表中的目的网络是匹配的？<br>
-使用 最长前缀匹配， 即前缀匹配得最多的就是目的网络。<br>
-优化算法可用二叉线索树来确认最长前缀。</p>
-<hr>
-<p>Q： 为什么要用二叉线索树来 判断最长匹配前缀？ 字典树不可以吗？<br>
-A:</p>
-<h2><span id="3-3-arp-jie-xi">3.3 ARP解析</span><a href="#3-3-arp-jie-xi" class="header-anchor">#</a></h2>
-<p>全称Address Resolution Protocol，地址解析协议。</p>
-<p>从主机发给路由， 或者路由发给路由时，底层还是得封装一层mac地址然后往下交给交换机。<br>
-那么ip和mac地址的对应关系， 是怎么得知的？<br>
-答案就是ARP协议</p>
-<p>本质就是当mac缓存表里没有ip和mac的对应关系时， 主机或者路由会广播ARP报文， 对应ip方向的交换机会把报文发送回来，这时候就直到mac地址和ip的对饮关系了。</p>
-<ul>
-<li>arp -a可以检查ARP告诉缓存</li>
-<li>ARP缓存有超时时间</li>
-<li>目的主机不存在时，会反复发送，有个超期期限的存在。</li>
-<li>主机发送ARP查找自己的Mac地址称为“免费ARP&quot;</li>
-<li>发送给某1主机的arp请求被中间路由器接收了，则称为“ARP代理”， 发送者不管不管你是中间路由还是目的ip主机，只知道这个ip需要发给这个mac。</li>
-</ul>
-<h2><span id="3-4-rarp-ni-di-zhi-jie-xi-xie-yi">3.4 RARP逆地址解析协议</span><a href="#3-4-rarp-ni-di-zhi-jie-xi-xie-yi" class="header-anchor">#</a></h2>
-<p>由mac地址反取ip。<br>
-因为ip不存在，无法直接转给给路由。所以会比ARP难。<br>
-过程：<br>
-1）将源设备和目标设备的MAC地址字段都设为发送者的MAC地址和IP地址，发送主机发送一个本地的RARP广播，能够到达网络上的所有设备，在此广播包中，声明自己的MAC地址并且请求任何收到此请求的RARP服务器分配一个IP地址；<br>
-? 2）本地网段上的RARP服务器收到此请求后，检查其RARP列表，查找该MAC地址对应的IP地址；<br>
-? 3）如果存在，RARP服务器就给源主机发送一个响应数据包并将此IP地址提供给对方主机使用；如果不存在，RARP服务器对此不做任何的响应；<br>
-? 4） 源主机收到从RARP服务器的响应信息，就利用得到的IP地址进行通讯；如果一直没有收到RARP服务器的响应信息，表示初始化失败。</p>
-<h1><span id="4-icmp-xie-yi">4 ICMP协议</span><a href="#4-icmp-xie-yi" class="header-anchor">#</a></h1>
-<p>全称Internet control message protocl，网络控制报文协议<br>
-他会包装在IP的数据报文中，并把首部的协议类型改成ICMP那个数字。</p>
-<p>首部总共8个字节，分别为<br>
-2字节的ICMP类型<br>
-2字节的ICMP报文代码（类似错误码）<br>
-4字节的校验和<br>
-后面就是数据部分了。</p>
-<p>常见的2种用途：</p>
-<ol>
-<li>发送网络层之间的差错报告，例如：
-<ul>
-<li>源点抑制——发送网络拥塞</li>
-<li>终点不可达——无法找到对应ip交付地点</li>
-<li>时间超时——报文种的TTL降为0，或者分片一直没收集完</li>
-<li>参数错误——首部中字段有错</li>
-<li>路由改变（重定向）——　主机把数据发给了路由器R2，但是路由器R2发现主机自己本来就可以直达了，于是发给主机该消息，告诉他你要更新路由表了。</li>
-</ul>
-</li>
-</ol>
-<p>差错报告有以下其他特点：<br>
-* ICMP自身出错时，不会再发ICMP差错报文<br>
-* 如果是报文分配后发生错误，则只会发1次，而不会每个分片发一次<br>
-* 不针对多播，不针对127.0.0.1、0.0.0.0等特殊的地址发送差错报文，不可广播（避免广播风暴）</p>
-<p>​</p>
-<ol start="2">
-<li>发送一些询问报文，例如：
-<ul>
-<li>回送请求和应答——例如ping命令就是借助ICMP</li>
-<li>超时报文——traceroute就是用这个，把TTL从1慢慢增加，发好多份，通过TTL为0时的差错报告，定位跟踪路上有哪些路由</li>
-<li>时间戳请求——同步时间</li>
-</ul>
-</li>
-</ol>
-<h1><span id="5-dhcp-xie-yi">5 DHCP协议</span><a href="#5-dhcp-xie-yi" class="header-anchor">#</a></h1>
-<p>全称Dynamic Host Configuration Protocol， 动态主机配置协议</p>
-<p>当某个局域网内新增了一台主机，这个主机的ip是怎么生成的呢？这就会用到DHCP协议</p>
-<p>主机所在网内会有一台DCHP服务器。<br>
-当新主机加入时，发生如下之事：</p>
-<ol>
-<li>主机先“广播”自己，告诉大家“我来了，谁给我一个IP地址”（他一开始不知道DHCP在哪）</li>
-<li>DCHP服务器收到后，会分配一个IP地址，但因为不知道发给谁，所以也只能“广播”，告诉大家“我这有个ip，刚才谁要的，自己来领一下”</li>
-<li>主机收到DHCP广播的报文后，就能知道自己的ip和dhcp服务器位置了。于是给DCHP服务器发送请求，告诉他“我收到了你发来的ip了”</li>
-<li>DCHP收到后，确认了他的信息，并加入到DHCP本地的数据库中，后面分配新ip时就会排除掉这个ip了。</li>
-</ol>
-<p>有以下几个注意点：</p>
-<ol>
-<li>如果有多个主机同时应答了DHCP的广播， 则会选择最先到达的做分配。</li>
-<li>分配的ip是临时的</li>
-</ol>
-<p><strong>DCHP可以认为是基于UDP的应用层协议，但本质是为了寻求新主机的动态ip地址</strong></p>
-<h1><span id="6-lu-you-biao-de-zui-you-xia-yi-tiao-di-zhi-ru-he-ji-suan">6.路由表的最优下一跳地址如何计算？</span><a href="#6-lu-you-biao-de-zui-you-xia-yi-tiao-di-zhi-ru-he-ji-suan" class="header-anchor">#</a></h1>
-<p>可以理解为 在一个复杂的拓扑图下， 怎么选择最优的一个路由做目的地址的下一跳。<br>
-有2种方式：</p>
-<h2><span id="6-1-rip-xie-yi">6.1 RIP协议</span><a href="#6-1-rip-xie-yi" class="header-anchor">#</a></h2>
-<p>全称Routing Information Protocol,路由信息协议<br>
-是一种动态路由信息协议。</p>
-<ul>
-<li>
-<p>路由只会和相邻的其他路由交换信息。</p>
-</li>
-<li>
-<p>交换的是路由表的信息，关键在于目的网络和距离</p>
-</li>
-<li>
-<p>之前路由表里知道了表里会存储 到目的网络的距离即跨越路由数量，那么只要拿到周边所有路由的距离表，  看下哪个方向最小， 然后把下一跳地址选为最小的那个路由方向即可。</p>
-</li>
-<li>
-<p>使用UDP广播，把自己的路由报文发给周边的其他路由。</p>
-</li>
-<li>
-<p>当路径不可达时，会导致2个路由之间不断叠加该目的地址的距离，直到16时，会被设置成不可达。</p>
-</li>
-</ul>
-<p>所以RIP本质也是基于UDP的应用层协议，但是目的是为了网络层的最优路由选取。</p>
-<h2><span id="6-2-ospf-xie-yi">6.2 OSPF协议</span><a href="#6-2-ospf-xie-yi" class="header-anchor">#</a></h2>
-<p>open shortest path first，开放最短路径优先协议<br>
-指路由器里有全网的拓扑结构，使用最短路算法计算最优路由<br>
-因此路由会把自己的连接情况通过OSPF协议发给所有其他路由，以建立拓扑图。<br>
-这个是属于IP层的协议，不借助UDP。</p>
-<hr>
-<p>RIP和OSPF是自治网络系统AS里的选路措施。<br>
-AS里的选路措施被称作IGP（内部网关协议）<br>
-1个AS里只会有一种选路措施。</p>
-<p>而跨自治系统的协议叫EGP（外部网关协议）<br>
-通常使用BGP协议</p>
-<hr>
-<h2><span id="6-3-bgp-xie-yi">6.3 BGP协议</span><a href="#6-3-bgp-xie-yi" class="header-anchor">#</a></h2>
-<p>Border Gateway Protocol边界网关协议</p>
-<ul>
-<li>每个AS都知道自己为了到达网络N，需要经过哪些AS（相当于知道以AS为节点的拓扑图）</li>
-<li>每个AS都有一个BGP发言人,会与其他BGP网络之间交换自身的AS拓扑信息，从而构建全局连通图</li>
-<li>使用TCP 179端口工作</li>
-</ul>
-<hr>
-<h2><span id="q-rip-xie-yi-xia-lu-you-biao-shi-me-shi-hou-geng-xin">Q: RIP协议下路由表什么时候更新？</span><a href="#q-rip-xie-yi-xia-lu-you-biao-shi-me-shi-hou-geng-xin" class="header-anchor">#</a></h2>
-<p>A:</p>
-<ul>
-<li>正常情况下，路由器会基于更新计时器每30s将路由表发送给邻居路由器，而触发更新是立刻发送路由更新信息</li>
-<li>触发更新就是当检测到网络拓扑发生变动时，路由器会立即发送一个更新信息给邻居路由器，并依次产生触发更新通知它们的邻居路由器，此过程就叫触发更新</li>
-</ul>
-<hr>
-<h2><span id="q-lu-you-zhong-du-shi-shi-me">Q:  路由中毒是什么？</span><a href="#q-lu-you-zhong-du-shi-shi-me" class="header-anchor">#</a></h2>
-<p>A:<br>
-路由中毒是指在路由信息在路由表中失效时，先将度量值变为无穷大的数，而不是马上从路由表中删掉这条路由信息。 然后再将中毒路由信息发布出去，当相邻的路由器收到该中毒路由就可以通过其度量值是16，说明该路由是无效的。</p>
-<p>??因为RIP协议中的度量值其实就是跳数，而RIP协议的跳数最大是15，大于15的目的地被认为是不可达，所以当其度量值为16，就表示这是一个无效路由，这就是所谓的路由中毒，这个数字在限制了网络大小的同时也防止了一个叫做“记数到无穷大”的问题。</p>
-<hr>
-<h2><span id="q-shou-dao-zhong-du-lu-you-de-lu-you-qi-hui-zen-me-zuo">Q: 收到中毒路由的路由器会怎么做？</span><a href="#q-shou-dao-zhong-du-lu-you-de-lu-you-qi-hui-zen-me-zuo" class="header-anchor">#</a></h2>
-<p>A:<br>
-收到中毒路由信息的相邻的路由器会发送一个毒性逆转的信息，表示已经收到中毒路由信息。</p>
-<p>??那么为什么收到中毒路由的路由器为什么要回复一个毒性逆转的信息？这是因为如果不回复的话，那么发送中毒路由的路由器就会一直以广播的形式发送中毒路由，直到相邻的路由器收到并回复一个毒性逆转的信息。</p>
-<h1><span id="7-duo-bo">7 多播</span><a href="#7-duo-bo" class="header-anchor">#</a></h1>
-<p>UDP的时候会用到多播</p>
-<h2><span id="7-1-igmp-xie-yi">7.1 IGMP协议</span><a href="#7-1-igmp-xie-yi" class="header-anchor">#</a></h2>
-<p>internet group message protol，  网络组管理协议<br>
-负责收集和解释一个网络中的组成员信息<br>
-IGMP协议应用于路由器</p>
-<ul>
-<li>某主机加入新的多播组时，发送报文，并转发多播的关系给其他相邻主机或者路由</li>
-<li>会周期性探寻，确认自身这个主机是否还在多播组内</li>
-<li>无法直到总成员数</li>
-<li>IGMP属于网络层的协议</li>
-</ul>
-<h2><span id="7-2-mospf-duo-bo-lu-you-xuan-ze-xie-yi">7.2 MOSPF多播路由选择协议</span><a href="#7-2-mospf-duo-bo-lu-you-xuan-ze-xie-yi" class="header-anchor">#</a></h2>
-<p>多播开放最短通路优先（Multicast Open Shortest PathFirst，MOSPF）协议是OSPF协议的扩展<br>
-使用多播链路状态路由选择来创建源点基准树。<br>
-这个协议需要一个新的链路状态更新分组，把主机的单播地址和组地址或主机负责的地址联系起来，这个分组就称为组成员关系LSA。<br>
-此外，这个数可以保存在高速缓存中，以便以后有同样源点/组地址对的分组可以使用它。<br>
-多播的其他更详细概念见<a target="_blank" rel="noopener" href="https://blog.csdn.net/williananjhon/article/details/94166311">链接</a></p>
-<h1><span id="8-qi-ta-wang-luo-ceng-gai-nian">8 其他网络层概念</span><a href="#8-qi-ta-wang-luo-ceng-gai-nian" class="header-anchor">#</a></h1>
-<h2><span id="8-1-vpn">8.1 VPN</span><a href="#8-1-vpn" class="header-anchor">#</a></h2>
-<p>需要建立专用通道<br>
-当专用A试图向专用B通信时，会先加密，再通过加密隧道发到对方内网，具体报文内容不会和互联网直接接触。</p>
-<h2><span id="8-2-nat">8.2 NAT</span><a href="#8-2-nat" class="header-anchor">#</a></h2>
-<p>内外网转换用的一个东西， 公网ip和内网ip互转。</p>
-<h2><span id="8-3-yi-dong-ip">8.3 移动IP</span><a href="#8-3-yi-dong-ip" class="header-anchor">#</a></h2>
-<p>ip从子网A变道子网B。<br>
-在本网时，按TCP通信<br>
-要漫游到外网时， 注册一个转交地址<br>
-本地代理接收地址，开启隧道<br>
-数据发送到外网<br>
-在外网时，使用代理ip发送数据<br>
-回到本地时，会注册并转交之前的地址</p>
-<h1><span id="9-chang-jian-wang-luo-ceng-ming-ling">9 常见网络层命令</span><a href="#9-chang-jian-wang-luo-ceng-ming-ling" class="header-anchor">#</a></h1>
-<ul>
-<li>ifconfig　可显示本机的IP地址</li>
-<li>netstat　－ｒ可显示路由表</li>
-<li>tcpdump　可显示硬件地址</li>
-<li>ping　测试另一个主机是否可达</li>
-<li>traceroute　利用ICMP跟踪途径的所有路由</li>
-<li>route　命令可查看和修改路由表</li>
-<li>gated可查看IGP（内部网关协议）和EGP（外部网关协</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%8A%9B%E6%89%A3%E7%BB%83%E4%B9%A0%E9%A2%98%E9%9B%86%E5%90%88/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%8A%9B%E6%89%A3%E7%BB%83%E4%B9%A0%E9%A2%98%E9%9B%86%E5%90%88/" class="post-title-link" itemprop="url">MYSQL力扣练习题集合</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-08-24 00:10:49 / 修改时间：00:18:28" itemprop="dateCreated datePublished" datetime="2022-08-24T00:10:49+08:00">2022-08-24</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/SQL%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">SQL数据库</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%8A%9B%E6%89%A3%E7%BB%83%E4%B9%A0%E9%A2%98%E9%9B%86%E5%90%88/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%8A%9B%E6%89%A3%E7%BB%83%E4%B9%A0%E9%A2%98%E9%9B%86%E5%90%88/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<hr>
-<p>limit 1 offset 1 不存在却要求返回null时， 可以用子查询，或者IFNULL(临时表结果或字段， NULL)<br>
-子查询是select结果作为字段，例如 select (select xx) 而不是 select xxx from (select xxx)。  当select中的字段结果不存在，会自动返回NULL</p>
-<hr>
-<p>如果排名问题要去重，记得加 distinct</p>
-<hr>
-<p>CREATE FUNCTION中<br>
-可以set N:=N-1: 进行变量更新。 不能在return中进行更新</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> getNthHighestSalary(N <span class="type">INT</span>) <span class="keyword">RETURNS</span> <span class="type">INT</span></span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">  <span class="keyword">set</span> N :<span class="operator">=</span> N<span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">RETURN</span> (</span><br><span class="line">      # Write your MySQL query statement below.</span><br><span class="line">      <span class="keyword">select</span> (<span class="keyword">select</span> <span class="keyword">distinct</span> salary <span class="keyword">from</span> Employee </span><br><span class="line">      <span class="keyword">order</span> <span class="keyword">by</span> salary <span class="keyword">desc</span>  </span><br><span class="line">      limit <span class="number">1</span> <span class="keyword">offset</span> N) </span><br><span class="line">  );</span><br><span class="line"><span class="keyword">END</span></span><br></pre></td></tr></table></figure>
-<hr>
-<p>要做排名时给出序号时，有两种方式<br>
-简单方式：<br>
-利用子查询字段，注意子查询字段的特点等同于摘出一个字段，再做一次额外查询，得到唯一的一个结果。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># Write your MySQL query statement below</span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span>  a.score, (</span><br><span class="line">    # 拿a.score重新重新去检索一次表，得到<span class="built_in">count</span>(<span class="keyword">distinct</span> b.score)<span class="operator">+</span><span class="number">1</span>，得到自己的排名</span><br><span class="line">    <span class="keyword">select</span> <span class="built_in">count</span>(<span class="keyword">distinct</span> b.score)<span class="operator">+</span><span class="number">1</span> <span class="keyword">from</span> Scores b <span class="keyword">where</span>  a.score<span class="operator">&lt;</span>b.score</span><br><span class="line">    ) <span class="keyword">as</span> `rank` </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">from</span> Scores a <span class="keyword">order</span> <span class="keyword">by</span> a.score <span class="keyword">desc</span></span><br></pre></td></tr></table></figure>
-<p>但效率太慢。<br>
-高速的序号方法：<br>
-使用dense_rank() over(order by xxx) 可以得到序号，1 1 2 3 3 4，不会跳序号<br>
-其他序号方式：<br>
-row_number()  over(order by xxx)     就是简单的12345这种，不考虑重复<br>
-rank()  over(order by xxx)   如果重复了，1 1 3 4 4 6</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span>  score, </span><br><span class="line">(<span class="built_in">dense_rank</span>() <span class="keyword">over</span>(<span class="keyword">order</span> <span class="keyword">by</span> score <span class="keyword">desc</span>) ) <span class="keyword">as</span> `rank` </span><br><span class="line"><span class="keyword">from</span> Scores </span><br></pre></td></tr></table></figure>
-<hr>
-<p>寻找3个连续出现的数字，如果id是连续的，则可以自联结，即自己和自己join， 构造where <a target="_blank" rel="noopener" href="http://a.id">a.id</a> = b.id-1 and <a target="_blank" rel="noopener" href="http://b.id">b.id</a> = c.id-1 这样的情况。非常好理解</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">distinct</span> a.num <span class="keyword">as</span> ConsecutiveNums <span class="keyword">from</span> </span><br><span class="line">logs a,logs b, logs c</span><br><span class="line"><span class="keyword">where</span> </span><br><span class="line">a.id <span class="operator">=</span> b.id<span class="number">-1</span></span><br><span class="line"><span class="keyword">and</span> b.id <span class="operator">=</span> c.id<span class="number">-1</span></span><br><span class="line"><span class="keyword">and</span> a.num <span class="operator">=</span> b.num <span class="keyword">and</span> b.num <span class="operator">=</span> c.num</span><br></pre></td></tr></table></figure>
-<hr>
-<p>善用自join联结解决一些表内成员互相比较的复杂问题。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 查询收入超过他经理的员工名字。</span><br><span class="line"><span class="keyword">select</span> </span><br><span class="line"> a.name <span class="keyword">as</span> Employee </span><br><span class="line"><span class="keyword">from</span> </span><br><span class="line">Employee  a , Employee  b</span><br><span class="line"><span class="keyword">where</span> b.id <span class="operator">=</span> a.managerId <span class="keyword">and</span> a.salary <span class="operator">&gt;</span> b.salary</span><br></pre></td></tr></table></figure>
-<hr>
-<p>group分组后， 可以用having进行组内聚合情况的过滤， 剔除不想要的组</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 查找 Person 表中所有重复的电子邮箱。</span><br><span class="line"><span class="keyword">select</span> email <span class="keyword">from</span> person </span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> email </span><br><span class="line"><span class="keyword">having</span> </span><br><span class="line"><span class="built_in">count</span>(email) <span class="operator">&gt;</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
-<hr>
-<p>表a在 表b中不存在记录， 用left join + where xxx is null 来处理</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> c.name <span class="keyword">as</span> Customers </span><br><span class="line"><span class="keyword">from</span> Customers c  <span class="keyword">left</span> <span class="keyword">join</span>  Orders  o</span><br><span class="line"><span class="keyword">on</span> c.id <span class="operator">=</span> o.CustomerId <span class="keyword">where</span> o.id <span class="keyword">is</span> <span class="keyword">null</span></span><br></pre></td></tr></table></figure>
-<hr>
-<p>in 的用法  where a in(1,2,3,4)<br>
-或者 where a in (select aaa from xxx)</p>
-<p>in也支持二元组形式<br>
-where (a,b) in (select aaa,bbb from xxx)</p>
-<p>每组最大值的人选的情况，可以用join + in（分组结果）的方法</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 查找每个部门中薪资最高的员工，先join，再用in获取符合组+最大值的行</span><br><span class="line">select </span><br><span class="line">b.name as Department , a.name   as Employee ,  a.salary as Salary</span><br><span class="line">from Employee  a </span><br><span class="line">join</span><br><span class="line">Department  b</span><br><span class="line">on a.departmentId  = b.id  </span><br><span class="line"><span class="title function_">and</span> <span class="params">(a.departmentId, a.salary)</span> in (</span><br><span class="line">    select departmentId, max(salary)</span><br><span class="line">    from Employee</span><br><span class="line">    group by departmentId </span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<hr>
-<p>找某薪水是组内前几位的情况， 擅用自查询， 即join后， 拿某条记录在where中遍历一遍,  然后根据count(distinct xxx)来确认自己的排名</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># 找出每个部门获得前三高工资的所有员工</span><br><span class="line"><span class="keyword">select</span> </span><br><span class="line">b.name <span class="keyword">as</span> Department , a.name   <span class="keyword">as</span> Employee ,  a.salary <span class="keyword">as</span> Salary</span><br><span class="line"><span class="keyword">from</span> Employee  a </span><br><span class="line"><span class="keyword">join</span></span><br><span class="line">Department  b</span><br><span class="line"><span class="keyword">on</span> a.departmentId  <span class="operator">=</span> b.id</span><br><span class="line"># 比自己这行记录salary大， 且在同一组内的数量小于<span class="number">3</span>，则满足前<span class="number">3</span>  </span><br><span class="line"><span class="keyword">and</span> (<span class="keyword">select</span> <span class="built_in">count</span>(<span class="keyword">distinct</span> e.salary) <span class="keyword">from</span> Employee e <span class="keyword">where</span> a.DepartmentId  <span class="operator">=</span> e.DepartmentId  <span class="keyword">and</span> a.salary <span class="operator">&lt;</span> e.salary</span><br><span class="line"> ) <span class="operator">&lt;</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
-<hr>
-<ul>
-<li>分组后， SUM(IF(x=y,1,0) 可以统计组内x=y的个数<br>
-那么SUM(IF(x=y,1,0) ） / COUNT(x)  就能得到组内x=y的比率</li>
-<li>ROUND(xxx, 2) 可以保留两位小数。</li>
-<li>between的用法： between ‘2013-10-01’ AND ‘2013-10-03’</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 写一段 <span class="keyword">SQL</span> 语句查出?&quot;2013-10-01&quot;?至?&quot;2013-10-03&quot;?期间非禁止用户（乘客和司机都必须未被禁止）的取消率。非禁止用户即 banned 为 <span class="keyword">No</span> 的用户，禁止用户即 banned 为 Yes 的用户。</span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span> request_at <span class="keyword">as</span> <span class="keyword">DAY</span>, ROUND(</span><br><span class="line">    <span class="built_in">SUM</span>(IF(status <span class="operator">=</span> <span class="string">&#x27;completed&#x27;</span>, <span class="number">0</span>, <span class="number">1</span>))<span class="operator">/</span><span class="built_in">COUNT</span>(status), <span class="number">2</span></span><br><span class="line">) <span class="keyword">as</span> `Cancellation Rate`</span><br><span class="line"> <span class="keyword">from</span> </span><br><span class="line">Trips t, Users u1, Users u2</span><br><span class="line"><span class="keyword">where</span> (t.client_id  <span class="operator">=</span> u1.users_id</span><br><span class="line"><span class="keyword">and</span> t.driver_id <span class="operator">=</span> u2.users_id)</span><br><span class="line"><span class="keyword">and</span> u1.banned <span class="operator">=</span> <span class="string">&#x27;No&#x27;</span> <span class="keyword">and</span> u2.banned <span class="operator">=</span> <span class="string">&#x27;No&#x27;</span> </span><br><span class="line"><span class="keyword">and</span>  request_at <span class="keyword">between</span> <span class="string">&#x27;2013-10-01&#x27;</span> <span class="keyword">AND</span> <span class="string">&#x27;2013-10-03&#x27;</span></span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> request_at</span><br></pre></td></tr></table></figure>
-<hr>
-<p>求3个或3个以上连续id的记录，直接自联结，然后用3个or条件判断<br>
-<a target="_blank" rel="noopener" href="http://t1.id">t1.id</a> <a target="_blank" rel="noopener" href="http://t2.id">t2.id</a> <a target="_blank" rel="noopener" href="http://t3.id">t3.id</a><br>
-<a target="_blank" rel="noopener" href="http://t2.id">t2.id</a> <a target="_blank" rel="noopener" href="http://t1.id">t1.id</a> <a target="_blank" rel="noopener" href="http://t3.id">t3.id</a><br>
-<a target="_blank" rel="noopener" href="http://t2.id">t2.id</a> <a target="_blank" rel="noopener" href="http://t3.id">t3.id</a> <a target="_blank" rel="noopener" href="http://t1.id">t1.id</a><br>
-然后取每种连接表的t1即可</p>
-<p>注意distinct 可以用于星号<br>
-distinct s1.*<br>
-也可用于多列  distict s1.a,s1.b,s1.completed</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># 找出每行的人数大于或等于 <span class="number">100</span> 且 id 连续的三行或更多行记录。</span><br><span class="line"># 返回按 visit_date 升序排列的结果表</span><br><span class="line"><span class="keyword">select</span> </span><br><span class="line"><span class="keyword">distinct</span> s1.id,s1.visit_date , s1.people            </span><br><span class="line"><span class="keyword">from</span> </span><br><span class="line">Stadium s1, Stadium s2,Stadium s3</span><br><span class="line"><span class="keyword">where</span> s1.people  <span class="operator">&gt;=</span> <span class="number">100</span> <span class="keyword">and</span> s2.people <span class="operator">&gt;=</span><span class="number">100</span> <span class="keyword">and</span> s3.people <span class="operator">&gt;=</span> <span class="number">100</span> </span><br><span class="line"><span class="keyword">and</span> (</span><br><span class="line">    (s1.id <span class="operator">=</span> s2.id<span class="number">-1</span> <span class="keyword">and</span> s2.id <span class="operator">=</span> s3.id<span class="number">-1</span> ) <span class="keyword">or</span></span><br><span class="line">(s2.id <span class="operator">=</span> s1.id<span class="number">-1</span> <span class="keyword">and</span> s1.id <span class="operator">=</span> s3.id<span class="number">-1</span> ) <span class="keyword">or</span></span><br><span class="line">(s2.id <span class="operator">=</span> s3.id<span class="number">-1</span> <span class="keyword">and</span> s3.id <span class="operator">=</span> s1.id<span class="number">-1</span> )</span><br><span class="line">)</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> s1.id</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/home/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/home/">1</a><span class="page-number current">2</span><a class="page-number" href="/home/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/home/page/9/">9</a><a class="extend next" rel="next" href="/home/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/home/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/home/">1</a><span class="page-number current">2</span><a class="page-number" href="/home/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/home/page/10/">10</a><a class="extend next" rel="next" href="/home/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -3469,14 +3051,14 @@ distinct s1.*<br>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-count">30</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -3540,7 +3122,7 @@ distinct s1.*<br>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共194.5k字</span>
+  <span class="post-count">博客全站共195.7k字</span>
 </div>
 
         
