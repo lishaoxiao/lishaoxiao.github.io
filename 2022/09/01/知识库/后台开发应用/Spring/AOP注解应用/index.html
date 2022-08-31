@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="[toc]   增加了@AspectJ注解形式的AOP使用方式 注意只是使用方式变了，底层的实现逻辑和基本概念还是相同的。 注解形式的pointcut： 可通过注解直接定义pointcut内容，就不需要实现里面的方法了 这里的方法名仅仅是作为1个代号，代号可以提供给其它的pointcut去合并使用 下面这个图，二者标识的pointcut其实是一样的  引用时也能包含包名 pointcut">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AOP注解应用">
+<meta property="og:url" content="http://breakdawncoder.com/2022/09/01/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="[toc]   增加了@AspectJ注解形式的AOP使用方式 注意只是使用方式变了，底层的实现逻辑和基本概念还是相同的。 注解形式的pointcut： 可通过注解直接定义pointcut内容，就不需要实现里面的方法了 这里的方法名仅仅是作为1个代号，代号可以提供给其它的pointcut去合并使用 下面这个图，二者标识的pointcut其实是一样的  引用时也能包含包名 pointcut">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/82adc5bbf93caa060e7649ff9c73c9c3370480e7.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/93ad48e07377ac8591a10b2564b89e7845238640.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/0c416b8d211008bddc39219e2ba16087ffefb398.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/eb927a4ab949516c2436f86038ed53c1cc00d4e3.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/9921eefea0e72b57b2ae905ef1d340d8ccbd9173.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/6150e3e656d5bf81f4cfe3d77d02dd5d223dd52b.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/372535ab8ea8a2c77bf69b070a2c05bcde4cb335.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/56a84406b604aecce420c12d942ba93526f26998.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/cad1ea69bdfce12bff029f46bbe9848b12322677.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/ae8ce5ca694623441181af71dca6155d822e9e68.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/0e176c14cd01488fe4e90e65cabf0f582d80c46e.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/070bcb0b29a519f5d2d842885461f5681c4e5bb2.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/96574a574ffed6e4dee6477a922da1a12a5d2051.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/4b69c4b45e1e1a67ba51196cf7654e1a2982daef.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/f6a306ee8b151bbc9b210a7083de0a3bb16e3bd6.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/79b459a1b92d33b253f8db3ae3250cb4ce30882c.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/052b9e9888e60902ec8e7596f59f7300bbe3bb63.png">
+<meta property="article:published_time" content="2022-08-31T16:40:12.000Z">
+<meta property="article:modified_time" content="2022-08-31T15:02:00.369Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="后台开发知识,spring原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/82adc5bbf93caa060e7649ff9c73c9c3370480e7.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/2022/09/01/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>AOP注解应用 | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/01/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          AOP注解应用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-09-01 00:40:12" itemprop="dateCreated datePublished" datetime="2022-09-01T00:40:12+08:00">2022-09-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-31 23:02:00" itemprop="dateModified" datetime="2022-08-31T23:02:00+08:00">2022-08-31</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/spring%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">spring原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/spring%E5%8E%9F%E7%90%86/AOP/" itemprop="url" rel="index"><span itemprop="name">AOP</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/01/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/01/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>915</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<ul>
+<li>
+<p>增加了@AspectJ注解形式的AOP使用方式</p>
+<p>注意只是使用方式变了，底层的实现逻辑和基本概念还是相同的。</p>
+<p>注解形式的pointcut：<br>
+可通过注解直接定义pointcut内容，就不需要实现里面的方法了<br>
+这里的方法名仅仅是作为1个代号，代号可以提供给其它的pointcut去合并使用</p>
+<p>下面这个图，二者标识的pointcut其实是一样的<br>
+<img src="/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/82adc5bbf93caa060e7649ff9c73c9c3370480e7.png" alt="82adc5bbf93caa060e7649ff9c73c9c3370480e7"></p>
+<p>引用时也能包含包名</p>
+<p>pointcut表达式符号：<br>
+execution(指定方法签名，支持通配)： 标识仅支持方法执行类型的joinPoint<br>
+并支持方法参数识别<br>
+<img src="/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/93ad48e07377ac8591a10b2564b89e7845238640.png" alt="93ad48e07377ac8591a10b2564b89e7845238640"></p>
+<p>within 匹配<br>
+只能和包路径相关<br>
+<img src="/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/0c416b8d211008bddc39219e2ba16087ffefb398.png" alt="0c416b8d211008bddc39219e2ba16087ffefb398"></p>
+<p>@within（注解类名）<br>
+比上面多了个@，相当于只切入标注了某个注解的方法，且只用于对象是否标注了这个注解类名的注解</p>
+<p>this(objectType)<br>
+当目标对象的代理对象是objectType，则切入</p>
+<p>target(objectType)<br>
+当目标对象是objectType,则切入<br>
+<img src="/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/eb927a4ab949516c2436f86038ed53c1cc00d4e3.png" alt="eb927a4ab949516c2436f86038ed53c1cc00d4e3"><br>
+<img src="/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/9921eefea0e72b57b2ae905ef1d340d8ccbd9173.png" alt="9921eefea0e72b57b2ae905ef1d340d8ccbd9173"><br>
+@target（注解类型）<br>
+如果对象的目标对象 拥有target括号里的注解类型，则切入</p>
+<p>args<br>
+指定方法输入参数<br>
+<img src="/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/6150e3e656d5bf81f4cfe3d77d02dd5d223dd52b.png" alt="6150e3e656d5bf81f4cfe3d77d02dd5d223dd52b"></p>
+<p>@annotation<br>
+系统内所有标注了annotation的方法，都会切入。 和@within的区别在于前者是方法，后者是对象<br>
+<img src="/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/372535ab8ea8a2c77bf69b070a2c05bcde4cb335.png" alt="372535ab8ea8a2c77bf69b070a2c05bcde4cb335"></p>
+<p>注解形式的Advice<br>
+<img src="/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/56a84406b604aecce420c12d942ba93526f26998.png" alt="56a84406b604aecce420c12d942ba93526f26998"><br>
+可以和pointcut 合并？</p>
+<p><img src="/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/cad1ea69bdfce12bff029f46bbe9848b12322677.png" alt="cad1ea69bdfce12bff029f46bbe9848b12322677"></p>
+<p><img src="/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/ae8ce5ca694623441181af71dca6155d822e9e68.png" alt="ae8ce5ca694623441181af71dca6155d822e9e68"></p>
+<p><img src="/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/0e176c14cd01488fe4e90e65cabf0f582d80c46e.png" alt="0e176c14cd01488fe4e90e65cabf0f582d80c46e"><br>
+@AspectJ的注意事项：</p>
+<p>如果类中定义了多个相同位置的@advice， 则执行顺序取决于声明顺序</p>
+<p><img src="/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/070bcb0b29a519f5d2d842885461f5681c4e5bb2.png" alt="070bcb0b29a519f5d2d842885461f5681c4e5bb2"><br>
+如果有多个AspectJ类， 然后不同aspectJ的advice冲突了，怎么办？<br>
+需要实现Order接口，否则是不确定顺序<br>
+<img src="/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/96574a574ffed6e4dee6477a922da1a12a5d2051.png" alt="96574a574ffed6e4dee6477a922da1a12a5d2051"></p>
+<p>也可以指定实例化的方式，默认是单例实例化。</p>
+<p><img src="/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/4b69c4b45e1e1a67ba51196cf7654e1a2982daef.png" alt="4b69c4b45e1e1a67ba51196cf7654e1a2982daef"></p>
+<p>嵌套执行代理的问题：<br>
+<img src="/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/f6a306ee8b151bbc9b210a7083de0a3bb16e3bd6.png" alt="f6a306ee8b151bbc9b210a7083de0a3bb16e3bd6"><br>
+<img src="/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/79b459a1b92d33b253f8db3ae3250cb4ce30882c.png" alt="79b459a1b92d33b253f8db3ae3250cb4ce30882c"></p>
+<p>如果执行method1，  只会进行method1的代理，  method2并不会动， 这是因为底层原理，导致 我们生成1个method1的代理后，  执行时里面的method2并不会动， 即method1的代理里没有method2的代理，。<br>
+之所叫横切，就是因为他会切入到同一个逻辑层上，<br>
+如果需要层层横切，需要在method1里调用method2的代理<br>
+<img src="/images/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/052b9e9888e60902ec8e7596f59f7300bbe3bb63.png" alt="052b9e9888e60902ec8e7596f59f7300bbe3bb63"><br>
+而这个代理可以用注入的方式，不要在这里写死。<a target="_blank" rel="noopener" href="https://www.cnblogs.com/cloudwill/p/13648539.html">https://www.cnblogs.com/cloudwill/p/13648539.html</a>)</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/2022/09/01/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/AOP%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8/" title="AOP注解应用">http://breakdawncoder.com/2022/09/01/知识库/后台开发应用/Spring/AOP注解应用/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86-spring%E5%8E%9F%E7%90%86/" rel="tag"># 后台开发知识,spring原理</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/08/31/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/AOP%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" rel="prev" title="AOP实现原理">
+      <i class="fa fa-chevron-left"></i> AOP实现原理
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共202.8k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
