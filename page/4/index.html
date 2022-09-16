@@ -181,6 +181,437 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/07/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/09/07/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" class="post-title-link" itemprop="url">线程基础概念</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-07 23:57:49 / 修改时间：23:34:49" itemprop="dateCreated datePublished" datetime="2022-09-07T23:57:49+08:00">2022-09-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/07/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/07/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>671</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#3-1-gai-nian">3.1 概念</a>
+<ul>
+<li><a href="#3-1-1-mu-de">3.1.1 目的</a></li>
+<li><a href="#3-1-2-zu-cheng">3.1.2 组成</a>
+<ul>
+<li><a href="#3-1-3-shi-xian-fang-shi">3.1.3 实现方式</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#3-2-jin-cheng-he-xian-cheng-de-qu-bie">3.2 进程和线程的区别</a>
+<ul>
+<li><a href="#q-bing-fa-he-bing-xing-you-shi-me-qu-bie-ni">Q: 并发和并行有什么区别呢？</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="3-1-gai-nian">3.1 概念</span><a href="#3-1-gai-nian" class="header-anchor">#</a></h1>
+<ul>
+<li>是基本的CPU执行单元</li>
+<li>是程序执行流的最小胆小</li>
+<li>被系统调度和分配的基本单位</li>
+</ul>
+<h2><span id="3-1-1-mu-de">3.1.1 目的</span><a href="#3-1-1-mu-de" class="header-anchor">#</a></h2>
+<ul>
+<li>提高系统性能</li>
+<li>减小程序并发执行时的时空开销</li>
+</ul>
+<h2><span id="3-1-2-zu-cheng">3.1.2 组成</span><a href="#3-1-2-zu-cheng" class="header-anchor">#</a></h2>
+<ul>
+<li>线程id</li>
+<li>程序计数器PC</li>
+<li>寄存器集合</li>
+<li>堆栈</li>
+</ul>
+<h3><span id="3-1-3-shi-xian-fang-shi">3.1.3 实现方式</span><a href="#3-1-3-shi-xian-fang-shi" class="header-anchor">#</a></h3>
+<p>一般会有2种线程：</p>
+<ul>
+<li>用户级线程ULT：  创建发生在用户空间</li>
+<li>系统级线程KLT： 完成系统内所有线程的管理，提供给用户一定的线程管理接口。</li>
+</ul>
+<p>ULT和KLT的映射关系分类（即用户线程能给哪些系统线程管理）：</p>
+<ul>
+<li>多用户线程对应1个系统线程。 即所有线程公用一个线程管理接口<br>
+这样如果一旦阻塞就全部阻塞</li>
+<li>一对一： 每个用户线程单独使用1个系统线程做管理<br>
+这样会导致系统线程过多，开销大</li>
+<li>多对多： n个用户线程对应m个内核线程（n&gt;=m)<br>
+这个比较好</li>
+</ul>
+<p>linux用的是哪种呢？</p>
+<h1><span id="3-2-jin-cheng-he-xian-cheng-de-qu-bie">3.2 进程和线程的区别</span><a href="#3-2-jin-cheng-he-xian-cheng-de-qu-bie" class="header-anchor">#</a></h1>
+<ul>
+<li>从调度上看<br>
+线程是CPU调度的最小单位<br>
+进程是拥有资源的基本单位</li>
+<li>切换<br>
+同一进程内的线程之间切换，不用引起进程切换<br>
+从a进程的线程跳到b进程的线程，需要引起进程切换</li>
+<li>资源<br>
+线程只独立拥有一点点小资源（线程栈、共享虚拟地址空间）<br>
+进程则拥有很多</li>
+<li>通信： 线程可通过读写进程的全局变量来通信，但是进程之间通信则无法依赖变量。</li>
+<li>开销<br>
+线程的系统/时空开销少</li>
+<li>并发<br>
+进程和线程都支持并发。<br>
+是否支持并行要看CPU情况。</li>
+</ul>
+<hr>
+<h2><span id="q-bing-fa-he-bing-xing-you-shi-me-qu-bie-ni">Q: 并发和并行有什么区别呢？</span><a href="#q-bing-fa-he-bing-xing-you-shi-me-qu-bie-ni" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>并发指 在某一个时间段内跑多个任务， 这些任务可能抢占同一个CPU资源， ”存在交替执行“</li>
+<li>并行指 同一时刻，有多个任务同时在跑，  即分别占用不同的CPU跑任务。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/07/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E8%BF%9B%E7%A8%8B%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/09/07/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E8%BF%9B%E7%A8%8B%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" class="post-title-link" itemprop="url">操作系统基础概念</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-07 23:47:49 / 修改时间：23:30:18" itemprop="dateCreated datePublished" datetime="2022-09-07T23:47:49+08:00">2022-09-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/07/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E8%BF%9B%E7%A8%8B%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/07/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E8%BF%9B%E7%A8%8B%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#2-1-gai-nian-he-te-zheng">2.1 概念和特征</a></li>
+<li><a href="#2-2-jin-cheng-zhuang-tai-ji-tu">2.2 进程状态机图</a></li>
+<li><a href="#2-3-jin-cheng-zhuang-tai-bian-hua-shi-de-ju-ti-guo-cheng">2.3 进程状态变化时的具体过程</a>
+<ul>
+<li><a href="#2-3-1-jin-cheng-chuang-jian">2.3.1 进程创建</a></li>
+<li><a href="#2-3-2-jin-cheng-de-zhong-zhi">2.3.2 进程的终止</a></li>
+<li><a href="#2-3-3-jin-cheng-de-zu-sai">2.3.3 进程的阻塞</a></li>
+<li><a href="#2-3-4-jin-cheng-huan-xing">2.3.4 进程唤醒</a></li>
+<li><a href="#2-3-5-jin-cheng-qie-huan">2.3.5 进程切换</a></li>
+</ul>
+</li>
+<li><a href="#2-4-jin-cheng-de-zu-cheng">2.4 进程的组成</a>
+<ul>
+<li><a href="#2-4-1-pcb-jin-cheng-kong-zhi-kuai">2.4.1 PCB进程控制块</a></li>
+</ul>
+</li>
+<li><a href="#2-5-jin-cheng-zhi-jian-de-tong-xin">2.5 进程之间的通信</a></li>
+<li><a href="#2-6-linux-yan-shen">2.6 linux延申</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="2-1-gai-nian-he-te-zheng">2.1 概念和特征</span><a href="#2-1-gai-nian-he-te-zheng" class="header-anchor">#</a></h1>
+<ul>
+<li>
+<p>是资源分配、调度的独立单位</p>
+</li>
+<li>
+<p>进程包含以下内容：</p>
+<ol>
+<li>程序段（代码段）</li>
+<li>数据段（存数据）</li>
+<li>PCB进程控制块（ 进程存在的唯一标志）</li>
+</ol>
+</li>
+<li>
+<p>进程具有动态性，是一个动态的概念。</p>
+</li>
+<li>
+<p>每个进程具有独立的PCB结构， 资源也独立。</p>
+</li>
+</ul>
+<h1><span id="2-2-jin-cheng-zhuang-tai-ji-tu">2.2 进程状态机图</span><a href="#2-2-jin-cheng-zhuang-tai-ji-tu" class="header-anchor">#</a></h1>
+<p><img src="/images/%E8%BF%9B%E7%A8%8B%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/20210314234102979.png" alt="在这里插入图片描述"></p>
+<h1><span id="2-3-jin-cheng-zhuang-tai-bian-hua-shi-de-ju-ti-guo-cheng">2.3 进程状态变化时的具体过程</span><a href="#2-3-jin-cheng-zhuang-tai-bian-hua-shi-de-ju-ti-guo-cheng" class="header-anchor">#</a></h1>
+<h2><span id="2-3-1-jin-cheng-chuang-jian">2.3.1 进程创建</span><a href="#2-3-1-jin-cheng-chuang-jian" class="header-anchor">#</a></h2>
+<ul>
+<li>创建过程：</li>
+</ul>
+<ol>
+<li>分配进程；申请PCB</li>
+<li>分配资源</li>
+<li>初始化PCB</li>
+<li>插入到系统的就绪队列</li>
+</ol>
+<ul>
+<li>父进程创建子进程：<br>
+子进程可以继承父进程的所有资源。<br>
+父进程退出时，需要杀光子进程。</li>
+</ul>
+<h2><span id="2-3-2-jin-cheng-de-zhong-zhi">2.3.2 进程的终止</span><a href="#2-3-2-jin-cheng-de-zhong-zhi" class="header-anchor">#</a></h2>
+<p>终止有3种触发情况</p>
+<ul>
+<li>正常结束——运行完毕</li>
+<li>异常结束——越界、非法</li>
+<li>外界干预——直接kill进程</li>
+</ul>
+<p>终止的触发过程：</p>
+<ol>
+<li>根据进程标识符，找到PCB控制块，读取进程状态</li>
+<li>如果正常执行，则终止进程。 如果有子进程，则杀死子进程</li>
+<li>归还资源给父进程或者操作系统</li>
+<li>将PCB从系统PCB队列删除</li>
+</ol>
+<h2><span id="2-3-3-jin-cheng-de-zu-sai">2.3.3 进程的阻塞</span><a href="#2-3-3-jin-cheng-de-zu-sai" class="header-anchor">#</a></h2>
+<p>阻塞的过程：</p>
+<ol>
+<li>根据标识符找到PCB</li>
+<li>切换PCB状态为阻塞状态</li>
+<li>把PCB插入到等待队列中</li>
+</ol>
+<h2><span id="2-3-4-jin-cheng-huan-xing">2.3.4 进程唤醒</span><a href="#2-3-4-jin-cheng-huan-xing" class="header-anchor">#</a></h2>
+<p>唤醒的过程：</p>
+<ol>
+<li>根据标识符从等待队列中找到PCB</li>
+<li>移出等待队列，修改运行状态为就绪</li>
+<li>插入到就绪队列</li>
+</ol>
+<h2><span id="2-3-5-jin-cheng-qie-huan">2.3.5 进程切换</span><a href="#2-3-5-jin-cheng-qie-huan" class="header-anchor">#</a></h2>
+<ol>
+<li>保存当前处理器上下文信息，更新PCB并移入队列</li>
+<li>选择另一个进程，更新PCB状态</li>
+<li>更新内存管理</li>
+<li>恢复处理器上下文</li>
+</ol>
+<p>上面可以看到基本是围绕 PCB、等待队列、就绪队列、进程状态更新这4个概念展开的。</p>
+<p>注意调度是一个决策行为， 而切换是一个执行行为， 因此都是先调度，再切换。</p>
+<h1><span id="2-4-jin-cheng-de-zu-cheng">2.4 进程的组成</span><a href="#2-4-jin-cheng-de-zu-cheng" class="header-anchor">#</a></h1>
+<h2><span id="2-4-1-pcb-jin-cheng-kong-zhi-kuai">2.4.1 PCB进程控制块</span><a href="#2-4-1-pcb-jin-cheng-kong-zhi-kuai" class="header-anchor">#</a></h2>
+<p>pcb控制块在进程创建后， 就常驻内存中<br>
+是进程的唯一标志</p>
+<p>PCB控制块包含以下内容：</p>
+<ul>
+<li>进程描述<br>
+包括进程标识符 和 用户标识符</li>
+<li>进程控制和管理<br>
+包括  当前运行状态、 优先级、  入口地址、 外村地址、 进入内存时间、 CPU占用时间、信号量</li>
+<li>资源分配清单<br>
+包括  3个段指针（代码段、数据段、堆栈段），  文件描述符，   键盘/鼠标资源</li>
+<li>处理器相关信息<br>
+寄存器值<br>
+程序状态字</li>
+</ul>
+<p>PCB控制块的组织方式：</p>
+<ul>
+<li>链接方式： 各运行状态都有1个队列， 相关状态PCB都会放在链表队列中（因此可以非顺序取出）。</li>
+<li>索引方式： 建立一个索引表，指向对应pcb， 即用数组去组织</li>
+</ul>
+<h1><span id="2-5-jin-cheng-zhi-jian-de-tong-xin">2.5 进程之间的通信</span><a href="#2-5-jin-cheng-zhi-jian-de-tong-xin" class="header-anchor">#</a></h1>
+<p>进程的通信有3种方式</p>
+<ul>
+<li>
+<p>共享存储方式<br>
+由操作系统系统存储空间调用方式。<br>
+注意用户进程的空间是互相独立的，不会互相访问。</p>
+</li>
+<li>
+<p>消息传递<br>
+直接通信： 发送到对方的消息队列，从消息队列去<br>
+间接通信： 发信到中间邮箱（非双方进程）， 接收方自己去取。</p>
+</li>
+<li>
+<p>管道通信：<br>
+管道： 链接读写进程之间的共享文件<br>
+功能为互斥、同步<br>
+属于一次性操作， 一旦被读取，数据就被从管道中抛弃<br>
+半双工， 只有1方能操作，要么存入要么写。<br>
+如果要实现双方互动，则需要2个管道。</p>
+</li>
+</ul>
+<h1><span id="2-6-linux-yan-shen">2.6 linux延申</span><a href="#2-6-linux-yan-shen" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/cosmoslhf/article/details/41486965">linux进程状态解读</a><br>
+<img src="/images/%E8%BF%9B%E7%A8%8B%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/20210314234119864.png" alt="在这里插入图片描述"></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/yungyu16/p/13024626.html">linux下的PCB控制块</a><br>
+<img src="/images/%E8%BF%9B%E7%A8%8B%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/20210314234141176.png" alt="在这里插入图片描述"></p>
+<p><a target="_blank" rel="noopener" href="https://www.baidu.com/link?url=dS4YKcBwUx_-P05HmWh94_240ltWinPQbqk8zOa98itcDcM3G5JQOxDjrsnulDhVxdES9epB3hcNxjKYy7T_va&amp;wd=&amp;eqid=cfc3a9450028d72300000004603bc886">linux中的进程通信方式</a></p>
+<p><img src="/images/%E8%BF%9B%E7%A8%8B%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/20210314234155422.png" alt="在这里插入图片描述"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/07/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -696,7 +1127,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-15 23:20:14" itemprop="dateModified" datetime="2022-09-15T23:20:14+08:00">2022-09-15</time>
+                <time title="修改时间：2022-09-17 01:00:57" itemprop="dateModified" datetime="2022-09-17T01:00:57+08:00">2022-09-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -736,14 +1167,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>9.7k</span>
+              <span>12k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>9 分钟</span>
+              <span>11 分钟</span>
             </span>
 
         </div>
@@ -758,6 +1189,11 @@
           <div class="toc">
 <!-- toc -->
 <ul>
+<li><a href="#2022-09-16">2022-09-16</a>
+<ul>
+<li><a href="#di-yi-ti-duo-ge-lian-xu-qu-jian-chang-du-mian-ji-wen-ti-sao-miao-xian">第一题： 多个连续区间长度、面积问题——扫描线</a></li>
+</ul>
+</li>
 <li><a href="#2022-09-15">2022-09-15</a></li>
 <li><a href="#2022-09-14">2022-09-14</a>
 <ul>
@@ -796,6 +1232,22 @@
 <!-- tocstop -->
 </div> 
 <p>[toc]</p>
+<h1><span id="2022-09-16">2022-09-16</span><a href="#2022-09-16" class="header-anchor">#</a></h1>
+<h2><span id="di-yi-ti-duo-ge-lian-xu-qu-jian-chang-du-mian-ji-wen-ti-sao-miao-xian">第一题： 多个连续区间长度、面积问题——扫描线</span><a href="#di-yi-ti-duo-ge-lian-xu-qu-jian-chang-du-mian-ji-wen-ti-sao-miao-xian" class="header-anchor">#</a></h2>
+<p>多个连续区间，叠加部分要去掉或者叠加某个价值，这种题常见于那种任务流</p>
+<p>区间的坐标很大导致无法遍历坐标值， 但可以遍历起点和终点坐标。</p>
+<p>如果是求多个连续区间叠加后的横向长度（去除覆盖部分） ，就是最基础的扫描线应用</p>
+<p>每次碰到关键点， 就将当前宽度（只能是0或者1）乘上（当前位置减去上一个位置）</p>
+<p>然后直接更新上一个位置</p>
+<p>并修改宽度（你只要考虑当前线段数量是否为0还是1）</p>
+<p>求叠加线段长度的代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">long</span> <span class="title function_">getYLen</span><span class="params">(List&lt;<span class="type">int</span>[]&gt; yList)</span> &#123;</span><br><span class="line">    Collections.sort(yList, (a,b)-&gt;(a[<span class="number">0</span>] - b[<span class="number">0</span>]));</span><br><span class="line">    <span class="type">int</span> <span class="variable">last</span> <span class="operator">=</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="type">long</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span>[] yp : yList) &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">y</span> <span class="operator">=</span> yp[<span class="number">0</span>];</span><br><span class="line">        <span class="type">boolean</span> <span class="variable">isStart</span> <span class="operator">=</span> yp[<span class="number">2</span>] == <span class="number">0</span>;</span><br><span class="line">        <span class="comment">// 当前线段数量大于等于1，宽度就为1</span></span><br><span class="line">        sum += (count&gt;=<span class="number">1</span>?<span class="number">1</span>:<span class="number">0</span>) * (y - last);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 根据是起点还是终点更新线段数量</span></span><br><span class="line">        <span class="keyword">if</span> (isStart) &#123;</span><br><span class="line">            count++;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            count--;</span><br><span class="line">        &#125;</span><br><span class="line">        last = y;</span><br><span class="line">    &#125;</span><br><span class="line">    sum %= MOD;</span><br><span class="line">    <span class="keyword">return</span> (<span class="type">int</span>)sum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而这题求的是面积</p>
+<p>因此是二维的扫描线应用，即用到了两个方向上的扫描线</p>
+<p>先是按x作为扫描点，从左往右遍历</p>
+<p>每次遇到起点或者终点时， 先尝试计算 当前宽度 * （当前点-上一个点）</p>
+<p>当前宽度则根据上面的y轴叠加线段的计算方式计算</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">rectangleArea</span><span class="params">(<span class="type">int</span>[][] rectangles)</span> &#123;</span><br><span class="line">    List&lt;<span class="type">int</span>[]&gt; xlist = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; rectangles.length;i++) &#123;</span><br><span class="line">        <span class="type">int</span>[] rect = rectangles[i];</span><br><span class="line">        <span class="type">int</span> <span class="variable">xLeft</span> <span class="operator">=</span> rect[<span class="number">0</span>];</span><br><span class="line">        <span class="type">int</span> <span class="variable">xRight</span> <span class="operator">=</span> rect[<span class="number">2</span>];</span><br><span class="line">        xlist.add(<span class="keyword">new</span> <span class="title class_">int</span>[]&#123;xLeft, i, <span class="number">0</span>&#125;);</span><br><span class="line">        xlist.add(<span class="keyword">new</span>  <span class="title class_">int</span>[]&#123;xRight, i, <span class="number">1</span>&#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    Collections.sort(xlist, (a,b)-&gt;(a[<span class="number">0</span>] - b[<span class="number">0</span>]));</span><br><span class="line"></span><br><span class="line">    List&lt;<span class="type">int</span>[]&gt; ylist = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    <span class="type">int</span> <span class="variable">lastX</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="type">long</span> <span class="variable">res</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span>[] xp : xlist) &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">x</span> <span class="operator">=</span> xp[<span class="number">0</span>];</span><br><span class="line">        <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> xp[<span class="number">1</span>];</span><br><span class="line">        <span class="type">boolean</span> <span class="variable">isLeft</span> <span class="operator">=</span> xp[<span class="number">2</span>] == <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span>[] rect = rectangles[i];</span><br><span class="line">        <span class="type">int</span> <span class="variable">yDown</span> <span class="operator">=</span> rect[<span class="number">1</span>];</span><br><span class="line">        <span class="type">int</span> <span class="variable">yUp</span> <span class="operator">=</span> rect[<span class="number">3</span>];</span><br><span class="line">        <span class="keyword">if</span> (isLeft) &#123;</span><br><span class="line">            <span class="comment">// 把之前那段面积先加起来</span></span><br><span class="line">            <span class="type">long</span> <span class="variable">ylen</span> <span class="operator">=</span> getYLen(ylist);</span><br><span class="line">            <span class="type">long</span> <span class="variable">sum</span> <span class="operator">=</span> ylen * (x - lastX);</span><br><span class="line">            sum %= MOD;</span><br><span class="line">            res += sum;</span><br><span class="line">            res %= MOD;</span><br><span class="line">            <span class="comment">// 接着加入这段新的y区间</span></span><br><span class="line">            ylist.add(<span class="keyword">new</span> <span class="title class_">int</span>[]&#123;yUp, i, <span class="number">1</span>&#125;);</span><br><span class="line">            ylist.add(<span class="keyword">new</span> <span class="title class_">int</span>[]&#123;yDown, i, <span class="number">0</span>&#125;);</span><br><span class="line">            lastX = x;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 右点</span></span><br><span class="line">            <span class="comment">// 先计算之前的面积</span></span><br><span class="line">            <span class="type">long</span> <span class="variable">ylen</span> <span class="operator">=</span> getYLen(ylist);</span><br><span class="line">            <span class="type">long</span> <span class="variable">sum</span> <span class="operator">=</span> ylen * (x - lastX);</span><br><span class="line">            sum %= MOD;</span><br><span class="line">            res += sum;</span><br><span class="line">            res %= MOD;</span><br><span class="line">            <span class="comment">// 删除这段y区间</span></span><br><span class="line">            <span class="comment">// 删除的时候要注意用迭代器</span></span><br><span class="line">            Iterator&lt;<span class="type">int</span>[]&gt; it = ylist.iterator();</span><br><span class="line">            <span class="keyword">while</span> (it.hasNext()) &#123;</span><br><span class="line">                <span class="keyword">if</span> (it.next()[<span class="number">1</span>] == i) &#123;</span><br><span class="line">                    it.remove();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            lastX = x;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (<span class="type">int</span>)res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h1><span id="2022-09-15">2022-09-15</span><a href="#2022-09-15" class="header-anchor">#</a></h1>
 <p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/bulb-switcher-ii/">672. 灯泡开关 Ⅱ - 力扣（LeetCode）</a></p>
 <p>这题最佳题解是找规律，逐步定位到只需要判断前面4个灯泡即可。</p>
@@ -1702,422 +2154,6 @@ ApplicationContext接口定义还继承了ApplicationEventPublisher接口</p>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/31/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-31/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/31/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-31/" class="post-title-link" itemprop="url">2022-0831</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-08-31 23:12:42 / 修改时间：22:44:09" itemprop="dateCreated datePublished" datetime="2022-08-31T23:12:42+08:00">2022-08-31</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">刷题日记</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022%E5%B9%B48%E6%9C%88/" itemprop="url" rel="index"><span itemprop="name">2022年8月</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/31/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-31/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/31/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-31/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.8k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#di-yi-ti-shu-zu-wen-ti">第一题:数组问题</a></li>
-<li><a href="#di-er-ti-lian-biao-dao-shu-di-k-ge-yong-2-ge-zhi-zhen-wei-hu-ji-ke">第二题： 链表倒数第k个，用2个指针维护即可</a></li>
-<li><a href="#di-san-ti-zhan-de-yan-zheng">第三题: 栈的验证</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="di-yi-ti-shu-zu-wen-ti">第一题:数组问题</span><a href="#di-yi-ti-shu-zu-wen-ti" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/minimum-domino-rotations-for-equal-row/">1007. 行相等的最少多米诺旋转 - 力扣（LeetCode）</a></p>
-<p><img src="/images/2022-08-31/1661956709671.png" alt="1661956709671"></p>
-<p><img src="/images/2022-08-31/1661956718077.png" alt="1661956718077"></p>
-<p>很简单，搞3个统计数量的数组即可， 一个是去重后的总数，一个是A中各数字的总数，一个是B中各数字的总数</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">minDominoRotations</span><span class="params">(<span class="type">int</span>[] tops, <span class="type">int</span>[] bottoms)</span> &#123;</span><br><span class="line">        <span class="type">int</span>[] counts = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">7</span>];</span><br><span class="line">        <span class="type">int</span>[] counts1 = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">7</span>];</span><br><span class="line">        <span class="type">int</span>[] counts2 = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">7</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; tops.length;i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (tops[i] == bottoms[i]) &#123;</span><br><span class="line">                counts[tops[i]]++;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                counts[tops[i]]++;</span><br><span class="line">                counts[bottoms[i]]++;</span><br><span class="line">            &#125;</span><br><span class="line">            counts1[tops[i]]++;</span><br><span class="line">            counts2[bottoms[i]]++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> Integer.MAX_VALUE;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i&lt;=<span class="number">6</span>;i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (counts[i] == tops.length) &#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">changeCount</span> <span class="operator">=</span> Math.min(tops.length - counts1[i], tops.length - counts2[i]);</span><br><span class="line">                res = Math.min(res, changeCount);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (res == Integer.MAX_VALUE) &#123;</span><br><span class="line">            <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> res;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1><span id="di-er-ti-lian-biao-dao-shu-di-k-ge-yong-2-ge-zhi-zhen-wei-hu-ji-ke">第二题： 链表倒数第k个，用2个指针维护即可</span><a href="#di-er-ti-lian-biao-dao-shu-di-k-ge-yong-2-ge-zhi-zhen-wei-hu-ji-ke" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/swapping-nodes-in-a-linked-list/">1721. 交换链表中的节点 - 力扣（LeetCode）</a></p>
-<p><img src="/images/2022-08-31/1661956816895.png" alt="1661956816895"></p>
-<p>求倒数第k个，那就是先走k步，然后再以起点为另一个指针，两边一起走，直到走到尾部即可</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> ListNode <span class="title function_">swapNodes</span><span class="params">(ListNode head, <span class="type">int</span> k)</span> &#123;</span><br><span class="line">        <span class="type">ListNode</span> <span class="variable">newHead</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ListNode</span>();</span><br><span class="line">        newHead.next = head;</span><br><span class="line">        <span class="type">ListNode</span> <span class="variable">node1</span> <span class="operator">=</span> head;</span><br><span class="line">        <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> k-<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span>(count-- &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            node1 = node1.next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">ListNode</span> <span class="variable">node2</span> <span class="operator">=</span> newHead;</span><br><span class="line">        <span class="type">ListNode</span> <span class="variable">node</span> <span class="operator">=</span> node1;</span><br><span class="line">        <span class="keyword">while</span>(node != <span class="literal">null</span>) &#123;</span><br><span class="line">            node = node.next;</span><br><span class="line">            node2 = node2.next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> <span class="variable">tmp</span> <span class="operator">=</span> node1.val;</span><br><span class="line">        node1.val = node2.val;</span><br><span class="line">        node2.val = tmp;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1><span id="di-san-ti-zhan-de-yan-zheng">第三题:  栈的验证</span><a href="#di-san-ti-zhan-de-yan-zheng" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/validate-stack-sequences/">946. 验证栈序列 - 力扣（LeetCode）</a></p>
-<p><img src="/images/2022-08-31/1661957045969.png" alt="1661957045969"></p>
-<p>数据结构很基础的题目</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">validateStackSequences</span><span class="params">(<span class="type">int</span>[] pushed, <span class="type">int</span>[] popped)</span> &#123;</span><br><span class="line">        Deque&lt;Integer&gt; stack  = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;&gt;();</span><br><span class="line">        <span class="type">int</span> <span class="variable">i1</span> <span class="operator">=</span> <span class="number">0</span>, i2 = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>( i2 = <span class="number">0</span>;i2 &lt; popped.length;i2++) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">pop</span> <span class="operator">=</span> popped[i2];</span><br><span class="line">            <span class="keyword">if</span> (!stack.isEmpty() &amp;&amp; stack.peek() == pop) &#123;</span><br><span class="line">                stack.pop();</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">while</span>(i1 &lt; pushed.length &amp;&amp; pushed[i1] != pop) &#123;</span><br><span class="line">               stack.push(pushed[i1]);</span><br><span class="line">               i1++; </span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (i1 == pushed.length) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            i1++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/31/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/BeanFactory%E5%8E%9F%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/31/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/BeanFactory%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">Ioc基本概念和原理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-08-31 22:30:12 / 修改时间：22:48:29" itemprop="dateCreated datePublished" datetime="2022-08-31T22:30:12+08:00">2022-08-31</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/spring%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">spring原理</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/spring%E5%8E%9F%E7%90%86/Ioc%E6%B3%A8%E5%85%A5%E6%9C%BA%E5%88%B6/" itemprop="url" rel="index"><span itemprop="name">Ioc注入机制</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/31/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/BeanFactory%E5%8E%9F%E7%90%86/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/31/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/BeanFactory%E5%8E%9F%E7%90%86/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#beanfactory-ji-chu-gai-nian">beanFactory基础概念</a>
-<ul>
-<li><a href="#dai-ma-bian-xie-fang-shi">代码编写方式</a></li>
-<li><a href="#2-wai-bu-pei-zhi-wen-jian">2.外部配置文件</a></li>
-<li><a href="#3-zhu-jie-fang-shi">3.注解方式</a></li>
-</ul>
-</li>
-<li><a href="#beanfactory-shi-xian-yuan-li">BeanFactory实现原理</a>
-<ul>
-<li><a href="#ioc-qi-dong-guo-cheng">Ioc启动过程</a>
-<ul>
-<li><a href="#rong-qi-qi-dong-jie-duan">容器启动阶段：</a></li>
-<li><a href="#shi-li-hua-jie-duan-jian-dan-ban">实例化阶段（简单版)</a></li>
-</ul>
-<ul>
-<li><a href="#bean-shi-li-hua-de-xiang-xi-guo-cheng">Bean实例化的详细过程：</a>
-<ul>
-<li><a href="#di-yi-bu-shi-li-hua-qie-fan-hui-bao-zhuang-lei">第一步： 实例化，且返回包装类：</a></li>
-<li><a href="#di-er-bu-ji-yu-beanwrapper-she-zhi-cheng-yuan-shu-xing">第二步：基于BeanWrapper设置成员属性</a></li>
-<li><a href="#di-san-bu-jian-cha-aware-jie-kou">第三步：检查Aware接口</a></li>
-<li><a href="#di-si-bu-beanpostprocessor-chu-li">第四步：BeanPostProcessor处理</a></li>
-<li><a href="#di-wu-bu-chu-shi-hua">第五步： 初始化</a></li>
-<li><a href="#liu-bu-zhu-ce-xi-gou-fang-fa">六步：注册析构方法</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="beanfactory-ji-chu-gai-nian">beanFactory基础概念</span><a href="#beanfactory-ji-chu-gai-nian" class="header-anchor">#</a></h1>
-<p>Spring Ioc容器体系除了IOC serviceProvider，还包括其他的东西。<br>
-<img src="/images/BeanFactory%E5%8E%9F%E7%90%86/20201130235654874.png" alt="在这里插入图片描述"><br>
-图上可以看到除了IocProvider， 还包括了AOP、线程管理、周期管理之类的。</p>
-<hr>
-<p>Spring提供2种容器 BeanFactory和ApplicationContext<br>
-区别：</p>
-<ul>
-<li>BeanFactory:   延迟化加载。适合轻量级场景</li>
-<li>ApplicationContext:    给予BeanFacotry构建， 除了支持BeamFacotry所有功能，还提供了其他特性）<br>
-ApplicationContext所管理 的对象，在该类型容器启动之后，默认全部初始化并绑定完成</li>
-</ul>
-<p>区别就是 1个是要用的时候才加载， 另一个是直接全部扫描并加载好（有点像jvm的client模式和server模式区别）</p>
-<hr>
-<p>BeanFacotry是1个接口， 最重要的方法是getBean（name）<br>
-BeanFacotry的调用方式:<br>
-<img src="/images/BeanFactory%E5%8E%9F%E7%90%86/2020120100004469.png" alt="在这里插入图片描述"></p>
-<hr>
-<p>BeanFactory里的几个重要概念：<br>
-用图书馆的比喻在图里标注了一下<br>
-<img src="/images/BeanFactory%E5%8E%9F%E7%90%86/20201201000348873.png" alt="在这里插入图片描述"></p>
-<hr>
-<p>BeanFactory如何明确依赖关系，绑定依赖?</p>
-<h3><span id="dai-ma-bian-xie-fang-shi">代码编写方式</span><a href="#dai-ma-bian-xie-fang-shi" class="header-anchor">#</a></h3>
-<p>通过BeanDefinitionRegistry（BeamFacotry的实现，）去手动注册，  但是手动注册必须实现BeanDefintionRegistry：<br>
-<img src="/images/BeanFactory%E5%8E%9F%E7%90%86/20201201000056610.png" alt="在这里插入图片描述"><br>
-基于SpringBoot ，怎么拿到BeanFactory进行直接编码？</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">写一下项目里怎么拿到BeanFactory</span><br></pre></td></tr></table></figure>
-<h3><span id="2-wai-bu-pei-zhi-wen-jian">2.外部配置文件</span><a href="#2-wai-bu-pei-zhi-wen-jian" class="header-anchor">#</a></h3>
-<p>支持Properties文件格式和XML文件格式<br>
-Spring会实现1个BeanDefinitionReader类，用于进行 &quot;图书的入库读取操作”， 并注册到BeanDefinetionRegistry里<br>
-propetris:<br>
-<img src="/images/BeanFactory%E5%8E%9F%E7%90%86/20201201000559804.png" alt="在这里插入图片描述"></p>
-<p>需要注意的一点，就是$0和$1后面的 (ref)，(ref)用来表示所依赖的是引用对象，而不是普通的类型。如果不加(ref)， PropertiesBeanDefinitionReader会将djListener和djPersister作为简单的String类型 进行注入<br>
-调用方式：<br>
-<img src="/images/BeanFactory%E5%8E%9F%E7%90%86/20201201000605174.png" alt="在这里插入图片描述"><br>
-把reader绑定到registry，然后变成BeanFactory</p>
-<p>xml:<br>
-，Spring同样为XML 格式的配置文件提供了现成的BeanDefinitionReader实现，即XmlBeanDefinitionReader</p>
-<ul>
-<li>SpringBoot（serviceComb里），这种配置文件到哪去了呢？？</li>
-</ul>
-<h3><span id="3-zhu-jie-fang-shi">3.注解方式</span><a href="#3-zhu-jie-fang-shi" class="header-anchor">#</a></h3>
-<p>@Autowired@Autowired是这里的主角，它的存在将告知Spring容器需要为当前对象注入哪些依赖对象。同时如果要使用这个注解，必须在spring配置中增加context:component-scan</p>
-<p>这个太常见了。<br>
-SpringBoot里配置了context:component-scan吗？</p>
-<hr>
-<h1><span id="beanfactory-shi-xian-yuan-li">BeanFactory实现原理</span><a href="#beanfactory-shi-xian-yuan-li" class="header-anchor">#</a></h1>
-<p>官方关于IOC的参考图：<img src="/images/BeanFactory%E5%8E%9F%E7%90%86/20201201231716188.png" alt="在这里插入图片描述"><br>
-它会以某种方式加载Configuration Metadata（通常也就是XML格式的配置信息）<br>
-然后根据这些信息绑定整个系统的对象，终组装成 一个可用的基于轻量级容器的应用系统。</p>
-<h2><span id="ioc-qi-dong-guo-cheng">Ioc启动过程</span><a href="#ioc-qi-dong-guo-cheng" class="header-anchor">#</a></h2>
-<p>总共分为2个阶段：<br>
-容器启动和实例化阶段。<br>
-并且在这里2个阶段中，加入了足够多的可扩展点。<br>
-<img src="/images/BeanFactory%E5%8E%9F%E7%90%86/20201201231804371.png" alt="在这里插入图片描述"></p>
-<h4><span id="rong-qi-qi-dong-jie-duan">容器启动阶段：</span><a href="#rong-qi-qi-dong-jie-duan" class="header-anchor">#</a></h4>
-<p><img src="/images/BeanFactory%E5%8E%9F%E7%90%86/20201201231818619.png" alt="在这里插入图片描述"><br>
-从图里可以看到， Ioc从配置中将需要加载的元素映射成BeanDefintion， 并一一注册到BeanDefinitionRegistry中。</p>
-<h4><span id="shi-li-hua-jie-duan-jian-dan-ban">实例化阶段（简单版)</span><a href="#shi-li-hua-jie-duan-jian-dan-ban" class="header-anchor">#</a></h4>
-<blockquote>
-<p>当某个请求方通过容器的getBean方法明确地请求某个对象，或者<strong>因依赖关系容器 需要隐式地调用getBean方法时</strong>，就会触发第二阶段的活动。</p>
-</blockquote>
-<ul>
-<li>上面这句话可以看到， 不仅仅是getBean会触发，因为依赖所引发的也会进行初始化（有点像Java的Class初始化机制，既可以class.forName()，也可以间接触发？）</li>
-</ul>
-<p>实例化的简单过程如下：<br>
-<img src="/images/BeanFactory%E5%8E%9F%E7%90%86/20201201232231192.png" alt="在这里插入图片描述"><br>
-这张图的要点就是：</p>
-<ol>
-<li>已经初始化过的，就不会再初始化了。</li>
-<li>如果有一些回调的接口，会去调用再初始化装备</li>
-</ol>
-<h3><span id="bean-shi-li-hua-de-xiang-xi-guo-cheng">Bean实例化的详细过程：</span><a href="#bean-shi-li-hua-de-xiang-xi-guo-cheng" class="header-anchor">#</a></h3>
-<p><img src="/images/BeanFactory%E5%8E%9F%E7%90%86/20201201232817436.png" alt="在这里插入图片描述"></p>
-<h5><span id="di-yi-bu-shi-li-hua-qie-fan-hui-bao-zhuang-lei">第一步： 实例化，且返回包装类：</span><a href="#di-yi-bu-shi-li-hua-qie-fan-hui-bao-zhuang-lei" class="header-anchor">#</a></h5>
-<p><img src="/images/BeanFactory%E5%8E%9F%E7%90%86/20201201233547577.png" alt="在这里插入图片描述"></p>
-<p>容器在内部实现的时候，采用“策略模式（Strategy Pattern）”来决定采用何种方式初始化bean实例。<br>
-通常，可以通过反射或者CGLIB动态字节码生成来初始化相应的bean实例或者动态生成其子类<br>
-下面是一些用于初始化Bean时里的接口或者实现类</p>
-<blockquote>
-<p>InstantiationStrategy是实例化的策略抽象接口<br>
-SimpleInstantiationStrategy是实现类，只能反射来实例化对象实例，但不支持方法注入方式的对象实例化<br>
-CglibSubclassingInstantiation通过CGLIB 的动态字节码生成功能，该策略实现类可以动态生成某个类的子类，进而满足了方法注入所需的对象 实例化需求。（默认都用这个）<br>
-PS：确认一下工作项目里用的是什么接口的</p>
-</blockquote>
-<ul>
-<li>实例化不是直接返回构造完成的对象实例，<em><strong>而是以BeanWrapper对构造完成的对象实例 进行包裹，返回相应的BeanWrapper实例</strong></em></li>
-</ul>
-<h5><span id="di-er-bu-ji-yu-beanwrapper-she-zhi-cheng-yuan-shu-xing">第二步：基于BeanWrapper设置成员属性</span><a href="#di-er-bu-ji-yu-beanwrapper-she-zhi-cheng-yuan-shu-xing" class="header-anchor">#</a></h5>
-<p><img src="/images/BeanFactory%E5%8E%9F%E7%90%86/20201201233553114.png" alt="在这里插入图片描述"></p>
-<p>实例化BeanWrapper后，会做类似如下操作<br>
-<img src="/images/BeanFactory%E5%8E%9F%E7%90%86/20201201233142888.png" alt="在这里插入图片描述"></p>
-<ul>
-<li>从这张图可以看到之前为什么说 set注入很好用<br>
-这里只要调用setPropertyValue(成员名， 成员) 即可进行注入， 不用去反射特定的方法。</li>
-</ul>
-<h5><span id="di-san-bu-jian-cha-aware-jie-kou">第三步：检查Aware接口</span><a href="#di-san-bu-jian-cha-aware-jie-kou" class="header-anchor">#</a></h5>
-<p><img src="/images/BeanFactory%E5%8E%9F%E7%90%86/20201201233559827.png" alt="在这里插入图片描述"></p>
-<p>如果检测到有这个接口，则将这些Aware接口定义中规定的依赖注入给当前对象实例，都是一些特殊元素的注入。</p>
-<p>啥意思呢……就是指有一些和Ioc（Bean或BeanFactory）相关的属性，可以通过Aware放进你要实例化的实例中。 这个我记得后面有例子，先略过，只放下几个Spring里的经典Aware：</p>
-<blockquote>
-<ul>
-<li>BeanNameAware 检测到当前对象实 例实现了该接口，会将该对象实例的bean定义对应的beanName设置到当前对象实例</li>
-<li>BeanClassLoaderAware 会将对应加载当前bean的Classloader注入当前对象实例</li>
-<li>BeanFactoryAware，BeanFactory容器会将自身（即BeanFactory）设置到当前对象实例。这样，当前对象 实例就拥有了一个BeanFactory容器的引用，并且可以对这个容器内允许访问的对象按照需要 进行访问</li>
-</ul>
-</blockquote>
-<h5><span id="di-si-bu-beanpostprocessor-chu-li">第四步：BeanPostProcessor处理</span><a href="#di-si-bu-beanpostprocessor-chu-li" class="header-anchor">#</a></h5>
-<p>BeanPostProcessor， yyds！<br>
-<img src="/images/BeanFactory%E5%8E%9F%E7%90%86/20201201234008721.png" alt="在这里插入图片描述"><br>
-BeanPostProcessor 是容器提供的对象实例化阶段的强有力的扩展点。</p>
-<blockquote>
-<p>BeanPostProcessor和BeanFactoryPostProcessor的区别：<br>
-BeanPostProcessor是存在于对象实例化阶段<br>
-而BeanFactoryPostProcessor则是存在于容器启动阶段</p>
-</blockquote>
-<ul>
-<li>BeanPostProcessor可进行实例前处理和后处理，方法为postProcessBeforeInitialization（）和postProcessAfterInitialization（）</li>
-<li>通常比较常见的使用BeanPostProcessor的场景，是处理标记接口实现类，或者为当前对象提供 代理实现（<strong>注意这个代理，为后面的Aop做铺垫</strong>）</li>
-</ul>
-<p>例如有个叫ApplicationContextAwareProcessor的， 会做一些和ApplicationContext相关的Bean前置处理（但是注意这时候已经实例化好了，只是还没调用自定义init方法！）<br>
-<img src="/images/BeanFactory%E5%8E%9F%E7%90%86/20201201234443692.png" alt="在这里插入图片描述"><br>
-之前用过ApplicationContextAware，来在容器启动时，获取AplicationContext，进行你需要的处理。</p>
-<p>书里介绍了一下自定义的BeanPostProcessor步骤，我就贴下里面BeanProcessor的实现：<br>
-<img src="/images/BeanFactory%E5%8E%9F%E7%90%86/20201201235157966.png" alt="在这里插入图片描述"><br>
-看他就是自己实现了个BeanPostProcessor，然后用instance去判断是不是自己要处理的对象（每个都扫描了一遍~~）</p>
-<p>问题： SpringBoot里要自己用代码注册BeanPostProcessor或者写到applicationContext配置里吗？</p>
-<h5><span id="di-wu-bu-chu-shi-hua">第五步： 初始化</span><a href="#di-wu-bu-chu-shi-hua" class="header-anchor">#</a></h5>
-<p>“BeanPostProcessor之后，  会检查实例对象是否实现了InitializingBean接口，如果是，调用其afterProper- tiesSet()方法进一步调整对象实例的状态。</p>
-<p><img src="/images/BeanFactory%E5%8E%9F%E7%90%86/20201201235423266.png" alt="在这里插入图片描述"></p>
-<p>缺点：如果真的让我们的业务对象实现这个接口，则显得 Spring容器比较具有侵入性。<br>
-改进：用init-method属性在xml中配置， 选择调用某个已实现方法来做初始化操作，并且不需要初始化时可以剔除。</p>
-<ul>
-<li>注意init的顺序和BeanPostProcessor</li>
-<li><img src="/images/BeanFactory%E5%8E%9F%E7%90%86/20201201235507786.png" alt="在这里插入图片描述"></li>
-</ul>
-<h5><span id="liu-bu-zhu-ce-xi-gou-fang-fa">六步：注册析构方法</span><a href="#liu-bu-zhu-ce-xi-gou-fang-fa" class="header-anchor">#</a></h5>
-<p>例如数据池对象，需要在结束时，执行close操作<br>
-<img src="/images/BeanFactory%E5%8E%9F%E7%90%86/20201201235528930.png" alt="在这里插入图片描述"></p>
-<p>但Spring容器在关闭之前， 不会自动调用这些回调方法。<br>
-所以，需要我们告知容器，在哪个时间点来执行对象的自定义销 毁方法</p>
-<p>对于BeanFactory容器来说，调用ConfigurableBeanFactory提供的 destroySingletons()方法销毁容器中管理的所有singleton类型的对象实例。</p>
-<p><img src="/images/BeanFactory%E5%8E%9F%E7%90%86/20201201235533802.png" alt="在这里插入图片描述"></p>
-<p>对于ApplicationContext容器来说  可用registerShutdownHook（涉及底层runtime方法）<br>
-保证在Java虚拟机退出之前，这些singtleton类型的bean对象 实例的自定义销毁逻辑会被执行</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2189,14 +2225,14 @@ BeanPostProcessor是存在于对象实例化阶段<br>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">134</span>
+          <span class="site-state-item-count">136</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">42</span>
+        <span class="site-state-item-count">43</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -2260,7 +2296,7 @@ BeanPostProcessor是存在于对象实例化阶段<br>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共243.6k字</span>
+  <span class="post-count">博客全站共244.9k字</span>
 </div>
 
         

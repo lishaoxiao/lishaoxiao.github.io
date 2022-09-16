@@ -358,6 +358,271 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/17/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%89%AB%E6%8F%8F%E7%BA%BF%EF%BC%88%E5%8F%A0%E5%8A%A0%E5%8C%BA%E9%97%B4%E9%97%AE%E9%A2%98%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/09/17/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%89%AB%E6%8F%8F%E7%BA%BF%EF%BC%88%E5%8F%A0%E5%8A%A0%E5%8C%BA%E9%97%B4%E9%97%AE%E9%A2%98%EF%BC%89/" class="post-title-link" itemprop="url">扫描线（叠加区间问题）</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-17 23:12:42 / 修改时间：01:01:59" itemprop="dateCreated datePublished" datetime="2022-09-17T23:12:42+08:00">2022-09-17</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">算法大全</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%95%B0%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">数学</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/17/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%89%AB%E6%8F%8F%E7%BA%BF%EF%BC%88%E5%8F%A0%E5%8A%A0%E5%8C%BA%E9%97%B4%E9%97%AE%E9%A2%98%EF%BC%89/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/17/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%89%AB%E6%8F%8F%E7%BA%BF%EF%BC%88%E5%8F%A0%E5%8A%A0%E5%8C%BA%E9%97%B4%E9%97%AE%E9%A2%98%EF%BC%89/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>366</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#sao-miao-xian-gai-nian">扫描线概念</a></li>
+<li><a href="#bu-zou">步骤</a></li>
+<li><a href="#xiang-guan-ti-mu">相关题目</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="sao-miao-xian-gai-nian">扫描线概念</span><a href="#sao-miao-xian-gai-nian" class="header-anchor">#</a></h1>
+<p>多个连续区间，计算叠加部分要去掉或者叠加某个价值，这种题常见于那种任务流</p>
+<p>区间的坐标很大（一般是10^9）导致无法遍历坐标值， 但你可以遍历起点和终点坐标。</p>
+<p>则可以将这些起点和终点作为纳入扫描点，逐个按从左到右的顺序扫描,并更新所谓的“高度&quot;&quot;，每次做宽度 乘 高度的计算</p>
+<h1><span id="bu-zou">步骤</span><a href="#bu-zou" class="header-anchor">#</a></h1>
+<ol>
+<li>将终点和起点都放入数组排序， 并注意保留是起点还是终点的信息（有可能起点和终点相同，如果没保留这个标志可能导致出错）</li>
+<li>从左到右扫描各点</li>
+<li>扫描到某点时， 先不着急更新<strong>高度</strong>，  而是先计算&quot;当前高度乘上（当前位置减去上一个位置）&quot;。注意这个过程不需要区分是起点还是终点，都可以直接算。</li>
+<li>计算完成后， 根据是起点还是终点，来更新所谓的高度</li>
+<li>更新上一个位置</li>
+</ol>
+<hr>
+<h1><span id="xiang-guan-ti-mu">相关题目</span><a href="#xiang-guan-ti-mu" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/rectangle-area-ii/">850. 矩形面积 II - 力扣（LeetCode）</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/16/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E7%AE%97%E6%B3%95%E9%A2%98%E5%B8%B8%E8%A7%81%E6%83%85%E5%86%B5%E5%BA%94%E5%AF%B9%E6%80%9D%E8%B7%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/09/16/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E7%AE%97%E6%B3%95%E9%A2%98%E5%B8%B8%E8%A7%81%E6%83%85%E5%86%B5%E5%BA%94%E5%AF%B9%E6%80%9D%E8%B7%AF/" class="post-title-link" itemprop="url">算法题常见情况应对思路</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-09-16 23:12:42" itemprop="dateCreated datePublished" datetime="2022-09-16T23:12:42+08:00">2022-09-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-09-17 01:08:35" itemprop="dateModified" datetime="2022-09-17T01:08:35+08:00">2022-09-17</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">算法大全</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%85%B6%E4%BB%96/" itemprop="url" rel="index"><span itemprop="name">其他</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/16/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E7%AE%97%E6%B3%95%E9%A2%98%E5%B8%B8%E8%A7%81%E6%83%85%E5%86%B5%E5%BA%94%E5%AF%B9%E6%80%9D%E8%B7%AF/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/16/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E7%AE%97%E6%B3%95%E9%A2%98%E5%B8%B8%E8%A7%81%E6%83%85%E5%86%B5%E5%BA%94%E5%AF%B9%E6%80%9D%E8%B7%AF/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>340</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#jie-da-cuo-wu">解答错误</a>
+<ul>
+<li><a href="#pai-cha-yi-shu-zhi-yi-chu">排查一：数值溢出</a></li>
+</ul>
+</li>
+<li><a href="#pai-cha-er-er-fen-fa-xun-zhao-guan-jian-yong-li">排查二： 二分法寻找关键用例</a></li>
+<li><a href="#chao-shi">超时</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="jie-da-cuo-wu">解答错误</span><a href="#jie-da-cuo-wu" class="header-anchor">#</a></h1>
+<h2><span id="pai-cha-yi-shu-zhi-yi-chu">排查一：数值溢出</span><a href="#pai-cha-yi-shu-zhi-yi-chu" class="header-anchor">#</a></h2>
+<p>排查是否存在数值溢出， int要改成用long， 或者根据题意在某个可能溢出的部分没有mod(10^9+7)</p>
+<h1><span id="pai-cha-er-er-fen-fa-xun-zhao-guan-jian-yong-li">排查二： 二分法寻找关键用例</span><a href="#pai-cha-er-er-fen-fa-xun-zhao-guan-jian-yong-li" class="header-anchor">#</a></h1>
+<p>如果给出了用例， 但是用例里的值或者数组特别多，也不存在溢出问题，说明是题意理解有错，且肯定和某个关键值有关（如果不是某个关键值，那么简单用例就该出错了）</p>
+<p>例如：</p>
+<p><img src="/images/%E7%AE%97%E6%B3%95%E9%A2%98%E5%B8%B8%E8%A7%81%E6%83%85%E5%86%B5%E5%BA%94%E5%AF%B9%E6%80%9D%E8%B7%AF/1663347973949.png" alt="1663347973949"></p>
+<p>则你应对不断二分删除里面的数据， 对比结果，直到缩小用例范围，便可以调试或者打印信息来确认问题原因了。</p>
+<p>上面这边最后可以定位到这样小的范围：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[[<span class="number">166</span>,<span class="number">0</span>,<span class="number">166</span>,<span class="number">808</span>],[<span class="number">441</span>,<span class="number">0</span>,<span class="number">644</span>,<span class="number">435</span>]]</span><br></pre></td></tr></table></figure>
+<p>从而发现是[166,0,166,808]这个数据，明明题目说是矩形，却可以允许x1和x2相等。。</p>
+<h1><span id="chao-shi">超时</span><a href="#chao-shi" class="header-anchor">#</a></h1>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/epoll%E5%8E%9F%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1464,322 +1729,6 @@ tar 压缩文件</p>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F%E5%92%8C%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F%E5%92%8C%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">外观模式和代理模式</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-09-13 22:37:49 / 修改时间：23:23:07" itemprop="dateCreated datePublished" datetime="2022-09-13T22:37:49+08:00">2022-09-13</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%93%E6%9E%84%E5%9E%8B%EF%BC%88%E5%92%8C%E7%B1%BB%E7%9A%84%E7%BB%A7%E6%89%BF%E3%80%81%E6%8E%A5%E5%8F%A3%E5%AE%9E%E7%8E%B0%E3%80%81%E5%B0%81%E8%A3%85%E6%9C%89%E5%85%B3%EF%BC%89/" itemprop="url" rel="index"><span itemprop="name">结构型（和类的继承、接口实现、封装有关）</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F%E5%92%8C%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F%E5%92%8C%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>670</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#wai-guan-mo-shi">外观模式</a></li>
-<li><a href="#dai-li-mo-shi">代理模式</a></li>
-<li><a href="#dai-li-mo-shi-he-qi-ta-mo-shi-de-qu-bie">代理模式和其他模式的区别</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="wai-guan-mo-shi">外观模式</span><a href="#wai-guan-mo-shi" class="header-anchor">#</a></h1>
-<p>也叫门面模式。</p>
-<ul>
-<li>当我们有很多的类，各种类之间的方法互相关联，存在复杂的调用先后顺序时</li>
-</ul>
-<ol>
-<li>一种方法是告诉别人 这些类的用法， 让他们自己注意使用顺序。（比如你要先调A再调B才有用）</li>
-<li>另一种是提供一个统一对外的接口，  在接口里去组装这些顺序。</li>
-</ol>
-<p>这就是facade模式，看起来像一个窗口或者客户端，   外界不知道这些类的关系，但是只需要调门面的几个方法即可。<br>
-<img src="/images/%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F%E5%92%8C%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/a4624283bf8c71587ad996a7279f4891ab4f1cf3.png" alt="a4624283bf8c71587ad996a7279f4891ab4f1cf3"><br>
-也不一定是为了复杂的调用顺序，可能就是为了让调用者不用关心用哪个类，只关心调哪个方法，如下：<br>
-<img src="/images/%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F%E5%92%8C%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/2a2f769be48fb696ae6d25a31f79e378ae6d6cdd.png" alt="2a2f769be48fb696ae6d25a31f79e378ae6d6cdd"></p>
-<ul>
-<li>因为是将很多类作为成员封装进一个门面类里， 所以是结构型的设计模式。</li>
-</ul>
-<p>举例：  做饭（买菜、洗碗、烧菜，希望封装到一个仆人类里来做）</p>
-<hr>
-<h1><span id="dai-li-mo-shi">代理模式</span><a href="#dai-li-mo-shi" class="header-anchor">#</a></h1>
-<p>在代理模式（Proxy Pattern）中，一个类代表另一个类的功能。这种类型的设计模式属于结构型模式。<br>
-在代理模式中，我们创建具有现有对象的对象，以便向外界提供功能接口。</p>
-<p>代理模式中，  提供的行为和被代理对象是基本一致的，只是会额外做一些处理（例如打日志、监控），再调用被代理对象的方法。</p>
-<hr>
-<h1><span id="dai-li-mo-shi-he-qi-ta-mo-shi-de-qu-bie">代理模式和其他模式的区别</span><a href="#dai-li-mo-shi-he-qi-ta-mo-shi-de-qu-bie" class="header-anchor">#</a></h1>
-<ul>
-<li>和适配器模式的区别：适配器模式主要改变所考虑对象的接口，而代理模式不能改变所代理类的接口。</li>
-<li>和装饰器模式的区别：装饰器模式为了增强功能，而代理模式是为了加以控制。</li>
-<li>和外观模式的区别： 外观模式是可以封装好几个类，提供特定的单方法或者组合方法。  而代理模式大多是针对一个类做代理，且对外方法与被代理对象 基本一致。</li>
-<li>和仲裁者模式的区别： 仲裁者更多是三方 ABC交互，由B承担沟通工作，A不需要直接调用C。   代理模式则只涉及代理和被代理者。</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F%E5%92%8C%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F%E5%92%8C%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">组合模式和装饰者模式</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-09-13 22:27:49 / 修改时间：23:21:24" itemprop="dateCreated datePublished" datetime="2022-09-13T22:27:49+08:00">2022-09-13</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%93%E6%9E%84%E5%9E%8B%EF%BC%88%E5%92%8C%E7%B1%BB%E7%9A%84%E7%BB%A7%E6%89%BF%E3%80%81%E6%8E%A5%E5%8F%A3%E5%AE%9E%E7%8E%B0%E3%80%81%E5%B0%81%E8%A3%85%E6%9C%89%E5%85%B3%EF%BC%89/" itemprop="url" rel="index"><span itemprop="name">结构型（和类的继承、接口实现、封装有关）</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F%E5%92%8C%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F%E5%92%8C%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>960</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#zu-he-mo-shi-he-zhuang-shi-zhe-mo-shi">组合模式和装饰者模式</a>
-<ul>
-<li><a href="#yi-zu-he-mo-shi">一、组合模式</a></li>
-<li><a href="#you-dian">优点</a></li>
-<li><a href="#que-dian">缺点</a></li>
-</ul>
-</li>
-<li><a href="#er-zhuang-shi-zhe-mo-shi">二、装饰者模式</a>
-<ul>
-<li><a href="#q-zhuang-shi-mo-shi-he-zu-he-mo-shi-du-shi-cheng-yuan-li-hui-bao-han-zi-ji-zhe-ge-lei-huo-zhe-zi-lei-qu-bie-shi">Q: 装饰模式和组合模式都是成员里会包含自己这个类或者子类，区别是？</a></li>
-<li><a href="#q-zhuang-shi-zhao-mo-shi-he-proxy-dai-li-mo-shi-you-you-shi-me-qu-bie-dai-li-mo-shi-ye-shi-yong-cheng-yuan-de-fang-fa-diao-yong-zhi-hou-zai-zuo-yi-xie-e-wai-chu-li">Q: 装饰着模式和proxy代理模式又有什么区别？ 代理模式也是用成员的方法调用之后，再做一些额外处理</a></li>
-</ul>
-</li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="zu-he-mo-shi-he-zhuang-shi-zhe-mo-shi">组合模式和装饰者模式</span><a href="#zu-he-mo-shi-he-zhuang-shi-zhe-mo-shi" class="header-anchor">#</a></h1>
-<h2><span id="yi-zu-he-mo-shi">一、组合模式</span><a href="#yi-zu-he-mo-shi" class="header-anchor">#</a></h2>
-<p>该模式的意义：<br>
-用于树类，  或者支持将多个A对象合成1个A对象的 情形下<br>
-<img src="/images/%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F%E5%92%8C%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/8953af0abe9db9e2badbc02eacbeb5a0325e0ab6.png" alt="8953af0abe9db9e2badbc02eacbeb5a0325e0ab6"><br>
-该模式的意义：<br>
-用于树类，  或者支持将多个A对象合成1个A对象的 情形下</p>
-<p>主要方法：</p>
-<ul>
-<li>基类（ 包含add或insert方法 ）</li>
-<li>子类 包括  叶子类   和  非叶类</li>
-<li>非叶类 即可以add  叶子， 叶可以 add非叶。</li>
-<li>其实就是 子类里可以包含父类容器，不断添加、延伸。</li>
-</ul>
-<p>计算引擎中的GNODE、logicalNode就是这种。</p>
-<p><img src="/images/%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F%E5%92%8C%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/32a2333013afb0eb27642c817eb4e8de9d0f1cc7.png" alt="32a2333013afb0eb27642c817eb4e8de9d0f1cc7"></p>
-<h2><span id="you-dian">优点</span><a href="#you-dian" class="header-anchor">#</a></h2>
-<ol>
-<li>
-<p>客户端调用简单，客户端可以一致的使用组合结构或其中单个对象。</p>
-</li>
-<li>
-<p>可以形成复杂的树形结构。</p>
-</li>
-<li>
-<p>更容易在组合体内加入对象构件，客户端不必因为加入了新的对象构件而更改原有代码。</p>
-</li>
-</ol>
-<h2><span id="que-dian">缺点</span><a href="#que-dian" class="header-anchor">#</a></h2>
-<p>使设计变得更加抽象，对象的业务规则如果很复杂，则实现组合模式具有很大挑战性<br>
-而且不是所有的方法都与叶子对象子类都有关联<br>
-要注意使用场景</p>
-<h1><span id="er-zhuang-shi-zhe-mo-shi">二、装饰者模式</span><a href="#er-zhuang-shi-zhe-mo-shi" class="header-anchor">#</a></h1>
-<p>如果我们 对某个 类， 以后可能会有很多小的修改加上去， 而且都是“装饰”性质的， 即加“功能”，而且这些功能可以一层层叠加<br>
-如果加功能频率很多，我们可以用装饰者模式。 经典应用就是java中的stream流<br>
-new XXXStream(new BufferStream(new FileOutputStream()))<br>
-<img src="/images/%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F%E5%92%8C%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/d96605fa973db16ce93300c7e89582aa219dec2f.png" alt="d96605fa973db16ce93300c7e89582aa219dec2f"></p>
-<h2><span id="q-zhuang-shi-mo-shi-he-zu-he-mo-shi-du-shi-cheng-yuan-li-hui-bao-han-zi-ji-zhe-ge-lei-huo-zhe-zi-lei-qu-bie-shi">Q: 装饰模式和组合模式都是成员里会包含自己这个类或者子类，区别是？</span><a href="#q-zhuang-shi-mo-shi-he-zu-he-mo-shi-du-shi-cheng-yuan-li-hui-bao-han-zi-ji-zhe-ge-lei-huo-zhe-zi-lei-qu-bie-shi" class="header-anchor">#</a></h2>
-<p>A:<br>
-组合模式， 重点体现在用成员类组成一个树形或者图型结构（重点不在于做事情）， 使用者会关心成员类的内容且可能会遍历。<br>
-装饰者模式，重点体现在用成员类的方法做相同的事情，自己再做一些补充， 且可以不断叠加。 叠加后只提供一个最终叠加后的对象给别人使用， 别人不用关心里面叠加的那些中间对象。</p>
-<hr>
-<h2><span id="q-zhuang-shi-zhao-mo-shi-he-proxy-dai-li-mo-shi-you-you-shi-me-qu-bie-dai-li-mo-shi-ye-shi-yong-cheng-yuan-de-fang-fa-diao-yong-zhi-hou-zai-zuo-yi-xie-e-wai-chu-li">Q: 装饰着模式和proxy代理模式又有什么区别？ 代理模式也是用成员的方法调用之后，再做一些额外处理</span><a href="#q-zhuang-shi-zhao-mo-shi-he-proxy-dai-li-mo-shi-you-you-shi-me-qu-bie-dai-li-mo-shi-ye-shi-yong-cheng-yuan-de-fang-fa-diao-yong-zhi-hou-zai-zuo-yi-xie-e-wai-chu-li" class="header-anchor">#</a></h2>
-<p>A:</p>
-<ul>
-<li>使用代理模式，代理和真实对象之间的的关系通常在编译时就已经确定了。 注意AOP里的所有代理对象其实都是编译时定好了用哪个代理</li>
-<li>而 装饰者能够在运行时递归地被构造，即运行期可以设置不同的装饰对象做装饰， 但是代理的话，代理是固定的，只不过可能会选用不同的代理罢了。</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1851,14 +1800,14 @@ new XXXStream(new BufferStream(new FileOutputStream()))<br>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">134</span>
+          <span class="site-state-item-count">136</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">42</span>
+        <span class="site-state-item-count">43</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -1922,7 +1871,7 @@ new XXXStream(new BufferStream(new FileOutputStream()))<br>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共243.6k字</span>
+  <span class="post-count">博客全站共244.9k字</span>
 </div>
 
         

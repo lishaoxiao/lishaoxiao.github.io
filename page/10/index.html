@@ -181,6 +181,766 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/JDK%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E5%BA%94%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/JDK%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">JDK基础工具应用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-15 23:44:16" itemprop="dateCreated datePublished" datetime="2022-08-15T23:44:16+08:00">2022-08-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-16 00:02:50" itemprop="dateModified" datetime="2022-08-16T00:02:50+08:00">2022-08-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">java高级应用</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/JDK%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/JDK%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#q-jian-cha-nei-cun-xie-lu-de-gong-ju-you">Q：检查内存泄露的工具有？</a></li>
+<li><a href="#q-mou-jin-cheng-cpu-shi-yong-lu-yi-zhi-zhan-man-yong-shi-me-gong-ju-ke-yi-pai-cha">Q：某进程CPU使用率一直占满，用什么工具可以排查？</a></li>
+</ul>
+<ul>
+<li><a href="#ge-gong-ju-xiang-xi-jie-shao">各工具详细介绍</a>
+<ul>
+<li><a href="#jstack">jstack</a></li>
+<li><a href="#jstat">jstat</a></li>
+<li><a href="#jmap">jmap</a>
+<ul>
+<li><a href="#q-yong-jmap-jian-cha-nei-cun-xie-lou-shi-li">Q： 用jmap检查内存泄漏实例</a></li>
+</ul>
+</li>
+<li><a href="#jhat">jhat</a></li>
+<li><a href="#jdb">jdb</a></li>
+<li><a href="#jcmd">jcmd</a></li>
+<li><a href="#jps">jps</a></li>
+<li><a href="#jinfo">jinfo</a></li>
+<li><a href="#javap">javap</a></li>
+<li><a href="#javac">javac</a></li>
+</ul>
+</li>
+<li><a href="#idea-debug-gong-neng">IDEA-DEBUG功能</a>
+<ul>
+<li><a href="#q-idea-de-debug-zhong-ke-yi-evaluate-xiu-gai-jin-cheng-xing-wei-shi-tong-guo-shi-me-xiu-gai-de">Q: idea的debug中可以evaluate修改进程行为，是通过什么修改的？</a></li>
+<li><a href="#q-shi-xian-liao-asm-kuang-jia-jiu-hui-zi-dong-zhi-chi-xiu-gai-ma">Q: 实现了ASM框架，就会自动支持修改吗？</a></li>
+<li><a href="#q-zen-me-cai-neng-rang-jvm-neng-gou-diao-yong-wo-men-ti-gong-de-lei-zhuan-huan-qi-ni">Q: 怎么才能让 JVM 能够调用我们提供的类转换器呢</a></li>
+<li><a href="#q-na-ni-jiang-yi-xia-wo-yao-zi-ji-shi-xian-yi-ge-ke-xiu-gai-dai-ma-de-agent-de-hua-gai-zen-me-zuo">Q: 那你讲一下我要自己实现一个可修改代码的agent的话该怎么做？</a></li>
+</ul>
+</li>
+<li><a href="#jdk-xing-neng-jian-kong-he-diao-you-gong-ju">JDK性能监控和调优工具</a>
+<ul>
+<li><a href="#q-a-li-de-arthas-shang-ye-hua-de-jprofiler-ta-men-neng-jian-kong-de-yuan-li-shi-shi-me">Q: 阿里的Arthas、   商业化的jprofiler 他们能监控的原理是什么？</a></li>
+</ul>
+</li>
+<li><a href="#jdk-ke-shi-hua-gong-ju">JDK可视化工具</a>
+<ul>
+<li><a href="#jconsole">jconsole</a></li>
+<li><a href="#jvisualvm">jvisualvm</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<hr>
+<p>以一问一答的形式学习java工具</p>
+<h2><span id="q-jian-cha-nei-cun-xie-lu-de-gong-ju-you">Q：检查内存泄露的工具有？</span><a href="#q-jian-cha-nei-cun-xie-lu-de-gong-ju-you" class="header-anchor">#</a></h2>
+<p>A： jmap生成dump转储文件，jhat可视化查看。</p>
+<hr>
+<h2><span id="q-mou-jin-cheng-cpu-shi-yong-lu-yi-zhi-zhan-man-yong-shi-me-gong-ju-ke-yi-pai-cha">Q：某进程CPU使用率一直占满，用什么工具可以排查？</span><a href="#q-mou-jin-cheng-cpu-shi-yong-lu-yi-zhi-zhan-man-yong-shi-me-gong-ju-ke-yi-pai-cha" class="header-anchor">#</a></h2>
+<p>A：<br>
+top -Hp pid找到最占CPU的线程<br>
+然后jstack来查找那个线程此时所处的堆栈，确定问题发生位置。</p>
+<hr>
+<h1><span id="ge-gong-ju-xiang-xi-jie-shao">各工具详细介绍</span><a href="#ge-gong-ju-xiang-xi-jie-shao" class="header-anchor">#</a></h1>
+<h2><span id="jstack">jstack</span><a href="#jstack" class="header-anchor">#</a></h2>
+<p>全称： JVM Stack Trance<br>
+作用： 查看某个java进程的堆栈情况， 可用于确认死锁、IO等待、死循环等问题。<br>
+命令用法：</p>
+<ul>
+<li>
+<p>jstack pid</p>
+</li>
+<li>
+<p>查看死锁例子如下图，找到wait的lock和已被锁的lock</p>
+</li>
+<li>
+<p>查看等待IO例子：</p>
+</li>
+</ul>
+<h2><span id="jstat">jstat</span><a href="#jstat" class="header-anchor">#</a></h2>
+<p>全称：<br>
+作用：<br>
+查看进程中内存使用情况，但只能给出一些简单统计数据</p>
+<ul>
+<li>
+<p>统计加载了多少类以及占用空间 jstat -class pid</p>
+</li>
+<li>
+<p>统计编译了多少文件 jstat -compiler 10</p>
+</li>
+</ul>
+<hr>
+<p>Q： jstat -gcutil {pid} 2000 可以每隔2秒，对pid进程打印内存使用统计信息。<br>
+gcutil的输出如下<br>
+<img src="/images/JDK%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E5%BA%94%E7%94%A8/bf7e8bc9d6c5e91598baa006685e943e60df272e.png" alt="bf7e8bc9d6c5e91598baa006685e943e60df272e"><br>
+里面哪个百分比如果长期处于99%-100%会有OMM风险？（OutOfMemoryError)<br>
+A：<br>
+如果E和O即新生代、老年代内存区一直都处于满的状态，则很有可能会引发OMM风险。就像下面这个。<br>
+<img src="/images/JDK%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E5%BA%94%E7%94%A8/5d59d85bd0c23c151b5985f4aa98f0df64717b1e.png" alt="5d59d85bd0c23c151b5985f4aa98f0df64717b1e"></p>
+<hr>
+<h2><span id="jmap">jmap</span><a href="#jmap" class="header-anchor">#</a></h2>
+<p>全称： JVM Memory Map<br>
+作用：生成进程的内存堆快照<br>
+当需要看一下进程里是什么东西占用了过多内存时， 可以用jmap打印一下堆快照。<br>
+命令用法：</p>
+<ul>
+<li>
+<p>打印堆快照： jmap -dump:file=./dumpfile.dump 进程pid</p>
+</li>
+<li>
+<p>查看特定类所占用的情况： jmap -histo:live 进程pid | grep 类名</p>
+</li>
+</ul>
+<hr>
+<h3><span id="q-yong-jmap-jian-cha-nei-cun-xie-lou-shi-li">Q： 用jmap检查内存泄漏实例</span><a href="#q-yong-jmap-jian-cha-nei-cun-xie-lou-shi-li" class="header-anchor">#</a></h3>
+<p>我分了3次，每个1h调用jmap查看进程的内存实例，查看该时刻各对象数量<br>
+第一次查看情况如下：<br>
+<img src="/images/JDK%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E5%BA%94%E7%94%A8/424ece2d981a6aa09227e85b59c4e40e62bc3879.png" alt="424ece2d981a6aa09227e85b59c4e40e62bc3879"><br>
+第二次隔了2各小时，查看情况如下：</p>
+<p><img src="/images/JDK%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E5%BA%94%E7%94%A8/648c5a30bede19cb2c9848dde177167b9cee2dda.png" alt="648c5a30bede19cb2c9848dde177167b9cee2dda"><br>
+请问哪个对象可能有内存泄漏风险？<br>
+A：<br>
+ObjectA可能有泄露， 因为他的对象数量增加最快，说明对象一直在增加且很多无法进行gc释放。</p>
+<h2><span id="jhat">jhat</span><a href="#jhat" class="header-anchor">#</a></h2>
+<p>全称： JVM Heap Analysis Tool<br>
+和jmap配合， 可以解析jmap生成的堆快照， 支持生成1个web进程供我们分析和查看。<br>
+命令用法：</p>
+<ul>
+<li>jhat -J-Xmx515M dumpfile.dump<br>
+此时就会启动1个webServer，然后我们去访问就行了<br>
+<img src="0361a76d6700b236053c852d2dc02a08dfaa9db8.png" alt="0361a76d6700b236053c852d2dc02a08dfaa9db8"></li>
+</ul>
+<h2><span id="jdb">jdb</span><a href="#jdb" class="header-anchor">#</a></h2>
+<p>全称：Java Debugger<br>
+作用：用来对core文件和正在运行的Java进程进行实时地调试，类似于c++里的gdb<br>
+常见用法：</p>
+<ul>
+<li>
+<p>启动进程并调试: jdb -classpath . Test</p>
+</li>
+<li>
+<p>至二级调试某进程: jdb -attach 8000 -sourcepath /Users/wefit/Development/study/java/jtest/src/</p>
+</li>
+</ul>
+<h2><span id="jcmd">jcmd</span><a href="#jcmd" class="header-anchor">#</a></h2>
+<p>作用：多功能的工具，可以用它来导出堆、查看Java进程、导出线程信息、执行GC、还可以进行采样分析，可以理解为1个性能调优时用的工具。<br>
+常见命令：</p>
+<ul>
+<li>
+<p>查看 当前机器上所有的 jvm 进程信息: jcmd -l</p>
+</li>
+<li>
+<p>查看指定进程的性能统计信息: jcmd pid PerfCounter.print</p>
+</li>
+<li>
+<p>列出当前运行的 java 进程可以执行的操作: jcmd PID help</p>
+</li>
+<li>
+<p>查看线程堆栈信息: jcmd PID Thread.print</p>
+</li>
+<li>
+<p>查看堆内存信息： jcmd PID GC.heap_dump FILE_NAME</p>
+</li>
+</ul>
+<h2><span id="jps">jps</span><a href="#jps" class="header-anchor">#</a></h2>
+<p>简单记法： JVM process status<br>
+全名：Java Virtual Machine Process Status Tool<br>
+作用： 显示?当前系统用户?的?所有?Java进程情况及其进程号<br>
+常用命令：</p>
+<ul>
+<li>
+<p>查看进程jvm参数： jps -v</p>
+</li>
+<li>
+<p>输出程序main class的完整package名或程序的jar文件完整路径名： jps -l</p>
+</li>
+<li>
+<p>输出传递给main方法的参数: jps -m</p>
+</li>
+</ul>
+<h2><span id="jinfo">jinfo</span><a href="#jinfo" class="header-anchor">#</a></h2>
+<p>jvm infomation<br>
+作用：和jps功能类似， 但是支持根据指定pis查看指定进程</p>
+<ul>
+<li>
+<p>可以查看JVM参数、系统参数、调整jvm参数</p>
+</li>
+<li>
+<p>但不支持查看java程序的内存使用情况</p>
+</li>
+</ul>
+<h2><span id="javap">javap</span><a href="#javap" class="header-anchor">#</a></h2>
+<p>把java字节码文件反汇编为Java源码文件。</p>
+<h2><span id="javac">javac</span><a href="#javac" class="header-anchor">#</a></h2>
+<p>javac是java编译工具<br>
+javac的执行过程：<br>
+<img src="/images/JDK%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E5%BA%94%E7%94%A8/8c24abf8a5ff633bad6222ad66eac944c715ed91.png" alt="8c24abf8a5ff633bad6222ad66eac944c715ed91"></p>
+<h1><span id="idea-debug-gong-neng">IDEA-DEBUG功能</span><a href="#idea-debug-gong-neng" class="header-anchor">#</a></h1>
+<p>idea的debug功能是怎么实现的？ 为什么可以通过Evaluate 进行条件判断的？按以下问题逐个解答<br>
+完整详解见<a target="_blank" rel="noopener" href="https://blog.csdn.net/zhipengfang/article/details/117174718">IDEA的debug功能，背后的原理是怎样的？</a></p>
+<hr>
+<h2><span id="q-idea-de-debug-zhong-ke-yi-evaluate-xiu-gai-jin-cheng-xing-wei-shi-tong-guo-shi-me-xiu-gai-de">Q: idea的debug中可以evaluate修改进程行为，是通过什么修改的？</span><a href="#q-idea-de-debug-zhong-ke-yi-evaluate-xiu-gai-jin-cheng-xing-wei-shi-tong-guo-shi-me-xiu-gai-de" class="header-anchor">#</a></h2>
+<p>A:<br>
+ASM框架——动态修改类、方法，甚至可以重新定义类，连 CGLib 底层都是用 ASM 实现的。 访问者模式。需要实现visitMethod()/visitAnnotation()</p>
+<hr>
+<h2><span id="q-shi-xian-liao-asm-kuang-jia-jiu-hui-zi-dong-zhi-chi-xiu-gai-ma">Q: 实现了ASM框架，就会自动支持修改吗？</span><a href="#q-shi-xian-liao-asm-kuang-jia-jiu-hui-zi-dong-zhi-chi-xiu-gai-ma" class="header-anchor">#</a></h2>
+<p>A:<br>
+不会自动支持， 需要使用 instrument 的类修改功能，我们需要实现它的 ClassFileTransformer 接口定义一个类文件转换器。它唯一的一个 transform() 方法会在类文件被加载时调用，在 transform 方法里，我们可以对传入的二进制字节码进行改写或替换，生成新的字节码数组后返回，JVM 会使用 transform 方法返回的字节码数据进行类的加载。</p>
+<hr>
+<h2><span id="q-zen-me-cai-neng-rang-jvm-neng-gou-diao-yong-wo-men-ti-gong-de-lei-zhuan-huan-qi-ni">Q: 怎么才能让 JVM 能够调用我们提供的类转换器呢</span><a href="#q-zen-me-cai-neng-rang-jvm-neng-gou-diao-yong-wo-men-ti-gong-de-lei-zhuan-huan-qi-ni" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>JVM TI 通过事件机制，通过接口注册各种事件勾子，在 JVM 事件触发时同时触发预定义的勾子，以实现对各个 JVM 事件的感知和反应。</li>
+<li>Agent 是 JVM TI 实现的一种方式</li>
+<li>Java 的调试体系 jdpa 组成，从高到低分别为 jdi-&gt;jdwp-&gt;jvmti，我们通过 JDI 接口发送调试指令，而 jdwp 就相当于一个通道，帮我们翻译 JDI 指令到 JVM TI，最底层的 JVM TI 最终实现对 JVM 的操作。</li>
+<li>debug时要添加参数 -agentlib:jdwp=transport=dt_socket,suspend=y,address=localhost:3333，而 -agentlib 选项就指定了我们要加载的 Java Agent，jdwp 是 agent 的名字</li>
+</ul>
+<hr>
+<h2><span id="q-na-ni-jiang-yi-xia-wo-yao-zi-ji-shi-xian-yi-ge-ke-xiu-gai-dai-ma-de-agent-de-hua-gai-zen-me-zuo">Q: 那你讲一下我要自己实现一个可修改代码的agent的话该怎么做？</span><a href="#q-na-ni-jiang-yi-xia-wo-yao-zi-ji-shi-xian-yi-ge-ke-xiu-gai-dai-ma-de-agent-de-hua-gai-zen-me-zuo" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ol>
+<li>实现一个Agent，实现入口类agentmain(String args, Instrumentation inst)<br>
+在main里给inst添加转化方法addTransformer(自定义Transformer())<br>
+再对需要的类进行转化inst.retransformClasses(TransformTarget.class)。</li>
+<li>实现自定义Transformer， 里面需要实现一个ClassVisitor 访问者模式，有类似visitMethod的方法实现</li>
+<li>使用Attacher 将agent动态加载到目标jvm上。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">VirtualMachine</span> <span class="variable">vm</span> <span class="operator">=</span> VirtualMachine.attach(<span class="string">&quot;34242&quot;</span>); <span class="comment">// 目标 JVM pid</span></span><br><span class="line">        vm.loadAgent(<span class="string">&quot;/path/to/agent.jar&quot;</span>)</span><br></pre></td></tr></table></figure>
+<h1><span id="jdk-xing-neng-jian-kong-he-diao-you-gong-ju">JDK性能监控和调优工具</span><a href="#jdk-xing-neng-jian-kong-he-diao-you-gong-ju" class="header-anchor">#</a></h1>
+<p>有阿里的Arthas、   商业化的jprofiler<br>
+能进行CPU分析、方法耗时分析、GC活动分析、实时堆内容分析、 采样时间内的方法火焰图等</p>
+<h2><span id="q-a-li-de-arthas-shang-ye-hua-de-jprofiler-ta-men-neng-jian-kong-de-yuan-li-shi-shi-me">Q: 阿里的Arthas、   商业化的jprofiler 他们能监控的原理是什么？</span><a href="#q-a-li-de-arthas-shang-ye-hua-de-jprofiler-ta-men-neng-jian-kong-de-yuan-li-shi-shi-me" class="header-anchor">#</a></h2>
+<ul>
+<li>开发者可以在main函数执行之后再启动自己的Instrument应用，入口是agentmain函数。arthas就是通过这个实现的。利用-javaagent参数进行instrument的初始化，可以通过这个入口修改class<br>
+之后就可以通过addTransformer，retransformClasses，redefineClasses等方式对字节码进行增强和热替换了。</li>
+<li>修改字节码也需要一套框架，不然自己重写太蛮烦了。ASM是一个Java字节码操作框架，用来动态生成class或者增强class，cglib的底层就是它，arthas也是通过它实现对class的增强的。</li>
+<li>Arthas增强功能的核心是Enhancer和AdviceWeaver这两个类，对方法进行Aop织入，达到watch，trace等效果。</li>
+<li>还要提供一个启动端口连接的功能。JVMTI（JVM Tool Interface）是Java虚拟机所提供的native接口，提供了可用于debug和profiler的能力，是实现调试器和其他运行态分析工具的基础，Instrument就是对它的封装。<br>
+通过JDI接口进行交互调试，attach端口建立连接。</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/115127052">Arthas运行原理</a></p>
+<h1><span id="jdk-ke-shi-hua-gong-ju">JDK可视化工具</span><a href="#jdk-ke-shi-hua-gong-ju" class="header-anchor">#</a></h1>
+<h2><span id="jconsole">jconsole</span><a href="#jconsole" class="header-anchor">#</a></h2>
+<p>可监控jvm，即可监控本地jvm也可监控远程jvm，管理应用程序，可以检查死锁等诸多问题。</p>
+<p><img src="/images/JDK%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E5%BA%94%E7%94%A8/c2787e54e2a977602128d12af1e5c03d556d42b4.png" alt="c2787e54e2a977602128d12af1e5c03d556d42b4"></p>
+<h2><span id="jvisualvm">jvisualvm</span><a href="#jvisualvm" class="header-anchor">#</a></h2>
+<ul>
+<li>
+<p>jvisualvm可以监控远程服务器的运行状态</p>
+</li>
+<li>
+<p>可以在java程序运行起来后再运行， 通过某些协议连接到java进程中。</p>
+</li>
+<li>
+<p>运行时， 可以不需要配置配置环境、虚拟机参数等。</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">java-NIO</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-15 23:44:16 / 修改时间：23:50:52" itemprop="dateCreated datePublished" datetime="2022-08-15T23:44:16+08:00">2022-08-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">java高级应用</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#q-nio-he-biao-zhun-io-you-shi-me-qu-bie">Q： NIO和标准IO有什么区别？</a></li>
+</ul>
+<ul>
+<li><a href="#javanio-he-xin-3-zu-jian">JavaNIO核心3组件：</a>
+<ul>
+<li><a href="#1-channels-tong-dao">1. Channels 通道</a>
+<ul>
+<li><a href="#q-tong-dao-channel-dui-xiang-neng-tong-shi-zuo-du-xie-cao-zuo-ma">Q： 通道Channel对象能同时做读写操作吗？</a></li>
+<li><a href="#q-tong-dao-zhi-chi-yi-bu-du-xie-ma">Q： 通道支持异步读写吗</a></li>
+<li><a href="#q-tong-dao-de-du-xie-shi-fou-bi-xu-yao-yi-lai-huan-chong-qu-buffer">Q： 通道的读写是否必须要依赖缓冲区buffer？</a></li>
+<li><a href="#q-you-na-ji-chong-chang-yong-de-nio-channel">Q: 有哪几种常用的NIO Channel</a></li>
+<li><a href="#q-filechannal-wei-shi-me-bu-zhi-chi-fei-zu-sai">Q: fileChannal为什么不支持非阻塞？</a></li>
+</ul>
+</li>
+<li><a href="#2-buffer-huan-chong-qu">2. Buffer缓冲区</a>
+<ul>
+<li><a href="#buffer-te-dian-xiang-jie">buffer特点详解</a></li>
+<li><a href="#q-buffer-diao-yong-flip-fang-fa-cong-xie-mo-shi-qie-huan-dao-du-mo-shi-shi-position-hui-bian-cheng-duo-shao">Q： buffer调用flip()方法从写模式切换到读模式时，position会变成多少？</a></li>
+<li><a href="#q-buffer-yong-you-1-ge-limit-shu-xing-zhi-dao-shi-zuo-shi-me-de-ma">Q: buffer拥有1个limit属性。知道是做什么的吗？</a></li>
+<li><a href="#q-dang-buffer-cong-xie-mo-shi-qie-huan-dao-du-mo-shi-shi-limit-wei-duo-shao">Q： 当buffer从写模式切换到读模式时，limit为多少？</a></li>
+<li><a href="#q-xiang-buf-huan-chong-qu-xie-shu-ju-de-fang-shi-you-na-xie">Q： 向buf缓冲区写数据的方式有哪些？</a></li>
+<li><a href="#q-shou-dong-xiu-gai-dang-qian-huan-chong-qu-de-postion-de-fang-fa-you-na-xie">Q: 手动修改当前缓冲区的postion的方法有哪些?</a></li>
+<li><a href="#q-1-ge-channel-guan-dao-zhi-chi-duo-ge-buffer-ma">Q：1个channel管道支持多个buffer吗？</a></li>
+<li><a href="#q-buffer-de-warp-slice-duplicate-fen-bie-shi-zuo-shi-me-de">Q: Buffer的Warp、slice、duplicate分别是做什么的？</a></li>
+</ul>
+</li>
+<li><a href="#selector">Selector</a>
+<ul>
+<li><a href="#q-zai-nio-zhong-selector-de-hao-chu-shi-shi-me">Q： 在NIO中Selector的好处是什么？</a></li>
+<li><a href="#q-selector-zhi-chi-zhu-ce-na-chong-lei-xing-de-tong-dao">Q： Selector支持注册哪种类型的通道？</a></li>
+<li><a href="#q-selector-zhu-ce-shi-zhi-chi-jian-ting-na-ji-chong-shi-jian-dui-ying-de-chang-liang-shi-shi-me-a-zui-bu-xi-huan-ji-yi-zhe-chong-dong-xi-liao">Q： Selector注册时，支持监听哪几种事件，对应的常量是什么？（啊最不喜欢记忆这种东西了…）</a></li>
+<li><a href="#q-selector-wei-hu-de-selectionkey-ji-he-gong-you-na-ji-chong">Q： Selector维护的SelectionKey集合共有哪几种？</a></li>
+<li><a href="#q-zhu-ce-zhi-hou-ru-he-shi-yong-selector-dui-zhun-bei-jiu-xu-de-tong-dao-zuo-chu-li">Q:注册之后， 如何使用selector对准备就绪的通道做处理：</a></li>
+<li><a href="#q-select-fang-fa-qi-shi-shi-zu-sai-fang-fa-ji-diao-yong-shi-hui-jin-ru-deng-dai-zhi-dao-ba-suo-you-tong-dao-du-lun-xun-wan-bi-ru-guo-xi-wang-ti-qian-jie-shu-select-you-na-xie-fang-fa">Q：select()方法其实是阻塞方法，即调用时会进入等待，直到把所有通道都轮询完毕。如果希望提前结束select()，有哪些方法？</a></li>
+<li><a href="#q-zhi-qian-shuo-nio-shi-fei-zu-sai-io-dan-wei-shi-me-shang-mian-que-shuo-select-fang-fa-shi-zu-sai-de">Q:之前说NIO是非阻塞IO，但为什么上面却说select()方法是阻塞的？</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#nio-jin-jie">NIO进阶</a>
+<ul>
+<li><a href="#q-duo-xian-cheng-du-xie-tong-yi-wen-jian-shi-ru-he-jia-suo-bao-zheng-xian-cheng-an-quan">Q： 多线程读写同一文件时，如何加锁保证线程安全？</a></li>
+<li><a href="#q-ru-guo-xu-yao-du-1-ge-te-da-wen-jian-ke-yi-shi-yong-shi-me-huan-chong-qu">Q： 如果需要读1个特大文件，可以使用什么缓冲区？</a></li>
+<li><a href="#q-nio-zhong-bytebuffer-gai-ru-he-gen-ju-zheng-que-de-bian-ma-zhuan-wei-dui-ying-de-charbuffer">Q：NIO中ByteBuffer， 该如何根据正确的编码，转为对应的CharBuffer</a></li>
+<li><a href="#q-nio-bei-hou-de-shi-xian-yuan-li-shi-shi-me">Q: NIO背后的实现原理是什么？</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h2><span id="q-nio-he-biao-zhun-io-you-shi-me-qu-bie">Q： NIO和标准IO有什么区别？</span><a href="#q-nio-he-biao-zhun-io-you-shi-me-qu-bie" class="header-anchor">#</a></h2>
+<p>A：</p>
+<p>标准IO， 基于字节流和字符流进行操作，阻塞IO。<br>
+NIO基于通道channel和缓冲区Buffer进行操作，支持非阻塞IO，提供选择器</p>
+<hr>
+<h1><span id="javanio-he-xin-3-zu-jian">JavaNIO核心3组件：</span><a href="#javanio-he-xin-3-zu-jian" class="header-anchor">#</a></h1>
+<h2><span id="1-channels-tong-dao">1. Channels 通道</span><a href="#1-channels-tong-dao" class="header-anchor">#</a></h2>
+<h3><span id="q-tong-dao-channel-dui-xiang-neng-tong-shi-zuo-du-xie-cao-zuo-ma">Q： 通道Channel对象能同时做读写操作吗？</span><a href="#q-tong-dao-channel-dui-xiang-neng-tong-shi-zuo-du-xie-cao-zuo-ma" class="header-anchor">#</a></h3>
+<p>还是说需要像标准IO那样，需要同时创建input和output对象才能做读写操作？</p>
+<p>A：<br>
+通道Channel是双向的， 既可以从channel中读数据，也可以写数据。<br>
+可以看到既能调用read也能调用write，且需要依赖缓冲区buffer。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">FileChannel</span> <span class="variable">fileChannel</span> <span class="operator">=</span> FileChannel.open(<span class="keyword">new</span> <span class="title class_">File</span>(<span class="string">&quot;a.txt&quot;</span>).toPath());</span><br><span class="line">   <span class="type">ByteBuffer</span> <span class="variable">buf</span> <span class="operator">=</span> ByteBuffer.allocate(<span class="number">1024</span>);</span><br><span class="line">    fileChannel.read(buf);</span><br><span class="line">    fileChannel.write(buf);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>注意上图上，fileChannel.read(buf)是将a.txt里的数据读到buf， 即a.txt-&gt;buf</li>
+<li>fileChannel.write(buf)是将buf里的数据写入到a.txt中， 即buf-&gt;a.txt，不要搞反啦！</li>
+<li>通道和缓冲区的关系如下图：<br>
+<img src="/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/5cc26d4b5a39246b56d13836560f8f46b428f838.png" alt="5cc26d4b5a39246b56d13836560f8f46b428f838"></li>
+</ul>
+<hr>
+<h3><span id="q-tong-dao-zhi-chi-yi-bu-du-xie-ma">Q： 通道支持异步读写吗</span><a href="#q-tong-dao-zhi-chi-yi-bu-du-xie-ma" class="header-anchor">#</a></h3>
+<p>A: 支持。</p>
+<hr>
+<h3><span id="q-tong-dao-de-du-xie-shi-fou-bi-xu-yao-yi-lai-huan-chong-qu-buffer">Q： 通道的读写是否必须要依赖缓冲区buffer？</span><a href="#q-tong-dao-de-du-xie-shi-fou-bi-xu-yao-yi-lai-huan-chong-qu-buffer" class="header-anchor">#</a></h3>
+<p>A： 一般都是依赖buffer的。 但也支持2个管道之间的传输，即管道之间直接读写。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">String[] arr=<span class="keyword">new</span> <span class="title class_">String</span>[]&#123;<span class="string">&quot;a.txt&quot;</span>,<span class="string">&quot;b.txt&quot;</span>&#125;;</span><br><span class="line">FileChannel in=<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(arr[<span class="number">0</span>]).getChannel();</span><br><span class="line"><span class="type">FileChannel</span> <span class="variable">out</span> <span class="operator">=</span><span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(arr[<span class="number">1</span>]).getChannel();</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 将a.txt中的数据直接写进b.txt中，相当于文件拷贝</span></span><br><span class="line">in.transferTo(<span class="number">0</span>, in.size(), out);</span><br></pre></td></tr></table></figure>
+<hr>
+<h3><span id="q-you-na-ji-chong-chang-yong-de-nio-channel">Q: 有哪几种常用的NIO Channel</span><a href="#q-you-na-ji-chong-chang-yong-de-nio-channel" class="header-anchor">#</a></h3>
+<p>A:</p>
+<ul>
+<li>FileChannel<br>
+Java NIO中的FileChannel是一个连接到文件的通道。可以通过文件通道读写文件。<br>
+FileChannel无法设置为非阻塞模式，它总是运行在阻塞模式下<br>
+创建方式</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">RandomAccessFile</span>    <span class="variable">file</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RandomAccessFile</span>(<span class="string">&quot;D:/aa.txt&quot;</span>);</span><br><span class="line"><span class="type">FileChannel</span>    <span class="variable">fileChannel</span> <span class="operator">=</span> file.getChannel();</span><br></pre></td></tr></table></figure>
+<ul>
+<li>SocketChannel<br>
+Java NIO中的SocketChannel是一个连接到TCP网络套接字的通道。<br>
+支持非阻塞模式socketChannel.configureBlocking(false)。<br>
+可以通过以下2种方式创建SocketChannel：<br>
+打开一个SocketChannel并连接到互联网上的某台服务器。<br>
+一个新连接到达ServerSocketChannel时，会创建一个SocketChannel<br>
+创建方式：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">SocketChannel</span> <span class="variable">socketChannel</span> <span class="operator">=</span> SocketChannel.open();</span><br><span class="line">socketChannel.connect(<span class="keyword">new</span> <span class="title class_">InetSocketAddress</span>(<span class="string">&quot;192.168.1.100&quot;</span>,<span class="number">80</span>));</span><br></pre></td></tr></table></figure>
+<ul>
+<li>ServerSocketChannel<br>
+Java NIO中的 ServerSocketChannel 是一个可以监听新进来的TCP连接的通道, 就像标准IO中的ServerSocket一样。ServerSocketChannel类在 java.nio.channels包中。<br>
+SocketChannel和ServerSocketChannel的区别： 前者用于客户端，后者用于服务端<br>
+创建方式：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ServerSocketChannel</span> <span class="variable">serverSocketChannel</span> <span class="operator">=</span> ServerSocketChannel.open();</span><br><span class="line">serverSocketChannel.socket.bind(<span class="keyword">new</span> <span class="title class_">InetSocketAddress</span>(<span class="number">80</span>));</span><br><span class="line">serverSocketChannel.configureBlocking(<span class="literal">false</span>);</span><br><span class="line"><span class="keyword">while</span>(<span class="literal">true</span>)&#123;</span><br><span class="line">    <span class="type">SocketChannel</span> <span class="variable">socketChannel</span> <span class="operator">=</span> serverSocketChannel.accept();</span><br><span class="line">    <span class="keyword">if</span>(socketChannle != <span class="literal">null</span>)</span><br><span class="line">        doSomething...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h3><span id="q-filechannal-wei-shi-me-bu-zhi-chi-fei-zu-sai">Q: fileChannal为什么不支持非阻塞？</span><a href="#q-filechannal-wei-shi-me-bu-zhi-chi-fei-zu-sai" class="header-anchor">#</a></h3>
+<p>A：</p>
+<ul>
+<li>UNIX不支持文件的非阻塞I / O,请参见 Non-blocking I/O with regular files.由于Java应该(至少尝试)在所有平台上提供相同的行为,所以FileChannel不会实现SelectableChannel.</li>
+<li>阻塞与非阻塞发生在进程与进程之间的通信，一般文件的读写操作只会发生在进程内部，不存在外部进程的传输。<br>
+即使存在进程间的传输，文件依旧需要通过网络通信，把内容转成数据流传输，这点的传输和Socket通信是相同的，所以没必要再造一个API出来</li>
+</ul>
+<h2><span id="2-buffer-huan-chong-qu">2. Buffer缓冲区</span><a href="#2-buffer-huan-chong-qu" class="header-anchor">#</a></h2>
+<h3><span id="buffer-te-dian-xiang-jie">buffer特点详解</span><a href="#buffer-te-dian-xiang-jie" class="header-anchor">#</a></h3>
+<ul>
+<li>我们真正要把数据拿到或者要写数据， 实际上都是通过buffer进行操作的。<br>
+文件 &lt;-&gt; buffer &lt;-&gt; 数据</li>
+<li>buffer是1个即可读也可写的缓冲区，拥有读写2种模式。</li>
+<li>buffer的capacity属性限定了每个buffer的最大容量,下面的1024就是capacity。<br>
+ByteBuffer buf = ByteBuffer.allocate(1024);</li>
+<li>buffer拥有1个position属性，表示当前的读写位置。</li>
+<li>往buffer中写数据时，position就会增加。</li>
+<li>position最大值为capacity-1</li>
+<li>把fileChannel对应文件里的数据 写入到buffer，叫做写模式</li>
+<li>写之后，调用flip，让buffer的postion置0，此时相当于准备读取buffer里的数据（即调用buffer.get()拿数据）<br>
+（这个模式的叫法个人也觉得不太好，很容易绕，你可以就记忆成： flip就是从写模式转成读模式！）</li>
+</ul>
+<hr>
+<h3><span id="q-buffer-diao-yong-flip-fang-fa-cong-xie-mo-shi-qie-huan-dao-du-mo-shi-shi-position-hui-bian-cheng-duo-shao">Q： buffer调用flip()方法从写模式切换到读模式时，position会变成多少？</span><a href="#q-buffer-diao-yong-flip-fang-fa-cong-xie-mo-shi-qie-huan-dao-du-mo-shi-shi-position-hui-bian-cheng-duo-shao" class="header-anchor">#</a></h3>
+<p>A： 变为0。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ByteBuffer</span> <span class="variable">buf</span> <span class="operator">=</span> ByteBuffer.allocate(<span class="number">1024</span>);</span><br><span class="line">    <span class="comment">// 数据读到buf中,并返回数量，每次最多读1024个</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">byteRead</span> <span class="operator">=</span> fileChannel.read(buf);</span><br><span class="line">    <span class="comment">// 输出byteRead的数量，最多为1024</span></span><br><span class="line">    System.out.println(<span class="string">&quot;position=&quot;</span> + buf.position()+<span class="string">&quot;, byteRead=&quot;</span> + byteRead);</span><br><span class="line">    </span><br><span class="line">    buf.flip();</span><br><span class="line">    <span class="comment">// 切换到读模式了，输出0</span></span><br><span class="line">    System.out.println(<span class="string">&quot;position=&quot;</span> + buf.position());</span><br></pre></td></tr></table></figure>
+<hr>
+<h3><span id="q-buffer-yong-you-1-ge-limit-shu-xing-zhi-dao-shi-zuo-shi-me-de-ma">Q: buffer拥有1个limit属性。知道是做什么的吗？</span><a href="#q-buffer-yong-you-1-ge-limit-shu-xing-zhi-dao-shi-zuo-shi-me-de-ma" class="header-anchor">#</a></h3>
+<p>A:<br>
+写模式下，buffer的limit就是buffer的capacity，即最大容量</p>
+<hr>
+<h3><span id="q-dang-buffer-cong-xie-mo-shi-qie-huan-dao-du-mo-shi-shi-limit-wei-duo-shao">Q： 当buffer从写模式切换到读模式时，limit为多少？</span><a href="#q-dang-buffer-cong-xie-mo-shi-qie-huan-dao-du-mo-shi-shi-limit-wei-duo-shao" class="header-anchor">#</a></h3>
+<p>A： 每次切换前都要调用flip()，切换后，limit为写模式中的position。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">byteRead</span> <span class="operator">=</span> fileChannel.read(buf);</span><br><span class="line">      <span class="comment">// 输出1024</span></span><br><span class="line">      System.out.println(<span class="string">&quot;limit=&quot;</span> + buf.limit() + <span class="string">&quot;,postion=&quot;</span> + buf.position());</span><br><span class="line">      System.out.println(<span class="string">&quot;切换到读模式&quot;</span>);</span><br><span class="line">      buf.flip();</span><br><span class="line">      <span class="comment">// 输出byteRead数量</span></span><br><span class="line">      System.out.println(<span class="string">&quot;limit=&quot;</span> + buf.limit());</span><br></pre></td></tr></table></figure>
+<p>结果如下<br>
+<img src="/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/7faf1b8a996ad366bd46621cbb6207c4afa1a375.png" alt="7faf1b8a996ad366bd46621cbb6207c4afa1a375"></p>
+<hr>
+<h3><span id="q-xiang-buf-huan-chong-qu-xie-shu-ju-de-fang-shi-you-na-xie">Q： 向buf缓冲区写数据的方式有哪些？</span><a href="#q-xiang-buf-huan-chong-qu-xie-shu-ju-de-fang-shi-you-na-xie" class="header-anchor">#</a></h3>
+<p>A：</p>
+<ul>
+<li>int byteRead = fileChannel.read(buf);<br>
+从通道中读数据到buf中， 即相当于向buf缓冲区中写数据。</li>
+<li>buf.putChar(‘a’);<br>
+手动向buf中写入字符a， postion加1。</li>
+</ul>
+<hr>
+<h3><span id="q-shou-dong-xiu-gai-dang-qian-huan-chong-qu-de-postion-de-fang-fa-you-na-xie">Q: 手动修改当前缓冲区的postion的方法有哪些?</span><a href="#q-shou-dong-xiu-gai-dang-qian-huan-chong-qu-de-postion-de-fang-fa-you-na-xie" class="header-anchor">#</a></h3>
+<p>A:<br>
+rewind() 将postion设置为0<br>
+mark() 可以标记1个特定的位置， 相当于打标记， 在一顿操作后，可通过reset()回到之前mark()的位置（就像你需要mark我的这几篇博文一样！）</p>
+<hr>
+<h3><span id="q-1-ge-channel-guan-dao-zhi-chi-duo-ge-buffer-ma">Q：1个channel管道支持多个buffer吗？</span><a href="#q-1-ge-channel-guan-dao-zhi-chi-duo-ge-buffer-ma" class="header-anchor">#</a></h3>
+<p>A： 支持。 通道的write和read方法都支持传入1个buffer数组，会按照顺序做读写操作。<br>
+<img src="/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/27b39bd04044d506452c7404849d4ecee57fc3eb.png" alt="27b39bd04044d506452c7404849d4ecee57fc3eb"></p>
+<hr>
+<p>Q: 讲一下buffer的种类<br>
+A:<br>
+Buffer的种类：<br>
+<img src="/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/a881a6f6fe6a8395391678a5982d6620de0193b7.png" alt="a881a6f6fe6a8395391678a5982d6620de0193b7"></p>
+<p>大部分都是java基础类型产生的buffer，  除了mappedByteBuffer比较特别。</p>
+<hr>
+<h3><span id="q-buffer-de-warp-slice-duplicate-fen-bie-shi-zuo-shi-me-de">Q: Buffer的Warp、slice、duplicate分别是做什么的？</span><a href="#q-buffer-de-warp-slice-duplicate-fen-bie-shi-zuo-shi-me-de" class="header-anchor">#</a></h3>
+<p>A:</p>
+<ul>
+<li>
+<p>warp:<br>
+根据一个byte[]来生成一个固定的ByteBuffer时，使用ByteBuffer.wrap()非法的合适。他会直接基于byte[]数组生成一个新的buffer，值也保持一致。</p>
+</li>
+<li>
+<p>slice：<br>
+得到切片后的数组。</p>
+</li>
+<li>
+<p>duplicate：<br>
+调用duplicate方法返回的Buffer对象就是复制了一份原始缓冲区，复制了position、limit、capacity这些属性</p>
+</li>
+</ul>
+<blockquote>
+<blockquote>
+<p>注意！！！！！！<br>
+以上warp\slice\duplicte生成的缓冲区get和put所操作的数组还是与原始缓冲区一样的<br>
+所以对复制后的缓冲区进行修改也会修改原始的缓冲区，反之亦然<br>
+因此duplicte、slice一般是用于操作一下poistion\limit等处理，但是原内容不会去变他，否则就会引起原缓冲器的修改。</p>
+</blockquote>
+</blockquote>
+<h2><span id="selector">Selector</span><a href="#selector" class="header-anchor">#</a></h2>
+<p>selector可用来在线程中关联多个通道，并进行事件监听。<br>
+<img src="/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/ec184550662e4d8604d9538a21bab5ea0c04bf2c.png" alt="ec184550662e4d8604d9538a21bab5ea0c04bf2c"></p>
+<hr>
+<h3><span id="q-zai-nio-zhong-selector-de-hao-chu-shi-shi-me">Q： 在NIO中Selector的好处是什么？</span><a href="#q-zai-nio-zhong-selector-de-hao-chu-shi-shi-me" class="header-anchor">#</a></h3>
+<p>A：</p>
+<p>可以用更少的线程来管理各个通道。<br>
+减少线程上下文切换的资源开销。</p>
+<hr>
+<h3><span id="q-selector-zhi-chi-zhu-ce-na-chong-lei-xing-de-tong-dao">Q： Selector支持注册哪种类型的通道？</span><a href="#q-selector-zhi-chi-zhu-ce-na-chong-lei-xing-de-tong-dao" class="header-anchor">#</a></h3>
+<p>A：<br>
+支持非阻塞的通道。<br>
+通道要在注册前调用 channel.configureBlocking(false) 设置为非阻塞。<br>
+例如FileChannel就没办法注册，他注定是阻塞的。<br>
+而socketChannel就可以支持非阻塞。</p>
+<hr>
+<h3><span id="q-selector-zhu-ce-shi-zhi-chi-jian-ting-na-ji-chong-shi-jian-dui-ying-de-chang-liang-shi-shi-me-a-zui-bu-xi-huan-ji-yi-zhe-chong-dong-xi-liao">Q： Selector注册时，支持监听哪几种事件，对应的常量是什么？（啊最不喜欢记忆这种东西了…）</span><a href="#q-selector-zhu-ce-shi-zhi-chi-jian-ting-na-ji-chong-shi-jian-dui-ying-de-chang-liang-shi-shi-me-a-zui-bu-xi-huan-ji-yi-zhe-chong-dong-xi-liao" class="header-anchor">#</a></h3>
+<p>A：<br>
+共有4种可监听事件</p>
+<ul>
+<li>Connect 成功连接到1个服务器，对应常量SelectionKey.OP_CONNECT</li>
+<li>Accept 准备好接收新进入的连接， 对应常量SelectionKey.OP_ACCEPT</li>
+<li>Read, 有数据可读，对应常量SelectionKey.OP_READ</li>
+<li>Write 接收到往里写的数据， 对应常量SelectionKey.OP_WRITE<br>
+如果希望对该通道监听多种事件，可以用&quot;|&quot;位或操作符把常量连接起来。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> <span class="type">int</span> <span class="variable">interestingSet</span> <span class="operator">=</span> Selectionkey.OP_READ | Selectionkey.OP_WRITE;</span><br><span class="line"><span class="type">Selectionkey</span> <span class="variable">key</span> <span class="operator">=</span> channel.register(selector,interestingSet)</span><br></pre></td></tr></table></figure>
+<p>SelectionKey键表示了一个特定的通道对象和一个特定的选择器对象之间的注册关系</p>
+<hr>
+<h3><span id="q-selector-wei-hu-de-selectionkey-ji-he-gong-you-na-ji-chong">Q： Selector维护的SelectionKey集合共有哪几种？</span><a href="#q-selector-wei-hu-de-selectionkey-ji-he-gong-you-na-ji-chong" class="header-anchor">#</a></h3>
+<p>A：<br>
+共有三种。</p>
+<ol>
+<li>
+<p>已注册的所有键的集合(Registered key set)<br>
+所有与选择器关联的通道所生成的键的集合称为已经注册的键的集合。并不是所有注册过的键都仍然有效。这个集合通过keys()方法返回，并且可能是空的。这个已注册的键的集合不是可以直接修改的；试图这么做的话将引发java.lang.UnsupportedOperationException。</p>
+</li>
+<li>
+<p>已选择的键的集合(Selected key set)<br>
+已注册的键的集合的子集。这个集合的每个成员都是相关的通道被选择器(在前一个选择操作中)判断为已经准备好的，并且包含于键的interest集合中的操作。这个集合通过selectedKeys()方法返回(并有可能是空的)。<br>
+不要将已选择的键的集合与ready集合弄混了。这是一个键的集合，每个键都关联一个已经准备好至少一种操作的通道。每个键都有一个内嵌的ready集合，指示了所关联的通道已经准备好的操作。键可以直接从这个集合中移除，但不能添加。试图向已选择的键的集合中添加元素将抛出java.lang.UnsupportedOperationException。</p>
+</li>
+<li>
+<p>已取消的键的集合(Cancelled key set)<br>
+已注册的键的集合的子集，这个集合包含了cancel()方法被调用过的键(这个键已经被无效化)，但它们还没有被注销。这个集合是选择器对象的私有成员，因而无法直接访问。</p>
+</li>
+</ol>
+<hr>
+<h3><span id="q-zhu-ce-zhi-hou-ru-he-shi-yong-selector-dui-zhun-bei-jiu-xu-de-tong-dao-zuo-chu-li">Q:注册之后， 如何使用selector对准备就绪的通道做处理：</span><a href="#q-zhu-ce-zhi-hou-ru-he-shi-yong-selector-dui-zhun-bei-jiu-xu-de-tong-dao-zuo-chu-li" class="header-anchor">#</a></h3>
+<p>A：</p>
+<ol>
+<li>调用select()方法获取已就绪的通道，返回的int值表示有多少通道已经就绪</li>
+<li>从selector中获取selectedkeys</li>
+<li>遍历selectedkeys</li>
+<li>查看各SelectionKey中 是否有事件就绪了。</li>
+<li>如果有事件就绪，从key中获取对应对应管道。做对应处理</li>
+<li>类似如下，一般都会启1个线程来run这个selector监听的处理</li>
+</ol>
+<hr>
+<h3><span id="q-select-fang-fa-qi-shi-shi-zu-sai-fang-fa-ji-diao-yong-shi-hui-jin-ru-deng-dai-zhi-dao-ba-suo-you-tong-dao-du-lun-xun-wan-bi-ru-guo-xi-wang-ti-qian-jie-shu-select-you-na-xie-fang-fa">Q：select()方法其实是阻塞方法，即调用时会进入等待，直到把所有通道都轮询完毕。如果希望提前结束select()，有哪些方法？</span><a href="#q-select-fang-fa-qi-shi-shi-zu-sai-fang-fa-ji-diao-yong-shi-hui-jin-ru-deng-dai-zhi-dao-ba-suo-you-tong-dao-du-lun-xun-wan-bi-ru-guo-xi-wang-ti-qian-jie-shu-select-you-na-xie-fang-fa" class="header-anchor">#</a></h3>
+<p>A：<br>
+有2个办法：<br>
+wakeup()， 调用后，select（）方法立刻返回。<br>
+close()， 直接关闭selector。</p>
+<hr>
+<h3><span id="q-zhi-qian-shuo-nio-shi-fei-zu-sai-io-dan-wei-shi-me-shang-mian-que-shuo-select-fang-fa-shi-zu-sai-de">Q:之前说NIO是非阻塞IO，但为什么上面却说select()方法是阻塞的？</span><a href="#q-zhi-qian-shuo-nio-shi-fei-zu-sai-io-dan-wei-shi-me-shang-mian-que-shuo-select-fang-fa-shi-zu-sai-de" class="header-anchor">#</a></h3>
+<p>A:<br>
+其实NIO的非阻塞，指的是IO不阻塞，即我们不会卡在read()处，我们会用selector去查询就绪状态，如果状态ok就。<br>
+而查询操作是需要时间，因此select()必须要把所有通道都检查一遍才能告诉结果，因此select这个查询操作是阻塞的。</p>
+<hr>
+<h1><span id="nio-jin-jie">NIO进阶</span><a href="#nio-jin-jie" class="header-anchor">#</a></h1>
+<h2><span id="q-duo-xian-cheng-du-xie-tong-yi-wen-jian-shi-ru-he-jia-suo-bao-zheng-xian-cheng-an-quan">Q： 多线程读写同一文件时，如何加锁保证线程安全？</span><a href="#q-duo-xian-cheng-du-xie-tong-yi-wen-jian-shi-ru-he-jia-suo-bao-zheng-xian-cheng-an-quan" class="header-anchor">#</a></h2>
+<p>A：<br>
+使用FileChannel的加锁功能。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">RandomAccessFile</span> <span class="variable">randFile</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RandomAccessFile</span>(target, <span class="string">&quot;rw&quot;</span>);</span><br><span class="line"><span class="type">FileChannel</span>  <span class="variable">channel</span> <span class="operator">=</span> randFile.getChannel();</span><br><span class="line"><span class="comment">// pos和siz决定加锁区域， shared指定是否是共享锁</span></span><br><span class="line"><span class="type">FileLock</span> <span class="variable">fileLock</span> <span class="operator">=</span> channel.lock(pos , size , shared);</span><br><span class="line"><span class="keyword">if</span> (fileLock!=<span class="literal">null</span>) &#123;</span><br><span class="line">	<span class="keyword">do</span>();</span><br><span class="line">   <span class="comment">// 这里简化了，实际上应该用try-catch</span></span><br><span class="line">	fileLock.release();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2><span id="q-ru-guo-xu-yao-du-1-ge-te-da-wen-jian-ke-yi-shi-yong-shi-me-huan-chong-qu">Q： 如果需要读1个特大文件，可以使用什么缓冲区？</span><a href="#q-ru-guo-xu-yao-du-1-ge-te-da-wen-jian-ke-yi-shi-yong-shi-me-huan-chong-qu" class="header-anchor">#</a></h2>
+<p>A：<br>
+使用MappedByteBuffer。<br>
+这个缓冲区可以把大文件理解成1个byte数组来访问（但实际上并没有加载这么大的byte数组，实际内容放在内存+虚存中）。<br>
+主要通过FileChannel.map（模式，起始位置，区域）来生成1个MappedByteBuffer。<br>
+然后可以用put和get去处理对应位置的byte。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">length</span> <span class="operator">=</span> <span class="number">0x8FFFFFF</span>;<span class="comment">//一个byte占1B，所以共向文件中存128M的数据</span></span><br><span class="line"><span class="keyword">try</span> (<span class="type">FileChannel</span> <span class="variable">channel</span> <span class="operator">=</span> FileChannel.open(Paths.get(<span class="string">&quot;src/c.txt&quot;</span>),</span><br><span class="line">		StandardOpenOption.READ, StandardOpenOption.WRITE);) &#123;</span><br><span class="line">	<span class="type">MappedByteBuffer</span> <span class="variable">mapBuffer</span> <span class="operator">=</span> channel.map(FileChannel.MapMode.READ_WRITE, <span class="number">0</span>, length);</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;length;i++) &#123;</span><br><span class="line">		mapBuffer.put((<span class="type">byte</span>)<span class="number">0</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> length/<span class="number">2</span>;i&lt;length/<span class="number">2</span>+<span class="number">4</span>;i++) &#123;</span><br><span class="line">		<span class="comment">//像数组一样访问</span></span><br><span class="line">		System.out.println(mapBuffer.get(i));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>MapMode的三种模式：</p>
+<ul>
+<li>MapMode.READ_ONLY（只读）： 试图修改得到的缓冲区将导致抛出 ReadOnlyBufferException。</li>
+<li>MapMode.READ_WRITE（读/写）： 对得到的缓冲区的更改会写入文件，需要调用fore()方法</li>
+<li>MapMode.PRIVATE（专用）： 可读可写,但是修改的内容不会写入文件,只是buffer自身的改变。</li>
+</ul>
+<hr>
+<h2><span id="q-nio-zhong-bytebuffer-gai-ru-he-gen-ju-zheng-que-de-bian-ma-zhuan-wei-dui-ying-de-charbuffer">Q：NIO中ByteBuffer， 该如何根据正确的编码，转为对应的CharBuffer</span><a href="#q-nio-zhong-bytebuffer-gai-ru-he-gen-ju-zheng-que-de-bian-ma-zhuan-wei-dui-ying-de-charbuffer" class="header-anchor">#</a></h2>
+<p>A：<br>
+利用Charset的decode功能。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ByteBuffer</span> <span class="variable">byteBuffer</span> <span class="operator">=</span> ...;</span><br><span class="line"><span class="type">Charset</span> <span class="variable">charset</span> <span class="operator">=</span> Charset.forName(<span class="string">&quot;UTF-8&quot;</span>);</span><br><span class="line"><span class="type">CharBuffer</span> <span class="variable">charBuffer</span> <span class="operator">=</span> charset.decode(byteBuffer);</span><br><span class="line">如果是CharBuffer转ByteBuffer， 就用charset.encode。</span><br></pre></td></tr></table></figure>
+<hr>
+<h2><span id="q-nio-bei-hou-de-shi-xian-yuan-li-shi-shi-me">Q: NIO背后的实现原理是什么？</span><a href="#q-nio-bei-hou-de-shi-xian-yuan-li-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A: 使用了linux的epoll机制<br>
+NIO和epoll的对应关系见<a target="_blank" rel="noopener" href="https://blog.csdn.net/xing317521/article/details/105054661/">浅谈NIO和Epoll的实现原理</a><br>
+epoll原理见<a target="_blank" rel="noopener" href="http://doc.minidown.cn/ejxpkz/">epoll原理</a></p>
+<hr>
+<p><img src="/images/java-NIO%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/398cc1e5fdaa0abf90cd8e577fd826ade07c3ecf.png" alt="398cc1e5fdaa0abf90cd8e577fd826ade07c3ecf"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-Socket%E5%BA%94%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2458,544 +3218,6 @@ PS： 注意，不是说不能调用get或add方法， 而是调用get或add时�
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/13/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/13/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/" class="post-title-link" itemprop="url">java异常机制</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-13 00:31:20" itemprop="dateCreated datePublished" datetime="2022-08-13T00:31:20+08:00">2022-08-13</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-15 23:43:28" itemprop="dateModified" datetime="2022-08-15T23:43:28+08:00">2022-08-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E5%88%9D%E7%BA%A7%E8%AF%AD%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">java初级语法</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/13/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/13/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#yi-chang-ti-xi-fen-lei">异常体系分类</a>
-<ul>
-<li><a href="#q-throwable-he-error-de-guan-xi">Q： Throwable 和 Error的关系</a></li>
-<li><a href="#q-error-he-exception-de-guan-xi">Q： Error和Exception的关系</a></li>
-<li><a href="#q-error-ke-yi-bei-catch-bu-zhuo-ma">Q： Error可以被catch捕捉吗？</a></li>
-<li><a href="#yi-chang-ti-xi-huan-ke-yi-fen-wei-zhe-2-lei">异常体系还可以分为这2类:</a></li>
-</ul>
-</li>
-<li><a href="#yi-chang-bu-zhuo-he-fan-hui">异常捕捉和返回</a>
-<ul>
-<li><a href="#q-return-finally-xian-jing-1-finally-neng-tong-guo-xiu-gai-bian-liang-lai-geng-xin-return-de-bian-liang-zhi-ma">Q： return-finally陷阱1：  finally能通过修改变量，来更新return的变量值吗</a></li>
-<li><a href="#q-return-finally-xian-jing-2-finally-li-ye-return-shi-fan-hui-na-ge">Q： return-finally陷阱2： finally里也return时，返回哪个？</a></li>
-<li><a href="#q-shi-me-qing-kuang-xia-finally-kuai-li-de-bu-zou-ke-yi-bu-zhi-xing">Q： 什么情况下finally块里的步骤可以不执行？</a></li>
-<li><a href="#q-xian-bu-zhuo-fu-lei-yi-chang-zai-bu-zhuo-zi-lei-yi-chang-hui-fa-sheng-shi-me">Q： 先捕捉父类异常，再捕捉子类异常，会发生什么？</a></li>
-<li><a href="#q-throw-yi-chang-de-shi-hou-zai-finally-zhong-zuo-return-na-me-yi-chang-huan-hui-pao-chu-ma">Q：throw异常的时候，在finally中做return，那么异常还会抛出吗？</a></li>
-</ul>
-</li>
-<li><a href="#shou-jian-yi-chang-xiang-guan-wen-ti">受检异常相关问题</a>
-<ul>
-<li><a href="#q-zi-lei-fu-xie-ji-lei-fang-fa-shi-neng-throws-ji-lei-fang-fa-zhong-bu-cun-zai-de-yi-chang-ma">Q: 子类覆写基类方法时 ， 能throws基类方法中不存在的异常吗？</a></li>
-<li><a href="#q-finally-zhong-diao-yong-mou-zi-yuan-de-close-shi-ye-hui-pao-chu-shou-jian-yi-chang-chu-liao-zai-finally-li-zuo-try-catch-huan-neng-zen-me-zuo">Q: finally中调用某资源的close时，也会抛出受检异常，  除了在finally里做try-catch，还能怎么做？</a></li>
-<li><a href="#q-xian-cheng-pao-chu-yi-chang-de-hua-gai-zen-me-bu-zhuo">Q: 线程抛出异常的话该怎么捕捉？</a></li>
-</ul>
-</li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="yi-chang-ti-xi-fen-lei">异常体系分类</span><a href="#yi-chang-ti-xi-fen-lei" class="header-anchor">#</a></h1>
-<h2><span id="q-throwable-he-error-de-guan-xi">Q：  Throwable 和 Error的关系</span><a href="#q-throwable-he-error-de-guan-xi" class="header-anchor">#</a></h2>
-<p>A： Throwable是Error(错误）的基类，也是Exception的基类<br>
-1个好图，可看到常见的异常和error<br>
-<img src="/images/java%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/1616809879000046121.png" alt="image.png"></p>
-<hr>
-<h2><span id="q-error-he-exception-de-guan-xi">Q： Error和Exception的关系</span><a href="#q-error-he-exception-de-guan-xi" class="header-anchor">#</a></h2>
-<p>A：</p>
-<ul>
-<li>Error一般是会直接引起jvm出错的错误，例如Java虚拟机运行错误等，如果出现了当前线程会无法继续运行。</li>
-<li>Excpetion是程序本身可以处理的异常。发生后还能正常运行。</li>
-</ul>
-<hr>
-<h2><span id="q-error-ke-yi-bei-catch-bu-zhuo-ma">Q： Error可以被catch捕捉吗？</span><a href="#q-error-ke-yi-bei-catch-bu-zhuo-ma" class="header-anchor">#</a></h2>
-<p>A： 只要是Throwable和其子类都是可以throw和catch的。 但是不建议捕捉Error。</p>
-<hr>
-<h2><span id="yi-chang-ti-xi-huan-ke-yi-fen-wei-zhe-2-lei">异常体系还可以分为这2类:</span><a href="#yi-chang-ti-xi-huan-ke-yi-fen-wei-zhe-2-lei" class="header-anchor">#</a></h2>
-<ul>
-<li>
-<p>unchecked exception（非检查异常）<br>
-也称运行时异常（RuntimeException），比如常见的NullPointerException、IndexOutOfBoundsException。对于运行时异常，java编译器不要求必须进行异常捕获处理或者抛出声明，由程序员自行决定。</p>
-</li>
-<li>
-<p>checked exception（检查异常，编译异常）<br>
-也称非运行时异常（运行时异常以外的异常就是非运行时异常），java编译器强制程序员必须进行捕获处理，比如常见的IOExeption和SQLException。对于非运行时异常如果不进行捕获或者抛出声明处理，编译都不会通过。</p>
-</li>
-</ul>
-<h1><span id="yi-chang-bu-zhuo-he-fan-hui">异常捕捉和返回</span><a href="#yi-chang-bu-zhuo-he-fan-hui" class="header-anchor">#</a></h1>
-<h2><span id="q-return-finally-xian-jing-1-finally-neng-tong-guo-xiu-gai-bian-liang-lai-geng-xin-return-de-bian-liang-zhi-ma">Q： return-finally陷阱1：  finally能通过修改变量，来更新return的变量值吗</span><a href="#q-return-finally-xian-jing-1-finally-neng-tong-guo-xiu-gai-bian-liang-lai-geng-xin-return-de-bian-liang-zhi-ma" class="header-anchor">#</a></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">f</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> a;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">finally</span> &#123;</span><br><span class="line">      a=<span class="number">2</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>A:  不能， f返回1。</p>
-<hr>
-<h2><span id="q-return-finally-xian-jing-2-finally-li-ye-return-shi-fan-hui-na-ge">Q： return-finally陷阱2： finally里也return时，返回哪个？</span><a href="#q-return-finally-xian-jing-2-finally-li-ye-return-shi-fan-hui-na-ge" class="header-anchor">#</a></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">f</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">finally</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="number">2</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>A：返回finally里的，返回2。</p>
-<hr>
-<h2><span id="q-shi-me-qing-kuang-xia-finally-kuai-li-de-bu-zou-ke-yi-bu-zhi-xing">Q： 什么情况下finally块里的步骤可以不执行？</span><a href="#q-shi-me-qing-kuang-xia-finally-kuai-li-de-bu-zou-ke-yi-bu-zhi-xing" class="header-anchor">#</a></h2>
-<p>A： 只有在finally之前调用System.exit(0)退出jvm， 才能让finally不执行。</p>
-<hr>
-<h2><span id="q-xian-bu-zhuo-fu-lei-yi-chang-zai-bu-zhuo-zi-lei-yi-chang-hui-fa-sheng-shi-me">Q： 先捕捉父类异常，再捕捉子类异常，会发生什么？</span><a href="#q-xian-bu-zhuo-fu-lei-yi-chang-zai-bu-zhuo-zi-lei-yi-chang-hui-fa-sheng-shi-me" class="header-anchor">#</a></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    start();</span><br><span class="line">&#125; <span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;catch Exception&quot;</span>);</span><br><span class="line">&#125; <span class="keyword">catch</span> (RuntimeException re) &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;catch RuntimeException&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>A: 直接编译就错误了。 catch是会按顺序的且匹配1个就不再往下匹配，编译器因此识别出RuntimeExcpetion永远不会被捕捉到，便提前报错。</p>
-<hr>
-<h2><span id="q-throw-yi-chang-de-shi-hou-zai-finally-zhong-zuo-return-na-me-yi-chang-huan-hui-pao-chu-ma">Q：throw异常的时候，在finally中做return，那么异常还会抛出吗？</span><a href="#q-throw-yi-chang-de-shi-hou-zai-finally-zhong-zuo-return-na-me-yi-chang-huan-hui-pao-chu-ma" class="header-anchor">#</a></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="type">int</span> <span class="title function_">f</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>/<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">return</span> a;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(e);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    System.out.println(f());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>A:<br>
-不会，返回-1.<br>
-即finaly中做return会中断throw<br>
-因此永远不要在finally中去做return操作</p>
-<h1><span id="shou-jian-yi-chang-xiang-guan-wen-ti">受检异常相关问题</span><a href="#shou-jian-yi-chang-xiang-guan-wen-ti" class="header-anchor">#</a></h1>
-<h2><span id="q-zi-lei-fu-xie-ji-lei-fang-fa-shi-neng-throws-ji-lei-fang-fa-zhong-bu-cun-zai-de-yi-chang-ma">Q: 子类覆写基类方法时 ， 能throws基类方法中不存在的异常吗？</span><a href="#q-zi-lei-fu-xie-ji-lei-fang-fa-shi-neng-throws-ji-lei-fang-fa-zhong-bu-cun-zai-de-yi-chang-ma" class="header-anchor">#</a></h2>
-<p>像下面这样：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>&#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">f</span><span class="params">()</span> <span class="keyword">throws</span> IOException&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span> <span class="keyword">extends</span> <span class="title class_">A</span>&#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">f</span><span class="params">()</span> <span class="keyword">throws</span> IOException, SQLException &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>A: 不行，直接编译报错。  即子类覆写父类方法时， throws关键字后面跟的异常必须是小于等于父类方法异常的。<br>
-<img src="/images/java%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/1616809912530040293.png" alt="image.png"></p>
-<hr>
-<h2><span id="q-finally-zhong-diao-yong-mou-zi-yuan-de-close-shi-ye-hui-pao-chu-shou-jian-yi-chang-chu-liao-zai-finally-li-zuo-try-catch-huan-neng-zen-me-zuo">Q: finally中调用某资源的close时，也会抛出受检异常，  除了在finally里做try-catch，还能怎么做？</span><a href="#q-finally-zhong-diao-yong-mou-zi-yuan-de-close-shi-ye-hui-pao-chu-shou-jian-yi-chang-chu-liao-zai-finally-li-zuo-try-catch-huan-neng-zen-me-zuo" class="header-anchor">#</a></h2>
-<p>像下面这样，finally又有catch，就很难看：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">TryWithResource</span> <span class="variable">tryWithResource</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TryWithResource</span>();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            System.out.println(tryWithResource.age);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                tryWithResource.close();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
-<p>A：如果是JDK1.7，可以用try-with-resource语法。<br>
-需要资源类实现AutoCloseable接口，  并在try的时候在try括号后面跟上资源的创建，如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> (<span class="type">TryWithResource</span> <span class="variable">tryWithResource</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TryWithResource</span>()) &#123;</span><br><span class="line">        System.out.println(tryWithResource.age);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这样就不需要写finally，finally+close会通过编译器给我们自动加上。</p>
-<hr>
-<h2><span id="q-xian-cheng-pao-chu-yi-chang-de-hua-gai-zen-me-bu-zhuo">Q: 线程抛出异常的话该怎么捕捉？</span><a href="#q-xian-cheng-pao-chu-yi-chang-de-hua-gai-zen-me-bu-zhuo" class="header-anchor">#</a></h2>
-<p>A： 实现异常处理接口MyUnchecckedExceptionhandler</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyUnchecckedExceptionhandler</span> <span class="keyword">implements</span> <span class="title class_">UncaughtExceptionHandler</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">uncaughtException</span><span class="params">(Thread t, Throwable e)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;捕获异常处理方法：&quot;</span> + e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>然后把实现类设置给对应线程。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Thread</span> <span class="variable">t</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(<span class="keyword">new</span> <span class="title class_">ExceptionThread</span>());</span><br><span class="line">t.setUncaughtExceptionHandler(<span class="keyword">new</span> <span class="title class_">MyUnchecckedExceptionhandler</span>());</span><br><span class="line">t.start();</span><br></pre></td></tr></table></figure>
-<p>除此之外还有6种方法可以设置，详见<a target="_blank" rel="noopener" href="https://blog.csdn.net/pange1991/article/details/82115437">链接</a></p>
-<hr>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/13/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/13/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">java容器基础概念和应用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-13 00:27:53" itemprop="dateCreated datePublished" datetime="2022-08-13T00:27:53+08:00">2022-08-13</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-15 23:43:17" itemprop="dateModified" datetime="2022-08-15T23:43:17+08:00">2022-08-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E5%88%9D%E7%BA%A7%E8%AF%AD%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">java初级语法</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/13/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/13/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>5.7k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#list-xiang-guan-wen-ti">List相关问题</a>
-<ul>
-<li><a href="#q-arrlist-new-arraylist-arrays-aslist-he-arrlist-arrays-aslist-you-shi-me-qu-bie">Q:arrList = new ArrayList&lt;&gt;(Arrays.asList（）)   和  arrList =   Arrays.asList（）有什么区别</a></li>
-<li><a href="#q-na-aslist-zhi-chi-tong-guo-xiu-gai-yuan-shu-zu-lai-xiu-gai-list-nei-rong-ma">Q：那asList()支持通过修改原数组来修改list内容吗？</a></li>
-<li><a href="#q-dang-shu-ru-wei-na-xie-zi-mu-shi-die-dai-shi-hui-bao-cuo">Q： 当输入为哪些字母时，迭代时会报错</a></li>
-<li><a href="#q-arraylist-de-kuo-rong-gong-shi-he-mo-ren-chu-shi-da-xiao-shi-duo-shao">Q： ArrayList的扩容公式和默认初始大小是多少？</a></li>
-<li><a href="#q-vector-de-kuo-rong-gong-shi-shi-duo-shao">Q： Vector的扩容公式是多少？</a></li>
-<li><a href="#q-vector-he-arraylist-de-qu-bie">Q：vector和ArrayList的区别</a></li>
-<li><a href="#q-wei-shi-me-bu-tui-jian-shi-yong-stack">Q：为什么不推荐使用stack</a></li>
-</ul>
-</li>
-<li><a href="#map-xiang-guan-wen-ti">Map相关问题</a>
-<ul>
-<li><a href="#q-jie-da-xia-lie-te-xing-he-na-xie-map-you-guan">Q： 解答下列特性和哪些Map有关</a></li>
-<li><a href="#q-hashcode-xiang-tong-na-me-equals-ken-ding-true-ma">Q： hashCode相同， 那么equals肯定true吗？</a></li>
-<li><a href="#q-equals-wei-true-na-me-hashcode-ken-ding-xiang-tong-ma">Q： equals为true， 那么hashCode肯定相同吗？</a></li>
-<li><a href="#q-2-ge-string-ru-guo-nei-rong-xiang-tong-na-me-hashcode-xiang-tong-ma">Q： 2个String如果内容相同，那么hashCode相同吗？</a></li>
-<li><a href="#hashtable-hashmap-concurrenthashmap-bi-jiao">HashTable、HashMap、ConcurrentHashMap比较：</a></li>
-<li><a href="#q-collections-synchronizedmap-map-he-concurrenthashmap-na-ge-tong-bu-xiao-guo-hao">Q：Collections.synchronizedMap（map）和ConcurrentHashMap,哪个同步效果好？</a></li>
-<li><a href="#q-linkedhashmap-de-accessorder-wen-ti-xia-mian-shu-chu-shi-me">Q:linkedHashMap的accessOrder问题,下面输出什么</a></li>
-<li><a href="#q-hashmap-wei-shi-me-duo-xian-cheng-shi-yong-shi-ke-neng-hui-zao-cheng-si-xun-huan">Q：hashMap为什么多线程使用时可能会造成死循环？</a></li>
-<li><a href="#q-java1-7-he-1-8-zhi-jian-hashmap-zuo-liao-shi-me-gai-jin">Q:java1.7 和1.8 之间， hashMap做了什么改进？</a></li>
-</ul>
-</li>
-<li><a href="#collections">Collections</a></li>
-<li><a href="#te-shu-de-yin-yong-rong-qi">特殊的引用容器</a>
-<ul>
-<li><a href="#q-ru-guo-ra-yin-yong-liao-a-ze-a-bi-bu-ke-neng-bei-hui-shou-ra-shu-yu-shi-me-yin-yong">Q：如果RA引用了A，则A必不可能被回收， RA属于什么引用？</a></li>
-<li><a href="#q-ru-guo-zhi-you-ra-yin-yong-liao-a-zai-nei-cun-bu-zu-shi-hui-qiang-zhi-hui-shou-a-ze-ra-shu-yu-shi-me-yin-yong">Q： 如果只有RA引用了A， 在内存不足时会强制回收A，则RA属于什么引用？</a></li>
-<li><a href="#hexopostrendercodeblock-figure-class-highlight-java-table-tr-td-class-gutter-pre-span-class-line-1-span-br-pre-td-td-class-code-pre-span-class-line-softreference-lt-string-gt-softreference-span-class-keyword-new-span-span-class-title-class-softreference-span-lt-string-gt-str-span-br-pre-td-tr-table-figure-hexopostrendercodeblock"><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SoftReference&lt;String&gt; softReference = <span class="keyword">new</span> <span class="title class_">SoftReference</span>&lt;String&gt;(str);</span><br></pre></td></tr></table></figure></a></li>
-<li><a href="#q-ru-guo-zhi-you-ra-yin-yong-liao-a-bu-guan-nei-cun-zu-bu-zu-zhi-yao-la-ji-hui-shou-qi-sao-miao-dao-liao-jiu-hui-zhi-jie-hui-shou-ra-shu-yu">Q： 如果只有RA引用了A， 不管内存足不足，只要垃圾回收器扫描到了，就会直接回收，RA属于：</a></li>
-<li><a href="#q-dang-zhi-you-ra-yin-yong-liao-a-shi-du-hui-zai-xia-yi-ci-la-ji-shou-ji-shi-zhi-jie-hui-shou-qie-chuang-jian-yin-yong-shi-bi-xu-yi-lai-yin-yong-dui-lie-zhe-ge-yin-yong-ra-shu-yu">Q： 当只有RA引用了A时，都会在下一次垃圾收集时直接回收，且创建引用时必须依赖引用队列，这个引用RA属于：</a></li>
-<li><a href="#q-yin-yong-dui-lie-shi-shi-me-zuo-yong-shi-shi-me">Q： 引用队列是什么，作用是什么？</a></li>
-<li><a href="#you-xian-dui-lie">优先队列</a></li>
-</ul>
-</li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<p>经典java容器结构图：<br>
-<img src="/images/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/1614218412983051246.png" alt="image.png"></p>
-<p>注意哪些属于Collection，哪些属于Map。</p>
-<hr>
-<h1><span id="list-xiang-guan-wen-ti">List相关问题</span><a href="#list-xiang-guan-wen-ti" class="header-anchor">#</a></h1>
-<h2><span id="q-arrlist-new-arraylist-lt-gt-arrays-aslist-he-arrlist-arrays-aslist-you-shi-me-qu-bie">Q:arrList = new ArrayList&lt;&gt;(Arrays.asList（）)   和  arrList =   Arrays.asList（）有什么区别</span><a href="#q-arrlist-new-arraylist-lt-gt-arrays-aslist-he-arrlist-arrays-aslist-you-shi-me-qu-bie" class="header-anchor">#</a></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Integer&gt; arrList1 = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;(Arrays.asList(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>));</span><br><span class="line">List&lt;Integer&gt; arrList2 = Arrays.asList(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">arrList1.add(<span class="number">4</span>);</span><br><span class="line">arrList2.add(<span class="number">4</span>);</span><br></pre></td></tr></table></figure>
-<p>A:执行arrList2.add(4)时会报错。<br>
-因为 Arrays.asList()只会返回1个固定大小的列表， 其返回的List是AbstractList，无法调用add、remove和clear， 如果调用会直接抛异常。<br>
-异常名字为UnsupportedOperationException<br>
-具体原因可以见评论区。</p>
-<hr>
-<h2><span id="q-na-aslist-zhi-chi-tong-guo-xiu-gai-yuan-shu-zu-lai-xiu-gai-list-nei-rong-ma">Q：那asList()支持通过修改原数组来修改list内容吗？</span><a href="#q-na-aslist-zhi-chi-tong-guo-xiu-gai-yuan-shu-zu-lai-xiu-gai-list-nei-rong-ma" class="header-anchor">#</a></h2>
-<p>例如</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String[] ss = &#123;<span class="string">&quot;a&quot;</span>,<span class="string">&quot;b&quot;</span>,<span class="string">&quot;c&quot;</span>&#125;;</span><br><span class="line">List&lt;String&gt; arrList = Arrays.asList(ss);</span><br><span class="line">ss[<span class="number">0</span>] = <span class="string">&quot;d&quot;</span>;</span><br><span class="line">System.out.println(arrList);</span><br></pre></td></tr></table></figure>
-<p>上面操作后arrList会报错吗？</p>
-<p>A：<br>
-不会报错。arrList里的内容变成了{“d”,“b”,“c”}</p>
-<h2><span id="q-dang-shu-ru-wei-na-xie-zi-mu-shi-die-dai-shi-hui-bao-cuo">Q： 当输入为哪些字母时，迭代时会报错</span><a href="#q-dang-shu-ru-wei-na-xie-zi-mu-shi-die-dai-shi-hui-bao-cuo" class="header-anchor">#</a></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    List&lt;String&gt; list = Lists.newArrayList(<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;C&quot;</span>, <span class="string">&quot;D&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> args[<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">for</span> (String curStr : list) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s.equals(curStr)) &#123;</span><br><span class="line">            list.remove(curStr);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>A：<br>
-删除A或者B会报错，  但是删除C不会！<br>
-对于foreach遍历容器，并用remove做删除时，当删除倒数第二个元素时，是不会报错的。<br>
-因为：</p>
-<hr>
-<h2><span id="q-arraylist-de-kuo-rong-gong-shi-he-mo-ren-chu-shi-da-xiao-shi-duo-shao">Q： ArrayList的扩容公式和默认初始大小是多少？</span><a href="#q-arraylist-de-kuo-rong-gong-shi-he-mo-ren-chu-shi-da-xiao-shi-duo-shao" class="header-anchor">#</a></h2>
-<p>A：<br>
-扩容容量= 原容量 + (原容量右移1位，即0.5倍)= 1.5倍<br>
-<img src="/images/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/1614218437437040318.png" alt="image.png"></p>
-<p>初始容量为10.<br>
-<img src="/images/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/1614218442905061711.png" alt="image.png"></p>
-<ul>
-<li>注意，初始的数组长度还是0，数组长度和容量不是一个东西。</li>
-</ul>
-<hr>
-<h2><span id="q-vector-de-kuo-rong-gong-shi-shi-duo-shao">Q： Vector的扩容公式是多少？</span><a href="#q-vector-de-kuo-rong-gong-shi-shi-duo-shao" class="header-anchor">#</a></h2>
-<p>A:<br>
-扩容容量= 原容量 *2<br>
-<img src="/images/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/1614218451056083054.png" alt="image.png"></p>
-<p>初始大小为10<br>
-<img src="/images/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/1614218456618026072.png" alt="image.png"></p>
-<hr>
-<h2><span id="q-vector-he-arraylist-de-qu-bie">Q：vector和ArrayList的区别</span><a href="#q-vector-he-arraylist-de-qu-bie" class="header-anchor">#</a></h2>
-<p>A：<br>
-vector是线程安全的， 每个方法都加了syn关键字，频繁的加锁可能导致性能降低</p>
-<hr>
-<h2><span id="q-wei-shi-me-bu-tui-jian-shi-yong-stack">Q：为什么不推荐使用stack</span><a href="#q-wei-shi-me-bu-tui-jian-shi-yong-stack" class="header-anchor">#</a></h2>
-<p>A：<br>
-为什么不推荐使用stack<br>
-<a target="_blank" rel="noopener" href="https://www.cnblogs.com/cosmos-wong/p/11845934.html">https://www.cnblogs.com/cosmos-wong/p/11845934.html</a><br>
-stack 继承自vector ， 但是vector里包含了很多不需要的public方法<br>
-只是为了实现栈，不用链表来单独实现，而是为了复用简单的方法而迫使它继承 Vector，Stack 和 Vector 本来是毫无关系的。这使得 Stack 在基于数组实现上效率受影响，另外因为继承 Vector 类，Stack 可以复用 Vector 大量方法，这使得 Stack 在设计上不严谨</p>
-<hr>
-<h1><span id="map-xiang-guan-wen-ti">Map相关问题</span><a href="#map-xiang-guan-wen-ti" class="header-anchor">#</a></h1>
-<h2><span id="q-jie-da-xia-lie-te-xing-he-na-xie-map-you-guan">Q： 解答下列特性和哪些Map有关</span><a href="#q-jie-da-xia-lie-te-xing-he-na-xie-map-you-guan" class="header-anchor">#</a></h2>
-<ul>
-<li>
-<p>实现基于散列表，迭代时是不确定随机的顺序的Map为-----------------------------------------HashMap</p>
-</li>
-<li>
-<p>迭代时按照插入顺序进行迭代-----------------------------------------------------LinkedHashMap</p>
-</li>
-<li>
-<p>迭代时按照键值的比较顺序进行迭代-----------------------------------------------------TreeMap</p>
-</li>
-<li>
-<p>基于红黑树的实现-----------------------------------------------------TreeMap</p>
-</li>
-<li>
-<p>线程安全的Map-----------------------------------------------------ConcurrentHashMap</p>
-</li>
-<li>
-<p>键值比较时使用==而不是equal的Map-------------------------------------------------IdentityHashMap</p>
-</li>
-<li>
-<p>可以按区间得到1个子map的Map----------------------sortMap</p>
-</li>
-<li>
-<p>Set也有HashSet、LinkedSet、TreeSet、SortSet等，作用同理。</p>
-</li>
-</ul>
-<hr>
-<h2><span id="q-hashcode-xiang-tong-na-me-equals-ken-ding-true-ma">Q： hashCode相同， 那么equals肯定true吗？</span><a href="#q-hashcode-xiang-tong-na-me-equals-ken-ding-true-ma" class="header-anchor">#</a></h2>
-<p>A： 不一定。</p>
-<h2><span id="q-equals-wei-true-na-me-hashcode-ken-ding-xiang-tong-ma">Q： equals为true， 那么hashCode肯定相同吗？</span><a href="#q-equals-wei-true-na-me-hashcode-ken-ding-xiang-tong-ma" class="header-anchor">#</a></h2>
-<p>A： 对。<br>
-原因： 参见散列表的原理，明白hashCode的作用后就明白为什么了。<br>
-<br></p>
-<h2><span id="q-2-ge-string-ru-guo-nei-rong-xiang-tong-na-me-hashcode-xiang-tong-ma">Q： 2个String如果内容相同，那么hashCode相同吗？</span><a href="#q-2-ge-string-ru-guo-nei-rong-xiang-tong-na-me-hashcode-xiang-tong-ma" class="header-anchor">#</a></h2>
-<p>A： 对,相同。因为二者equals返回true，所以必定hashCode相同。<br>
-Q： 如果在插入后，修改某个key的hashCode，可能造成什么问题？<br>
-A：<br>
-可能造成内存泄漏。因为map是按计算后的hashCode存放的，而如果在外部修改了某个key的值，可能造成之前塞入的那个哈希所在的地址无法被外部remove(key)，却又无法被gc（因为一直持有），造成内存泄漏。</p>
-<hr>
-<h2><span id="hashtable-hashmap-concurrenthashmap-bi-jiao">HashTable、HashMap、ConcurrentHashMap比较：</span><a href="#hashtable-hashmap-concurrenthashmap-bi-jiao" class="header-anchor">#</a></h2>
-<ul>
-<li>key和value不可以为null的是：----------------------------HashTable</li>
-<li>线程安全的是：---------------------------------HashTable和ConcurrentHashMap<br>
-他们2个的区别：<br>
-在迭代的过程中，ConcurrentHashMap仅仅锁定map的某个部分，而Hashtable则会锁定整个map。(具体可参考底层实现原理，总之ConcurrentHashMap最重要的是做了分段)</li>
-</ul>
-<hr>
-<h2><span id="q-collections-synchronizedmap-map-he-concurrenthashmap-na-ge-tong-bu-xiao-guo-hao">Q：Collections.synchronizedMap（map）和ConcurrentHashMap,哪个同步效果好？</span><a href="#q-collections-synchronizedmap-map-he-concurrenthashmap-na-ge-tong-bu-xiao-guo-hao" class="header-anchor">#</a></h2>
-<p>A：</p>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>Collections.synchronizedMap(map)与ConcurrentHashMap主要区别是：Collections.synchronizedMap()和Hashtable一样，实现上在调用map所有方法时，都对整个map进行同步<br>
-而ConcurrentHashMap的实现却更加精细,分端加锁</p>
-</blockquote>
-</blockquote>
-</blockquote>
-<p>其实Colletions.synchronizedMap就是对放进去的map包了一层sync关键字。<br>
-详见：<br>
-<a target="_blank" rel="noopener" href="https://www.cnblogs.com/a198720/articles/4227500.html">https://www.cnblogs.com/a198720/articles/4227500.html</a></p>
-<hr>
-<h2><span id="q-linkedhashmap-de-accessorder-wen-ti-xia-mian-shu-chu-shi-me">Q:linkedHashMap的accessOrder问题,下面输出什么</span><a href="#q-linkedhashmap-de-accessorder-wen-ti-xia-mian-shu-chu-shi-me" class="header-anchor">#</a></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">fun2</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    LinkedHashMap&lt;String, String&gt; accessOrderTrue = <span class="keyword">new</span> <span class="title class_">LinkedHashMap</span>&lt;&gt;(<span class="number">16</span>, <span class="number">0.75f</span>, <span class="literal">true</span>);</span><br><span class="line">    accessOrderTrue.put(<span class="string">&quot;1&quot;</span>,<span class="string">&quot;1&quot;</span>);</span><br><span class="line">    accessOrderTrue.put(<span class="string">&quot;2&quot;</span>,<span class="string">&quot;2&quot;</span>);</span><br><span class="line">    accessOrderTrue.put(<span class="string">&quot;3&quot;</span>,<span class="string">&quot;3&quot;</span>);</span><br><span class="line">    accessOrderTrue.put(<span class="string">&quot;4&quot;</span>,<span class="string">&quot;4&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;put后的数据：&quot;</span>+accessOrderTrue);</span><br><span class="line">    accessOrderTrue.get(<span class="string">&quot;2&quot;</span>);</span><br><span class="line">    accessOrderTrue.get(<span class="string">&quot;3&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;get后的数据&quot;</span>+accessOrderTrue);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>A：<br>
-省略key值<br>
-put后的数据： {1=1,2=2,3=3,4=4}<br>
-get后的数据： {1=1,4=4,2=2,3=3}</p>
-<ul>
-<li>accessOrder为true时， 会把最近访问过的数据放到链表 <em><strong>末尾</strong></em>。</li>
-</ul>
-<hr>
-<h2><span id="q-hashmap-wei-shi-me-duo-xian-cheng-shi-yong-shi-ke-neng-hui-zao-cheng-si-xun-huan">Q：hashMap为什么多线程使用时可能会造成死循环？</span><a href="#q-hashmap-wei-shi-me-duo-xian-cheng-shi-yong-shi-ke-neng-hui-zao-cheng-si-xun-huan" class="header-anchor">#</a></h2>
-<p>A：<br>
-<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/1e9cf0ac07f4">https://www.jianshu.com/p/1e9cf0ac07f4</a><br>
-主要发生在2个线程同时put并进行扩容时， 对同一个对象的链表引用会出现问题。、</p>
-<hr>
-<h2><span id="q-java1-7-he-1-8-zhi-jian-hashmap-zuo-liao-shi-me-gai-jin">Q:java1.7 和1.8 之间， hashMap做了什么改进？</span><a href="#q-java1-7-he-1-8-zhi-jian-hashmap-zuo-liao-shi-me-gai-jin" class="header-anchor">#</a></h2>
-<p>A：<br>
-1.7的哈希如果冲突严重，则在一个点上形成的链表会越来越长。<br>
-因此1.8做了改进，如果那个点的链表长度超过TREEIFY_THRESHOLD,则会转为红黑树。</p>
-<h1><span id="collections">Collections</span><a href="#collections" class="header-anchor">#</a></h1>
-<ul>
-<li>Collection是接口， Collections是1个工具类</li>
-<li>排序： Collections.sort(collection ,Comparator&lt;&gt;)</li>
-<li>打乱顺序： Collections.shuffle(collection ,Random)</li>
-<li>填充: Collections.fill(list, 对象) ，  注意是浅拷贝填充， 即填充后使用的是同一个引用。</li>
-<li>返回不可变容器（即无法对容器做修改）： Collections.unmodifiableMap(容器)<br>
-除此之外可以返回空的不可变集合和仅有单个元素的不可变集合。<br>
-<img src="/images/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/1614218468075036317.png" alt="image.png"></li>
-</ul>
-<hr>
-<p><img src="/images/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/1614218476720061727.png" alt="image.png"></p>
-<h1><span id="te-shu-de-yin-yong-rong-qi">特殊的引用容器</span><a href="#te-shu-de-yin-yong-rong-qi" class="header-anchor">#</a></h1>
-<p>假设有1个对象A， 有1个引用RA指向A</p>
-<h2><span id="q-ru-guo-ra-yin-yong-liao-a-ze-a-bi-bu-ke-neng-bei-hui-shou-ra-shu-yu-shi-me-yin-yong">Q：如果RA引用了A，则A必不可能被回收， RA属于什么引用？</span><a href="#q-ru-guo-ra-yin-yong-liao-a-ze-a-bi-bu-ke-neng-bei-hui-shou-ra-shu-yu-shi-me-yin-yong" class="header-anchor">#</a></h2>
-<p>A:  强引用StrongRefernce，默认的引用操作都是强引用</p>
-<hr>
-<h2><span id="q-ru-guo-zhi-you-ra-yin-yong-liao-a-zai-nei-cun-bu-zu-shi-hui-qiang-zhi-hui-shou-a-ze-ra-shu-yu-shi-me-yin-yong">Q： 如果只有RA引用了A， 在内存不足时会强制回收A，则RA属于什么引用？</span><a href="#q-ru-guo-zhi-you-ra-yin-yong-liao-a-zai-nei-cun-bu-zu-shi-hui-qiang-zhi-hui-shou-a-ze-ra-shu-yu-shi-me-yin-yong" class="header-anchor">#</a></h2>
-<p>A: 软引用SoftReferencem，用法如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SoftReference&lt;String&gt; softReference = <span class="keyword">new</span> <span class="title class_">SoftReference</span>&lt;String&gt;(str);</span><br></pre></td></tr></table></figure>
-<hr>
-<h2><span id="q-ru-guo-zhi-you-ra-yin-yong-liao-a-bu-guan-nei-cun-zu-bu-zu-zhi-yao-la-ji-hui-shou-qi-sao-miao-dao-liao-jiu-hui-zhi-jie-hui-shou-ra-shu-yu">Q： 如果只有RA引用了A， 不管内存足不足，只要垃圾回收器扫描到了，就会直接回收，RA属于：</span><a href="#q-ru-guo-zhi-you-ra-yin-yong-liao-a-bu-guan-nei-cun-zu-bu-zu-zhi-yao-la-ji-hui-shou-qi-sao-miao-dao-liao-jiu-hui-zhi-jie-hui-shou-ra-shu-yu" class="header-anchor">#</a></h2>
-<p>A： 弱引用WeakReference，  注意和垃圾收集器的启动间隔有关，因此短时间内RA还是可用的。<br>
-和这个引用相关的集合：WeakHashMap</p>
-<hr>
-<h2><span id="q-dang-zhi-you-ra-yin-yong-liao-a-shi-du-hui-zai-xia-yi-ci-la-ji-shou-ji-shi-zhi-jie-hui-shou-qie-chuang-jian-yin-yong-shi-bi-xu-yi-lai-yin-yong-dui-lie-zhe-ge-yin-yong-ra-shu-yu">Q： 当只有RA引用了A时，都会在下一次垃圾收集时直接回收，且创建引用时必须依赖引用队列，这个引用RA属于：</span><a href="#q-dang-zhi-you-ra-yin-yong-liao-a-shi-du-hui-zai-xia-yi-ci-la-ji-shou-ji-shi-zhi-jie-hui-shou-qie-chuang-jian-yin-yong-shi-bi-xu-yi-lai-yin-yong-dui-lie-zhe-ge-yin-yong-ra-shu-yu" class="header-anchor">#</a></h2>
-<p>A： 虚引用（幽灵引用）PhantomReference。<br>
-和弱引用区别：<br>
-虚引用创建时必须依赖引用队列，且用途一般是跟踪对象的垃圾回收，让用户在回收时通过虚引用去触发一些清理行为。</p>
-<hr>
-<h2><span id="q-yin-yong-dui-lie-shi-shi-me-zuo-yong-shi-shi-me">Q： 引用队列是什么，作用是什么？</span><a href="#q-yin-yong-dui-lie-shi-shi-me-zuo-yong-shi-shi-me" class="header-anchor">#</a></h2>
-<p>A： 引用队列可以配合软引用、弱引用及幽灵引用使用，当引用的对象将要被JVM回收时，会将其加入到引用队列。<br>
-应用：通过引用队列可以了解JVM垃圾回收情况。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 引用队列</span></span><br><span class="line">ReferenceQueue&lt;String&gt; rq = <span class="keyword">new</span> <span class="title class_">ReferenceQueue</span>&lt;String&gt;();</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 幽灵引用</span></span><br><span class="line">PhantomReference&lt;String&gt; pr = <span class="keyword">new</span> <span class="title class_">PhantomReference</span>&lt;String&gt;(<span class="keyword">new</span> <span class="title class_">String</span>(<span class="string">&quot;&quot;</span>), rq);</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 永远为null（幽灵引用相当于无引用）</span></span><br><span class="line">System.out.println(pr.get());</span><br></pre></td></tr></table></figure>
-<hr>
-<p><img src="/images/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/1614218485847000930.png" alt="image.png"></p>
-<h2><span id="you-xian-dui-lie">优先队列</span><a href="#you-xian-dui-lie" class="header-anchor">#</a></h2>
-<p><img src="/images/java%E5%AE%B9%E5%99%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%92%8C%E5%BA%94%E7%94%A8/1614218491033053213.png" alt="image.png"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -3067,14 +3289,14 @@ get后的数据： {1=1,4=4,2=2,3=3}</p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">134</span>
+          <span class="site-state-item-count">136</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">42</span>
+        <span class="site-state-item-count">43</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -3138,7 +3360,7 @@ get后的数据： {1=1,4=4,2=2,3=3}</p>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共243.6k字</span>
+  <span class="post-count">博客全站共244.9k字</span>
 </div>
 
         
