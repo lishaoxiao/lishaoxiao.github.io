@@ -358,6 +358,1286 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/09/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/" class="post-title-link" itemprop="url">微服务心跳管理机制设计</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-19 23:40:12 / 修改时间：23:25:44" itemprop="dateCreated datePublished" datetime="2022-09-19T23:40:12+08:00">2022-09-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">系统设计</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#ji-yu-lru-shi-xian-bai-wan-ji-bie-de-xin-tiao-jian-kong-fu-wu">基于LRU实现百万级别的心跳监控服务</a>
+<ul>
+<li><a href="#1-q-bai-wan-ji-bie-jie-dian-ru-he-kuai-su-zhao-dao-chi-xian-de-jie-dian-fei-shu-ju-ku-cun-chu-mo-shi">1. Q: 百万级别节点，如何快速找到离线的节点？（非数据库存储模式）</a></li>
+<li><a href="#2-q-ru-he-bao-zheng-xin-tiao-fu-wu-de-ke-kao-xing">2. Q: 如何保证心跳服务的可靠性？</a></li>
+<li><a href="#3-q-ru-he-ti-sheng-dan-ge-xin-tiao-fu-wu-jie-dian-de-xin-tiao-jie-shou-xing-neng">3. Q: 如何提升单个心跳服务节点的心跳接收性能？</a></li>
+<li><a href="#4-xin-tiao-bao-xuan-yong-tcp-huan-shi-udp">4. 心跳包选用TCP还是UDP？</a></li>
+</ul>
+</li>
+<li><a href="#ling-yi-ge-fang-shi-shi-jian-lun">另一个方式：时间轮</a>
+<ul>
+<li><a href="#q-java-de-delayqueue-lei-yuan-li-zhi-dao-ma">Q: java的DelayQueue类原理知道吗？</a></li>
+<li><a href="#q-shi-jian-lun-he-java-de-delayqueue-you-shi-me-qu-bie">Q: 时间轮和   java的delayQueue）有什么区别？</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<hr>
+<p>笔记来源：<br>
+<a target="_blank" rel="noopener" href="https://time.geekbang.org/column/article/240656">实战：单机如何实现管理百万主机的心跳服务</a></p>
+<h1><span id="ji-yu-lru-shi-xian-bai-wan-ji-bie-de-xin-tiao-jian-kong-fu-wu">基于LRU实现百万级别的心跳监控服务</span><a href="#ji-yu-lru-shi-xian-bai-wan-ji-bie-de-xin-tiao-jian-kong-fu-wu" class="header-anchor">#</a></h1>
+<h2><span id="1-q-bai-wan-ji-bie-jie-dian-ru-he-kuai-su-zhao-dao-chi-xian-de-jie-dian-fei-shu-ju-ku-cun-chu-mo-shi">1. Q: 百万级别节点，如何快速找到离线的节点？（非数据库存储模式）</span><a href="#1-q-bai-wan-ji-bie-jie-dian-ru-he-kuai-su-zhao-dao-chi-xian-de-jie-dian-fei-shu-ju-ku-cun-chu-mo-shi" class="header-anchor">#</a></h2>
+<p>全部遍历找超时，O(n)， 百万级别节点消耗非常大，   遍历时可能会因为涉及更新的同步问题， 导致此时无法插入。<br>
+如果用单线程，这个过程慢的话会造成阻塞。</p>
+<p>实现方式1： LRU+链表+哈希表<br>
+① 所有心跳放进一个LRU队列中，保证最新的心跳包在队尾，最老的心跳包在队头。<br>
+② 如果某节点有新的心跳包进来， 利用哈希表找到这个节点的链点位置，删除掉，再将新包插入到队尾。<br>
+③ 每次心跳检查时， 只要查询队头， 不断将超时的心跳包出队，直到队头的心跳包不超时即可。<br>
+<img src="/images/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/ee76fb4d7bfd65d2190dbadd7760c7f312f74079.png" alt="ee76fb4d7bfd65d2190dbadd7760c7f312f74079"><br>
+实现方式2： 时间轮，时间轮的做法见最后</p>
+<h2><span id="2-q-ru-he-bao-zheng-xin-tiao-fu-wu-de-ke-kao-xing">2. Q: 如何保证心跳服务的可靠性？</span><a href="#2-q-ru-he-bao-zheng-xin-tiao-fu-wu-de-ke-kao-xing" class="header-anchor">#</a></h2>
+<p>上面提到的心跳检查都在内存中，  心跳检查节点如果只有1个的话不可靠，而且量级也会很大。<br>
+但又不能落盘，这会导致数据库的并发查询压力很大，且数据库自身的可靠性又会成了问题。</p>
+<p>解决方式：<br>
+分布式处理。<br>
+心跳入口网关 根据节点的ip或者节点id做哈希， 确保相同节点的心跳包发往同一个节点。<br>
+如果网关发现某个节点挂了，利用哈希一致算法更新发送的节点即可。</p>
+<h2><span id="3-q-ru-he-ti-sheng-dan-ge-xin-tiao-fu-wu-jie-dian-de-xin-tiao-jie-shou-xing-neng">3. Q: 如何提升单个心跳服务节点的心跳接收性能？</span><a href="#3-q-ru-he-ti-sheng-dan-ge-xin-tiao-fu-wu-jie-dian-de-xin-tiao-jie-shou-xing-neng" class="header-anchor">#</a></h2>
+<p>收到心跳后， 涉及心跳的解包，LRU+哈希更新，需要提升处理性能。</p>
+<p>①  多线程处理， 同样利用上面的方法做哈希，分配到特定的心跳处理线程，不同线程之间处理的节点信息不会互相干扰。</p>
+<blockquote>
+<blockquote>
+<p>注意点：  缓存队列放到各自的工作线程中。 即push而非pull的方式，尽可能避免N之间的竞争，即只做1+1的竞争。<br>
+<img src="/images/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/68d6f3d4595ec0a8c74566349c25dda9fb4bb3f8.png" alt="68d6f3d4595ec0a8c74566349c25dda9fb4bb3f8"><br>
+队列锁采用自旋锁，避免工作线程频繁出现上下文切换（即保证工作线程一直在跑，这个用于高并发场景，高并发场景不能让他停下来的）</p>
+</blockquote>
+</blockquote>
+<p>② 心跳包资源池减少内存释放频率<br>
+如果只有10w个节点，那么每次收到心跳请求时，不要反复new新的心跳对象，而是从心跳资源池里取出构造好的对象，把最新时间set进去后再扔给分发线程。</p>
+<h2><span id="4-xin-tiao-bao-xuan-yong-tcp-huan-shi-udp">4. 心跳包选用TCP还是UDP？</span><a href="#4-xin-tiao-bao-xuan-yong-tcp-huan-shi-udp" class="header-anchor">#</a></h2>
+<p>满足以下条件的话选择UDP:</p>
+<ol>
+<li>心跳包报文长度内容信息量很少，基本小于MTU， 不需要利用TCP自带的分包机制。</li>
+<li>超时判断时间允许偶然一次的不可靠丢包（即偶尔丢一次并不影响）</li>
+</ol>
+<p>这种情况用UDP在网内发到心跳服务即可。<br>
+不需要TCP那样的高消耗。</p>
+<h1><span id="ling-yi-ge-fang-shi-shi-jian-lun">另一个方式：时间轮</span><a href="#ling-yi-ge-fang-shi-shi-jian-lun" class="header-anchor">#</a></h1>
+<p>参考自<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/0f0fec47a0ad">TimingWheel 时间轮详解</a></p>
+<p>时间轮本质：</p>
+<ol>
+<li>弄一个数组（看起来是一个环，实际上是数组）</li>
+<li>数组中中每个节点又存了一个双向链表，用于存放实际的任务（用链表是为了方便插入）</li>
+<li>任务具体放数组中的哪个位置？  根据 超期时间取余决定他的实际存放位置。</li>
+<li>如果数组的节点中有任务，会把本身的超期时间带着一起扔进一个 队列中</li>
+<li>队列每次取队头数据， 如果时间没到队头节点指定的延迟时间，就阻塞，直到时间到达，取出里面的任务逐个执行。</li>
+<li>如果任务的定时时间超过整个环的时间？  则新增一个时间轮，时间比这个更长，因此队列里可能会多插入一个节点，节点中会标识我是小时间轮还是大时间轮的。<br>
+<img src="/images/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/2e95b497a970bc8baad42f25d6dee04d0241a079.png" alt="2e95b497a970bc8baad42f25d6dee04d0241a079"></li>
+</ol>
+<hr>
+<p>其他的延时队列怎么做的?<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/woniu211111/article/details/109302412">延时队列实现的几种姿势</a></p>
+<hr>
+<h2><span id="q-java-de-delayqueue-lei-yuan-li-zhi-dao-ma">Q: java的DelayQueue类原理知道吗？</span><a href="#q-java-de-delayqueue-lei-yuan-li-zhi-dao-ma" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ol>
+<li>有一个优先队列， 放入的任务会根据是否快要超期进行排序， 马上就要超期的会放在队头。</li>
+<li>当使用take方法取数据时，看一下队头任务，如果时间到了就返回。</li>
+<li>如果时间还没到</li>
+</ol>
+<ul>
+<li>首先看一下是否已经有线程在等待这个任务了，如果是的话，使用锁的condition机制做await等待。</li>
+<li>如果没有线程正在等待，就计算还差多少时间， 然后用 LockSupport.parkNanos()让这个调用take方法的线程等待特定时间。</li>
+</ul>
+<ol start="4">
+<li>注意等待期间，会释放锁，因此这期间可以正常offer和take。</li>
+<li>当时间到了后，这个线程肯定能取走数据了。  取完后，顺便看一下队列里还有没有数据，如果有， 调用condition.signal()，通知那堆正在等待的线程， 你们可以试着竞争一下取数据了。</li>
+<li>另外每当有新的任务offer时，如果发现最新入队的数据就是马上要超期的数据， 也会立刻通知等待的各位马上苏醒竞争（因为之前等待的线程认为自己还要睡一会才会有数据）</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/fuzhongmin05/article/details/105716205">Java阻塞延迟队列DelayQueue原理及使用</a></p>
+<hr>
+<h2><span id="q-shi-jian-lun-he-java-de-delayqueue-you-shi-me-qu-bie">Q: 时间轮和   java的delayQueue）有什么区别？</span><a href="#q-shi-jian-lun-he-java-de-delayqueue-you-shi-me-qu-bie" class="header-anchor">#</a></h2>
+<p>A:<br>
+java的delayQueue本质上是用堆（优先队列）实现的。<br>
+接收任务后， 直接把任务放进优先队列中， 按照超期时间确定堆位置。  每次poll时如果发现堆顶没到时间就阻塞，直到时间到了再poll。<br>
+取出来检查后，再加上时间扔回队列。</p>
+<p>坏处： 插入和删除的复杂度是O(logn)。</p>
+<p>而时间轮并不会把任务扔进 queue中，而是把时间轮的槽扔进queue中。  因此整个延迟队列实际上时针对槽的，不需要堆，按先入先出取数据和插槽即可，O(1)的复杂度。  而后面扔进来的任务，都是往槽里的双向链表塞进去而已。</p>
+<hr>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E6%9C%8D%E5%8A%A1%E7%BC%93%E5%AD%98%E8%AE%BE%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/09/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E6%9C%8D%E5%8A%A1%E7%BC%93%E5%AD%98%E8%AE%BE%E8%AE%A1/" class="post-title-link" itemprop="url">服务缓存设计</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-19 23:10:12 / 修改时间：23:26:01" itemprop="dateCreated datePublished" datetime="2022-09-19T23:10:12+08:00">2022-09-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">系统设计</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E6%9C%8D%E5%8A%A1%E7%BC%93%E5%AD%98%E8%AE%BE%E8%AE%A1/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E6%9C%8D%E5%8A%A1%E7%BC%93%E5%AD%98%E8%AE%BE%E8%AE%A1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#ben-di-huan-cun">本地缓存</a>
+<ul>
+<li><a href="#q-shi-me-shi-ben-di-huan-cun">Q: 什么是本地缓存？</a></li>
+<li><a href="#q-you-na-xie-ben-di-huan-cun-chan-pin">Q: 有哪些本地缓存产品？</a></li>
+<li><a href="#q-ben-di-huan-cun-you-shi-me-que-dian">Q: 本地缓存有什么缺点？</a></li>
+<li><a href="#q-ben-di-huan-cun-you-na-xie-geng-xin-fang-shi">Q: 本地缓存有哪些更新方式？</a></li>
+<li><a href="#q-bei-dong-geng-xin-ben-di-huan-cun-you-shi-me-yao-zhu-yi-de-di-fang">Q: 被动更新本地缓存有什么要注意的地方？</a></li>
+<li><a href="#q-shi-me-shi-off-heap-ji-zhu-you-shi-me-hao-chu">Q: 什么是off-heap技术？有什么好处</a></li>
+<li><a href="#q-zen-me-shi-yong-off-heap">Q: 怎么使用off-heap？</a></li>
+<li><a href="#q-directbytebuffer-de-nei-cun-shi-me-shi-hou-hui-bei-shi-fang-xu-yao-zi-ji-xie-c-dai-ma-shi-fang-ma">Q: directByteBuffer的内存什么时候会被释放？ 需要自己写C++代码释放吗？</a></li>
+</ul>
+</li>
+<li><a href="#fen-bu-shi-huan-cun">分布式缓存</a>
+<ul>
+<li><a href="#q-yi-zhi-xing-ha-xi-shi-zuo-shi-me-de">Q: 一致性哈希是做什么的？</a></li>
+<li><a href="#q-fen-cao-suan-fa-shi-shi-me">Q: 分槽算法是什么？</a></li>
+<li><a href="#q-huan-cun-chuan-tou-shi-shi-me-jie-jue-fang-shi-shi">Q: 缓存穿透是什么?解决方式是？</a></li>
+<li><a href="#q-yao-shi-fen-bu-shi-huan-cun-fa-sheng-xue-beng-liao-zen-me-ban-yao-zen-me-fang-zhi-fa-sheng">Q: 要是分布式缓存发生雪崩了怎么办，要怎么防止发生</a></li>
+<li><a href="#q-ji-shi-wan-de-yong-hu-tong-shi-fang-wen-mou-ge-shu-ju-dan-zhe-ge-shu-ju-zheng-hao-huan-cun-li-mei-you-dao-zhi-shi-ji-wan-de-qing-qiu-da-dao-shu-ju-ku-shang-zhe-chong-qing-kuang-jiao-zuo-shi-me-zen-me-jie-jue">Q: 几十万的用户同时访问某个数据，但这个数据正好缓存里没有，导致十几万的请求打到数据库上，这种情况叫做什么？怎么解决？</a></li>
+<li><a href="#q-huan-cun-guo-duo-shi-ru-he-jin-xing-shai-xuan-he-tao-tai">Q: 缓存过多时，如何进行筛选和淘汰？</a></li>
+</ul>
+</li>
+<li><a href="#huan-cun-re-dian">缓存热点</a>
+<ul>
+<li><a href="#q-shi-me-shi-re-dian-key-wen-ti">Q: 什么是热点Key问题？</a></li>
+<li><a href="#q-ru-he-fa-xian-re-dian">Q: 如何发现热点？</a></li>
+<li><a href="#q-ru-he-jie-jue-re-dian-wen-ti">Q: 如何解决热点问题？</a></li>
+<li><a href="#q-ru-he-shan-chu-re-dian">Q: 如何删除热点？</a></li>
+<li><a href="#q-ru-he-li-yong-redis-shi-xian-miao-sha-xi-tong">Q: 如何利用redis 实现秒杀系统？</a></li>
+</ul>
+</li>
+<li><a href="#shu-ju-yi-zhi-xing">数据一致性</a>
+<ul>
+<li><a href="#q-dang-xu-yao-shan-chu-shu-ju-shi-ru-guo-wo-xian-shan-huan-cun-zai-shan-shu-ju-ku-ke-neng-hui-you-shi-me-wen-ti">Q: 当需要删除数据时， 如果我先删缓存，再删数据库，可能会有什么问题？</a></li>
+<li><a href="#q-wang-luo-tong-xin-zheng-chang-ming-ling-zheng-chang-de-qing-kuang-xia-xian-shan-ku-zai-shan-huan-cun-huan-shi-you-ke-neng-zao-cheng-zang-shu-ju-zhi-dao-wei-shi-me-me">Q: 网络通信正常、命令正常的情况下， 先删库 ，再删缓存， 还是有可能造成脏数据， 知道为什么么？</a></li>
+<li><a href="#q-ru-guo-shan-liao-ku-zhi-hou-zai-shan-huan-cun-de-tu-zhong-wang-luo-lin-shi-bu-tong-zen-me-ban-na-huan-cun-ye-you-ke-neng-yi-zhi-zang-zhao-liao">Q: 如果删了库之后， 再删缓存的途中，网络临时不通怎么办？那缓存也有可能一直脏着了。</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<hr>
+<h1><span id="ben-di-huan-cun">本地缓存</span><a href="#ben-di-huan-cun" class="header-anchor">#</a></h1>
+<h2><span id="q-shi-me-shi-ben-di-huan-cun">Q:  什么是本地缓存？</span><a href="#q-shi-me-shi-ben-di-huan-cun" class="header-anchor">#</a></h2>
+<p>A:<br>
+即在客户端、应用端进行本地缓存， 或在jvm中缓存或在程序的堆外缓存。中间没有跨网络的开销</p>
+<hr>
+<h2><span id="q-you-na-xie-ben-di-huan-cun-chan-pin">Q: 有哪些本地缓存产品？</span><a href="#q-you-na-xie-ben-di-huan-cun-chan-pin" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>Ehcache(Hibernate的二级缓存就用的这个）</li>
+<li>GuavaCache（轻量，易用，有丰富的被动更新机制）</li>
+<li>MapDb(支持堆外内存）</li>
+</ul>
+<hr>
+<h2><span id="q-ben-di-huan-cun-you-shi-me-que-dian">Q: 本地缓存有什么缺点？</span><a href="#q-ben-di-huan-cun-you-shi-me-que-dian" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>本地缓存会占用jvm有限的内存资源</li>
+<li>高潮gc次数过快可能会导致贤者时间（stopworld）的延长。</li>
+<li>只在本地缓存， 容易引发数据不同步。</li>
+</ul>
+<hr>
+<h2><span id="q-ben-di-huan-cun-you-na-xie-geng-xin-fang-shi">Q: 本地缓存有哪些更新方式？</span><a href="#q-ben-di-huan-cun-you-na-xie-geng-xin-fang-shi" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>被动更新<br>
+通过自己设置的超时时间， 超期后就自动进行更新，更新就是去重新发请求获取。。</li>
+<li>主动更新<br>
+数据发生变更，主动通过消息队列的方式同步给订阅的应用（适用于内部服务配置订阅），应用进行更新。</li>
+</ul>
+<hr>
+<h2><span id="q-bei-dong-geng-xin-ben-di-huan-cun-you-shi-me-yao-zhu-yi-de-di-fang">Q: 被动更新本地缓存有什么要注意的地方？</span><a href="#q-bei-dong-geng-xin-ben-di-huan-cun-you-shi-me-yao-zhu-yi-de-di-fang" class="header-anchor">#</a></h2>
+<p>A:<br>
+如果同时失效的缓存很多，  需要控制更新时的线程必须只有1个， 如果支持同时触发多个线程进行请求更新，可能导致大量请求打到分布式缓存上引发雪崩。<br>
+两种方式：</p>
+<ol>
+<li>expireAfterWrite，   各超期的缓存起线程准备发请求时，需要先抢到锁，抢到了才能发，否则就阻塞（对性能要求不高可以选这个）</li>
+<li>refreshAfterWrite，  也是抢锁，区别是如果抢不到，就返回旧值，等下次超期再抢。 （ 数据实时性要求不高的情况下可以选择这个）</li>
+</ol>
+<hr>
+<h2><span id="q-shi-me-shi-off-heap-ji-zhu-you-shi-me-hao-chu">Q: 什么是off-heap技术？有什么好处</span><a href="#q-shi-me-shi-off-heap-ji-zhu-you-shi-me-hao-chu" class="header-anchor">#</a></h2>
+<p>A:<br>
+堆外内存技术， 将数据存在jvm外的操作系统内存上，避免和原jvm进程互相干扰，因此也不会参与垃圾收集器gc。<br>
+好处：</p>
+<ul>
+<li>减少gc次数</li>
+<li>扩展和使用更大的内存空间</li>
+<li>省去了物理内存和heap进程内存之间的数据复制步骤，类似于零拷贝了。</li>
+</ul>
+<hr>
+<h2><span id="q-zen-me-shi-yong-off-heap">Q: 怎么使用off-heap？</span><a href="#q-zen-me-shi-yong-off-heap" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>NIO有个ByteBuffer.allocateDirect(int capacity)方法， 可以生成一个DirectByteBuffer实例</li>
+<li>根据参数capacity的值，它会在物理内存中分配一块固定大小的直接字节缓冲区。</li>
+<li>本质上是调用sum.misc.unsafe里实现的native方法进行内存分配操作。</li>
+<li>可用-XX：MaxDirectMemorySize限制总的最大堆外申请大小，避免申请过多。</li>
+</ul>
+<hr>
+<h2><span id="q-directbytebuffer-de-nei-cun-shi-me-shi-hou-hui-bei-shi-fang-xu-yao-zi-ji-xie-c-dai-ma-shi-fang-ma">Q: directByteBuffer的内存什么时候会被释放？ 需要自己写C++代码释放吗？</span><a href="#q-directbytebuffer-de-nei-cun-shi-me-shi-hou-hui-bei-shi-fang-xu-yao-zi-ji-xie-c-dai-ma-shi-fang-ma" class="header-anchor">#</a></h2>
+<p>A:<br>
+不需要。   directByteBuffer在jvm中仍然是段引用，只不过buffer数据存到堆外了。 当这个buffer引用被回收了， 那么buffer背后的堆外内存也会被回收。</p>
+<h1><span id="fen-bu-shi-huan-cun">分布式缓存</span><a href="#fen-bu-shi-huan-cun" class="header-anchor">#</a></h1>
+<hr>
+<h2><span id="q-yi-zhi-xing-ha-xi-shi-zuo-shi-me-de">Q:  一致性哈希是做什么的？</span><a href="#q-yi-zhi-xing-ha-xi-shi-zuo-shi-me-de" class="header-anchor">#</a></h2>
+<p>A:<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42046105/article/details/92802476">https://blog.csdn.net/qq_42046105/article/details/92802476</a><br>
+普通的哈希表算法一般都是计算出哈希值后，通过取余操作将 key 值映射到不同的服务器上<br>
+但是当服务器数量发生变化时，取余操作的除数发生变化，所有 key 所映射的服务器几乎都会改变，这对分布式缓存系统来说是不可以接收的。<br>
+一致性哈希算法能尽可能减少了服务器数量变化所导致的缓存迁移。</p>
+<p>以分布式缓存场景为例，分析一下一致性哈希算法环的原理。<br>
+首先将缓存服务器（ ip + 端口号）进行哈希，映射成环上的一个节点，计算出缓存数据 key 值的 hash key，同样映射到环上，并顺时针选取最近的一个服务器节点作为该缓存应该存储的服务器。具体实现见后续的章节。</p>
+<p><img src="/images/%E6%9C%8D%E5%8A%A1%E7%BC%93%E5%AD%98%E8%AE%BE%E8%AE%A1/b64d1b6633bdfe624e578751aadc21f0ea591b65.png" alt="b64d1b6633bdfe624e578751aadc21f0ea591b65"><br>
+服务器 B 宕机下线，服务器 B 中存储的缓存数据要进行迁移，但由于一致性哈希环的存在，只需要迁移key 值为1的数据，其他的数据的存储服务器不会发生变化。这也是一致性哈希算法比取余映射算法出色的地方。<br>
+<img src="/images/%E6%9C%8D%E5%8A%A1%E7%BC%93%E5%AD%98%E8%AE%BE%E8%AE%A1/9aac123b97d816fed485a1c96c572f008eb025b1.png" alt="9aac123b97d816fed485a1c96c572f008eb025b1"></p>
+<p>现实情况下，服务器在一致性哈希环上的位置不可能分布的这么均匀，导致了每个节点实际占据环上的区间大小不一。</p>
+<p>这种情况下，可以增加虚节点来解决。通过增加虚节点（即A节点实际对应好几个虚节点），使得每个节点在环上所“管辖”的区域更加均匀。</p>
+<p>这样就既保证了在节点变化时，尽可能小的影响数据分布的变化，而同时又保证了数据分布的均匀。</p>
+<hr>
+<h2><span id="q-fen-cao-suan-fa-shi-shi-me">Q: 分槽算法是什么？</span><a href="#q-fen-cao-suan-fa-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A:<br>
+在redis官方给出的集群方案中，数据的分配是按照槽位来进行分配的，每一个数据的键被哈希函数映射到一个槽位，redis-3.0.0规定一共有16384个槽位，当然这个可以根据用户的喜好进行配置。当用户put或者是get一个数据的时候，首先会查找这个数据对应的槽位是多少，然后查找对应的节点，然后才把数据放入这个节点。这样就做到了把数据均匀的分配到集群中的每一个节点上，从而做到了每一个节点的负载均衡，充分发挥了集群的威力。</p>
+<p>Redis 集群有16384个哈希槽,每个key通过CRC16校验后对16384取模来决定放置哪个槽.集群的每个节点负责一部分hash槽</p>
+<ul>
+<li>当需要增加节点时，只需要把其他节点的某些哈希槽挪到新节点就可以了；</li>
+<li>当需要移除节点时，只需要把移除节点上的哈希槽挪到其他节点就行了；<br>
+<img src="/images/%E6%9C%8D%E5%8A%A1%E7%BC%93%E5%AD%98%E8%AE%BE%E8%AE%A1/5bf0eef7aafe6e5eeb4da6d74b7ba2fa37bbefa2.png" alt="5bf0eef7aafe6e5eeb4da6d74b7ba2fa37bbefa2"><br>
+<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/4163916a2a8a">一致性哈希和分槽算法</a></li>
+</ul>
+<hr>
+<h2><span id="q-huan-cun-chuan-tou-shi-shi-me-jie-jue-fang-shi-shi">Q: 缓存穿透是什么?解决方式是？</span><a href="#q-huan-cun-chuan-tou-shi-shi-me-jie-jue-fang-shi-shi" class="header-anchor">#</a></h2>
+<p>A:<br>
+大量不存在的请求攻入，反复去查询数据库<br>
+对于不存在的数据，可以用布隆过滤器（对1个值做多个不同的哈希，放入不同的位图位置里，  后面计算的时候，看下是否有1个位置没满足，没满足就一定不存在）</p>
+<hr>
+<p>Q:  缓存中的布隆过滤器是什么？</p>
+<p>A:</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/fouy_yun/article/details/81075432">回答1</a><br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38080318/article/details/106207978?utm_medium=distribute.pc_feed_404.none-task-blog-2~default~BlogCommendFromBaidu~default-2.control404&amp;depth_1-utm_source=distribute.pc_feed_404.none-task-blog-2~default~BlogCommendFromBaidu~default-2.control40">回答2</a><br>
+<img src="/images/%E6%9C%8D%E5%8A%A1%E7%BC%93%E5%AD%98%E8%AE%BE%E8%AE%A1/1663600837395.png" alt="1663600837395"></p>
+<hr>
+<hr>
+<h2><span id="q-yao-shi-fen-bu-shi-huan-cun-fa-sheng-xue-beng-liao-zen-me-ban-yao-zen-me-fang-zhi-fa-sheng">Q: 要是分布式缓存发生雪崩了怎么办，要怎么防止发生</span><a href="#q-yao-shi-fen-bu-shi-huan-cun-fa-sheng-xue-beng-liao-zen-me-ban-yao-zen-me-fang-zhi-fa-sheng" class="header-anchor">#</a></h2>
+<p>A:<br>
+缓存雪崩可能是因为数据未加载到缓存中，或者一大堆缓存在同一时间大面积的失效过期，从而导致所有请求都去查数据库，导致数据库CPU和内存负载过高，甚至宕机。</p>
+<p>解决方式：</p>
+<ul>
+<li>
+<p>缓存失效可以通过加锁或队列来控制读取数据库的访问的线程数量，比如对某个key值运行一个线程访问数据库，其他线程等待</p>
+</li>
+<li>
+<p>不同的key，设置不同的过期时间，让失效的时间点尽量均匀或者随机，避免一下子大面积失效。</p>
+</li>
+<li>
+<p>做二级缓存，a1失效时候，访问a2，a1失效的时间设置为短期，a2为长期</p>
+</li>
+</ul>
+<hr>
+<h2><span id="q-ji-shi-wan-de-yong-hu-tong-shi-fang-wen-mou-ge-shu-ju-dan-zhe-ge-shu-ju-zheng-hao-huan-cun-li-mei-you-dao-zhi-shi-ji-wan-de-qing-qiu-da-dao-shu-ju-ku-shang-zhe-chong-qing-kuang-jiao-zuo-shi-me-zen-me-jie-jue">Q: 几十万的用户同时访问某个数据，但这个数据正好缓存里没有，导致十几万的请求打到数据库上，这种情况叫做什么？怎么解决？</span><a href="#q-ji-shi-wan-de-yong-hu-tong-shi-fang-wen-mou-ge-shu-ju-dan-zhe-ge-shu-ju-zheng-hao-huan-cun-li-mei-you-dao-zhi-shi-ji-wan-de-qing-qiu-da-dao-shu-ju-ku-shang-zhe-chong-qing-kuang-jiao-zuo-shi-me-zen-me-jie-jue" class="header-anchor">#</a></h2>
+<p>A:<br>
+这种情况叫做  ”缓存击穿“。</p>
+<ol>
+<li>延长热点数据的缓存超期时间。 提前预置热点缓存。</li>
+<li>接口限流、降级、队列。</li>
+</ol>
+<hr>
+<h2><span id="q-huan-cun-guo-duo-shi-ru-he-jin-xing-shai-xuan-he-tao-tai">Q: 缓存过多时，如何进行筛选和淘汰？</span><a href="#q-huan-cun-guo-duo-shi-ru-he-jin-xing-shai-xuan-he-tao-tai" class="header-anchor">#</a></h2>
+<p>A:</p>
+<p>没啥人用的数据占用了很多内存，叫缓存污染</p>
+<p>Redis共支持八种淘汰策略。</p>
+<ul>
+<li>第一类： 不淘汰</li>
+</ul>
+<ol>
+<li>noeviction<br>
+如果满了，新的写请求就报错</li>
+</ol>
+<ul>
+<li>第二类：淘汰部分过期数据<br>
+当缓存满却收到新的写请求时，从会过期数据中选一个淘汰。</li>
+</ul>
+<ol start="2">
+<li>volatile-random 随机删除过期数据中的某一个</li>
+<li>volatile-ttl： 越早过期的数据，越优先被删除</li>
+<li>volatile-lru：局部最近最少使用（即过期数据中一直没被用过的，优先删）。<br>
+特点是会从集合中随机选N个，从N个里选一个LRU最小的删除。<br>
+好处：Redis不用维护一个巨大的链表，也不用操作链表，进而提升性能</li>
+<li>volatile-lfu：<br>
+增加了访问次数<br>
+先在过期集合中判断访问次数，再判断LRU时间、</li>
+</ol>
+<ul>
+<li>第三类：全部数据可能都被淘汰</li>
+</ul>
+<ol start="6">
+<li>allkeys-lru</li>
+<li>allkeys-random</li>
+<li>allkeys-lfu<br>
+和volatile的处理一样，区别是 ”所有缓存“ 而非”部分过期缓存“</li>
+</ol>
+<h1><span id="huan-cun-re-dian">缓存热点</span><a href="#huan-cun-re-dian" class="header-anchor">#</a></h1>
+<h2><span id="q-shi-me-shi-re-dian-key-wen-ti">Q: 什么是热点Key问题？</span><a href="#q-shi-me-shi-re-dian-key-wen-ti" class="header-anchor">#</a></h2>
+<p>A:<br>
+热点问题产生的原因大致有以下两种：</p>
+<p>用户消费的数据远大于生产的数据（热卖商品、热点新闻、热点评论、明星直播）。<br>
+在日常工作生活中一些突发的的事件，被大量刊发、浏览的热点新闻、热点评论、明星直播等，这些典型的读多写少的场景会产生热点问题。<br>
+危害：</p>
+<ul>
+<li>请求分片集中，超过单Server的性能极限。</li>
+<li>在服务端读数据进行访问时，往往会对数据进行分片切分，此过程中会在某一主机Server上对相应的Key进行访问，当访问超过Server极限时，就会导致热点Key问题的产生。</li>
+<li>流量集中，达到物理网卡上限。</li>
+<li>请求过多，缓存分片服务被打垮。</li>
+<li>DB击穿，引起业务雪崩。</li>
+</ul>
+<hr>
+<h2><span id="q-ru-he-fa-xian-re-dian">Q:  如何发现热点？</span><a href="#q-ru-he-fa-xian-re-dian" class="header-anchor">#</a></h2>
+<ol>
+<li>最简单的方式，是提前配置热点key，需要运营人员提供相关数据。</li>
+<li>或者搭建有自身业务特点的热点自动发现平台， 通过分析日志得到热点key，及时更新热点保护。</li>
+<li>client-&gt;Proxy-&gt;redis的proxy层做收集上报，其实类似于上面的自动发现收集。<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/liu15835467265liu/article/details/103746821/">发现动态热点数据</a><br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/cxy_19891109/article/details/87480515">秒杀系统之发现动态热点数据</a></li>
+<li>redis自身有个monitor命令， 可以抓取收到的命令，收集上报热点key。</li>
+</ol>
+<hr>
+<h2><span id="q-ru-he-jie-jue-re-dian-wen-ti">Q: 如何解决热点问题？</span><a href="#q-ru-he-jie-jue-re-dian-wen-ti" class="header-anchor">#</a></h2>
+<p>识别到热点后就是处理策略了。</p>
+<ol>
+<li>升级为本地缓存，也就是redis前置服务增加jvm内部缓存，只针对部分热点key。</li>
+<li>紧急扩容redis缓存（但是扩容需要过程，还涉及预热同步主节点数据问题）</li>
+<li>拆分key分散到更多其它缓存节点避免单节点瓶颈**（redis单节点一般10w qps）**， 即单独对这个热点key添加新的分片算法，分到其他本不属于的redis上。</li>
+</ol>
+<p>换句话说， 根本解决方式就是及时进行缓存的扩容。 有种办法是重写redis的访问机制，将slave节点也用上，实现读写分离。<br>
+redis有个客户端lettuce，可以开启cluster模式下的读写分离， 水平扩容slave节点来无限延申系统容量。<br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/williamjie/p/11250789.html">热点Key问题的发现与解决</a></p>
+<hr>
+<h2><span id="q-ru-he-shan-chu-re-dian">Q: 如何删除热点？</span><a href="#q-ru-he-shan-chu-re-dian" class="header-anchor">#</a></h2>
+<p>A:<br>
+然后就是删除的问题，，保证最终一致性即可，如果是本地缓存可以用MQ广播消息+超时过期的策略，当然还有些极端情况的不一致可以考虑延迟双删和binlog异步刷新</p>
+<hr>
+<h2><span id="q-ru-he-li-yong-redis-shi-xian-miao-sha-xi-tong">Q: 如何利用redis 实现秒杀系统？</span><a href="#q-ru-he-li-yong-redis-shi-xian-miao-sha-xi-tong" class="header-anchor">#</a></h2>
+<p>A:<br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/williamjie/p/11250753.html">使用Redis搭建电商秒杀系统</a></p>
+<hr>
+<hr>
+<hr>
+<h1><span id="shu-ju-yi-zhi-xing">数据一致性</span><a href="#shu-ju-yi-zhi-xing" class="header-anchor">#</a></h1>
+<h2><span id="q-dang-xu-yao-shan-chu-shu-ju-shi-ru-guo-wo-xian-shan-huan-cun-zai-shan-shu-ju-ku-ke-neng-hui-you-shi-me-wen-ti">Q: 当需要删除数据时， 如果我先删缓存，再删数据库，可能会有什么问题？</span><a href="#q-dang-xu-yao-shan-chu-shu-ju-shi-ru-guo-wo-xian-shan-huan-cun-zai-shan-shu-ju-ku-ke-neng-hui-you-shi-me-wen-ti" class="header-anchor">#</a></h2>
+<p>A:<br>
+删完缓存，业务代码准备去删数据库时， 另一个请求打到redis这，发现不存在，于是另一个处理线程去数据库中取出了数据，并加载到了缓存中。<br>
+这导致了缓存删除了个寂寞。</p>
+<p>核心原因是因为业务代码的 删库和读-加载操作是支持并发执行的。</p>
+<ul>
+<li>因此应该先删数据库， 再删缓存，  这样能确保不会把脏数据重新加载到内存中</li>
+</ul>
+<hr>
+<h2><span id="q-wang-luo-tong-xin-zheng-chang-ming-ling-zheng-chang-de-qing-kuang-xia-xian-shan-ku-zai-shan-huan-cun-huan-shi-you-ke-neng-zao-cheng-zang-shu-ju-zhi-dao-wei-shi-me-me">Q:  网络通信正常、命令正常的情况下， 先删库 ，再删缓存， 还是有可能造成脏数据， 知道为什么么？</span><a href="#q-wang-luo-tong-xin-zheng-chang-ming-ling-zheng-chang-de-qing-kuang-xia-xian-shan-ku-zai-shan-huan-cun-huan-shi-you-ke-neng-zao-cheng-zang-shu-ju-zhi-dao-wei-shi-me-me" class="header-anchor">#</a></h2>
+<p>A:<br>
+这种情况一般是”读缓存过期“导致的。</p>
+<p>即正好某个key的读缓存过期，被删除。<br>
+然后查询请求过来， 决定查库并加载到缓存中。<br>
+此时又正好发来一个删除请求， 删库+删缓存，  然后又被上面的请求给重新加载了。</p>
+<p>但是一般不考虑， 因为 正好过期+ 正好删除请求 +  ”先删库-&gt;查询缓存-&gt;删缓存-&gt;加载缓存的顺序“    这种概率是非常低的。</p>
+<hr>
+<h2><span id="q-ru-guo-shan-liao-ku-zhi-hou-zai-shan-huan-cun-de-tu-zhong-wang-luo-lin-shi-bu-tong-zen-me-ban-na-huan-cun-ye-you-ke-neng-yi-zhi-zang-zhao-liao">Q: 如果删了库之后， 再删缓存的途中，网络临时不通怎么办？那缓存也有可能一直脏着了。</span><a href="#q-ru-guo-shan-liao-ku-zhi-hou-zai-shan-huan-cun-de-tu-zhong-wang-luo-lin-shi-bu-tong-zen-me-ban-na-huan-cun-ye-you-ke-neng-yi-zhi-zang-zhao-liao" class="header-anchor">#</a></h2>
+<p>A:<br>
+失败的话，放入一个消息队列。 搞一个定时线程定期取消息队列中的消息进行处理。<br>
+为了减少业务代码耦合， 弄一个独立的缓存更新程序， 专门从binlog中拿更新消息进行同步。<br>
+<img src="/images/%E6%9C%8D%E5%8A%A1%E7%BC%93%E5%AD%98%E8%AE%BE%E8%AE%A1/f94f82af9a27192d3240215b4ce5f13b785f87b1.png" alt="f94f82af9a27192d3240215b4ce5f13b785f87b1"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8%E5%92%8C%E4%BA%8B%E5%8A%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/09/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8%E5%92%8C%E4%BA%8B%E5%8A%A1/" class="post-title-link" itemprop="url">分布式存储和事务</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-19 22:32:12 / 修改时间：23:17:54" itemprop="dateCreated datePublished" datetime="2022-09-19T22:32:12+08:00">2022-09-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">系统设计</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8%E5%92%8C%E4%BA%8B%E5%8A%A1/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8%E5%92%8C%E4%BA%8B%E5%8A%A1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#q-cap-fen-bie-zhi-shi-me">Q: CAP分别指什么？</a></li>
+<li><a href="#q-wei-shi-me-shuo-cap-wu-fa-tong-shi-man-zu-neng-jiang-qing-chu-3-chong-qing-kuang-ma">Q: 为什么说CAP无法同时满足？ 能讲清楚3种情况吗？</a></li>
+<li><a href="#q-base-jie-jue-fang-an-shi-shi-me">Q: BASE解决方案是什么？</a></li>
+<li><a href="#q-fen-bu-shi-shi-wu-chong-de-2pc-shi-shi-me">Q: 分布式事务种的2PC是什么？</a></li>
+<li><a href="#q-3pc-you-shi-shi-me">Q: 3PC又是什么？</a></li>
+<li><a href="#q-tcc-you-shi-shi-me">Q: TCC又是什么？</a></li>
+<li><a href="#q-shu-ju-ku-zhu-cong-fu-zhi-de-yan-shi-wen-ti-ru-he-jie-jue">Q:数据库主从复制的延时问题如何解决？</a></li>
+<li><a href="#q-jiang-yi-xia-fen-bu-shi-suo-de-shi-xian">Q：讲一下分布式锁的实现？</a></li>
+<li><a href="#q-xiang-xi-jiang-jiang-ru-he-yong-shu-ju-ku-shi-xian-suo">Q: 详细讲讲如何用数据库实现锁？</a></li>
+<li><a href="#q-redis-de-hong-suo-shi-shi-me-jie-jue-shi-me-wen-ti-de">Q: redis的红锁是什么？解决什么问题的？</a></li>
+<li><a href="#q-ru-he-shi-xian-fen-bu-shi-de-fu-zai-jun-heng">Q: 如何实现分布式的负载均衡？</a></li>
+<li><a href="#q-zhu-bei-shu-ju-ku-ru-he-shi-xian-zhu-bei-qie-huan">Q: 主备数据库如何实现主备切换？</a></li>
+<li><a href="#q-ru-he-fang-zhi-shang-mian-de-zhu-bei-qie-huan-guo-cheng-zhong-de-xin-shu-ju-diu-shi">Q： 如何防止上面的主备切换过程中的新数据丢失？</a></li>
+<li><a href="#q-ru-he-fang-zhi-zhu-bei-qie-huan-shi-de-shu-ju-bu-tong-bu-he-shang-mian-de-shu-ju-diu-shi-bu-tong-zhe-li-zhi-de-shi-master-jie-dian-yi-jing-shou-dao-shu-ju-dan-shi-huan-mei-you-wang-bei-jie-dian-tong-bu-shi-jiu-gua-diao-liao">Q: 如何防止主备切换时的数据不同步？ 和上面的数据丢失不同， 这里指的是master节点已经收到数据， 但是还没有往备节点同步时就挂掉了</a></li>
+<li><a href="#q-ru-he-sheng-cheng-fen-bu-shi-id">Q: 如何生成分布式ID？</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<hr>
+<h1><span id="q-cap-fen-bie-zhi-shi-me">Q:  CAP分别指什么？</span><a href="#q-cap-fen-bie-zhi-shi-me" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>
+<p>C  一致性Consistency ——    多台节点之间数据一致 （响应准确度）</p>
+</li>
+<li>
+<p>A  可用性Availability ——    能快速响应结果，没有延迟或者等待  （响应速度，不需要等待）</p>
+</li>
+<li>
+<p>P   分区容错性PartitionTolerance——  如果有一部分节点挂了， 其他区节点还能提供服务 （ 时刻能响应，不会挂）</p>
+</li>
+</ul>
+<hr>
+<h1><span id="q-wei-shi-me-shuo-cap-wu-fa-tong-shi-man-zu-neng-jiang-qing-chu-3-chong-qing-kuang-ma">Q: 为什么说CAP无法同时满足？ 能讲清楚3种情况吗？</span><a href="#q-wei-shi-me-shuo-cap-wu-fa-tong-shi-man-zu-neng-jiang-qing-chu-3-chong-qing-kuang-ma" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>
+<p>CA 无P :<br>
+不支持分区处理请求，  则仅1个节点， 或者全部是时刻联通， 1个挂了，则认为系统不可用。<br>
+意味着分布式系统的意义不存在。无法扩展。违背初衷<br>
+传统的关系型数据库RDBMS：Oracle、MySQL就是CA。</p>
+</li>
+<li>
+<p>CP 无A：<br>
+没有可用性。<br>
+意味着我会尽可能保证数据同步，  不同步的话我就不返回。<br>
+如果有节点挂了，就用另外正在同步的节点做。<br>
+例子： redis、hbase 这类和业务实时性强相关较弱的分布式数据库<br>
+他们要保证一致性，但不一定要马上能返回结果，</p>
+</li>
+<li>
+<p>AP 无C<br>
+缺失一致性。<br>
+就是因为节点同步延迟， 你看到的可能和别人的页面不一样，但是至少会马上给你结果。<br>
+一般用于不重要的广告、 网页推送、推荐之类的功能。</p>
+</li>
+</ul>
+<p>举个例子：<br>
+<img src="/images/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8%E5%92%8C%E4%BA%8B%E5%8A%A1/c06e14ad98f2204d0498aa5833018c5d8374a45c.png" alt="c06e14ad98f2204d0498aa5833018c5d8374a45c"><br>
+以这个图为例<br>
+如果必须满足P<br>
+则当DB1和DB0的网络通信断开（需要1分钟才能恢复）<br>
+N2仍旧要能够返回结果。<br>
+这时候一致性和可用性无法同时满足<br>
+如果要求有一致性，则必须等待1分钟才会恢复， 则无法立刻响应结果<br>
+如果要求可用性， 则必须立刻返回结果，  那么无法保证DB0和DB1是一致的。</p>
+<hr>
+<h1><span id="q-base-jie-jue-fang-an-shi-shi-me">Q: BASE解决方案是什么？</span><a href="#q-base-jie-jue-fang-an-shi-shi-me" class="header-anchor">#</a></h1>
+<p>A:<br>
+BASE就是为了解决关系数据库强一致性引起的问题而引起的可用性降低而提出的解决方案。</p>
+<ul>
+<li>基本可用（Basically Available）<br>
+指系统故障时，能保障核心功能可用，接口性能适当降低</li>
+<li>软状态（Soft state）<br>
+允许存在中间状态，例如支付中、同步中， 也就是允许数据延时</li>
+<li>最终一致（Eventually Consistent）<br>
+经过一段时间后，所有节点数据都将会达到一致。如订单的&quot;支付中&quot;状态，最终会变 为“支付成功”或者&quot;支付失败&quot;，使订单状态与实际交易结果达成一致，但需要一定时间的延迟、等待。</li>
+</ul>
+<hr>
+<h1><span id="q-fen-bu-shi-shi-wu-chong-de-2pc-shi-shi-me">Q: 分布式事务种的2PC是什么？</span><a href="#q-fen-bu-shi-shi-wu-chong-de-2pc-shi-shi-me" class="header-anchor">#</a></h1>
+<p>A:<br>
+2PC（ two-phase commit protocol）<br>
+两阶段提交</p>
+<ul>
+<li>第一阶段：请求/表决阶段（点击放大）<br>
+问一下这些参与节点&quot;这件事你们能不能处理成功了&quot;，参与者节点打开本地数据库事务，完成后并不会立马提交数据库本地事务，而是先向Coordinator报告说：“我这边可以处理了/我这边不能处理”</li>
+<li>第二阶段：提交/执行阶段（正常流程）<br>
+所有参与者节点都向协调者报告说“我这边可以处理”，协调者向所有参与者节点发送“全局提交确认通知（global_commit）”，参与者节点就会完成自身本地数据库事务的提交，并最终将提交结果回复“ack”消息给Coordinator，然后Coordinator就会向调用方返回分布式事务处理完成的结果。</li>
+<li>第二阶段：提交/执行阶段（异常流程）<br>
+参与者节点向协调者节点反馈“Vote_Abort”的消息。此时分布式事务协调者节点就会向所有的参与者节点发起事务回滚的消息（“global_rollback”），此时各个参与者节点就会回滚本地事务，释放资源，并且向协调者节点发送“ack”确认消息，协调者节点就会向调用方返回分布式事务处理失败的结果。<br>
+缺点：性能（阻塞等待）、协调者故障、</li>
+</ul>
+<hr>
+<h1><span id="q-3pc-you-shi-shi-me">Q:  3PC又是什么？</span><a href="#q-3pc-you-shi-shi-me" class="header-anchor">#</a></h1>
+<p>A:<br>
+在两阶段提交的基础上增加了CanCommit阶段 并引入了超时机制 ，一旦事务参与者迟迟没有收到协调者的Commit请求，就会自动进行本地commit，这样相对有效地解决了协调者单点故障的问题。</p>
+<p>第一阶段：CanCommit阶段（确认、检查各节点状态）<br>
+第二阶段：PreCommit阶段（事务预提交，有执行节点的超时机制）<br>
+第三阶段：DoCommit阶段（同样引入超时）</p>
+<hr>
+<h1><span id="q-tcc-you-shi-shi-me">Q: TCC又是什么？</span><a href="#q-tcc-you-shi-shi-me" class="header-anchor">#</a></h1>
+<p>A:</p>
+<p>补偿事务TCC协议 （Try-Confirm-Cancel）<br>
+有3个阶段   Try、confirm、cancel</p>
+<ul>
+<li>Try阶段：主要是对业务系统做检测及资源预留。</li>
+<li>Confirm阶段：确认执行业务操作。</li>
+<li>Cancel阶段：取消执行业务操作。</li>
+</ul>
+<blockquote>
+<blockquote>
+<p>2PC通常都是在跨库的DB层面，而TCC本质上就是一个应用层面的2PC，需要通过业务逻辑来实现。这种分布式事务的实现方式的优势在于，可以让应用自己定义数据库操作的粒度，使得降低锁冲突、提高吞吐量成为可能。</p>
+</blockquote>
+</blockquote>
+<p>TCC的不足之处则在于对应用的侵入性非常强，业务逻辑的每个分支都需要实现try、confirm、cancel三个操作。此外，其实现难度也比较大，需要按照网络状态、系统故障等不同的失败原因实现不同的回滚策略。</p>
+<hr>
+<h1><span id="q-shu-ju-ku-zhu-cong-fu-zhi-de-yan-shi-wen-ti-ru-he-jie-jue">Q:数据库主从复制的延时问题如何解决？</span><a href="#q-shu-ju-ku-zhu-cong-fu-zhi-de-yan-shi-wen-ti-ru-he-jie-jue" class="header-anchor">#</a></h1>
+<p>A:<br>
+分情况讨论</p>
+<ul>
+<li>如果是写操作太多，导致binlog过多，以至于主库写和从库写都很慢——那么可以通过水平扩容的方式，打散写请求。  或者用高版本mysql支持并行binlog复制</li>
+<li>过大的事务，导致主从延时——拆分大事务语句到若干小事务中，这样能够进行及时提交，减小主从复制延时</li>
+<li>对大表进行alter table操作，导致了表会重新生成并进行迁移。——避免业务高峰执行表修改操作，尽量安排在业务低峰期执行</li>
+<li>从库机器规格、配置和主库不一致。 ——从库有时候规格应该比主库配置要高。</li>
+<li>数据库的表缺少主键或者合适索引，导致更新时的主从复制延时。  —— 去检查表结构，保证每个表都有显式自增主键，并协助用户建立合适索引</li>
+<li>从库的查询请求过多，导致性能下降——增加从库数量，打散从库的查询请求。</li>
+</ul>
+<hr>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/92077345">https://zhuanlan.zhihu.com/p/92077345</a></p>
+<hr>
+<h1><span id="q-jiang-yi-xia-fen-bu-shi-suo-de-shi-xian">Q：讲一下分布式锁的实现？</span><a href="#q-jiang-yi-xia-fen-bu-shi-suo-de-shi-xian" class="header-anchor">#</a></h1>
+<p>A:<br>
+分布式锁实现</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/wuzhiwei549/article/details/80692278">https://blog.csdn.net/wuzhiwei549/article/details/80692278</a></p>
+<ul>
+<li>从理解的难易程度角度（从低到高）</li>
+</ul>
+<p>数据库（最简单） &gt; 缓存 &gt; Zookeeper</p>
+<ul>
+<li>从实现的复杂性角度（从低到高）</li>
+</ul>
+<p>Zookeeper &gt;= 缓存 &gt; 数据库</p>
+<ul>
+<li>从性能角度（从高到低）</li>
+</ul>
+<p>缓存（最快） &gt; Zookeeper &gt;= 数据库</p>
+<ul>
+<li>从可靠性角度（从高到低）</li>
+</ul>
+<p>Zookeeper（最可靠） &gt; 缓存（怕主节点突然挂了，导致锁失效） &gt; 数据库（无失效时间，挂了就gg）</p>
+<hr>
+<h1><span id="q-xiang-xi-jiang-jiang-ru-he-yong-shu-ju-ku-shi-xian-suo">Q: 详细讲讲如何用数据库实现锁？</span><a href="#q-xiang-xi-jiang-jiang-ru-he-yong-shu-ju-ku-shi-xian-suo" class="header-anchor">#</a></h1>
+<p>A:<br>
+有个locker表<br>
+分别有4个字典</p>
+<ul>
+<li>锁名</li>
+<li>持有锁的机器id</li>
+<li>version</li>
+<li>超时时间</li>
+</ul>
+<p>先查出这个锁名所在的行数据<br>
+判断这个锁的id是否为空。<br>
+如果不为空，且机器id也不是自己，说明被人持有了，返回false。<br>
+如果为空， 则会尝试去更新， 使用   update 机器id where lockname=‘xxx’ and  <strong>version = 刚才拿到的version+1</strong><br>
+如果update返回的结果不为0，说明更新成功， 返回true，持有锁成功。<br>
+如果update结果为0， 说明抢锁失败， 因为version被人改了，导致where条件不成立，没更新任何一条</p>
+<p>抢到锁的人完成自己的事务操作后， 释放锁，即把锁id清理即可。<br>
+没抢到的人自己选择等一段时间再获取，或者频繁查询。</p>
+<p>利用的行锁和MVCC的特性实现。<br>
+图片如下：<br>
+<img src="/images/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8%E5%92%8C%E4%BA%8B%E5%8A%A1/0e3326d72b41e735c84aec1ebb1b23f34149834b.png" alt="locker锁表"></p>
+<hr>
+<h1><span id="q-redis-de-hong-suo-shi-shi-me-jie-jue-shi-me-wen-ti-de">Q: redis的红锁是什么？解决什么问题的？</span><a href="#q-redis-de-hong-suo-shi-shi-me-jie-jue-shi-me-wen-ti-de" class="header-anchor">#</a></h1>
+<p>A:<br>
+解决的问题：<br>
+Redis的master节点上拿到了锁，但是这个加锁的key还没有同步到slave节点；master故障，发生故障转移，slave节点升级为master节点，导致锁丢失。</p>
+<p>如何解决：</p>
+<ol>
+<li>获取当前时间（单位是毫秒）。</li>
+<li>轮流用相同的key和随机值在N个节点上请求锁，在这一步里，客户端在每个master上请求锁时，会有一个和总的锁释放时间相比小的多的超时时间。比如如果锁自动释放时间是10秒钟，那每个节点锁请求的超时时间可能是5-50毫秒的范围，这个可以防止一个客户端在某个宕掉的master节点上阻塞过长时间，如果一个master节点不可用了，我们应该尽快尝试下一个master节点。</li>
+<li>客户端计算第二步中获取锁所花的时间，只有当客户端在大多数master节点上成功获取了锁（在这里是3个），而且总共消耗的时间不超过锁释放时间，这个锁就认为是获取成功了。</li>
+<li>如果锁获取成功了，那现在锁自动释放时间就是最初的锁释放时间减去之前获取锁所消耗的时间。</li>
+<li>如果锁获取失败了，不管是因为获取成功的锁不超过一半（N/2+1)还是因为总消耗时间超过了锁释放时间，客户端都会到每个master节点上释放锁，即便是那些他认为没有获取成功的锁。</li>
+</ol>
+<hr>
+<h1><span id="q-ru-he-shi-xian-fen-bu-shi-de-fu-zai-jun-heng">Q: 如何实现分布式的负载均衡？</span><a href="#q-ru-he-shi-xian-fen-bu-shi-de-fu-zai-jun-heng" class="header-anchor">#</a></h1>
+<p>A:</p>
+<p>nginx的负载均衡方式<br>
+反向代理，作为代理服务器进行请求转发。<br>
+轮询： 指定1个服务器ip列表， 依次按顺序分配<br>
+weight权重： 根据指定权重， 分配的概率会变高（和服务器不同性能相关）<br>
+ip哈希算法：  让特定ip都导向同一个服务器（避免不同服务器频繁获取某个用户信息）<br>
+fair响应时间算法：  根据响应时间，动态调整分配优先级<br>
+url哈希： 类似ip哈希，根据url哈希，一般是某个服务器会做特定接口缓存的情况。</p>
+<hr>
+<h1><span id="q-zhu-bei-shu-ju-ku-ru-he-shi-xian-zhu-bei-qie-huan">Q:  主备数据库如何实现主备切换？</span><a href="#q-zhu-bei-shu-ju-ku-ru-he-shi-xian-zhu-bei-qie-huan" class="header-anchor">#</a></h1>
+<p>A:<br>
+两种方式</p>
+<ol>
+<li>配置中心实现。 当监控系统发现异常后， 运维人员手动修改配置中心的数据源信息。  shark支持了基于zk的配置中心客户端。</li>
+<li>给主备节点部署keepalive程序。  需要主备机器配置虚拟ip（类似于浮动ip),支持机器进行ip切换。<br>
+运行过程中，  master和slave机器上的keepalived程序会互相发心跳，确认对方是否存货。 一旦master实例出现异常， 主节点的keeplive会自杀， 同时slave节点开始接管这个虚拟ip。</li>
+</ol>
+<hr>
+<h1><span id="q-ru-he-fang-zhi-shang-mian-de-zhu-bei-qie-huan-guo-cheng-zhong-de-xin-shu-ju-diu-shi">Q： 如何防止上面的主备切换过程中的新数据丢失？</span><a href="#q-ru-he-fang-zhi-shang-mian-de-zhu-bei-qie-huan-guo-cheng-zhong-de-xin-shu-ju-diu-shi" class="header-anchor">#</a></h1>
+<p>A:<br>
+数据优先插入到缓存服务，再通过消息队列插入到数据库， 如果主节点挂了，可以通过failover机制重发，当切换成功后，就能插入到更新后的master节点上了（ 前提是failover的总时间大于主备切换的时间）</p>
+<hr>
+<h1><span id="q-ru-he-fang-zhi-zhu-bei-qie-huan-shi-de-shu-ju-bu-tong-bu-he-shang-mian-de-shu-ju-diu-shi-bu-tong-zhe-li-zhi-de-shi-master-jie-dian-yi-jing-shou-dao-shu-ju-dan-shi-huan-mei-you-wang-bei-jie-dian-tong-bu-shi-jiu-gua-diao-liao">Q: 如何防止主备切换时的数据不同步？ 和上面的数据丢失不同， 这里指的是master节点已经收到数据， 但是还没有往备节点同步时就挂掉了</span><a href="#q-ru-he-fang-zhi-zhu-bei-qie-huan-shi-de-shu-ju-bu-tong-bu-he-shang-mian-de-shu-ju-diu-shi-bu-tong-zhe-li-zhi-de-shi-master-jie-dian-yi-jing-shou-dao-shu-ju-dan-shi-huan-mei-you-wang-bei-jie-dian-tong-bu-shi-jiu-gua-diao-liao" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>
+<p>方法1： 如果要求数据强一致， 可以开启半同步复制模式， 即事务提交到master时，master会先发binlog给slave，当slave响应成功后，master才会完成这个事务。 （TPS较高场景不适合该模式）</p>
+</li>
+<li>
+<p>方法2： 就是上面提到的缓存机制，先缓存，再落库。 然后再依靠 GTID（全局事务id）来保证主备数据的最终一致性。</p>
+</li>
+</ul>
+<p>GTID即全局事务ID (global transaction identifier), 其保证为每一个在主上提交的事务在复制集群中可以生成一个唯一的ID。GTID最初由google实现，官方MySQL在5.6才加入该功能。mysql主从结构在一主一从情况下对于GTID来说就没有优势了，而对于2台主以上的结构优势异常明显，可以在数据不丢失的情况下切换新主<br>
+<img src="/images/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8%E5%92%8C%E4%BA%8B%E5%8A%A1/5e695f9c56a67777bdb1727f6c2f805f16b0140c.png" alt="5e695f9c56a67777bdb1727f6c2f805f16b0140c"><br>
+如图, Server1(Master)崩溃，根据从上show slave status获得Master_log_File/Read_Master_Log_Pos的值，Server2(Slave)已经跟上了主，Server3(Slave)没有跟上主。这时要是把Server2提升为主，Server3变成Server2的从。这时在Server3上执行change的时候需要做一些计算。</p>
+<p>这个问题在5.6的GTID出现后，就显得非常的简单。由于同一事务的GTID在所有节点上的值一致，那么<strong>根据Server3当前停止点的GTID就能定位到Server2上的GTID</strong>。甚至由于MASTER_AUTO_POSITION功能的出现，我们都不需要知道GTID的具体值，直接使用CHANGE MASTER TO MASTER_HOST=‘xxx’, MASTER_AUTO_POSITION命令就可以直接完成failover的工作。</p>
+<hr>
+<h1><span id="q-ru-he-sheng-cheng-fen-bu-shi-id">Q: 如何生成分布式ID？</span><a href="#q-ru-he-sheng-cheng-fen-bu-shi-id" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>UUID<br>
+UUID.randomUUID()<br>
+UUID有5个版本，第一个版本比较好理解<br>
+基于时间戳、随机数、机器MAC地址（java中改成ip地址）生成UUID<br>
+随机性过强，不连续</li>
+<li>数据库自增ID<br>
+需要一个单独的MySQL实例用来生成ID，给id字段加上auto_increment关键字，自动id，只不过可能会不连续（可能挂掉）</li>
+<li>数据库多主模式<br>
+设置两个Mysql实例都能单独的生产自增ID<br>
+2个实例的自增大小相同，但是起始值不同，就能保证隔开了<br>
+不方便扩容</li>
+<li>号段模式<br>
+从数据库批量的获取自增ID，每次从数据库取出一个号段范围，例如 (1,1000] 代表1000个ID，具体的业务服务将本号段，生成1~1000的自增ID并加载到内存<br>
+多业务端可能同时操作，所以采用版本号version乐观锁方式更新，这种分布式ID生成方式不强依赖于数据库，不会频繁的访问数据库，对数据库的压力小很多。<br>
+主流</li>
+<li>Redis<br>
+利用redis的 incr命令实现ID的原子性自增<br>
+RDB备份可能导致id重复<br>
+AOF备份可能导致重启时间过长</li>
+<li>雪花算法Snowflake<br>
+Snowflake ID组成结构：正数位（占1比特）+ 时间戳（占41比特）+ 机器ID（占5比特）+ 数据中心（占5比特）+ 自增值（占12比特），总共64比特组成的一个Long类型<br>
+序列号部分（12bit），自增值支持同一毫秒内同一个节点可以生成4096个ID</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/107939861">9种分布式ID生成方式</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E8%AE%BE%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/09/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E8%AE%BE%E8%AE%A1/" class="post-title-link" itemprop="url">消息队列设计</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-19 21:30:12 / 修改时间：23:12:48" itemprop="dateCreated datePublished" datetime="2022-09-19T21:30:12+08:00">2022-09-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">系统设计</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E8%AE%BE%E8%AE%A1/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E8%AE%BE%E8%AE%A1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#q-xiao-xi-dui-lie-de-zuo-yong-shi-shi-me">Q: 消息队列的作用是什么？</a></li>
+<li><a href="#q-xiao-xi-dui-lie-du-you-shi-me-que-dian">Q: 消息队列都有什么缺点？</a></li>
+<li><a href="#q-kafka-activemq-ribbitmq-rocketmq-du-you-shi-me-you-que-dian">Q: Kafka、activeMQ、RibbitMQ、RocketMQ都有什么优缺点？</a></li>
+<li><a href="#q-ru-he-bao-zheng-xiao-xi-dui-lie-de-gao-ke-yong-bu-hui-yin-wei-1-tai-xiao-xi-dui-lie-fu-wu-gua-diao-dao-zhi-fu-wu-shi-ling">Q: 如何保证消息队列的高可用？不会因为1台消息队列服务挂掉导致服务失灵？</a></li>
+<li><a href="#q-zen-me-zhi-dao-leader-diao-xian">Q: 怎么知道leader掉线？</a></li>
+<li><a href="#q-ru-he-bao-zheng-xiao-xi-bu-hui-bei-chong-fu-xiao-fei">Q: 如何保证消息不会被重复消费？</a></li>
+<li><a href="#q-shi-ru-he-bao-zheng-xiao-xi-xiao-fei-shi-yi-ding-shi-mi-deng-de">Q: 是如何保证消息消费时一定是幂等的？</a></li>
+<li><a href="#q-xiao-xi-dui-lie-mq-zen-me-bao-zheng-shun-xu-xiao-fei">Q: 消息队列 mq 怎么保证顺序消费？</a></li>
+<li><a href="#q-ru-he-bao-zheng-xiao-xi-de-ke-kao-xing-chuan-shu-bu-hui-diu-shi">Q: 如何保证消息的可靠性传输，不会丢失？</a></li>
+<li><a href="#q-xiao-xi-dui-lie-man-liao-fa-sheng-zu-sai-ji-ya-zen-me-ban-li-ru-tu-ran-liu-liang-feng-zhi-ji-bai-wan-xiao-xi-chi-xu-ji-ya">Q:消息队列满了, 发生阻塞积压怎么办？例如突然流量峰值， 几百万消息持续积压？</a></li>
+<li><a href="#q-ru-guo-rang-ni-xie-yi-ge-xiao-xi-dui-lie-gai-ru-he-jin-xing-jia-gou-she-ji-shuo-yi-xia-ni-de-si-lu">Q: 如果让你写一个消息队列，该如何进行架构设计，说一下你的思路？</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<hr>
+<h1><span id="q-xiao-xi-dui-lie-de-zuo-yong-shi-shi-me">Q: 消息队列的作用是什么？</span><a href="#q-xiao-xi-dui-lie-de-zuo-yong-shi-shi-me" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>
+<p>解耦：<br>
+通过一个MQ，发布和订阅模型（Pub/Sub模型），系统A就和其它系统彻底解耦。<br>
+需要考虑一下负责的系统中，是否有类似的场景，就是一个系统或者一个模块，调用了多个系统，互相之间的调用很复杂，维护起来很麻烦。（新增、删除接口都是要两边互相适配）<br>
+但是其实这个调用是不需要同步调用接口的（不需要等待返回），如果用MQ给他异步化解耦，也是可以的，这个时候可以考虑在自己的项目中，是不是可以运用这个MQ来进行系统的解耦。</p>
+</li>
+<li>
+<p>异步：<br>
+加快接口的返回。</p>
+</li>
+<li>
+<p>削峰<br>
+就是大量的请求过来，然后MQ将其消化掉了，然后通过其它系统从MQ中取消息，在逐步进行消费，保证系统的有序运行。一般高峰期不会持续太长，在一段时间后，就会被下游系统消化掉。</p>
+</li>
+</ul>
+<hr>
+<h1><span id="q-xiao-xi-dui-lie-du-you-shi-me-que-dian">Q: 消息队列都有什么缺点？</span><a href="#q-xiao-xi-dui-lie-du-you-shi-me-que-dian" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>系统可用性降低： MQ挂掉的话很危险</li>
+<li>系统复杂性提高：要考虑消息没有重复消费？怎么处理消息丢失的情况？怎么保证消息传递的顺序性</li>
+<li>一致性问题：存在关联的消息，被不同消费者消费，如果另一个消费者执行失败，如何感知和回退？</li>
+</ul>
+<hr>
+<h1><span id="q-kafka-activemq-ribbitmq-rocketmq-du-you-shi-me-you-que-dian">Q: Kafka、activeMQ、RibbitMQ、RocketMQ都有什么优缺点？</span><a href="#q-kafka-activemq-ribbitmq-rocketmq-du-you-shi-me-you-que-dian" class="header-anchor">#</a></h1>
+<p>A:<br>
+列出一个表格<br>
+<img src="/images/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E8%AE%BE%E8%AE%A1/63e89c47a42f0a17c97a8a2a303e4aeabd0a6de1.png" alt="63e89c47a42f0a17c97a8a2a303e4aeabd0a6de1"></p>
+<p>简单记忆rabitMq和kafka的区别</p>
+<ol>
+<li>kafka高吞吐，适合大数据量的实时计算、日志采集。 但rabitMq的时延更小。</li>
+<li>rabitMq基于主从， kafka则支持分布式（多副本）</li>
+<li>rabitQq基于erlang开发， kafka用scala开发。</li>
+</ol>
+<hr>
+<h1><span id="q-ru-he-bao-zheng-xiao-xi-dui-lie-de-gao-ke-yong-bu-hui-yin-wei-1-tai-xiao-xi-dui-lie-fu-wu-gua-diao-dao-zhi-fu-wu-shi-ling">Q: 如何保证消息队列的高可用？不会因为1台消息队列服务挂掉导致服务失灵？</span><a href="#q-ru-he-bao-zheng-xiao-xi-dui-lie-de-gao-ke-yong-bu-hui-yin-wei-1-tai-xiao-xi-dui-lie-fu-wu-gua-diao-dao-zhi-fu-wu-shi-ling" class="header-anchor">#</a></h1>
+<p>A:<br>
+只讲一下kafka的</p>
+<p>每个partition属于多台机器。<br>
+有一个是leader节点<br>
+leader会把数据同步到另外2台机器。<br>
+如果leader挂了，则消费者选择读取 这个partition的另外2台机器</p>
+<p>假设其中的一个leader宕机了，但是因为每个leader下还有多个follower，并且每个follower都进行了数据的备份，因此kafka会自动感知leader已经宕机，同时将其它的follower给选举出来，作为新的leader，并向外提供服务支持。<br>
+<img src="/images/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E8%AE%BE%E8%AE%A1/45e7b2c323914c2bcc4ed65a2d3d872471f920ed.png" alt="45e7b2c323914c2bcc4ed65a2d3d872471f920ed"></p>
+<hr>
+<h1><span id="q-zen-me-zhi-dao-leader-diao-xian">Q: 怎么知道leader掉线？</span><a href="#q-zen-me-zhi-dao-leader-diao-xian" class="header-anchor">#</a></h1>
+<p>A:<br>
+对于Kafka而言，定义一个Broker是否“活着”包含两个条件：</p>
+<p>一是它必须维护与ZooKeeper的session（这个通过ZooKeeper的Heartbeat机制来实现）。<br>
+二是Follower必须能够及时将Leader的消息复制过来，不能“落后太多”。<br>
+Leader会跟踪与其保持同步的Replica列表，该列表称为ISR（即in-sync Replica）。如果一个Follower宕机，或者落后太多，Leader将把它从ISR中移除</p>
+<p>更详细的解释，包括如何感知掉线（ack、zk-session）、如何选举<br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/qingyunzong/p/9004703.html">Kafka学习之路 （三）Kafka的高可用</a></p>
+<hr>
+<h1><span id="q-ru-he-bao-zheng-xiao-xi-bu-hui-bei-chong-fu-xiao-fei">Q: 如何保证消息不会被重复消费？</span><a href="#q-ru-he-bao-zheng-xiao-xi-bu-hui-bei-chong-fu-xiao-fei" class="header-anchor">#</a></h1>
+<p>A: 需要消息消费者保证幂等性， 同样的消息，消费2次，结果是一样的。</p>
+<p>幂等性是什么？通俗点说：幂等性就是一个数据，或者一个请求，以相同的内容和方式给你执行多次，得保证对应的数据不会改变，并且不能出错，这就是幂等性。（这样才能做到发送者搞重试或者多发问题）</p>
+<hr>
+<h1><span id="q-shi-ru-he-bao-zheng-xiao-xi-xiao-fei-shi-yi-ding-shi-mi-deng-de">Q: 是如何保证消息消费时一定是幂等的？</span><a href="#q-shi-ru-he-bao-zheng-xiao-xi-xiao-fei-shi-yi-ding-shi-mi-deng-de" class="header-anchor">#</a></h1>
+<p>A:<br>
+需要应用服务器消费消息时是幂等的， 注意<strong>消息队列不保证幂等</strong>。<br>
+消费中如果是insert相关，且只会insert1次的，通过主键判断，避免重插（消费端）<br>
+消费端业可以加一个redis， 以缓存消费过的记录， 重复消费可以通过redis识别，并且redis是临时缓存，不会占用太多资源。</p>
+<hr>
+<h1><span id="q-xiao-xi-dui-lie-mq-zen-me-bao-zheng-shun-xu-xiao-fei">Q: 消息队列 mq 怎么保证顺序消费？</span><a href="#q-xiao-xi-dui-lie-mq-zen-me-bao-zheng-shun-xu-xiao-fei" class="header-anchor">#</a></h1>
+<p>A:<br>
+abbitmq 中， 每个消费者对应一个队列<br>
+kafka中， 每个消费者对应一个 partition。 partion中是有序的。</p>
+<p>即kafka能保证塞入partion时是有序的<br>
+因此你要求有序的那堆请求，要有相同的key映射到同一个partion</p>
+<p>同时消费者处理的时候，也要按照核心key在内存中分配给不同的线程（内存线程使用加锁队列去获取消息）， 避免多线程处理的时候出现混乱<br>
+<img src="/images/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E8%AE%BE%E8%AE%A1/e536b0c4b51e6b9230a6f586b3cb7c65fc9f23d9.png" alt="e536b0c4b51e6b9230a6f586b3cb7c65fc9f23d9"></p>
+<hr>
+<h1><span id="q-ru-he-bao-zheng-xiao-xi-de-ke-kao-xing-chuan-shu-bu-hui-diu-shi">Q: 如何保证消息的可靠性传输，不会丢失？</span><a href="#q-ru-he-bao-zheng-xiao-xi-de-ke-kao-xing-chuan-shu-bu-hui-diu-shi" class="header-anchor">#</a></h1>
+<p>A:<br>
+生产者发送到 MQ的时候丢了： 生产者使用ack机制，如果超时没收到，就回调nack接口做重发</p>
+<p>MQ没发给消费者： 消息持久化，如果MQ挂了，还可以从磁盘中恢复重发。（ack应该在存盘后再发给生产者）</p>
+<p>消费端没收到数据或者消费者挂了：<br>
+关闭MQ的自动ack， 在消费者的代码逻辑里自己实现ack机制，保证是自己处理完成后才发ack，而不是收到了就发ack。<br>
+对于kafka来说， 消费者的ack其实就是offset。 offset不能自动发，要自己实现。</p>
+<hr>
+<h1><span id="q-xiao-xi-dui-lie-man-liao-fa-sheng-zu-sai-ji-ya-zen-me-ban-li-ru-tu-ran-liu-liang-feng-zhi-ji-bai-wan-xiao-xi-chi-xu-ji-ya">Q:消息队列满了, 发生阻塞积压怎么办？例如突然流量峰值， 几百万消息持续积压？</span><a href="#q-xiao-xi-dui-lie-man-liao-fa-sheng-zu-sai-ji-ya-zen-me-ban-li-ru-tu-ran-liu-liang-feng-zhi-ji-bai-wan-xiao-xi-chi-xu-ji-ya" class="header-anchor">#</a></h1>
+<p>A:<br>
+运维根据告警信息， 对queue资源和consumer资源都临时进行紧急进行人工扩容。</p>
+<hr>
+<h1><span id="q-ru-guo-rang-ni-xie-yi-ge-xiao-xi-dui-lie-gai-ru-he-jin-xing-jia-gou-she-ji-shuo-yi-xia-ni-de-si-lu">Q: 如果让你写一个消息队列，该如何进行架构设计，说一下你的思路？</span><a href="#q-ru-guo-rang-ni-xie-yi-ge-xiao-xi-dui-lie-gai-ru-he-jin-xing-jia-gou-she-ji-shuo-yi-xia-ni-de-si-lu" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ol>
+<li>
+<p>首先MQ得支持可伸缩性<br>
+那就需要快速扩容，就可以增加吞吐量和容量，可以设计一个分布式的系统，参考kafka的设计理念，broker - &gt; topic -&gt; partition，每个partition放一台机器，那就存一部分数据，如果现在资源不够了，可以给topic增加partition，然后做数据迁移，增加机器，不就可以存放更多的数据，提高更高的吞吐量</p>
+</li>
+<li>
+<p>其次得考虑一下这个MQ的数据要不要落地磁盘？也就是需不需要保证消息持久化，因为这样可以保证数据的不丢失，那落地盘的时候怎么落？顺序写，这样没有磁盘随机读写的寻址开销，磁盘顺序读的性能是很高的，这就是kafka的思路。</p>
+</li>
+<li>
+<p>其次需要考虑MQ的可用性？这个可以具体到我们上面提到的消息队列保证高可用，提出了多副本 ，leader 和follower模式，当一个leader宕机的时候，马上选取一个follower作为新的leader对外提供服务。</p>
+</li>
+<li>
+<p>需不需要支持数据0丢失？可以参考kafka零丢失方案</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/18/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC311%E5%9C%BA%E5%91%A8%E8%B5%9B-104%E5%90%8D-4%E9%A2%98%20/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/09/18/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC311%E5%9C%BA%E5%91%A8%E8%B5%9B-104%E5%90%8D-4%E9%A2%98%20/" class="post-title-link" itemprop="url">第311场周赛-104名-4题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-18 12:12:42 / 修改时间：22:09:27" itemprop="dateCreated datePublished" datetime="2022-09-18T12:12:42+08:00">2022-09-18</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">力扣周赛记录</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/18/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC311%E5%9C%BA%E5%91%A8%E8%B5%9B-104%E5%90%8D-4%E9%A2%98%20/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/18/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC311%E5%9C%BA%E5%91%A8%E8%B5%9B-104%E5%90%8D-4%E9%A2%98%20/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><img src="/images/%E7%AC%AC311%E5%9C%BA%E5%91%A8%E8%B5%9B-104%E5%90%8D-4%E9%A2%98%20/1663509817507.png" alt="1663509817507"></p>
+<h2><span id="ben-qi-zong-jie">本期总结：</span><a href="#ben-qi-zong-jie" class="header-anchor">#</a></h2>
+<ol>
+<li>子数字、子序列的题目， 一定要关注一下有没有”连续“二字！</li>
+<li>排列组合公式可以记忆一下，特别是C二维数组中左边是啥，右边是啥</li>
+</ol>
+<hr>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/smallest-even-multiple/">6180. 最小偶倍数 - 力扣（LeetCode）</a></p>
+<p>sb题目</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">smallestEvenMultiple</span><span class="params">(<span class="type">int</span> n)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> n%<span class="number">2</span>==<span class="number">0</span>?n:n*<span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/length-of-the-longest-alphabetical-continuous-substring/">6181. 最长的字母序连续子字符串的长度 - 力扣（LeetCode）</a></p>
+<p>单指针直接遍历计数就好了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">longestContinuousSubstring</span><span class="params">(String s)</span> &#123;</span><br><span class="line">        <span class="type">char</span> <span class="variable">lastC</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">len</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; s.length();i++) &#123;</span><br><span class="line">            <span class="type">char</span> <span class="variable">c</span> <span class="operator">=</span> s.charAt(i);</span><br><span class="line">            <span class="keyword">if</span> (c != lastC + <span class="number">1</span>) &#123;</span><br><span class="line">                res = Math.max(len, res);</span><br><span class="line">                len = <span class="number">1</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                len++;   </span><br><span class="line">            &#125;</span><br><span class="line">            lastC = c;</span><br><span class="line">        &#125;</span><br><span class="line">        res = Math.max(len, res);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/reverse-odd-levels-of-binary-tree/">6182. 反转二叉树的奇数层 - 力扣（LeetCode）</a></p>
+<p><img src="/images/%E7%AC%AC311%E5%9C%BA%E5%91%A8%E8%B5%9B-104%E5%90%8D-4%E9%A2%98%20/1663509945954.png" alt="1663509945954"></p>
+<p>先后序dfs记录每个点在哪个层，放进一个list</p>
+<p>然后按层遍历哪些list，把他们的值返回来重新存放即可</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for a binary tree node.</span></span><br><span class="line"><span class="comment"> * public class TreeNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     TreeNode left;</span></span><br><span class="line"><span class="comment"> *     TreeNode right;</span></span><br><span class="line"><span class="comment"> *     TreeNode() &#123;&#125;</span></span><br><span class="line"><span class="comment"> *     TreeNode(int val) &#123; this.val = val; &#125;</span></span><br><span class="line"><span class="comment"> *     TreeNode(int val, TreeNode left, TreeNode right) &#123;</span></span><br><span class="line"><span class="comment"> *         this.val = val;</span></span><br><span class="line"><span class="comment"> *         this.left = left;</span></span><br><span class="line"><span class="comment"> *         this.right = right;</span></span><br><span class="line"><span class="comment"> *     &#125;</span></span><br><span class="line"><span class="comment"> * &#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> TreeNode <span class="title function_">reverseOddLevels</span><span class="params">(TreeNode root)</span> &#123;</span><br><span class="line">        Map&lt;Integer, List&lt;TreeNode&gt;&gt; nodes = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        dfs(root, <span class="number">0</span>, nodes);</span><br><span class="line">        <span class="keyword">for</span> (Map.Entry&lt;Integer, List&lt;TreeNode&gt;&gt; entry : nodes.entrySet()) &#123;</span><br><span class="line">            <span class="keyword">if</span> (entry.getKey() % <span class="number">2</span> == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;    </span><br><span class="line">            List&lt;TreeNode&gt; list = entry.getValue();</span><br><span class="line">            List&lt;Integer&gt; valus = list.stream().map(tn -&gt; tn.val).collect(Collectors.toList());</span><br><span class="line">            Collections.reverse(valus);</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; list.size();i++) &#123;</span><br><span class="line">                list.get(i).val = valus.get(i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> root;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">dfs</span><span class="params">(TreeNode node, <span class="type">int</span> level, Map&lt;Integer, List&lt;TreeNode&gt;&gt; map)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span>( node == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> ;</span><br><span class="line">        &#125;</span><br><span class="line">        dfs(node.left, level+<span class="number">1</span>, map);</span><br><span class="line">        dfs(node.right, level+<span class="number">1</span>, map);</span><br><span class="line">        <span class="keyword">if</span> (!map.containsKey(level)) &#123;</span><br><span class="line">            map.put(level, <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;());</span><br><span class="line">        &#125;</span><br><span class="line">        map.get(level).add(node);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/sum-of-prefix-scores-of-strings/">6183. 字符串的前缀分数和 - 力扣（LeetCode）</a></p>
+<p>字段树，只有1000的范围，不会超，直接构建完树后直接遍历</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Node</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        Node[] nextNodes = <span class="keyword">new</span> <span class="title class_">Node</span>[<span class="number">26</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span>[] sumPrefixScores(String[] words) &#123;</span><br><span class="line">        <span class="type">Node</span> <span class="variable">root</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Node</span>();</span><br><span class="line">        <span class="keyword">for</span> (String word : words) &#123;</span><br><span class="line">            <span class="type">Node</span> <span class="variable">node</span> <span class="operator">=</span> root;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">char</span> c : word.toCharArray()) &#123;</span><br><span class="line">                <span class="keyword">if</span> (node.nextNodes[c-<span class="string">&#x27;a&#x27;</span>] == <span class="literal">null</span>) &#123;</span><br><span class="line">                    node.nextNodes[c-<span class="string">&#x27;a&#x27;</span>] = <span class="keyword">new</span> <span class="title class_">Node</span>();</span><br><span class="line"></span><br><span class="line">                &#125;</span><br><span class="line">                node.nextNodes[c-<span class="string">&#x27;a&#x27;</span>].count++;</span><br><span class="line">                node = node.nextNodes[c-<span class="string">&#x27;a&#x27;</span>];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span>[] res = <span class="keyword">new</span> <span class="title class_">int</span>[words.length];</span><br><span class="line">        <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (String word : words) &#123;</span><br><span class="line">            <span class="type">Node</span> <span class="variable">node</span> <span class="operator">=</span> root;</span><br><span class="line">            <span class="type">int</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">char</span> c : word.toCharArray()) &#123;</span><br><span class="line">                <span class="keyword">if</span> (node.nextNodes[c-<span class="string">&#x27;a&#x27;</span>] != <span class="literal">null</span>) &#123;</span><br><span class="line">                    sum += node.nextNodes[c - <span class="string">&#x27;a&#x27;</span>].count;</span><br><span class="line">                &#125;</span><br><span class="line">                node = node.nextNodes[c-<span class="string">&#x27;a&#x27;</span>];</span><br><span class="line">            &#125;</span><br><span class="line">            res[i++] = sum;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/17/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%89%AB%E6%8F%8F%E7%BA%BF%EF%BC%88%E5%8F%A0%E5%8A%A0%E5%8C%BA%E9%97%B4%E9%97%AE%E9%A2%98%EF%BC%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -984,755 +2264,10 @@ A:</p>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/" class="post-title-link" itemprop="url">linux系统启动过程</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-09-15 22:37:49 / 修改时间：23:49:58" itemprop="dateCreated datePublished" datetime="2022-09-15T22:37:49+08:00">2022-09-15</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">linux-unix原理</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#zheng-ti-liu-cheng">整体流程</a></li>
-<li><a href="#qi-dong-di-yi-bu-jia-zai-bios">启动第一步－－加载BIOS</a></li>
-<li><a href="#qi-dong-di-er-bu-du-qu-mbr">启动第二步－－读取MBR</a></li>
-<li><a href="#qi-dong-di-san-bu-boot-loader">启动第三步－－Boot Loader</a></li>
-<li><a href="#qi-dong-di-si-bu-jia-zai-nei-he"><strong>启动<strong><strong>第四步</strong></strong>－－加载内核</strong></a></li>
-<li><a href="#qi-dong-di-wu-bu-yong-hu-ceng-init-yi-ju-inittab-wen-jian-lai-she-ding-yun-xing-deng-ji"><strong>启动<strong><strong>第五步</strong></strong>－－用户层init依据inittab文件来设定运行等级</strong></a></li>
-<li><a href="#qi-dong-di-liu-bu-init-jin-cheng-zhi-xing-rc-sysinit"><strong>启动<strong><strong>第六步</strong></strong>－－init进程执行rc.sysinit</strong></a></li>
-<li><a href="#qi-dong-di-qi-bu-qi-dong-nei-he-mo-kuai"><strong>启动<strong><strong>第七步</strong></strong>－－启动内核模块</strong></a></li>
-<li><a href="#qi-dong-di-ba-bu-zhi-xing-bu-tong-yun-xing-ji-bie-de-jiao-ben-cheng-xu"><strong>启动<strong><strong>第八步</strong></strong>－－执行不同运行级别的脚本程序</strong></a></li>
-<li><a href="#qi-dong-di-jiu-bu-zhi-xing-etc-rc-d-rc-local"><strong>启动<strong><strong>第九步</strong></strong>－－执行/etc/rc.d/rc.local</strong></a></li>
-<li><a href="#qi-dong-di-shi-bu-zhi-xing-bin-login-cheng-xu-jin-ru-deng-lu-zhuang-tai"><strong>启动<strong><strong>第十步</strong></strong>－－执行/bin/login程序，进入登录状态</strong></a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="zheng-ti-liu-cheng">整体流程</span><a href="#zheng-ti-liu-cheng" class="header-anchor">#</a></h1>
-<ol>
-<li>
-<p>加载BIOS(CPU相关信息)</p>
-</li>
-<li>
-<p>读取磁道第一个扇区MBR（预启动信息）</p>
-</li>
-<li>
-<p>boot loader(操作系统运行之前运行的小程序)</p>
-</li>
-<li>
-<p>加载内核</p>
-</li>
-<li>
-<p>设定运行等级</p>
-</li>
-<li>
-<p>启动内核</p>
-</li>
-<li>
-<p>启动脚本登录界面</p>
-</li>
-</ol>
-<h1><span id="qi-dong-di-yi-bu-jia-zai-bios">启动第一步－－加载BIOS</span><a href="#qi-dong-di-yi-bu-jia-zai-bios" class="header-anchor">#</a></h1>
-<p>当你打开计算机电源，计算机会首先加载BIOS信息，BIOS信息是如此的重要，以至于计算机必须在最开始就找到它。这是因为BIOS中包含了CPU的相关信息、设备启动顺序信息、硬盘信息、内存信息、时钟信息、PnP特性等等。在此之后，计算机心里就有谱了，知道应该去读取哪个硬件设备了。</p>
-<h1><span id="qi-dong-di-er-bu-du-qu-mbr">启动第二步－－读取MBR</span><a href="#qi-dong-di-er-bu-du-qu-mbr" class="header-anchor">#</a></h1>
-<p>众所周知，硬盘上第0磁道第一个扇区被称为MBR，也就是Master Boot Record，即主引导记录，它的大小是512字节，别看地方不大，可里面却存放了预启动信息、分区表信息。</p>
-<p>系统找到BIOS所指定的硬盘的MBR后，就会将其复制到0×7c00地址所在的物理内存中。其实被复制到物理内存的内容就是Boot Loader，而具体到你的电脑，那就是lilo或者grub了。</p>
-<h1><span id="qi-dong-di-san-bu-boot-loader">启动第三步－－Boot Loader</span><a href="#qi-dong-di-san-bu-boot-loader" class="header-anchor">#</a></h1>
-<p>Boot Loader 就是在操作系统内核运行之前运行的一段小程序。通过这段小程序，我们可以初始化硬件设备、建立内存空间的映射图，从而将系统的软硬件环境带到一个合适的状态，以便为最终调用操作系统内核做好一切准备。</p>
-<p>Boot Loader有若干种，其中Grub、Lilo和spfdisk是常见的Loader。</p>
-<p>我们以Grub为例来讲解吧，毕竟用lilo和spfdisk的人并不多。</p>
-<p>系统读取内存中的grub配置信息（一般为menu.lst或grub.lst），并依照此配置信息来启动不同的操作系统。</p>
-<h1><span id="qi-dong-di-si-bu-jia-zai-nei-he"><strong>启动<strong><strong>第四步</strong></strong>－－加载内核</strong></span><a href="#qi-dong-di-si-bu-jia-zai-nei-he" class="header-anchor">#</a></h1>
-<p>根据grub设定的内核映像所在路径，系统读取内存映像，并进行解压缩操作。此时，屏幕一般会输出“Uncompressing Linux”的提示。当解压缩内核完成后，屏幕输出“OK, booting the kernel”。</p>
-<p>系统将解压后的内核放置在内存之中，并调用start_kernel()函数来启动一系列的初始化函数并初始化各种设备，完成Linux核心环境的建立。至此，Linux内核已经建立起来了，基于Linux的程序应该可以正常运行了。</p>
-<h1><span id="qi-dong-di-wu-bu-yong-hu-ceng-init-yi-ju-inittab-wen-jian-lai-she-ding-yun-xing-deng-ji"><strong>启动<strong><strong>第五步</strong></strong>－－用户层init依据inittab文件来设定运行等级</strong></span><a href="#qi-dong-di-wu-bu-yong-hu-ceng-init-yi-ju-inittab-wen-jian-lai-she-ding-yun-xing-deng-ji" class="header-anchor">#</a></h1>
-<p>内核被加载后，<strong>第一个</strong>运行的程序便是/sbin/init，该文件会读取/etc/inittab文件，并依据此文件来进行初始化工作。</p>
-<p>其实/etc/inittab文件最主要的作用就是设定Linux的运行等级，其设定形式是“：id:5:initdefault:”，这就表明Linux需要运行在等级5上。Linux的运行等级设定如下：</p>
-<p>0：关机</p>
-<p>1：单用户模式</p>
-<p>2：无网络支持的多用户模式</p>
-<p>3：有网络支持的多用户模式</p>
-<p>4：保留，未使用</p>
-<p>5：有网络支持有X-Window支持的多用户模式</p>
-<p>6：重新引导系统，即重启</p>
-<p>关于/etc/inittab文件的学问，其实还有很多</p>
-<h1><span id="qi-dong-di-liu-bu-init-jin-cheng-zhi-xing-rc-sysinit"><strong>启动<strong><strong>第六步</strong></strong>－－init进程执行rc.sysinit</strong></span><a href="#qi-dong-di-liu-bu-init-jin-cheng-zhi-xing-rc-sysinit" class="header-anchor">#</a></h1>
-<p>在设定了运行等级后，Linux系统执行的第一个用户层文件就是/etc/rc.d/rc.sysinit脚本程序，它做的工作非常多，包括设定PATH、设定网络配置（/etc/sysconfig/network）、启动swap分区、设定/proc等等。如果你有兴趣，可以到/etc/rc.d中查看一下rc.sysinit文件，里面的脚本够你看几天的</p>
-<h1><span id="qi-dong-di-qi-bu-qi-dong-nei-he-mo-kuai"><strong>启动<strong><strong>第七步</strong></strong>－－启动内核模块</strong></span><a href="#qi-dong-di-qi-bu-qi-dong-nei-he-mo-kuai" class="header-anchor">#</a></h1>
-<p>具体是依据/etc/modules.conf文件或/etc/modules.d目录下的文件来装载内核模块。</p>
-<h1><span id="qi-dong-di-ba-bu-zhi-xing-bu-tong-yun-xing-ji-bie-de-jiao-ben-cheng-xu"><strong>启动<strong><strong>第八步</strong></strong>－－执行不同运行级别的脚本程序</strong></span><a href="#qi-dong-di-ba-bu-zhi-xing-bu-tong-yun-xing-ji-bie-de-jiao-ben-cheng-xu" class="header-anchor">#</a></h1>
-<p>根据运行级别的不同，系统会运行rc0.d到rc6.d中的相应的脚本程序，来完成相应的初始化工作和启动相应的服务。</p>
-<h1><span id="qi-dong-di-jiu-bu-zhi-xing-etc-rc-d-rc-local"><strong>启动<strong><strong>第九步</strong></strong>－－执行/etc/rc.d/rc.local</strong></span><a href="#qi-dong-di-jiu-bu-zhi-xing-etc-rc-d-rc-local" class="header-anchor">#</a></h1>
-<p>你如果打开了此文件，里面有一句话，读过之后，你就会对此命令的作用一目了然：</p>
-<p># This script will be executed <em>after</em> all the other init scripts.</p>
-<p># You can put your own initialization stuff in here if you don’t</p>
-<p># want to do the full Sys V style init stuff.</p>
-<p>rc.local就是在一切初始化工作后，Linux留给用户进行个性化的地方。你可以把你想设置和启动的东西放到这里。</p>
-<h1><span id="qi-dong-di-shi-bu-zhi-xing-bin-login-cheng-xu-jin-ru-deng-lu-zhuang-tai"><strong>启动<strong><strong>第十步</strong></strong>－－执行/bin/login程序，进入登录状态</strong></span><a href="#qi-dong-di-shi-bu-zhi-xing-bin-login-cheng-xu-jin-ru-deng-lu-zhuang-tai" class="header-anchor">#</a></h1>
-<p>此时，系统已经进入到了等待用户输入username和password的时候了，你已经可以用自己的帐号登入系统了。😃</p>
-<p>===</p>
-<p>漫长的启动过程结束了，一切都清静了…</p>
-<p>其实在这背后，还有着更加复杂的底层函数调用，等待着你去研究…本文就算抛砖引玉了:)</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">unix高级编程思维导图笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-09-15 21:47:49 / 修改时间：23:39:39" itemprop="dateCreated datePublished" datetime="2022-09-15T21:47:49+08:00">2022-09-15</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">linux-unix原理</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>83</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#biao-zhun-io-ku">标准IO库</a></li>
-<li><a href="#wen-jian-io">文件IO</a></li>
-<li><a href="#wen-jian-he-mu-lu">文件和目录</a></li>
-<li><a href="#xi-tong-shu-ju-wen-jian-he-xin-xi">系统数据文件和信息</a></li>
-<li><a href="#xin-hao">信号</a></li>
-<li><a href="#jin-cheng-huan-jing">进程环境</a></li>
-<li><a href="#jin-cheng-guan-xi">进程关系</a></li>
-<li><a href="#jin-cheng-kong-zhi">进程控制</a></li>
-<li><a href="#xian-cheng">线程</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="biao-zhun-io-ku">标准IO库</span><a href="#biao-zhun-io-ku" class="header-anchor">#</a></h1>
-<p><img src="/images/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/20180217174719501" alt="img"></p>
-<h1><span id="wen-jian-io">文件IO</span><a href="#wen-jian-io" class="header-anchor">#</a></h1>
-<p><img src="/images/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/20180217174838423" alt="img"></p>
-<h1><span id="wen-jian-he-mu-lu">文件和目录</span><a href="#wen-jian-he-mu-lu" class="header-anchor">#</a></h1>
-<p><img src="/images/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/2018021717500292" alt="img"></p>
-<h1><span id="xi-tong-shu-ju-wen-jian-he-xin-xi">系统数据文件和信息</span><a href="#xi-tong-shu-ju-wen-jian-he-xin-xi" class="header-anchor">#</a></h1>
-<p><img src="/images/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/20180217175013204" alt="img"></p>
-<h1><span id="xin-hao">信号</span><a href="#xin-hao" class="header-anchor">#</a></h1>
-<p><img src="/images/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/20180217175207636" alt="img"></p>
-<h1><span id="jin-cheng-huan-jing">进程环境</span><a href="#jin-cheng-huan-jing" class="header-anchor">#</a></h1>
-<p><img src="/images/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/2018021717522228" alt="img"></p>
-<h1><span id="jin-cheng-guan-xi">进程关系</span><a href="#jin-cheng-guan-xi" class="header-anchor">#</a></h1>
-<p><img src="/images/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/20180217175231672" alt="img"></p>
-<h1><span id="jin-cheng-kong-zhi">进程控制</span><a href="#jin-cheng-kong-zhi" class="header-anchor">#</a></h1>
-<p><img src="/images/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/20180217175244585" alt="img"></p>
-<h1><span id="xian-cheng">线程</span><a href="#xian-cheng" class="header-anchor">#</a></h1>
-<p><img src="/images/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/20180217175257321" alt="img"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/linux%E5%91%BD%E4%BB%A4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/linux%E5%91%BD%E4%BB%A4/" class="post-title-link" itemprop="url">linux命令</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-09-15 20:47:49 / 修改时间：23:47:38" itemprop="dateCreated datePublished" datetime="2022-09-15T20:47:49+08:00">2022-09-15</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">linux-unix原理</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/linux%E5%91%BD%E4%BB%A4/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/linux%E5%91%BD%E4%BB%A4/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<p>man 命令输出该命令的使用手册<br>
-./ 当前目录…/ 父目录<br>
-ls常用参数-a 显示所有文件（包括隐藏的，all）-i  列出索引节点（inode）-l  输出长列表（即包含文件的各种信息，long）-s  输出每个文件的块大小（size）-F 区分各个文件，目录后加/，可执行文件后加*（区分file）<br>
-ls 参数 匹配串则可以只显示匹配字符串的文件，可以用*和？</p>
-<hr>
-<p>touch 文件名创建一个空文件<br>
-touch -t 200101011200 文件名 这样可以修改文件的时间</p>
-<hr>
-<p>cp 源文件 目标文件cp test1 test2  在当前目录中，将test1复制为新的test2cp test1 dir   将test1复制到目录dir中cp dir/test1  .   将dir/test1复制到当前目录中<br>
-cp -R dir1 dir2  将dir1中的所有内容进行复制，复制成dir2cp -f 强制覆盖，即如果有重复直接覆盖，不提示用户<br>
-cp -l test1 testlink  创建一个硬链接testlink，索引节点号与test1相同，类似“复制”。不可跨文件系统或挂载点cp -s test1 soft_test    创建一个软连接soft_test，节点号不同，可以跨文件系统或挂载点</p>
-<hr>
-<p>mv test1 test_new_name  将test1重命名为test_new_name当重命名时，test1的软连接会变成无效链接，硬链接则仍然有效<br>
-rm 删除文件删除test1后，硬连接仍然显示内容，软连接则已经无效。<br>
-mkdirmkdir -m=MODE 设定模式，rwx-umaskmkdir -p parents 若路径上的目录不存在，自己建1个父目录mkdir -v  建目录时要显示信息<br>
-rmdir dir1  默认情况下，rmdir只能删除空目录rm -f dir1 ，可删除dir1中的所有文件加目录，但是会有提示rm -rf dir1， 删除所有且无提示<br>
-stat test1  可查看test1的状态信息，但没有文件类型file test1  可查看文件的类型（文本文件，可执行文件，数据文件）</p>
-<hr>
-<p>当前目录中有a和bls&gt;c则先生成c，再执行ls，再执行传输进C<br>
-tar：压缩命令z 创建tar.gz格式文件x 解压  c压缩vf一般都跟在最后，f指把压缩文件输出到某个目录下tar 命令符  所得到的压缩文件名字  要被压缩的目录<br>
-cat 直接跳最后一页less 可以上下查看more 只能向下查看</p>
-<hr>
-<p>cat -n test1 给所有行加上“行号”cat -b test1 给“非空行”加上“行号”cat -s test1 压缩连续空白行为一行cat -T<br>
-tail 查看文件末尾10行，可用-n指定行数head 查看文件头，也可用-n指定行数</p>
-<hr>
-<p>ps 查看当前进程<br>
-ps-e 查看系统所有进程<br>
-参数含义UID:启动用户PID:进程的进程号PPID：父进程号C： CPU利用率STIME：进程启动的系统时间TTY：进程启动时的终端设备TIME：运行进程需要的CPU时间CMD:程序名称<br>
-top：实时显示进程<br>
-w命令显示当前登录的用户和其进行的操作<br>
-uptime查看当前系统的启动时间</p>
-<hr>
-<p>kill 进程号  相当于kill-TERM 尽可能地杀死进程，如果进程跑飞则可能无法杀死<br>
-kill -s HUP 进程号  先停止进程再结束进程<br>
-killall 进程名（可使用通配符）<br>
-mount 输出挂载设备</p>
-<hr>
-<p>df 查看磁盘空间情况<br>
-du 了解哪个磁盘没有空间了cat /proc/cpuinfo：查看一台linux机器的CPU信息<br>
-du：查看该目录占用文件系统数据块的情况 cat /proc/swaps：查看SWAP分区信息df -lh：查看硬盘信息<br>
-sort file 对文本中的字符串进行排序<br>
-sort -n file 对文本中的数字进行排序<br>
-grep 字符串  文件   查找字符串在文件中的位置<br>
-tar 压缩文件</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/11%E7%A7%8D%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/11%E7%A7%8D%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">11种行为型模式</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-09-13 23:47:49 / 修改时间：23:27:15" itemprop="dateCreated datePublished" datetime="2022-09-13T23:47:49+08:00">2022-09-13</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%A1%8C%E4%B8%BA%E5%9E%8B-%E5%92%8C%E5%81%9A%E5%85%B7%E4%BD%93%E4%BA%8B%E6%83%85%E6%9C%89%E5%85%B3/" itemprop="url" rel="index"><span itemprop="name">行为型(和做具体事情有关)</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/11%E7%A7%8D%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/11%E7%A7%8D%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>919</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#jie-shi-qi-mo-shi">解释器模式</a></li>
-<li><a href="#mo-ban-fang-fa-mo-shi">模板方法模式</a></li>
-<li><a href="#ze-ren-lian-mo-shi">责任链模式</a></li>
-<li><a href="#ming-ling-mo-shi">命令模式</a></li>
-<li><a href="#die-dai-qi-mo-shi">迭代器模式</a></li>
-<li><a href="#bei-wang-lu-mo-shi">备忘录模式</a></li>
-<li><a href="#guan-cha-zhe-mo-shi">观察者模式</a></li>
-<li><a href="#zhong-cai-zhe">仲裁者</a></li>
-<li><a href="#zhuang-tai-mo-shi">状态模式</a></li>
-<li><a href="#ce-lue-mo-shi">策略模式</a></li>
-<li><a href="#fang-wen-zhe-mo-shi">访问者模式</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="jie-shi-qi-mo-shi">解释器模式</span><a href="#jie-shi-qi-mo-shi" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://www.runoob.com/design-pattern/interpreter-pattern.html">https://www.runoob.com/design-pattern/interpreter-pattern.html</a></p>
-<p>这种模式实现了一个表达式接口，该接口解释一个特定的上下文。</p>
-<p>项目中的expresion里的evalute本质上就是解释器模式。</p>
-<h1><span id="mo-ban-fang-fa-mo-shi">模板方法模式</span><a href="#mo-ban-fang-fa-mo-shi" class="header-anchor">#</a></h1>
-<p>抽象类定义n个抽象方法，提供一个对外接口确定抽象方法的调用顺序， 子类负责实现这几个内部的抽象方法。</p>
-<h1><span id="ze-ren-lian-mo-shi">责任链模式</span><a href="#ze-ren-lian-mo-shi" class="header-anchor">#</a></h1>
-<p>if/else太多了判断起来很烦， 用setNext设置一个责任链，谁完不成就交给下一个，这样后续直接添加setNext就好，不用再加else。</p>
-<p>适用于需要“动态”添加判断条件情况。</p>
-<h1><span id="ming-ling-mo-shi">命令模式</span><a href="#ming-ling-mo-shi" class="header-anchor">#</a></h1>
-<p>把命令作为一个commond类看待，这样可以把命令放到队列或者栈里去处理。</p>
-<h1><span id="die-dai-qi-mo-shi">迭代器模式</span><a href="#die-dai-qi-mo-shi" class="header-anchor">#</a></h1>
-<p>提供给外界一个iterator()专门用于next遍历， 这样外界不用关心内部的存储逻辑。</p>
-<h1><span id="bei-wang-lu-mo-shi">备忘录模式</span><a href="#bei-wang-lu-mo-shi" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://www.runoob.com/design-pattern/memento-pattern.html">https://www.runoob.com/design-pattern/memento-pattern.html</a></p>
-<p>备忘录模式就是在不破坏封装的前提下，捕获一个对象的内部状态，并在该对象之外保存这个状态，这样可以在以后将对象恢复到原先保存的状态</p>
-<h1><span id="guan-cha-zhe-mo-shi">观察者模式</span><a href="#guan-cha-zhe-mo-shi" class="header-anchor">#</a></h1>
-<p>A做了一件事之后，把自己的状态通知 B\C\D这3个观察者（需要绑定观察者）</p>
-<p>注意和访问者不是同一个模式。</p>
-<h1><span id="zhong-cai-zhe">仲裁者</span><a href="#zhong-cai-zhe" class="header-anchor">#</a></h1>
-<p>A\B\C\D 这几个类对象每当做完一件事，就调用 E.update(xxx)， E会负责更新整体状态，或者作为中间人去调度其他几个类。</p>
-<h1><span id="zhuang-tai-mo-shi">状态模式</span><a href="#zhuang-tai-mo-shi" class="header-anchor">#</a></h1>
-<p>状态不同， doAction时发生的事情也不同，类似于项目中做互信时，不同状态有不同的doAction处理逻辑</p>
-<p><img src="/images/%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F%20-%20%E5%89%AF%E6%9C%AC/d146ad3e20bcc846133a5bb32f2bef82890f29d6-1663082735876.png" alt="d146ad3e20bcc846133a5bb32f2bef82890f29d6"></p>
-<blockquote>
-<p>和策略模式的区别： 状态模式在于状态之间是由关联的，是可以切换状态的，且状态A到状态B可能有限制。<br>
-但是策略模式的话，不同的策略之间可能是独立的，仅仅是有同一个基类，但不存在可以切换的状态图。</p>
-</blockquote>
-<h1><span id="ce-lue-mo-shi">策略模式</span><a href="#ce-lue-mo-shi" class="header-anchor">#</a></h1>
-<p>装备了不同的武器或者策略，就会有不同的战斗结果。 我只要不断切换自己装备的武器子类即可。</p>
-<h1><span id="fang-wen-zhe-mo-shi">访问者模式</span><a href="#fang-wen-zhe-mo-shi" class="header-anchor">#</a></h1>
-<p>同一份数据或者树型结构， 可以用不同的vistor去访问，得到不同的结果或者展示。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">享元模式</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-09-13 22:47:49 / 修改时间：23:24:42" itemprop="dateCreated datePublished" datetime="2022-09-13T22:47:49+08:00">2022-09-13</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%93%E6%9E%84%E5%9E%8B%EF%BC%88%E5%92%8C%E7%B1%BB%E7%9A%84%E7%BB%A7%E6%89%BF%E3%80%81%E6%8E%A5%E5%8F%A3%E5%AE%9E%E7%8E%B0%E3%80%81%E5%B0%81%E8%A3%85%E6%9C%89%E5%85%B3%EF%BC%89/" itemprop="url" rel="index"><span itemprop="name">结构型（和类的继承、接口实现、封装有关）</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>327</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#xiang-yuan-mo-shi">享元模式</a></li>
-<li><a href="#he-qi-ta-de-qu-bie">和其他的区别：</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="xiang-yuan-mo-shi">享元模式</span><a href="#xiang-yuan-mo-shi" class="header-anchor">#</a></h1>
-<p>当有几种对象， 可能会被经常创建，且属性变化不大，也许就几种（例如常量1-100经常用）</p>
-<p>一种方式是调用者经常自己手动创建这些对象</p>
-<p>还有一种是封装到一个factory中，  调用者取factory中拿。</p>
-<p>factory中会维护一个map， 缓存这些对象，这样就不用经常创建了。所以叫享元。<br>
-<img src="/images/%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/fbcb7c5c2bb6242e758efb7b42bfcf7bb57b731e.png" alt="fbcb7c5c2bb6242e758efb7b42bfcf7bb57b731e"></p>
-<hr>
-<h1><span id="he-qi-ta-de-qu-bie">和其他的区别：</span><a href="#he-qi-ta-de-qu-bie" class="header-anchor">#</a></h1>
-<ul>
-<li>和原型模式的区别： 原型模式的重点在于提供clone方法去创建对象。  而享元模式不存在创建，更多是一个缓存结构（所以是结构型设计模式）</li>
-<li>和工厂模式的区别： 享元模式其实类似于单例+工厂的结合。  工厂模式不一定是享元模式，因为工厂模式可能真的是创建新的。  而享元模式基本会提供类似工厂方法的get方法，给调用者使用，本质上不生成新的对象了。</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1800,7 +2335,7 @@ tar 压缩文件</p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">136</span>
+          <span class="site-state-item-count">141</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1871,7 +2406,7 @@ tar 压缩文件</p>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共244.9k字</span>
+  <span class="post-count">博客全站共256.9k字</span>
 </div>
 
         
