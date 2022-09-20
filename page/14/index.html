@@ -181,6 +181,196 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/06/05/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/jdk%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/06/05/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/jdk%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" class="post-title-link" itemprop="url">jdk动态代理原理解析</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-06-05 16:09:35" itemprop="dateCreated datePublished" datetime="2022-06-05T16:09:35+08:00">2022-06-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-10 00:51:40" itemprop="dateModified" datetime="2022-08-10T00:51:40+08:00">2022-08-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">java高级原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/java%E5%B8%B8%E8%A7%81%E5%BA%94%E7%94%A8%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">java常见应用原理</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/jdk%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/jdk%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#jdk-dong-tai-dai-li">jdk动态代理</a></li>
+<li><a href="#shi-xian-jdk-dong-tai-dai-li-shi-xu-yao-na-xie-bu-zou">实现jdk动态代理时需要哪些步骤？</a></li>
+<li><a href="#jdk-dong-tai-dai-li-de-invoke-yuan-li-shi-shi-me">JDK动态代理的invoke原理是什么？</a></li>
+<li><a href="#wei-shi-me-proxy-newproxyinstance-bi-xu-yao-chuan-ru-yi-ge-lei-jia-zai-qi">为什么Proxy.newProxyInstance必须要传入一个类加载器？</a></li>
+<li><a href="#wei-shi-me-jdk-dong-tai-dai-li-bi-xu-yi-lai-yi-ge-jie-kou-di-ceng-luo-ji-shi-shi-me">为什么jdk动态代理必须依赖一个接口？底层逻辑是什么？</a></li>
+<li><a href="#na-me-spring-li-aop-suo-yong-de-cglib-wei-sha-bu-xu-yao-jie-kou-ni">那么spring里AOP所用的CGLIB为啥不需要接口呢？</a></li>
+<li><a href="#na-me-cglib-he-jdk-dong-tai-dai-li-na-ge-geng-hao">那么CGLIB和jdk动态代理哪个更好？</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h2><span id="jdk-dong-tai-dai-li">jdk动态代理</span><a href="#jdk-dong-tai-dai-li" class="header-anchor">#</a></h2>
+<h2><span id="shi-xian-jdk-dong-tai-dai-li-shi-xu-yao-na-xie-bu-zou">实现jdk动态代理时需要哪些步骤？</span><a href="#shi-xian-jdk-dong-tai-dai-li-shi-xu-yao-na-xie-bu-zou" class="header-anchor">#</a></h2>
+<ol>
+<li>有一个目标类Class， 目标类必须implment某个行为接口Inteface</li>
+<li>有一个代理类XxxProxy，实现自InvocationHandler接口</li>
+<li>代理类必须实现一个invoke方法， invoke方法的入参是  被代理对象（目标对象）、执行方法（method的反射对象）、执行参数<br>
+通过调用“ 执行方法.invoke(被代理对象，执行参数)” 这个常见的反射操作，  即可执行实际调用方法，然后你可以在这个方法的前后做各种处理或者改造。</li>
+<li>使用Proxy.newProxyInstance(被代理类的类加载器， 被代理类的接口， 这个proxy代理对象)生成一个做过绑定的代理对象，能被调用的方法都是行为接口Inteface里的。</li>
+</ol>
+<hr>
+<h2><span id="jdk-dong-tai-dai-li-de-invoke-yuan-li-shi-shi-me">JDK动态代理的invoke原理是什么？</span><a href="#jdk-dong-tai-dai-li-de-invoke-yuan-li-shi-shi-me" class="header-anchor">#</a></h2>
+<p>proxy类里面真正的那个代理方法字节码类似如下（这个类就是给被别人调用的代理类，是newProxyxxx（）操作后的那个类，不是invokeHandler类）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Proxy0.class</span><br><span class="line">public final void sayHello(object[] args) &#123;</span><br><span class="line">	try &#123;</span><br><span class="line">		// this.h就是继承了invokeHandler的那个类对象</span><br><span class="line">		this.h.invoke(this, m3, args);</span><br><span class="line">	&#125; catch(Excetion ...) &#123;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">static &#123;</span><br><span class="line">	m3 = Class.forname(&quot;那个接口的类名&quot;).getMethod(&quot;sayHello&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>m3就是通过static初始化阶段生成一个m方法， 然后调用sayHello时，调用invokeHandler.invoke，从而走进他里面实现的那个方法。</p>
+<p>Proxy.newProxyInstance()会通过调用sun.misc.ProxyGenerator.generateProxyClass()来生成一个字节码，从而得到一个描述代理类的字节码数组。<br>
+生成字节码的过程就是根据class文件的格式规范去拼装字节码。</p>
+<p>更多源码逻辑见<a target="_blank" rel="noopener" href="https://blog.csdn.net/Trunks2009/article/details/123106582">Proxy源码解析</a></p>
+<hr>
+<h2><span id="wei-shi-me-proxy-newproxyinstance-bi-xu-yao-chuan-ru-yi-ge-lei-jia-zai-qi">为什么Proxy.newProxyInstance必须要传入一个类加载器？</span><a href="#wei-shi-me-proxy-newproxyinstance-bi-xu-yao-chuan-ru-yi-ge-lei-jia-zai-qi" class="header-anchor">#</a></h2>
+<p><img src="/images/jdk%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/48a3a4503f728f9ce9520a2c4820e9a9858c237a.png" alt="48a3a4503f728f9ce9520a2c4820e9a9858c237a"><br>
+因为他需要创建一个新的proxy类时，必须要基于接口去构造一个新的类对象，后面再使用类对象去反射一个实际代理对象<br>
+<img src="/images/jdk%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/08a7c84b1abfab8a47fa544fd0de4603c1699e88.png" alt="08a7c84b1abfab8a47fa544fd0de4603c1699e88"></p>
+<hr>
+<h2><span id="wei-shi-me-jdk-dong-tai-dai-li-bi-xu-yi-lai-yi-ge-jie-kou-di-ceng-luo-ji-shi-shi-me">为什么jdk动态代理必须依赖一个接口？底层逻辑是什么？</span><a href="#wei-shi-me-jdk-dong-tai-dai-li-bi-xu-yi-lai-yi-ge-jie-kou-di-ceng-luo-ji-shi-shi-me" class="header-anchor">#</a></h2>
+<p>因为真正给用户调用的那个代理对象类XXXProxy$0， 实际上他为了做相关的代理操作（比如将inovkeHnandler作为成员，并调用各种字节码生产方法），需要extends Proxy这个类<br>
+也就是说他的类结构长这样：<br>
+<img src="/images/jdk%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/5d5edf4370eff2c399096e1fefdd76e9cb7c90ee.png" alt="5d5edf4370eff2c399096e1fefdd76e9cb7c90ee"><br>
+因为java是单继承，导致父类已经被Proxy占用了，但你有需要对Worker对象做代理封装，并提供这个接口对外提供的方法，因此只能用implements的形式。</p>
+<p>另一个更好的解释：</p>
+<blockquote>
+<blockquote>
+<p>Cglib代理实际上是通过继承，也就是生成一个继承被代理对象的类，编译成class文件时还会额外生成一个fastclass文件<br>
+该文件记录各个method的class索引（类名+方法名+参数），当执行某个方法时，通过计算索引，定位到具体的方法，代理对象执行该方法，然后super调用父类（执行了被代理对象的方法）。<br>
+生成代理对象时通过fastclass索引机制直接定位到被代理对象的class文件，从而实现反复调用，等于说是class复用，每次都是直接拿被代理对象的class内容执行的。</p>
+</blockquote>
+</blockquote>
+<hr>
+<h2><span id="na-me-spring-li-aop-suo-yong-de-cglib-wei-sha-bu-xu-yao-jie-kou-ni">那么spring里AOP所用的CGLIB为啥不需要接口呢？</span><a href="#na-me-spring-li-aop-suo-yong-de-cglib-wei-sha-bu-xu-yao-jie-kou-ni" class="header-anchor">#</a></h2>
+<p>因为CGLIB是直接继承被代理类做字节码增加的，相当于做了字节码改造。</p>
+<p>而jdk动态代理需要继承自Proxy类，利用父类的机制引用invokeHandler+反射的方法，来做代理操作。</p>
+<hr>
+<h2><span id="na-me-cglib-he-jdk-dong-tai-dai-li-na-ge-geng-hao">那么CGLIB和jdk动态代理哪个更好？</span><a href="#na-me-cglib-he-jdk-dong-tai-dai-li-na-ge-geng-hao" class="header-anchor">#</a></h2>
+<ol>
+<li>性能上比较</li>
+</ol>
+<ul>
+<li>jdk动态代理生成类速度快，调用慢</li>
+<li>cglib生成类速度慢，但后续调用快</li>
+</ul>
+<p>但是实际上JDK的速度在版本升级的时候每次都提高很多性能,而CGLIB仍止步不前.<br>
+在对JDK动态代理与CGlib动态代理的代码实验中看，1W次执行下，JDK7及8的动态代理性能比CGlib要好20%左右。</p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/eea9a3acbaad">JDK 动态代理和Cglib性能对比</a></p>
+<ol start="2">
+<li>稳定性上比较</li>
+</ol>
+<ul>
+<li>jdk动态代理Java本身支持，不用担心依赖问题，随着版本稳定升级和优化。</li>
+<li>而CGLIB是外部技术，字节码库需要进行更新以保证在新版java上能运行<br>
+；</li>
+</ul>
+<ol start="3">
+<li>使用上比较<br>
+jdk动态代理必须依赖接口，CGLIB不需要，在设计不当的历史包袱下<br>
+如果必须对非接口对象做代理，那么只能用CGLIB临时过度。</li>
+</ol>
+<p>因此spring实现AOP时，都是优先使用jdk动态代理，如果没有实现接口，才改成CGLIB过度，这也是为什么我们spring里的service类一般都要先定义1个接口，即使你只有1个service实现类。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/06/05/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-high/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1511,7 +1701,7 @@ jvm概念中说的是”slot一定能存放下1个boolean\byte\int\引用地址\
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/05/06/%E9%9A%8F%E7%AC%94/sleep/">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/05/06/%E9%9A%8F%E7%AC%94/%E5%A4%B1%E7%9C%A0%E7%96%97%E6%B3%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/abd.png">
@@ -1525,7 +1715,7 @@ jvm概念中说的是”slot一定能存放下1个boolean\byte\int\引用地址\
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/05/06/%E9%9A%8F%E7%AC%94/sleep/" class="post-title-link" itemprop="url">解决失眠的科学疗法</a>
+            <a href="/2022/05/06/%E9%9A%8F%E7%AC%94/%E5%A4%B1%E7%9C%A0%E7%96%97%E6%B3%95/" class="post-title-link" itemprop="url">解决失眠的科学疗法</a>
         </h2>
 
         <div class="post-meta">
@@ -1543,7 +1733,7 @@ jvm概念中说的是”slot一定能存放下1个boolean\byte\int\引用地址\
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-10 23:57:29" itemprop="dateModified" datetime="2022-08-10T23:57:29+08:00">2022-08-10</time>
+                <time title="修改时间：2022-08-10 00:54:37" itemprop="dateModified" datetime="2022-08-10T00:54:37+08:00">2022-08-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1568,8 +1758,8 @@ jvm概念中说的是”slot一定能存放下1个boolean\byte\int\引用地址\
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2022/05/06/%E9%9A%8F%E7%AC%94/sleep/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/05/06/%E9%9A%8F%E7%AC%94/sleep/" itemprop="commentCount"></span>
+    <a title="valine" href="/2022/05/06/%E9%9A%8F%E7%AC%94/%E5%A4%B1%E7%9C%A0%E7%96%97%E6%B3%95/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/05/06/%E9%9A%8F%E7%AC%94/%E5%A4%B1%E7%9C%A0%E7%96%97%E6%B3%95/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -1646,7 +1836,7 @@ jvm概念中说的是”slot一定能存放下1个boolean\byte\int\引用地址\
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/05/06/%E9%9A%8F%E7%AC%94/%E5%A4%B1%E7%9C%A0%E7%96%97%E6%B3%95/">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/05/06/%E9%9A%8F%E7%AC%94/sleep/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/abd.png">
@@ -1660,7 +1850,7 @@ jvm概念中说的是”slot一定能存放下1个boolean\byte\int\引用地址\
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/05/06/%E9%9A%8F%E7%AC%94/%E5%A4%B1%E7%9C%A0%E7%96%97%E6%B3%95/" class="post-title-link" itemprop="url">解决失眠的科学疗法</a>
+            <a href="/2022/05/06/%E9%9A%8F%E7%AC%94/sleep/" class="post-title-link" itemprop="url">解决失眠的科学疗法</a>
         </h2>
 
         <div class="post-meta">
@@ -1678,7 +1868,7 @@ jvm概念中说的是”slot一定能存放下1个boolean\byte\int\引用地址\
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-10 00:54:37" itemprop="dateModified" datetime="2022-08-10T00:54:37+08:00">2022-08-10</time>
+                <time title="修改时间：2022-08-10 23:57:29" itemprop="dateModified" datetime="2022-08-10T23:57:29+08:00">2022-08-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1703,8 +1893,8 @@ jvm概念中说的是”slot一定能存放下1个boolean\byte\int\引用地址\
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2022/05/06/%E9%9A%8F%E7%AC%94/%E5%A4%B1%E7%9C%A0%E7%96%97%E6%B3%95/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/05/06/%E9%9A%8F%E7%AC%94/%E5%A4%B1%E7%9C%A0%E7%96%97%E6%B3%95/" itemprop="commentCount"></span>
+    <a title="valine" href="/2022/05/06/%E9%9A%8F%E7%AC%94/sleep/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/05/06/%E9%9A%8F%E7%AC%94/sleep/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -2567,100 +2757,6 @@ A:</p>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/05/02/home/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/05/02/home/" class="post-title-link" itemprop="url">首页</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-05-02 22:07:43 / 修改时间：22:11:05" itemprop="dateCreated datePublished" datetime="2022-05-02T22:07:43+08:00">2022-05-02</time>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/05/02/home/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/05/02/home/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>73</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>哈喽，我是破晓。<br>
-本博客主要有以下目的：</p>
-<ol>
-<li>整理自己历史以往学习过的所有知识点，温故知新</li>
-<li>发布一些高质量的知识分享文章</li>
-<li>记录一些只给部分人观看的个人生活记录</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2732,14 +2828,14 @@ A:</p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">141</span>
+          <span class="site-state-item-count">142</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">43</span>
+        <span class="site-state-item-count">44</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -2803,7 +2899,7 @@ A:</p>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共256.9k字</span>
+  <span class="post-count">博客全站共260.1k字</span>
 </div>
 
         

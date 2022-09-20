@@ -358,6 +358,325 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/20/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/09/20/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" class="post-title-link" itemprop="url">动态规划</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-09-20 23:12:42" itemprop="dateCreated datePublished" datetime="2022-09-20T23:12:42+08:00">2022-09-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-09-21 00:04:30" itemprop="dateModified" datetime="2022-09-21T00:04:30+08:00">2022-09-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">算法大全</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E7%89%B9%E6%AE%8A%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">特殊算法</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/20/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/20/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#1-4-de-si-kao-tao-lu">1+4的思考套路</a>
+<ul>
+<li><a href="#jian-dan-li-zi">简单例子</a>
+<ul>
+<li><a href="#zai-chao-shi-de-si-lu-shang-xie-chu-yi-zu-ji-suan-guo-cheng-de-li-zi">①在超时的思路上写出一组计算过程的例子</a></li>
+<li><a href="#zai-chao-shi-li-zi-de-ji-chu-shang-you-na-xie-chong-fu-lang-fei-de-di-fang">②在超时例子的基础上，有哪些重复、浪费的地方？</a></li>
+<li><a href="#ru-he-ding-yi-dp-shu-zu">③如何定义dp数组？</a></li>
+<li><a href="#zhuang-tai-de-bian-hua-fang-xiang-shi-shi-me-shi-zen-me-bian-hua-de">④状态的变化方向是什么，是怎么变化的</a></li>
+<li><a href="#bian-jie-zhuang-tai-shi-shi-me">⑤边界状态是什么？</a></li>
+<li><a href="#shi-xian">实现</a></li>
+</ul>
+</li>
+<li><a href="#jin-jie-ban-er-wei-de-dong-tai-gui-hua">进阶版，二维的动态规划</a>
+<ul>
+<li><a href="#zai-chao-shi-de-si-lu-shang-xie-chu-yi-zu-ji-suan-guo-cheng-de-li-zi-1">①在超时的思路上写出一组计算过程的例子</a></li>
+<li><a href="#zai-chao-shi-li-zi-de-ji-chu-shang-you-na-xie-chong-fu-lang-fei-de-di-fang-1">②在超时例子的基础上，有哪些重复、浪费的地方？</a></li>
+<li><a href="#ru-he-ding-yi-dp-shu-zu-1">③如何定义dp数组？</a></li>
+<li><a href="#zhuang-tai-de-bian-hua-fang-xiang-shi-shi-me-shi-zen-me-bian-hua-de-1">④状态的变化方向是什么，是怎么变化的</a></li>
+<li><a href="#bian-jie-zhuang-tai-shi-shi-me-1">⑤边界状态是什么？</a></li>
+<li><a href="#shi-xian-1">实现</a></li>
+<li><a href="#nei-cun-yi-chu-chu-li">内存溢出处理</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#qi-ta-lei-si-ti-mu-lian-xi">其他类似题目练习</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<p>以后不定期更新一些算法方便自己的思考和总结。</p>
+<hr>
+<p>平时练习算法题学习算法知识时，经常会发现题解里写着“动态规划”，里面一上来就是一个复杂的dp公式，对于新人来说除了说声<br>
+<img src="/images/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/image(144).png" alt="image.png"></p>
+<p>剩下就是疑惑，他是怎么想到这个公式的？我能想到吗？这玩意工作中有用吗？<br>
+加上“动态规划”这高端的名字，然后就劝退了不少试图去理解他的人。<br>
+<img src="/images/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/image(145).png" alt="image.png"></p>
+<p>动态规划听起来太吓人，可以换个说法</p>
+<p>我在内心更喜欢叫他“状态缓存”<br>
+如果是服务开发，相信很熟悉这个词语， 利用缓存来加快一些重复的请求的响应速度。<br>
+而这个缓存的特点是 <em><strong>和其他缓存有所关联。</strong></em></p>
+<p>比如我们的服务要计算7天内的某金钱总和，计算后要缓存一下。<br>
+后来又收到一个请求，要计算8天内的金钱总和<br>
+那我们只需要取之前算过的7天内的金钱综合，加上第8天的金钱就行了。</p>
+<h1><span id="1-4-de-si-kao-tao-lu">1+4的思考套路</span><a href="#1-4-de-si-kao-tao-lu" class="header-anchor">#</a></h1>
+<p>自己针对动态规划总结了一个自己的思考套路，我叫他1组例子4个问题，就叫1+4好了，通过这5个过程，可以站在普通人的角度（就是非acm大佬那种的角度），去理解动态规划是如何被思考出来的</p>
+<ul>
+<li>在超时的思路上写出一组计算过程的例子</li>
+<li>在超时例子的基础上，有哪些重复、浪费的地方？</li>
+<li>如何定义dp数组</li>
+<li>状态的变化方向是什么，是怎么变化的</li>
+<li>边界状态是什么</li>
+</ul>
+<h2><span id="jian-dan-li-zi">简单例子</span><a href="#jian-dan-li-zi" class="header-anchor">#</a></h2>
+<p>以一道简单题为例：<br>
+爬楼梯：<br>
+<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/climbing-stairs/">https://leetcode-cn.com/problems/climbing-stairs/</a></p>
+<p><img src="/images/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/image(146).png" alt="image.png"></p>
+<p>这时候就要静下心，观察这个解法的例子中是否有重复经历的场景，而这个重复经历的场景就叫状态。<br>
+我处理动态规划的题目时， 都会问自己3个问题，一般就能顺利地解决。</p>
+<h3><span id="zai-chao-shi-de-si-lu-shang-xie-chu-yi-zu-ji-suan-guo-cheng-de-li-zi">①在超时的思路上写出一组计算过程的例子</span><a href="#zai-chao-shi-de-si-lu-shang-xie-chu-yi-zu-ji-suan-guo-cheng-de-li-zi" class="header-anchor">#</a></h3>
+<p>如果我们考虑最简单的解法，  就是从起点开始，每次选择走1步或者走2步，看下能否走到终点，能走到则方法数+1。<br>
+但这种方法注定超时（O（n^2)）<br>
+但我还是照着这个过程模拟了一下，随便列了几个<br>
+1 -&gt;2-&gt; 3-&gt; 4-&gt; 5<br>
+1 -&gt;2 -&gt;3-&gt; 5<br>
+1-&gt;3-&gt;4-&gt;5<br>
+1-&gt;3-&gt;5</p>
+<h3><span id="zai-chao-shi-li-zi-de-ji-chu-shang-you-na-xie-chong-fu-lang-fei-de-di-fang">②在超时例子的基础上，有哪些重复、浪费的地方？</span><a href="#zai-chao-shi-li-zi-de-ji-chu-shang-you-na-xie-chong-fu-lang-fei-de-di-fang" class="header-anchor">#</a></h3>
+<p>在上面，我发现了重复的地方<br>
+<img src="/images/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/image(147).png" alt="image.png"></p>
+<p>也就是说<br>
+从3到5总共就2种路线，已经在1-&gt;2之后计算过了，我后面从1走到3再往后走时，没必要再去算了。<br>
+换言之，当我走到3的时候，其实早就可以知道后面还剩下多少种走法。<br>
+发现重复的地方后，就可以开始建立dp公式了。</p>
+<h3><span id="ru-he-ding-yi-dp-shu-zu">③如何定义dp数组？</span><a href="#ru-he-ding-yi-dp-shu-zu" class="header-anchor">#</a></h3>
+<p>定义dp数组，也就是定义上面提到的重复的地方。重新看下之前的那句话<br>
+当我走到3的时候，其实早就可以知道后面还剩下多少种走法。<br>
+所以dp[3]代表的就是从3往后，有多少种可走的方法。</p>
+<h3><span id="zhuang-tai-de-bian-hua-fang-xiang-shi-shi-me-shi-zen-me-bian-hua-de">④状态的变化方向是什么，是怎么变化的</span><a href="#zhuang-tai-de-bian-hua-fang-xiang-shi-shi-me-shi-zen-me-bian-hua-de" class="header-anchor">#</a></h3>
+<ul>
+<li>首先思考状态的变化方向<br>
+重新看这句话：</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>当我走到3的时候，其实早就可以知道后面还剩下多少种走法</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>说明结果取决于往 <em><strong>后面</strong></em> 的状态<br>
+因此我们要先计算后面的状态, 即从后往前算</p>
+<ul>
+<li>接着思考这个后面的状态和当前的状态有什么联系，是怎么变化的</li>
+</ul>
+<p>这个一般都包含在题目条件中<br>
+根据题意，要么走2步，要么走1步，因此每当我走到一层时，下一次就2种状态可以变化。<br>
+那么对于第3层而言，他后续有2种走法，走1步或者走2步<br>
+那么他的情况就是dp[3] = dp[3+1] + dp{3+2}<br>
+如果层数设为i，那么这个变化情况就是<br>
+dp[i] = dp[i+1] + dp[i+2]</p>
+<h3><span id="bian-jie-zhuang-tai-shi-shi-me">⑤边界状态是什么？</span><a href="#bian-jie-zhuang-tai-shi-shi-me" class="header-anchor">#</a></h3>
+<p>边界状态就是不需要依赖后面的状态了，直接可以得到结果的状态。<br>
+在这里肯定就是最后一层dp[n]， 最后一层默认是一种走法。 dp[n]=1</p>
+<h3><span id="shi-xian">实现</span><a href="#shi-xian" class="header-anchor">#</a></h3>
+<p>根据上面的过程，自己便定义了这个状态和变化</p>
+<ul>
+<li>定义：dp[i] :  代表从第i层往后，有多少种走法</li>
+<li>方向和变化：dp[i] =  dp[i+1] + dp[i+2];</li>
+<li>边界:  dp[n] = 1<br>
+根据这个写代码就很容易了<br>
+代码：</li>
+</ul>
+<pre><code class="language-java">    public int climbStairs(int n) &#123;
+        int[] dp = new int[n + 1];
+        dp[n] = 1;
+        dp[n-1] = 1;
+        for(int i = n-2; i &gt;=0;i--) &#123;
+            dp[i] = dp[i+1] + dp[i+2];
+        &#125;
+        return dp[0];
+    &#125;
+</code></pre>
+<h2><span id="jin-jie-ban-er-wei-de-dong-tai-gui-hua">进阶版，二维的动态规划</span><a href="#jin-jie-ban-er-wei-de-dong-tai-gui-hua" class="header-anchor">#</a></h2>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/number-of-ways-to-stay-in-the-same-place-after-some-steps/">https://leetcode-cn.com/problems/number-of-ways-to-stay-in-the-same-place-after-some-steps/</a></p>
+<p><img src="/images/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/image(148).png" alt="image.png"></p>
+<h3><span id="zai-chao-shi-de-si-lu-shang-xie-chu-yi-zu-ji-suan-guo-cheng-de-li-zi">①在超时的思路上写出一组计算过程的例子</span><a href="#zai-chao-shi-de-si-lu-shang-xie-chu-yi-zu-ji-suan-guo-cheng-de-li-zi" class="header-anchor">#</a></h3>
+<p>超时的思路肯定是像搜索一样模拟所有的行走过程。<br>
+先假设1个steps=5, arrlen=3的情况<br>
+随便先列几个。模拟一下不断走的位置。数字指的是当前位置。<br>
+0-&gt;1-&gt;2-&gt;1-&gt;0-&gt;0<br>
+0-&gt;1-&gt;2-&gt;1-&gt;1-&gt;0<br>
+0-&gt;1-&gt;1-&gt;1-&gt;1-&gt;0<br>
+0-&gt;1-&gt;1-&gt;1-&gt;0-&gt;0<br>
+0-&gt;0-&gt;1-&gt;1-&gt;1-&gt;0<br>
+……</p>
+<h3><span id="zai-chao-shi-li-zi-de-ji-chu-shang-you-na-xie-chong-fu-lang-fei-de-di-fang">②在超时例子的基础上，有哪些重复、浪费的地方？</span><a href="#zai-chao-shi-li-zi-de-ji-chu-shang-you-na-xie-chong-fu-lang-fei-de-di-fang" class="header-anchor">#</a></h3>
+<p>0-&gt;1-&gt;2-&gt;<em><strong>1-&gt;0-&gt;0</strong></em><br>
+0-&gt;1-&gt;2-&gt;<em><strong>1-&gt;1-&gt;0</strong></em><br>
+0-&gt;1-&gt;1-&gt;<em><strong>1-&gt;1-&gt;0</strong></em><br>
+0-&gt;1-&gt;1-&gt;<em><strong>1-&gt;0-&gt;0</strong></em><br>
+0-&gt;0-&gt;1-&gt;<em><strong>1-&gt;1-&gt;0</strong></em><br>
+0-&gt;0-&gt;1-&gt;<em><strong>1-&gt;0-&gt;0</strong></em><br>
+我发现这部分标粗的部分重复了，<br>
+换句话说<br>
+当我还剩2步且当前位置为1的时候，后面还有多少种走法，其实早就知道了。</p>
+<h3><span id="ru-he-ding-yi-dp-shu-zu">③如何定义dp数组？</span><a href="#ru-he-ding-yi-dp-shu-zu" class="header-anchor">#</a></h3>
+<p>重新看这句话：</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>当我还剩2步且当前位置为1的时候，后面还有多少种走法，其实早就知道了。</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>涉及了2个关键因素: 剩余步数和当前值，所以得用二维数组<br>
+因此<br>
+dp[realstep][index]<br>
+就代表了  剩余步数为step且位置为index时， 后续还剩多少种走法。</p>
+<h3><span id="zhuang-tai-de-bian-hua-fang-xiang-shi-shi-me-shi-zen-me-bian-hua-de">④状态的变化方向是什么，是怎么变化的</span><a href="#zhuang-tai-de-bian-hua-fang-xiang-shi-shi-me-shi-zen-me-bian-hua-de" class="header-anchor">#</a></h3>
+<ul>
+<li>先思考变化方向<br>
+“当我还剩2步且当前位置为1的时候，<em><strong>后面</strong></em> 还有多少种走法，其实早就知道了。”</li>
+</ul>
+<p>这个后面是指啥， 后面会怎么变?<br>
+后面肯定是步数越来越少的情况， 并且位置会根据规律变化。 所以变化方向是步数变少，位置则按照规定去变。<br>
+那么这个固定越来越少的这个“剩余步数”，就是核心的变化方向<br>
+我们计算时，可以先计算小的剩余步数的状态， 再去算大的剩余步数。</p>
+<ul>
+<li>如何变化<br>
+根据题意和方向，剩余步数肯定-1，  然后位置有3种选择（减1，不变，加1）， 那么方法就是3种选择的相加<br>
+dp[step][index] = dp[step-1][index-1] + dp[step-1][index] + dp[step-1][index+1]</li>
+</ul>
+<h3><span id="bian-jie-zhuang-tai-shi-shi-me">⑤边界状态是什么？</span><a href="#bian-jie-zhuang-tai-shi-shi-me" class="header-anchor">#</a></h3>
+<p>剩余步数为0时，只有当前位置为0才是我们最终想要的方案，把值设为1并提供给后面用，其他位置且步数为0时都认为是0。<br>
+dp[0][0] = 1；<br>
+dp[0][index] = 0；（index&gt;0)</p>
+<h3><span id="shi-xian">实现</span><a href="#shi-xian" class="header-anchor">#</a></h3>
+<p>那么最终出来了</p>
+<ul>
+<li>定义：dp{realstep][index]:    剩余步数为step且位置为index时， 后续还剩多少种走法。</li>
+<li>方向和变化：dp[step][index] = dp[step-1][index-1] + dp[step-1][index] + dp[step-1][index+1]</li>
+<li>边界:  dp[0][0] = 1；</li>
+</ul>
+<h3><span id="nei-cun-yi-chu-chu-li">内存溢出处理</span><a href="#nei-cun-yi-chu-chu-li" class="header-anchor">#</a></h3>
+<p>不过这题因为是困难题，所以给上面这个公式设立了一个小难度：<br>
+<img src="/images/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/image(149).png" alt="image.png"></p>
+<p>数组长度非常大，导致如果index的范围我们选择为0~arrLen-1, 那么最大情况dp[500][10^6]注定超时内存范围。<br>
+这时候就要去思考index设那么大是不是没必要<br>
+一般我们可以自己列这种情况的小例子，例如<br>
+step=2, arr=10<br>
+然后看下index有没有必要设成0~9，随便走几步<br>
+0-&gt;1-&gt;0<br>
+0-&gt;1-&gt;0<br>
+0-&gt;0-&gt;0<br>
+嗯？我发现就3种情况，arr后面那么长不用啦？<br>
+于是发现规律：<br>
+剩余的步数，必须支撑他返回原点！<br>
+也就是说，其实index的最大范围最多就是step/2， 不能再多了，再多肯定回不去了。<br>
+于是问题解决。</p>
+<h1><span id="qi-ta-lei-si-ti-mu-lian-xi">其他类似题目练习</span><a href="#qi-ta-lei-si-ti-mu-lian-xi" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/minimum-cost-for-tickets/">https://leetcode-cn.com/problems/minimum-cost-for-tickets/</a></p>
+<hr>
+<p>状态压缩的位dp，尽量从0往上更新，往后面看而不是往前面看</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/partition-to-k-equal-sum-subsets/">698. 划分为k个相等的子集 - 力扣（LeetCode）</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1514,7 +1833,7 @@ kafka中， 每个消费者对应一个 partition。 partion中是有序的。</
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/18/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC311%E5%9C%BA%E5%91%A8%E8%B5%9B-104%E5%90%8D-4%E9%A2%98%20/">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/18/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC311%E5%9C%BA%E5%91%A8%E8%B5%9B-104%E5%90%8D-4%E9%A2%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/abd.png">
@@ -1528,7 +1847,7 @@ kafka中， 每个消费者对应一个 partition。 partion中是有序的。</
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/09/18/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC311%E5%9C%BA%E5%91%A8%E8%B5%9B-104%E5%90%8D-4%E9%A2%98%20/" class="post-title-link" itemprop="url">第311场周赛-104名-4题</a>
+            <a href="/2022/09/18/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC311%E5%9C%BA%E5%91%A8%E8%B5%9B-104%E5%90%8D-4%E9%A2%98/" class="post-title-link" itemprop="url">第311场周赛-104名-4题</a>
         </h2>
 
         <div class="post-meta">
@@ -1538,10 +1857,16 @@ kafka中， 每个消费者对应一个 partition。 partion中是有序的。</
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-09-18 12:12:42 / 修改时间：22:09:27" itemprop="dateCreated datePublished" datetime="2022-09-18T12:12:42+08:00">2022-09-18</time>
+              <time title="创建时间：2022-09-18 12:12:42" itemprop="dateCreated datePublished" datetime="2022-09-18T12:12:42+08:00">2022-09-18</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-09-19 23:34:07" itemprop="dateModified" datetime="2022-09-19T23:34:07+08:00">2022-09-19</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -1565,8 +1890,8 @@ kafka中， 每个消费者对应一个 partition。 partion中是有序的。</
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2022/09/18/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC311%E5%9C%BA%E5%91%A8%E8%B5%9B-104%E5%90%8D-4%E9%A2%98%20/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/18/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC311%E5%9C%BA%E5%91%A8%E8%B5%9B-104%E5%90%8D-4%E9%A2%98%20/" itemprop="commentCount"></span>
+    <a title="valine" href="/2022/09/18/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC311%E5%9C%BA%E5%91%A8%E8%B5%9B-104%E5%90%8D-4%E9%A2%98/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/18/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC311%E5%9C%BA%E5%91%A8%E8%B5%9B-104%E5%90%8D-4%E9%A2%98/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -1596,11 +1921,6 @@ kafka中， 每个消费者对应一个 partition。 partion中是有序的。</
 
       
           <p><img src="/images/%E7%AC%AC311%E5%9C%BA%E5%91%A8%E8%B5%9B-104%E5%90%8D-4%E9%A2%98%20/1663509817507.png" alt="1663509817507"></p>
-<h2><span id="ben-qi-zong-jie">本期总结：</span><a href="#ben-qi-zong-jie" class="header-anchor">#</a></h2>
-<ol>
-<li>子数字、子序列的题目， 一定要关注一下有没有”连续“二字！</li>
-<li>排列组合公式可以记忆一下，特别是C二维数组中左边是啥，右边是啥</li>
-</ol>
 <hr>
 <p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/smallest-even-multiple/">6180. 最小偶倍数 - 力扣（LeetCode）</a></p>
 <p>sb题目</p>
@@ -2050,220 +2370,6 @@ kafka中， 每个消费者对应一个 partition。 partion中是有序的。</
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/linux%E9%9B%B6%E6%8B%B7%E8%B4%9D/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/linux%E9%9B%B6%E6%8B%B7%E8%B4%9D/" class="post-title-link" itemprop="url">linux零拷贝</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-09-15 22:47:49 / 修改时间：23:28:33" itemprop="dateCreated datePublished" datetime="2022-09-15T22:47:49+08:00">2022-09-15</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">linux-unix原理</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/linux%E9%9B%B6%E6%8B%B7%E8%B4%9D/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/linux%E9%9B%B6%E6%8B%B7%E8%B4%9D/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#dma">DMA</a>
-<ul>
-<li><a href="#q-dma-de-zuo-yong-shi-shi-me">Q:DMA的作用是什么？</a></li>
-</ul>
-</li>
-<li><a href="#chuan-tong-shu-ju-chuan-song">传统数据传送</a></li>
-<li><a href="#ling-kao-bei-yuan-li">零拷贝原理</a>
-<ul>
-<li><a href="#shi-me-shi-ling-kao-bei">什么是零拷贝?</a></li>
-<li><a href="#yi-mmap-nei-cun-ying-she">一、mmap内存映射</a></li>
-<li><a href="#er-sendfile">二、sendfile</a></li>
-<li><a href="#san-sendfile-with-dma-scatter-gather-copy">三、、Sendfile With DMA Scatter/Gather Copy</a></li>
-<li><a href="#si-splice">四、splice</a></li>
-</ul>
-</li>
-<li><a href="#linux-ling-kao-bei-ji-zhi-dui-bi">linux 零拷贝机制对比</a></li>
-<li><a href="#ling-kao-bei-de-ying-yong">零拷贝的应用</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/2fd2f03b4cc3">来源参考</a></p>
-<blockquote></blockquote>
-<h1><span id="dma">DMA</span><a href="#dma" class="header-anchor">#</a></h1>
-<h2><span id="q-dma-de-zuo-yong-shi-shi-me">Q:DMA的作用是什么？</span><a href="#q-dma-de-zuo-yong-shi-shi-me" class="header-anchor">#</a></h2>
-<p>A:<br>
-IO中断，需要CPU响应，需要CPU参与，因此效率比较低<br>
-用户进程需要读取磁盘数据，需要CPU中断，发起IO请求，每次的IO中断，都带来CPU的上下文切换。<br>
-DMA(Direct Memory Access，直接内存存取) 是所有现代电脑的重要特色，它允许不同速度的硬件装置来沟通，而不需要依赖于CPU 的大量中断负载。</p>
-<hr>
-<p>实际因此IO读取，涉及两个过程：</p>
-<ol>
-<li>DMA等待数据准备好，把磁盘数据读取到操作系统内核缓冲区；</li>
-<li>用户进程，将内核缓冲区的数据copy到用户空间。<br>
-这两个过程，都是阻塞的,占用时间。<br>
-<img src="/images/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/9bc71cd4950d1563b41e145c834a7a02714125b7.png" alt="9bc71cd4950d1563b41e145c834a7a02714125b7"></li>
-</ol>
-<h1><span id="chuan-tong-shu-ju-chuan-song">传统数据传送</span><a href="#chuan-tong-shu-ju-chuan-song" class="header-anchor">#</a></h1>
-<p>Q: 传统数据传送的缺点是什么？</p>
-<p>A: 如果是把文件二进制数据直接通过网络传输， 会涉及4次传输。</p>
-<ol>
-<li>第一次：将磁盘文件，读取到操作系统内核缓冲区；</li>
-<li>第二次：将内核缓冲区的数据，copy到application应用程序的buffer；</li>
-<li>第三步：将application应用程序buffer中的数据，copy到socket网络发送缓冲区(属于操作系统内核的缓冲区)；</li>
-<li>第四次：将socket buffer的数据，copy到网卡，由网卡进行网络传输。</li>
-</ol>
-<p><img src="/images/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/b81d9302d0571857e766209319deeb824473bd49.png" alt="b81d9302d0571857e766209319deeb824473bd49"></p>
-<p>如果不对数据做特殊处理的话， 那么2和3是没有必要的。</p>
-<h1><span id="ling-kao-bei-yuan-li">零拷贝原理</span><a href="#ling-kao-bei-yuan-li" class="header-anchor">#</a></h1>
-<h2><span id="shi-me-shi-ling-kao-bei">什么是零拷贝?</span><a href="#shi-me-shi-ling-kao-bei" class="header-anchor">#</a></h2>
-<p>零拷贝(英语: Zero-copy) 技术是指计算机执行操作时，CPU不需要先将数据从某处内存复制到另一个特定区域。这种技术通常用于通过网络传输文件时节省CPU周期和内存带宽。</p>
-<ul>
-<li>零拷贝技术可以减少数据拷贝和共享总线操作的次数，消除传输数据在存储器之间不必要的中间拷贝次数，从而有效地提高数据传输效率</li>
-<li>零拷贝技术减少了用户进程地址空间和内核地址空间之间因为上:下文切换而带来的开销</li>
-</ul>
-<blockquote>
-<p>可以看出没有说不需要拷贝，只是说减少冗余[不必要]的拷贝。</p>
-</blockquote>
-<p>目的：减少IO流程中不必要的拷贝<br>
-零拷贝需要OS支持，也就是需要kernel暴露api。虚拟机不能操作内核，</p>
-<h2><span id="yi-mmap-nei-cun-ying-she">一、mmap内存映射</span><a href="#yi-mmap-nei-cun-ying-she" class="header-anchor">#</a></h2>
-<p>DMA加载磁盘数据到kernel buffer后，应用程序缓冲区(application buffers)和内核缓冲区(kernel buffer)进行映射，数据再应用缓冲区和内核缓存区的改变就能省略。<br>
-<img src="/images/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/3fb0ac7085f297bc9ebc376ca0b813313c0b703b.png" alt="3fb0ac7085f297bc9ebc376ca0b813313c0b703b"></p>
-<p>mmap内存映射将会经历：3次拷贝: 1次cpu copy，2次DMA copy；</p>
-<p>epoll中事件的传递用的是mmap</p>
-<h2><span id="er-sendfile">二、sendfile</span><a href="#er-sendfile" class="header-anchor">#</a></h2>
-<p>当调用sendfile()时，DMA将磁盘数据复制到kernel buffer，然后将内核中的kernel buffer直接拷贝到socket buffer；<br>
-一旦数据全都拷贝到socket buffer，sendfile()系统调用将会return、代表数据转化的完成。<br>
-socket buffer里的数据就能在网络传输了。<br>
-<img src="/images/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/6bc1d3912c82b88534cca1582fb77446d1a45916.png" alt="6bc1d3912c82b88534cca1582fb77446d1a45916"><br>
-sendfile会经历：3次拷贝，1次CPU copy 2次DMA copy；<br>
-以及2次上下文切换</p>
-<h2><span id="san-sendfile-with-dma-scatter-gather-copy">三、、Sendfile With DMA Scatter/Gather Copy</span><a href="#san-sendfile-with-dma-scatter-gather-copy" class="header-anchor">#</a></h2>
-<p>Scatter/Gather可以看作是sendfile的增强版，批量sendfile。</p>
-<p><img src="/images/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/dae3d6b62f5de10f215226d8a8790ecc7ee6db5b.png" alt="dae3d6b62f5de10f215226d8a8790ecc7ee6db5b"><br>
-<img src="/images/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/49ca15a47fae3cad2a776b8fdd5c4b5099f1cf5e.png" alt="49ca15a47fae3cad2a776b8fdd5c4b5099f1cf5e"><br>
-<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_38006908/article/details/87375404">浅谈scatter-gather DMA</a><br>
-Scatter/Gather会经历2次拷贝: 0次cpu copy，2次DMA copy</p>
-<p>为什么都是sendfile，  scatter/gather不需要cpu拷贝呢？<br>
-我理解是copy过程借助的是DMA的gathercopy， 不再需要cpu的参与， 他可以一次性全部拷贝完，不用分多次。<br>
-<img src="/images/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/7941f2f9868b88a70c970e955c7ceff5495734cd.png" alt="7941f2f9868b88a70c970e955c7ceff5495734cd"></p>
-<h2><span id="si-splice">四、splice</span><a href="#si-splice" class="header-anchor">#</a></h2>
-<p>数据从磁盘读取到OS内核缓冲区后，在内核缓冲区直接可将其转成内核空间其他数据buffer，而不需要拷贝到用户空间。<br>
-如下图所示，从磁盘读取到内核buffer后，在内核空间直接与socket buffer建立pipe管道。<br>
-和sendfile()不同的是，splice()不需要硬件支持。<br>
-<img src="/images/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/d24a7b4f5d20e931f5a4b6bd681f556b98a012c5.png" alt="d24a7b4f5d20e931f5a4b6bd681f556b98a012c5"><br>
-splice会经历 2次拷贝: 0次cpu copy 2次DMA copy；</p>
-<blockquote>
-<blockquote>
-<p>注意splice和sendfile的不同，sendfile是将磁盘数据加载到kernel buffer后，需要一次CPU copy,拷贝到socket buffer。<br>
-而splice是更进一步，连这个CPU copy也不需要了，直接将两个内核空间的buffer进行set up pipe。</p>
-</blockquote>
-</blockquote>
-<h1><span id="linux-ling-kao-bei-ji-zhi-dui-bi">linux 零拷贝机制对比</span><a href="#linux-ling-kao-bei-ji-zhi-dui-bi" class="header-anchor">#</a></h1>
-<p><img src="/images/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/e44c722b8b1949c80cd6267f9abc23e5e78bd4f0.png" alt="e44c722b8b1949c80cd6267f9abc23e5e78bd4f0"></p>
-<h1><span id="ling-kao-bei-de-ying-yong">零拷贝的应用</span><a href="#ling-kao-bei-de-ying-yong" class="header-anchor">#</a></h1>
-<p>Q: 知道零拷贝用在哪些地方吗？<br>
-A:</p>
-<ul>
-<li>NIO提供的内存映射 MappedByteBuffer   ——Linux mmap()</li>
-<li>NIO  FileChannel.transferTo()  —— Linux sendfile()</li>
-<li>Kafka Producer生产的数据持久化到broker，采用mmap文件映射，实现顺序的快速写入；</li>
-<li>Kafka Customer从broker读取数据，采用sendfile，将磁盘文件读到OS内核缓冲区后，直接转到socket buffer进行网络发送。</li>
-</ul>
-<hr>
-<ul>
-<li>mmap 适合小数据量读写，sendFile 适合大文件传输。</li>
-<li>mmap 需要 4 次上下文切换，3 次数据拷贝；sendFile 需要 3 次上下文切换，最少 2 次数据拷贝。</li>
-<li>sendFile 可以利用 DMA 方式，减少 CPU 拷贝，mmap 则不能（必须从内核拷贝到 Socket 缓冲区）。</li>
-<li>在这个选择上：rocketMQ 在消费消息时，使用了 mmap。kafka 使用了 sendFile。</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2335,14 +2441,14 @@ A:</p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">141</span>
+          <span class="site-state-item-count">142</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">43</span>
+        <span class="site-state-item-count">44</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -2406,7 +2512,7 @@ A:</p>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共256.9k字</span>
+  <span class="post-count">博客全站共260.1k字</span>
 </div>
 
         
