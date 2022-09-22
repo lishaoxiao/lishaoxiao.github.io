@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Q: 主节点如果挂了，就无法响应写操作了，那么redis如何检测到主节点离线或者挂了？ Q: 讲了那么多， 什么是哨兵啊？是某个redis进程里带的一个独立模块吗？ Q: 为什么要用多个哨兵进程进行监控，而不用一个监控进行监控？ Q:哨兵进程怎么知道其他哨兵进程的存在？ Q: 哨兵怎么对主节点继续检测的？ Q: 当确认主节点客观下线后， 由哪个哨兵来负责通知客户端或者应用服务进行主节点ip的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis主从切换（故障转移）">
+<meta property="og:url" content="http://breakdawncoder.com/2022/09/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/redis/redis%E4%B8%BB%E4%BB%8E%E5%88%87%E6%8D%A2%EF%BC%88%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB%EF%BC%89/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="Q: 主节点如果挂了，就无法响应写操作了，那么redis如何检测到主节点离线或者挂了？ Q: 讲了那么多， 什么是哨兵啊？是某个redis进程里带的一个独立模块吗？ Q: 为什么要用多个哨兵进程进行监控，而不用一个监控进行监控？ Q:哨兵进程怎么知道其他哨兵进程的存在？ Q: 哨兵怎么对主节点继续检测的？ Q: 当确认主节点客观下线后， 由哪个哨兵来负责通知客户端或者应用服务进行主节点ip的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/redis%E4%B8%BB%E4%BB%8E%E5%88%87%E6%8D%A2%EF%BC%88%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB%EF%BC%89/ef6dc1286e092b2616025b31d24c869762345209.png">
+<meta property="article:published_time" content="2022-09-24T12:36:12.000Z">
+<meta property="article:modified_time" content="2022-09-22T15:42:54.936Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="后台开发知识,redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/redis%E4%B8%BB%E4%BB%8E%E5%88%87%E6%8D%A2%EF%BC%88%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB%EF%BC%89/ef6dc1286e092b2616025b31d24c869762345209.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/2022/09/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/redis/redis%E4%B8%BB%E4%BB%8E%E5%88%87%E6%8D%A2%EF%BC%88%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>redis主从切换（故障转移） | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/home/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/redis/redis%E4%B8%BB%E4%BB%8E%E5%88%87%E6%8D%A2%EF%BC%88%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          redis主从切换（故障转移）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-09-24 20:36:12" itemprop="dateCreated datePublished" datetime="2022-09-24T20:36:12+08:00">2022-09-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-09-22 23:42:54" itemprop="dateModified" datetime="2022-09-22T23:42:54+08:00">2022-09-22</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/redis/redis%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">redis高可用原理</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/redis/redis%E4%B8%BB%E4%BB%8E%E5%88%87%E6%8D%A2%EF%BC%88%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB%EF%BC%89/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/redis/redis%E4%B8%BB%E4%BB%8E%E5%88%87%E6%8D%A2%EF%BC%88%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB%EF%BC%89/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#q-zhu-jie-dian-ru-guo-gua-liao-jiu-wu-fa-xiang-ying-xie-cao-zuo-liao-na-me-redis-ru-he-jian-ce-dao-zhu-jie-dian-chi-xian-huo-zhe-gua-liao">Q: 主节点如果挂了，就无法响应写操作了，那么redis如何检测到主节点离线或者挂了？</a></li>
+<li><a href="#q-jiang-liao-na-me-duo-shi-me-shi-shao-bing-a-shi-mou-ge-redis-jin-cheng-li-dai-de-yi-ge-du-li-mo-kuai-ma">Q: 讲了那么多， 什么是哨兵啊？是某个redis进程里带的一个独立模块吗？</a></li>
+<li><a href="#q-wei-shi-me-yao-yong-duo-ge-shao-bing-jin-cheng-jin-xing-jian-kong-er-bu-yong-yi-ge-jian-kong-jin-xing-jian-kong">Q: 为什么要用多个哨兵进程进行监控，而不用一个监控进行监控？</a></li>
+<li><a href="#q-shao-bing-jin-cheng-zen-me-zhi-dao-qi-ta-shao-bing-jin-cheng-de-cun-zai">Q:哨兵进程怎么知道其他哨兵进程的存在？</a></li>
+<li><a href="#q-shao-bing-zen-me-dui-zhu-jie-dian-ji-xu-jian-ce-de">Q: 哨兵怎么对主节点继续检测的？</a></li>
+<li><a href="#q-dang-que-ren-zhu-jie-dian-ke-guan-xia-xian-hou-you-na-ge-shao-bing-lai-fu-ze-tong-zhi-ke-hu-duan-huo-zhe-ying-yong-fu-wu-jin-xing-zhu-jie-dian-ip-de-qie-huan">Q: 当确认主节点客观下线后， 由哪个哨兵来负责通知客户端或者应用服务进行主节点ip的切换？</a></li>
+<li><a href="#q-shi-me-qing-kuang-xia-wu-fa-wan-cheng-zhu-cong-qie-huan">Q: 什么情况下无法完成主从切换？</a></li>
+<li><a href="#q-cong-ku-na-me-duo-zen-me-xuan-ze-yi-ge-xin-de-zhu-ku">Q: 从库那么多，怎么选择一个新的主库？</a></li>
+<li><a href="#q-xuan-ding-zhu-ku-hou-gu-zhang-zhuan-yi-de-liu-cheng-shi-zen-me-yang-de">Q: 选定主库后， 故障转移的流程是怎么样的？</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<hr>
+<h1><span id="q-zhu-jie-dian-ru-guo-gua-liao-jiu-wu-fa-xiang-ying-xie-cao-zuo-liao-na-me-redis-ru-he-jian-ce-dao-zhu-jie-dian-chi-xian-huo-zhe-gua-liao">Q: 主节点如果挂了，就无法响应写操作了，那么redis如何检测到主节点离线或者挂了？</span><a href="#q-zhu-jie-dian-ru-guo-gua-liao-jiu-wu-fa-xiang-ying-xie-cao-zuo-liao-na-me-redis-ru-he-jian-ce-dao-zhu-jie-dian-chi-xian-huo-zhe-gua-liao" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ol>
+<li>redis有多个哨兵进程，共同监控主从节点的状态。</li>
+<li>当某个哨兵发现主节点连不上了，则会进行“主观下线”，即他个人认为主节点掉了。</li>
+<li>接着这个最先发现主节点掉线的哨兵，会马上发送is-master-down-by-addr给其他哨兵， 让其他哨兵帮忙确认一下。</li>
+<li>其他哨兵同时做一下检测，确认不通时，就会给出赞同票。</li>
+<li>当赞同票大于quorum 配置，则认为主节点是“客观下线”了</li>
+</ol>
+<hr>
+<h1><span id="q-jiang-liao-na-me-duo-shi-me-shi-shao-bing-a-shi-mou-ge-redis-jin-cheng-li-dai-de-yi-ge-du-li-mo-kuai-ma">Q: 讲了那么多， 什么是哨兵啊？是某个redis进程里带的一个独立模块吗？</span><a href="#q-jiang-liao-na-me-duo-shi-me-shi-shao-bing-a-shi-mou-ge-redis-jin-cheng-li-dai-de-yi-ge-du-li-mo-kuai-ma" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>Sentinel 其实是一个 redis 服务端程序，只不过运行在特殊的模式下，不提供数据存储服务，只进行普通 redis 节点监控管理。</li>
+<li>它也会定时执行 serverCron 函数，只是里面其他的程序用不到，用到的是对普通 redis 节点的监控以及故障转移模块。</li>
+</ul>
+<hr>
+<h1><span id="q-wei-shi-me-yao-yong-duo-ge-shao-bing-jin-cheng-jin-xing-jian-kong-er-bu-yong-yi-ge-jian-kong-jin-xing-jian-kong">Q: 为什么要用多个哨兵进程进行监控，而不用一个监控进行监控？</span><a href="#q-wei-shi-me-yao-yong-duo-ge-shao-bing-jin-cheng-jin-xing-jian-kong-er-bu-yong-yi-ge-jian-kong-jin-xing-jian-kong" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>一个监控程序不可靠， 如果1个监控进程挂了，那么检测机制就失效了</li>
+<li>一个监控程序有一个特定的检查间隔， 而哨兵机制可以多个分时间段进行检测。当最先发现下线的人，触发投票过程即可</li>
+</ul>
+<hr>
+<h1><span id="q-shao-bing-jin-cheng-zen-me-zhi-dao-qi-ta-shao-bing-jin-cheng-de-cun-zai">Q:哨兵进程怎么知道其他哨兵进程的存在？</span><a href="#q-shao-bing-jin-cheng-zen-me-zhi-dao-qi-ta-shao-bing-jin-cheng-de-cun-zai" class="header-anchor">#</a></h1>
+<p>A:<br>
+在主从集群中，主库上有一个名为__sentinel__:hello的频道，不同哨兵就是通过它来相互发现，实现互相通信的</p>
+<ol>
+<li>
+<p>哨兵 1 把自己的 IP（172.16.19.3）和端口（26579）发布到__sentinel__:hello频道上</p>
+</li>
+<li>
+<p>哨兵 2 和 3 订阅了该频道。那么此时，哨兵 2 和 3 就可以从这个频道直接获取哨兵 1 的 IP 地址和端口号。</p>
+</li>
+<li>
+<p>然后，哨兵 2、3 可以和哨兵 1 建立网络连接。</p>
+<p><img src="/images/redis%E4%B8%BB%E4%BB%8E%E5%88%87%E6%8D%A2%EF%BC%88%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB%EF%BC%89/ef6dc1286e092b2616025b31d24c869762345209.png" alt="ef6dc1286e092b2616025b31d24c869762345209"></p>
+</li>
+</ol>
+<hr>
+<h1><span id="q-shao-bing-zen-me-dui-zhu-jie-dian-ji-xu-jian-ce-de">Q: 哨兵怎么对主节点继续检测的？</span><a href="#q-shao-bing-zen-me-dui-zhu-jie-dian-ji-xu-jian-ce-de" class="header-anchor">#</a></h1>
+<p>A:<br>
+由哨兵向主库发送 INFO 命令来完成的<br>
+，哨兵 2 给主库发送 INFO 命令，主库接受到这个命令后，就会把从库列表返回给哨兵，实时更新。</p>
+<hr>
+<h1><span id="q-dang-que-ren-zhu-jie-dian-ke-guan-xia-xian-hou-you-na-ge-shao-bing-lai-fu-ze-tong-zhi-ke-hu-duan-huo-zhe-ying-yong-fu-wu-jin-xing-zhu-jie-dian-ip-de-qie-huan">Q: 当确认主节点客观下线后， 由哪个哨兵来负责通知客户端或者应用服务进行主节点ip的切换？</span><a href="#q-dang-que-ren-zhu-jie-dian-ke-guan-xia-xian-hou-you-na-ge-shao-bing-lai-fu-ze-tong-zhi-ke-hu-duan-huo-zhe-ying-yong-fu-wu-jin-xing-zhu-jie-dian-ip-de-qie-huan" class="header-anchor">#</a></h1>
+<p>A:<br>
+需要选一个主的哨兵节点。<br>
+Raft选举算法： 选举的票数大于等于num(sentinels)/2+1时，将成为领导者，如果没有超过，继续选举</p>
+<hr>
+<h1><span id="q-shi-me-qing-kuang-xia-wu-fa-wan-cheng-zhu-cong-qie-huan">Q: 什么情况下无法完成主从切换？</span><a href="#q-shi-me-qing-kuang-xia-wu-fa-wan-cheng-zhu-cong-qie-huan" class="header-anchor">#</a></h1>
+<p>A:<br>
+哨兵进程挂掉太多。<br>
+假设有5个哨兵进程， 1个哨兵必须拿到超过多数的选票(5/2+1=3票)。<br>
+但目前只有2个哨兵活着，无论怎么投票，一个哨兵最多只能拿到2票，永远无法达到N/2+1选票的结果。因此无法完成主从切换。</p>
+<hr>
+<h1><span id="q-cong-ku-na-me-duo-zen-me-xuan-ze-yi-ge-xin-de-zhu-ku">Q: 从库那么多，怎么选择一个新的主库？</span><a href="#q-cong-ku-na-me-duo-zen-me-xuan-ze-yi-ge-xin-de-zhu-ku" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ol>
+<li>剔除和其他哨兵不通的从节点</li>
+<li>选择salve-priority配置中优先级最高的从节点</li>
+<li>选择偏移复制量最大的，即复制最完整的。</li>
+</ol>
+<hr>
+<h1><span id="q-xuan-ding-zhu-ku-hou-gu-zhang-zhuan-yi-de-liu-cheng-shi-zen-me-yang-de">Q: 选定主库后， 故障转移的流程是怎么样的？</span><a href="#q-xuan-ding-zhu-ku-hou-gu-zhang-zhuan-yi-de-liu-cheng-shi-zen-me-yang-de" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ol>
+<li>主哨兵通知新主节点， 让他把自己升级主节点，不再需要同步别人的数据。</li>
+<li>通知其他的从节点更新主节点ip</li>
+<li>通知客户端或者应用服务，主节点已经更换。</li>
+<li>原先掉线的主节点如果上线了，会被通知成为从节点。</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/2022/09/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/redis/redis%E4%B8%BB%E4%BB%8E%E5%88%87%E6%8D%A2%EF%BC%88%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB%EF%BC%89/" title="redis主从切换（故障转移）">http://breakdawncoder.com/2022/09/24/知识库/后台开发应用/redis/redis主从切换（故障转移）/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86-redis/" rel="tag"># 后台开发知识,redis</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/09/23/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/redis/redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" rel="prev" title="redis主从复制">
+      <i class="fa fa-chevron-left"></i> redis主从复制
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/09/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/redis/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4/" rel="next" title="redis分布式集群">
+      redis分布式集群 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">Q: 主节点如果挂了，就无法响应写操作了，那么redis如何检测到主节点离线或者挂了？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">Q: 讲了那么多， 什么是哨兵啊？是某个redis进程里带的一个独立模块吗？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">Q: 为什么要用多个哨兵进程进行监控，而不用一个监控进行监控？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">Q:哨兵进程怎么知道其他哨兵进程的存在？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">Q: 哨兵怎么对主节点继续检测的？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">Q: 当确认主节点客观下线后， 由哪个哨兵来负责通知客户端或者应用服务进行主节点ip的切换？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">Q: 什么情况下无法完成主从切换？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">8.</span> <span class="nav-text">Q: 从库那么多，怎么选择一个新的主库？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">9.</span> <span class="nav-text">Q: 选定主库后， 故障转移的流程是怎么样的？</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">159</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">47</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共290k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
