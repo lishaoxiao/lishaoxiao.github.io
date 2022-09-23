@@ -181,6 +181,651 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%8A%9B%E6%89%A3%E7%BB%83%E4%B9%A0%E9%A2%98%E9%9B%86%E5%90%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%8A%9B%E6%89%A3%E7%BB%83%E4%B9%A0%E9%A2%98%E9%9B%86%E5%90%88/" class="post-title-link" itemprop="url">MYSQL力扣练习题集合</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-24 00:10:49 / 修改时间：00:18:28" itemprop="dateCreated datePublished" datetime="2022-08-24T00:10:49+08:00">2022-08-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/SQL%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">SQL数据库</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%8A%9B%E6%89%A3%E7%BB%83%E4%B9%A0%E9%A2%98%E9%9B%86%E5%90%88/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%8A%9B%E6%89%A3%E7%BB%83%E4%B9%A0%E9%A2%98%E9%9B%86%E5%90%88/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<hr>
+<p>limit 1 offset 1 不存在却要求返回null时， 可以用子查询，或者IFNULL(临时表结果或字段， NULL)<br>
+子查询是select结果作为字段，例如 select (select xx) 而不是 select xxx from (select xxx)。  当select中的字段结果不存在，会自动返回NULL</p>
+<hr>
+<p>如果排名问题要去重，记得加 distinct</p>
+<hr>
+<p>CREATE FUNCTION中<br>
+可以set N:=N-1: 进行变量更新。 不能在return中进行更新</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> getNthHighestSalary(N <span class="type">INT</span>) <span class="keyword">RETURNS</span> <span class="type">INT</span></span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">  <span class="keyword">set</span> N :<span class="operator">=</span> N<span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">RETURN</span> (</span><br><span class="line">      # Write your MySQL query statement below.</span><br><span class="line">      <span class="keyword">select</span> (<span class="keyword">select</span> <span class="keyword">distinct</span> salary <span class="keyword">from</span> Employee </span><br><span class="line">      <span class="keyword">order</span> <span class="keyword">by</span> salary <span class="keyword">desc</span>  </span><br><span class="line">      limit <span class="number">1</span> <span class="keyword">offset</span> N) </span><br><span class="line">  );</span><br><span class="line"><span class="keyword">END</span></span><br></pre></td></tr></table></figure>
+<hr>
+<p>要做排名时给出序号时，有两种方式<br>
+简单方式：<br>
+利用子查询字段，注意子查询字段的特点等同于摘出一个字段，再做一次额外查询，得到唯一的一个结果。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># Write your MySQL query statement below</span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span>  a.score, (</span><br><span class="line">    # 拿a.score重新重新去检索一次表，得到<span class="built_in">count</span>(<span class="keyword">distinct</span> b.score)<span class="operator">+</span><span class="number">1</span>，得到自己的排名</span><br><span class="line">    <span class="keyword">select</span> <span class="built_in">count</span>(<span class="keyword">distinct</span> b.score)<span class="operator">+</span><span class="number">1</span> <span class="keyword">from</span> Scores b <span class="keyword">where</span>  a.score<span class="operator">&lt;</span>b.score</span><br><span class="line">    ) <span class="keyword">as</span> `rank` </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">from</span> Scores a <span class="keyword">order</span> <span class="keyword">by</span> a.score <span class="keyword">desc</span></span><br></pre></td></tr></table></figure>
+<p>但效率太慢。<br>
+高速的序号方法：<br>
+使用dense_rank() over(order by xxx) 可以得到序号，1 1 2 3 3 4，不会跳序号<br>
+其他序号方式：<br>
+row_number()  over(order by xxx)     就是简单的12345这种，不考虑重复<br>
+rank()  over(order by xxx)   如果重复了，1 1 3 4 4 6</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span>  score, </span><br><span class="line">(<span class="built_in">dense_rank</span>() <span class="keyword">over</span>(<span class="keyword">order</span> <span class="keyword">by</span> score <span class="keyword">desc</span>) ) <span class="keyword">as</span> `rank` </span><br><span class="line"><span class="keyword">from</span> Scores </span><br></pre></td></tr></table></figure>
+<hr>
+<p>寻找3个连续出现的数字，如果id是连续的，则可以自联结，即自己和自己join， 构造where <a target="_blank" rel="noopener" href="http://a.id">a.id</a> = b.id-1 and <a target="_blank" rel="noopener" href="http://b.id">b.id</a> = c.id-1 这样的情况。非常好理解</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">distinct</span> a.num <span class="keyword">as</span> ConsecutiveNums <span class="keyword">from</span> </span><br><span class="line">logs a,logs b, logs c</span><br><span class="line"><span class="keyword">where</span> </span><br><span class="line">a.id <span class="operator">=</span> b.id<span class="number">-1</span></span><br><span class="line"><span class="keyword">and</span> b.id <span class="operator">=</span> c.id<span class="number">-1</span></span><br><span class="line"><span class="keyword">and</span> a.num <span class="operator">=</span> b.num <span class="keyword">and</span> b.num <span class="operator">=</span> c.num</span><br></pre></td></tr></table></figure>
+<hr>
+<p>善用自join联结解决一些表内成员互相比较的复杂问题。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 查询收入超过他经理的员工名字。</span><br><span class="line"><span class="keyword">select</span> </span><br><span class="line"> a.name <span class="keyword">as</span> Employee </span><br><span class="line"><span class="keyword">from</span> </span><br><span class="line">Employee  a , Employee  b</span><br><span class="line"><span class="keyword">where</span> b.id <span class="operator">=</span> a.managerId <span class="keyword">and</span> a.salary <span class="operator">&gt;</span> b.salary</span><br></pre></td></tr></table></figure>
+<hr>
+<p>group分组后， 可以用having进行组内聚合情况的过滤， 剔除不想要的组</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 查找 Person 表中所有重复的电子邮箱。</span><br><span class="line"><span class="keyword">select</span> email <span class="keyword">from</span> person </span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> email </span><br><span class="line"><span class="keyword">having</span> </span><br><span class="line"><span class="built_in">count</span>(email) <span class="operator">&gt;</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<hr>
+<p>表a在 表b中不存在记录， 用left join + where xxx is null 来处理</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> c.name <span class="keyword">as</span> Customers </span><br><span class="line"><span class="keyword">from</span> Customers c  <span class="keyword">left</span> <span class="keyword">join</span>  Orders  o</span><br><span class="line"><span class="keyword">on</span> c.id <span class="operator">=</span> o.CustomerId <span class="keyword">where</span> o.id <span class="keyword">is</span> <span class="keyword">null</span></span><br></pre></td></tr></table></figure>
+<hr>
+<p>in 的用法  where a in(1,2,3,4)<br>
+或者 where a in (select aaa from xxx)</p>
+<p>in也支持二元组形式<br>
+where (a,b) in (select aaa,bbb from xxx)</p>
+<p>每组最大值的人选的情况，可以用join + in（分组结果）的方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 查找每个部门中薪资最高的员工，先join，再用in获取符合组+最大值的行</span><br><span class="line">select </span><br><span class="line">b.name as Department , a.name   as Employee ,  a.salary as Salary</span><br><span class="line">from Employee  a </span><br><span class="line">join</span><br><span class="line">Department  b</span><br><span class="line">on a.departmentId  = b.id  </span><br><span class="line"><span class="title function_">and</span> <span class="params">(a.departmentId, a.salary)</span> in (</span><br><span class="line">    select departmentId, max(salary)</span><br><span class="line">    from Employee</span><br><span class="line">    group by departmentId </span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<hr>
+<p>找某薪水是组内前几位的情况， 擅用自查询， 即join后， 拿某条记录在where中遍历一遍,  然后根据count(distinct xxx)来确认自己的排名</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># 找出每个部门获得前三高工资的所有员工</span><br><span class="line"><span class="keyword">select</span> </span><br><span class="line">b.name <span class="keyword">as</span> Department , a.name   <span class="keyword">as</span> Employee ,  a.salary <span class="keyword">as</span> Salary</span><br><span class="line"><span class="keyword">from</span> Employee  a </span><br><span class="line"><span class="keyword">join</span></span><br><span class="line">Department  b</span><br><span class="line"><span class="keyword">on</span> a.departmentId  <span class="operator">=</span> b.id</span><br><span class="line"># 比自己这行记录salary大， 且在同一组内的数量小于<span class="number">3</span>，则满足前<span class="number">3</span>  </span><br><span class="line"><span class="keyword">and</span> (<span class="keyword">select</span> <span class="built_in">count</span>(<span class="keyword">distinct</span> e.salary) <span class="keyword">from</span> Employee e <span class="keyword">where</span> a.DepartmentId  <span class="operator">=</span> e.DepartmentId  <span class="keyword">and</span> a.salary <span class="operator">&lt;</span> e.salary</span><br><span class="line"> ) <span class="operator">&lt;</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+<hr>
+<ul>
+<li>分组后， SUM(IF(x=y,1,0) 可以统计组内x=y的个数<br>
+那么SUM(IF(x=y,1,0) ） / COUNT(x)  就能得到组内x=y的比率</li>
+<li>ROUND(xxx, 2) 可以保留两位小数。</li>
+<li>between的用法： between ‘2013-10-01’ AND ‘2013-10-03’</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 写一段 <span class="keyword">SQL</span> 语句查出?&quot;2013-10-01&quot;?至?&quot;2013-10-03&quot;?期间非禁止用户（乘客和司机都必须未被禁止）的取消率。非禁止用户即 banned 为 <span class="keyword">No</span> 的用户，禁止用户即 banned 为 Yes 的用户。</span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span> request_at <span class="keyword">as</span> <span class="keyword">DAY</span>, ROUND(</span><br><span class="line">    <span class="built_in">SUM</span>(IF(status <span class="operator">=</span> <span class="string">&#x27;completed&#x27;</span>, <span class="number">0</span>, <span class="number">1</span>))<span class="operator">/</span><span class="built_in">COUNT</span>(status), <span class="number">2</span></span><br><span class="line">) <span class="keyword">as</span> `Cancellation Rate`</span><br><span class="line"> <span class="keyword">from</span> </span><br><span class="line">Trips t, Users u1, Users u2</span><br><span class="line"><span class="keyword">where</span> (t.client_id  <span class="operator">=</span> u1.users_id</span><br><span class="line"><span class="keyword">and</span> t.driver_id <span class="operator">=</span> u2.users_id)</span><br><span class="line"><span class="keyword">and</span> u1.banned <span class="operator">=</span> <span class="string">&#x27;No&#x27;</span> <span class="keyword">and</span> u2.banned <span class="operator">=</span> <span class="string">&#x27;No&#x27;</span> </span><br><span class="line"><span class="keyword">and</span>  request_at <span class="keyword">between</span> <span class="string">&#x27;2013-10-01&#x27;</span> <span class="keyword">AND</span> <span class="string">&#x27;2013-10-03&#x27;</span></span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> request_at</span><br></pre></td></tr></table></figure>
+<hr>
+<p>求3个或3个以上连续id的记录，直接自联结，然后用3个or条件判断<br>
+<a target="_blank" rel="noopener" href="http://t1.id">t1.id</a> <a target="_blank" rel="noopener" href="http://t2.id">t2.id</a> <a target="_blank" rel="noopener" href="http://t3.id">t3.id</a><br>
+<a target="_blank" rel="noopener" href="http://t2.id">t2.id</a> <a target="_blank" rel="noopener" href="http://t1.id">t1.id</a> <a target="_blank" rel="noopener" href="http://t3.id">t3.id</a><br>
+<a target="_blank" rel="noopener" href="http://t2.id">t2.id</a> <a target="_blank" rel="noopener" href="http://t3.id">t3.id</a> <a target="_blank" rel="noopener" href="http://t1.id">t1.id</a><br>
+然后取每种连接表的t1即可</p>
+<p>注意distinct 可以用于星号<br>
+distinct s1.*<br>
+也可用于多列  distict s1.a,s1.b,s1.completed</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># 找出每行的人数大于或等于 <span class="number">100</span> 且 id 连续的三行或更多行记录。</span><br><span class="line"># 返回按 visit_date 升序排列的结果表</span><br><span class="line"><span class="keyword">select</span> </span><br><span class="line"><span class="keyword">distinct</span> s1.id,s1.visit_date , s1.people            </span><br><span class="line"><span class="keyword">from</span> </span><br><span class="line">Stadium s1, Stadium s2,Stadium s3</span><br><span class="line"><span class="keyword">where</span> s1.people  <span class="operator">&gt;=</span> <span class="number">100</span> <span class="keyword">and</span> s2.people <span class="operator">&gt;=</span><span class="number">100</span> <span class="keyword">and</span> s3.people <span class="operator">&gt;=</span> <span class="number">100</span> </span><br><span class="line"><span class="keyword">and</span> (</span><br><span class="line">    (s1.id <span class="operator">=</span> s2.id<span class="number">-1</span> <span class="keyword">and</span> s2.id <span class="operator">=</span> s3.id<span class="number">-1</span> ) <span class="keyword">or</span></span><br><span class="line">(s2.id <span class="operator">=</span> s1.id<span class="number">-1</span> <span class="keyword">and</span> s1.id <span class="operator">=</span> s3.id<span class="number">-1</span> ) <span class="keyword">or</span></span><br><span class="line">(s2.id <span class="operator">=</span> s3.id<span class="number">-1</span> <span class="keyword">and</span> s3.id <span class="operator">=</span> s1.id<span class="number">-1</span> )</span><br><span class="line">)</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> s1.id</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/23/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E9%9B%86%E5%90%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/23/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E9%9B%86%E5%90%88/" class="post-title-link" itemprop="url">MYSQL常用命令集合</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-23 23:47:49" itemprop="dateCreated datePublished" datetime="2022-08-23T23:47:49+08:00">2022-08-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-24 00:16:36" itemprop="dateModified" datetime="2022-08-24T00:16:36+08:00">2022-08-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/SQL%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">SQL数据库</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/23/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E9%9B%86%E5%90%88/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/23/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E9%9B%86%E5%90%88/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#show-ming-ling">SHOW命令</a>
+<ul>
+<li><a href="#xian-shi-dang-qian-suo-you-de-ke-yong-shu-ju-ku">显示当前所有的可用数据库</a></li>
+<li><a href="#xian-shi-dang-qian-shu-ju-ku-nei-ke-yong-biao">显示当前数据库内可用表</a></li>
+<li><a href="#xian-shi-mou-ge-biao-zhong-de-suo-you-shu-xing-xin-xi">显示某个表中的所有属性信息</a></li>
+</ul>
+</li>
+<li><a href="#jian-suo-ming-ling">检索命令</a>
+<ul>
+<li><a href="#jian-suo-dan-ge-lie">检索单个列</a></li>
+<li><a href="#jian-suo-duo-ge-lie">检索多个列</a></li>
+<li><a href="#jian-suo-suo-you-lie">检索所有列</a></li>
+<li><a href="#jian-suo-chu-bu-chong-fu-de-xing">检索出不重复的行</a></li>
+<li><a href="#fan-hui-mou-xie-xing">返回某些行</a></li>
+</ul>
+</li>
+<li><a href="#pai-xu-ming-ling">排序命令</a>
+<ul>
+<li><a href="#an-dan-lie-pai-xu">按单列排序</a></li>
+<li><a href="#an-duo-ge-lie-pai-xu">按多个列排序</a></li>
+<li><a href="#jiang-xu-pai-xu">降序排序</a></li>
+</ul>
+</li>
+<li><a href="#tiao-jian-cha-xun">条件查询</a>
+<ul>
+<li><a href="#zhao-chu-price-2-de-ren">找出price=2的人</a></li>
+<li><a href="#bu-pi-pei-jian-cha-gei-chu-id-bu-shi-1003-de-ren-zhi-zao-de-chan-pin">不匹配检查： 给出id不是1003的人制造的产品</a></li>
+<li><a href="#fan-wei-zhi-jian-cha">范围值检查：</a></li>
+<li><a href="#kong-zhi-jian-cha">空值检查</a></li>
+<li><a href="#duo-ge-guo-lu-tiao-jian-and-shi-qie-or-shi-huo">多个过滤条件（AND是且， OR是或）</a></li>
+<li><a href="#and-he-or-de-zu-he">AND和OR的组合</a></li>
+<li><a href="#qu-te-ding-zhi-ji-id-1002-1003-1004-de-zhi-jie-ke">取特定值，即id=1002、1003、1004的值皆可</a></li>
+<li><a href="#fou-ding-tiao-jian-not-tiao-jian-ze-qu-bu-man-zu-zhe-ge-tiao-jian-de-xing">否定条件 NOT 条件，  则取不满足这个条件的行</a></li>
+</ul>
+</li>
+<li><a href="#tong-pei-fu">通配符</a>
+<ul>
+<li><a href="#pei-he-zi-fu-chuan-pi-pei-he-like-shi-yong">配合字符串匹配和LIKE使用</a></li>
+<li><a href="#xia-hua-xian-tong-pei-fu-gai-fu-hao-zhi-neng-dai-biao-1-ge-ren-yi-zi-fu">下划线通配符， 该符号只能代表1个任意字符</a></li>
+<li><a href="#shi-yong-tong-pei-fu-de-zhu-yi-shi-xiang">使用通配符的注意事项</a></li>
+<li><a href="#zheng-ze-biao-da-shi-ban-sui-zhao-regexp-shi-yong">正则表达式，伴随着REGEXP使用</a></li>
+</ul>
+</li>
+<li><a href="#te-shu-udf">特殊UDF</a>
+<ul>
+<li><a href="#fen-zu-ju-he">分组+聚合</a></li>
+<li><a href="#fan-hui-jie-ge-de-ping-jun-zhi">返回价格的平均值</a></li>
+<li><a href="#ji-suan-de-shu-liang-bao-gua-null">计算的数量，包括NULL</a></li>
+<li><a href="#zhi-ding-bu-tong-yuan-su-de-tong-ji">指定不同元素的统计</a></li>
+<li><a href="#fen-chu-5-ge-id-ji-suan-ge-id-dui-ying-chan-pin-de-shu-liang">分出5个id，计算各id对应产品的数量</a></li>
+<li><a href="#guo-lu-fen-zu">过滤分组</a></li>
+<li><a href="#lie-chu-ju-you-2-ge-yi-shang-jie-ge-wei-10-de-chan-pin">列出具有2个以上价格为10的产品</a></li>
+</ul>
+</li>
+<li><a href="#zi-cha-xun">子查询</a>
+<ul>
+<li><a href="#zhao-chu-ding-gou-liao-wu-pin-tnt2-de-suo-you-ke-hu-id">找出订购了物品TNT2的所有客户id</a></li>
+</ul>
+</li>
+<li><a href="#ddl">DDL</a>
+<ul>
+<li><a href="#chuang-jian-biao">创建表：</a></li>
+<li><a href="#tian-jia-lie">添加列：</a></li>
+<li><a href="#shan-chu-lie">删除列：</a></li>
+<li><a href="#shan-chu-biao">删除表：</a></li>
+<li><a href="#chong-ming-ming-biao">重命名表：</a></li>
+<li><a href="#cha-ru-xing">插入行：</a></li>
+<li><a href="#shan-chu-shu-ju">删除数据：</a></li>
+<li><a href="#biao-zhong-shan-chu-zhu-jian-wei">表中删除主键为：</a></li>
+<li><a href="#biao-zhong-zeng-jia-zhu-jian-wei">表中增加主键为：</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="show-ming-ling">SHOW命令</span><a href="#show-ming-ling" class="header-anchor">#</a></h1>
+<h2><span id="xian-shi-dang-qian-suo-you-de-ke-yong-shu-ju-ku">显示当前所有的可用数据库</span><a href="#xian-shi-dang-qian-suo-you-de-ke-yong-shu-ju-ku" class="header-anchor">#</a></h2>
+<p>SHOW DATABASE;</p>
+<hr>
+<h2><span id="xian-shi-dang-qian-shu-ju-ku-nei-ke-yong-biao">显示当前数据库内可用表</span><a href="#xian-shi-dang-qian-shu-ju-ku-nei-ke-yong-biao" class="header-anchor">#</a></h2>
+<p>SHOW TABLES ;</p>
+<hr>
+<h2><span id="xian-shi-mou-ge-biao-zhong-de-suo-you-shu-xing-xin-xi">显示某个表中的所有属性信息</span><a href="#xian-shi-mou-ge-biao-zhong-de-suo-you-shu-xing-xin-xi" class="header-anchor">#</a></h2>
+<p>SHOW COLUMNS FORM 表名</p>
+<p>SHOW STATUS 显示广泛的服务器状态<br>
+SHOW CREATE DATABASE/TABLE  显示创建库或表的SQL语句是啥<br>
+SHOW GRANTS 显示授权用户<br>
+SHOW ERRORS SHOW WARNINGS  显示服务器错误或警告消息</p>
+<hr>
+<h1><span id="jian-suo-ming-ling">检索命令</span><a href="#jian-suo-ming-ling" class="header-anchor">#</a></h1>
+<h2><span id="jian-suo-dan-ge-lie">检索单个列</span><a href="#jian-suo-dan-ge-lie" class="header-anchor">#</a></h2>
+<p>SELECT prod_name<br>
+FROM products</p>
+<hr>
+<h2><span id="jian-suo-duo-ge-lie">检索多个列</span><a href="#jian-suo-duo-ge-lie" class="header-anchor">#</a></h2>
+<p>SELECT id,name,price<br>
+FROM products</p>
+<hr>
+<h2><span id="jian-suo-suo-you-lie">检索所有列</span><a href="#jian-suo-suo-you-lie" class="header-anchor">#</a></h2>
+<p>SELECT *<br>
+FROM products</p>
+<hr>
+<h2><span id="jian-suo-chu-bu-chong-fu-de-xing">检索出不重复的行</span><a href="#jian-suo-chu-bu-chong-fu-de-xing" class="header-anchor">#</a></h2>
+<p>SELECT DISTINCT id<br>
+FROM products</p>
+<hr>
+<h2><span id="fan-hui-mou-xie-xing">返回某些行</span><a href="#fan-hui-mou-xie-xing" class="header-anchor">#</a></h2>
+<p>SELECT name<br>
+FROM products<br>
+LIMIT  begin,len  //即开始行，和行数<br>
+注意： 行从0开始，  故LIMIT1，返回的是第二行</p>
+<hr>
+<h1><span id="pai-xu-ming-ling">排序命令</span><a href="#pai-xu-ming-ling" class="header-anchor">#</a></h1>
+<h2><span id="an-dan-lie-pai-xu">按单列排序</span><a href="#an-dan-lie-pai-xu" class="header-anchor">#</a></h2>
+<p>SELECT name,age<br>
+FROM products<br>
+ORDER BY age<br>
+找出年龄最小的？ 加个LIMIT 1即可</p>
+<hr>
+<h2><span id="an-duo-ge-lie-pai-xu">按多个列排序</span><a href="#an-duo-ge-lie-pai-xu" class="header-anchor">#</a></h2>
+<p>先按price排，再按name排<br>
+SELECT id,price,name<br>
+FROM products<br>
+ORDER BY price, name</p>
+<hr>
+<h2><span id="jiang-xu-pai-xu">降序排序</span><a href="#jiang-xu-pai-xu" class="header-anchor">#</a></h2>
+<p>按price降序排，再按name升序排<br>
+SELECT id,price,name<br>
+FROM products<br>
+ORDER BY price DEC, name</p>
+<hr>
+<h1><span id="tiao-jian-cha-xun">条件查询</span><a href="#tiao-jian-cha-xun" class="header-anchor">#</a></h1>
+<h2><span id="zhao-chu-price-2-de-ren">找出price=2的人</span><a href="#zhao-chu-price-2-de-ren" class="header-anchor">#</a></h2>
+<p>SELECT name, price<br>
+FROM products<br>
+WHERE price = 2<br>
+注意： ORDER BY 排序语句应该放在WHERE的后面</p>
+<p>SQL做where字符匹配时，不区分大小写。</p>
+<hr>
+<h2><span id="bu-pi-pei-jian-cha-gei-chu-id-bu-shi-1003-de-ren-zhi-zao-de-chan-pin">不匹配检查： 给出id不是1003的人制造的产品</span><a href="#bu-pi-pei-jian-cha-gei-chu-id-bu-shi-1003-de-ren-zhi-zao-de-chan-pin" class="header-anchor">#</a></h2>
+<p>SELECT id,name<br>
+FROM products<br>
+WHERE id &lt;&gt; 1003;   //或者 id != 1003</p>
+<hr>
+<h2><span id="fan-wei-zhi-jian-cha">范围值检查：</span><a href="#fan-wei-zhi-jian-cha" class="header-anchor">#</a></h2>
+<p>SELECT name,price<br>
+FROM products<br>
+WHERE price BETWEEN 5 AND 10</p>
+<hr>
+<h2><span id="kong-zhi-jian-cha">空值检查</span><a href="#kong-zhi-jian-cha" class="header-anchor">#</a></h2>
+<p>WHERE price IS NULL</p>
+<hr>
+<h2><span id="duo-ge-guo-lu-tiao-jian-and-shi-qie-or-shi-huo">多个过滤条件（AND是且， OR是或）</span><a href="#duo-ge-guo-lu-tiao-jian-and-shi-qie-or-shi-huo" class="header-anchor">#</a></h2>
+<p>WHERE id=1003 AND price &lt;10 AND age &lt; 18</p>
+<hr>
+<h2><span id="and-he-or-de-zu-he">AND和OR的组合</span><a href="#and-he-or-de-zu-he" class="header-anchor">#</a></h2>
+<p>WHERE id=1002 OR id=1003 AND price&gt;10<br>
+根据SQL的规则， AND优先于OR，变成了<br>
+WHERE id=1002 OR （id=1003 AND price&gt;10）<br>
+所以最好在OR和AND组合时，加上括号<br>
+WHERE （id=1002 OR id=1003） AND price&gt;10</p>
+<hr>
+<h2><span id="qu-te-ding-zhi-ji-id-1002-1003-1004-de-zhi-jie-ke">取特定值，即id=1002、1003、1004的值皆可</span><a href="#qu-te-ding-zhi-ji-id-1002-1003-1004-de-zhi-jie-ke" class="header-anchor">#</a></h2>
+<p>WHERE id IN (1002,1003,1004)</p>
+<hr>
+<h2><span id="fou-ding-tiao-jian-not-tiao-jian-ze-qu-bu-man-zu-zhe-ge-tiao-jian-de-xing">否定条件       NOT 条件，  则取不满足这个条件的行</span><a href="#fou-ding-tiao-jian-not-tiao-jian-ze-qu-bu-man-zu-zhe-ge-tiao-jian-de-xing" class="header-anchor">#</a></h2>
+<p>WHERE id NOT IN (1002,1003,1004)</p>
+<hr>
+<h1><span id="tong-pei-fu">通配符</span><a href="#tong-pei-fu" class="header-anchor">#</a></h1>
+<h2><span id="pei-he-zi-fu-chuan-pi-pei-he-like-shi-yong">配合字符串匹配和LIKE使用</span><a href="#pei-he-zi-fu-chuan-pi-pei-he-like-shi-yong" class="header-anchor">#</a></h2>
+<p>百分号通配符，查找以jet开头的任何名字<br>
+WHERE name LIKE  ‘jet%’<br>
+包含有anvil的名字<br>
+WHERE name LIKE  ‘%anvil%’<br>
+查找以s起头，e结尾的所有名字<br>
+WHERE name LIKE ‘s%e’</p>
+<hr>
+<h2><span id="xia-hua-xian-tong-pei-fu-gai-fu-hao-zhi-neng-dai-biao-1-ge-ren-yi-zi-fu">下划线通配符， 该符号只能代表1个任意字符</span><a href="#xia-hua-xian-tong-pei-fu-gai-fu-hao-zhi-neng-dai-biao-1-ge-ren-yi-zi-fu" class="header-anchor">#</a></h2>
+<p>不能匹配0个字符，即该处必须有1个字符<br>
+WHERE name LIKE ‘_ton anvil’</p>
+<hr>
+<h2><span id="shi-yong-tong-pei-fu-de-zhu-yi-shi-xiang">使用通配符的注意事项</span><a href="#shi-yong-tong-pei-fu-de-zhu-yi-shi-xiang" class="header-anchor">#</a></h2>
+<p>1.不要过度使用通配符<br>
+2.不要把通配符用在搜索模式的开始处<br>
+3.注意通配符的位置</p>
+<hr>
+<h2><span id="zheng-ze-biao-da-shi-ban-sui-zhao-regexp-shi-yong">正则表达式，伴随着REGEXP使用</span><a href="#zheng-ze-biao-da-shi-ban-sui-zhao-regexp-shi-yong" class="header-anchor">#</a></h2>
+<p>LIKE匹配的是整个串，REGEXP只要出现了类似的即可，即有子串即可<br>
+例如LIKE ‘abc’ ，只能返回abc。<br>
+REGEXP ‘abc’， 则可以返回 abcd</p>
+<hr>
+<p>.可以匹配任意一个字符<br>
+WHERE name REGEXP ‘.000’</p>
+<hr>
+<p>搜索2个串, |类似于或OR<br>
+WHERE name REGEXP ‘1000|2000’<br>
+注意：  ‘1|2|3 Ton’ 指代的是1或2或3 Ton， 故不要连续用|后又跟字符，而应该用[]</p>
+<hr>
+<p>匹配几个字符中的一个即可<br>
+WHERE name REGEXP ‘[123] TON’<br>
+则可返回  1 Ton 和 2 Ton</p>
+<hr>
+<p>匹配1-9加a-z<br>
+WHERE name REGEXP  ‘[1-9] [a-z]’</p>
+<hr>
+<p>匹配 正则符号模样的特殊字符<br>
+用\作为前导<br>
+WHERE name REGEXP ‘\.’<br>
+则找到匹配.的， 此时.不代表任意字符</p>
+<hr>
+<p>匹配某个字符的0个或1个<br>
+WHERE name REGEXP ‘sticks?’<br>
+则可匹配stick或者sticks</p>
+<hr>
+<p>指定匹配数目 {n}<br>
+不少于指定数目的匹配 {n,}<br>
+匹配n到m数目的匹配 {n,m}</p>
+<hr>
+<p>WHERE name REGEXP ‘[[:digit:]]{4}’<br>
+则匹配4个任意数字</p>
+<hr>
+<p>^定位为文本的开始，$定位为文本的结束<br>
+注意： ^有另外一个用途，可以用来否定集合[]</p>
+<hr>
+<h1><span id="te-shu-udf">特殊UDF</span><a href="#te-shu-udf" class="header-anchor">#</a></h1>
+<p>在SQL中测试自己写的正则表达式对不对<br>
+SELECT ‘hello’ REGEXP ‘abc’<br>
+若正确，则返回1，否则返回0。 显然这个例子返回0</p>
+<hr>
+<p>计算字段<br>
+SELECT Concat(name, ‘(’ , country, ‘)’ )</p>
+<hr>
+<p>则返回的行里的每个值为<br>
+LSX(CHINA)<br>
+CRISTINA(USA)</p>
+<hr>
+<p>RTrim(name)可以删除name中多余的右边空格，常可以用在拼接中</p>
+<hr>
+<p>给计算字段取别名<br>
+SELECT Concat(name, ‘(’ , country, ‘)’ ) AS newtitle<br>
+则列名叫newtitle</p>
+<hr>
+<p>执行算数计算<br>
+SELECT id, num, price, num*price AS sumProfit<br>
+则多返回一个列，叫做总利润</p>
+<hr>
+<p>测试拼接字段<br>
+SELECT 3*2+5,  则返回11<br>
+SELECT Now(),  则返回数据库的当前时间</p>
+<hr>
+<p>数据处理函数<br>
+Select name, Upper(name) AS upcase_name       都转为大写</p>
+<hr>
+<h2><span id="fen-zu-ju-he">分组+聚合</span><a href="#fen-zu-ju-he" class="header-anchor">#</a></h2>
+<h2><span id="fan-hui-jie-ge-de-ping-jun-zhi">返回价格的平均值</span><a href="#fan-hui-jie-ge-de-ping-jun-zhi" class="header-anchor">#</a></h2>
+<p>SELECT AVG(price) AS avg_price<br>
+FROM products<br>
+WHERE id = 1003</p>
+<hr>
+<h2><span id="ji-suan-de-shu-liang-bao-gua-null">计算的数量，包括NULL</span><a href="#ji-suan-de-shu-liang-bao-gua-null" class="header-anchor">#</a></h2>
+<p>SELECT COUNT（*） AS num_cust<br>
+计算num的数量，不包括NULL<br>
+SELECT COUTN（num） AS num_cust<br>
+还有MAX,MIN,SUM</p>
+<hr>
+<h2><span id="zhi-ding-bu-tong-yuan-su-de-tong-ji">指定不同元素的统计</span><a href="#zhi-ding-bu-tong-yuan-su-de-tong-ji" class="header-anchor">#</a></h2>
+<p>SELECT AVG（DISTINCT price） AS avg_price</p>
+<hr>
+<h2><span id="fen-chu-5-ge-id-ji-suan-ge-id-dui-ying-chan-pin-de-shu-liang">分出5个id，计算各id对应产品的数量</span><a href="#fen-chu-5-ge-id-ji-suan-ge-id-dui-ying-chan-pin-de-shu-liang" class="header-anchor">#</a></h2>
+<p>SELECT id, COUNT(*) AS id_num<br>
+FROM products<br>
+GROUP BY id<br>
+1.除了聚集计算语句外， SELECT中出现的每个列都必须出现在GROUP BY中<br>
+2.GROUP BY 必须出在 ORDER BY 之前</p>
+<hr>
+<h2><span id="guo-lu-fen-zu">过滤分组</span><a href="#guo-lu-fen-zu" class="header-anchor">#</a></h2>
+<p>SELECT id， COUNT(<em>) AD orders<br>
+FROM orders<br>
+GROUP BY id<br>
+HAVING COUNT(</em>) &gt;= 2</p>
+<hr>
+<h2><span id="lie-chu-ju-you-2-ge-yi-shang-jie-ge-wei-10-de-chan-pin">列出具有2个以上价格为10的产品</span><a href="#lie-chu-ju-you-2-ge-yi-shang-jie-ge-wei-10-de-chan-pin" class="header-anchor">#</a></h2>
+<p>SELECT id, COUNT(<em>) AS  num<br>
+FROM products<br>
+WHERE price &gt;= 10<br>
+GROUP BY id<br>
+HAVING COUNT(</em>) &gt;=2<br>
+顺序：先WHERE过滤， 在COUNT过滤</p>
+<blockquote>
+<blockquote>
+<p>语句使用顺序<br>
+SELECT<br>
+FROM<br>
+WHERE<br>
+GROUP BY<br>
+HAVING<br>
+ORDER BY<br>
+LIMIT</p>
+</blockquote>
+</blockquote>
+<h1><span id="zi-cha-xun">子查询</span><a href="#zi-cha-xun" class="header-anchor">#</a></h1>
+<h2><span id="zhao-chu-ding-gou-liao-wu-pin-tnt2-de-suo-you-ke-hu-id">找出订购了物品TNT2的所有客户id</span><a href="#zhao-chu-ding-gou-liao-wu-pin-tnt2-de-suo-you-ke-hu-id" class="header-anchor">#</a></h2>
+<p>SELECT cus_id<br>
+FROM orders<br>
+WHERE sail_id IN （SELECT sail_id<br>
+FROM orderitem<br>
+WHERE prod_id = ‘TNT2’）<br>
+即先从产品表中，找到产品id为INT2的所有订单<br>
+再从订单表中，找到订单id匹配的所有客户。</p>
+<p>检索出上述客户id的所有信息<br>
+SELECT cus_name, cus_age<br>
+FROM customer<br>
+WHERE  cus_id IN (SELECT cus_id<br>
+FROM orders<br>
+WHERE sail_id IN （SELECT sail_id<br>
+FROM orderitem<br>
+WHERE prod_id = ‘TNT2’））<br>
+显示每个客户的订单总数<br>
+SELECT name, state, (SELECT COUNT(*)<br>
+FROM orders<br>
+WHERE orders.cus_id = cus.cus_id ) AS orders<br>
+FROM customers<br>
+ORDER BY name<br>
+对于customer中的每一个客户id， 都从订单表中进行检索，找出每个id的订单数量。</p>
+<h1><span id="ddl">DDL</span><a href="#ddl" class="header-anchor">#</a></h1>
+<h2><span id="chuang-jian-biao">创建表：</span><a href="#chuang-jian-biao" class="header-anchor">#</a></h2>
+<p>CREATE TABLE 表名<br>
+（<br>
+列名   数据类型   列属性<br>
+……<br>
+PRIMARY KEY (主键列1，主键列2……)<br>
+）ENGINE=InnoDB</p>
+<h2><span id="tian-jia-lie">添加列：</span><a href="#tian-jia-lie" class="header-anchor">#</a></h2>
+<p>ALTER TABLE 表名<br>
+ADD 列名 数据类型</p>
+<h2><span id="shan-chu-lie">删除列：</span><a href="#shan-chu-lie" class="header-anchor">#</a></h2>
+<p>ALTER TABLE 表名<br>
+DROP COLUMN 列名</p>
+<h2><span id="shan-chu-biao">删除表：</span><a href="#shan-chu-biao" class="header-anchor">#</a></h2>
+<p>DROP TABLE 表名</p>
+<h2><span id="chong-ming-ming-biao">重命名表：</span><a href="#chong-ming-ming-biao" class="header-anchor">#</a></h2>
+<p>RENAME TABLE 旧表名 TO 新表名</p>
+<h2><span id="cha-ru-xing">插入行：</span><a href="#cha-ru-xing" class="header-anchor">#</a></h2>
+<p>INSERT INTO 表名(<br>
+列名1<br>
+列名2<br>
+……<br>
+)<br>
+VALUES（<br>
+数据1<br>
+数据2<br>
+……<br>
+），<br>
+（<br>
+数据3<br>
+数据4<br>
+）;<br>
+这样就插入了2行</p>
+<p>更新数据：<br>
+UPDATE 表名<br>
+SET  列名1=数据1<br>
+列名2=数据2<br>
+WHERE 查询条件</p>
+<h2><span id="shan-chu-shu-ju">删除数据：</span><a href="#shan-chu-shu-ju" class="header-anchor">#</a></h2>
+<p>DELETE FROM 表名<br>
+WHERE 查询条件</p>
+<h2><span id="biao-zhong-shan-chu-zhu-jian-wei">表中删除主键为：</span><a href="#biao-zhong-shan-chu-zhu-jian-wei" class="header-anchor">#</a></h2>
+<p>alert table table_test drop primary key;</p>
+<h2><span id="biao-zhong-zeng-jia-zhu-jian-wei">表中增加主键为：</span><a href="#biao-zhong-zeng-jia-zhu-jian-wei" class="header-anchor">#</a></h2>
+<p>alert table table_test add primary key(id);</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/23/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-23/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2110,666 +2755,10 @@ C(8,3) = 8 * 7 * 6 /(321) = 6 / 1 * 7 / 2 * 8 / 3<br>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/21/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/21/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/" class="post-title-link" itemprop="url">数据库索引详解</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-08-21 23:46:49 / 修改时间：23:56:11" itemprop="dateCreated datePublished" datetime="2022-08-21T23:46:49+08:00">2022-08-21</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/SQL%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">SQL数据库</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/21/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/21/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>6.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#suo-yin-de-ji-ben-gai-nian">索引的基本概念</a>
-<ul>
-<li><a href="#suo-yin-de-you-dian">索引的优点</a></li>
-<li><a href="#suo-yin-lei-xing">索引类型</a>
-<ul>
-<li><a href="#ha-xi-suo-yin">哈希索引</a>
-<ul>
-<li><a href="#zi-ding-yi-ha-xi-suo-yin">自定义哈希索引</a></li>
-</ul>
-</li>
-<li><a href="#kong-jian-shu-ju-suo-yin-r-tree">空间数据索引（R-Tree)</a></li>
-<li><a href="#quan-wen-suo-yin">全文索引</a></li>
-</ul>
-</li>
-<li><a href="#san-xing-suo-yin-de-ping-jie">三星索引的评价</a></li>
-</ul>
-</li>
-<li><a href="#suo-yin-yuan-li">索引原理</a>
-<ul>
-<li><a href="#b-tree-shi-xian">B+ tree实现</a></li>
-<li><a href="#q-wei-shi-me-bu-xuan-ze-shi-yong-b-shu-er-shi-shi-yong-b-shu">Q: 为什么不选择使用B树， 而是使用B+树？</a></li>
-<li><a href="#q-na-wei-shi-me-bu-xuan-yong-hong-hei-shu">Q: 那为什么不选用红黑树？</a></li>
-<li><a href="#q-na-wei-shi-me-bu-yong-ha-xi-biao">Q: 那为什么不用哈希表？</a></li>
-</ul>
-</li>
-<li><a href="#gao-xing-neng-de-suo-yin-ce-lue">高性能的索引策略</a>
-<ul>
-<li><a href="#du-li-de-lie-de-wen-ti">独立的列的问题</a></li>
-<li><a href="#qian-zhui-suo-yin-you-hua">前缀索引优化</a>
-<ul>
-<li><a href="#qian-zhui-suo-yin-de-chuang-jian">前缀索引的创建</a></li>
-<li><a href="#que-ding-qian-zhui-chang-du">确定前缀长度</a></li>
-<li><a href="#ru-he-zuo-hou-zhui-suo-yin">如何做后缀索引？</a></li>
-</ul>
-</li>
-<li><a href="#duo-lie-suo-yin">多列索引</a></li>
-<li><a href="#ru-he-que-ding-suo-yin-lie-shun-xu">如何确定索引列顺序</a></li>
-</ul>
-</li>
-<li><a href="#ju-cu-suo-yin">聚簇索引</a>
-<ul>
-<li><a href="#ju-cu-he-fei-ju-cu-de-qu-bie">聚簇和非聚簇的区别</a></li>
-<li><a href="#ju-cu-de-you-dian">聚簇的优点</a></li>
-<li><a href="#ju-cu-de-que-dian">聚簇的缺点</a></li>
-<li><a href="#ju-cu-he-fei-ju-cu-de-dui-bi">聚簇和非聚簇的对比</a></li>
-<li><a href="#q-shi-me-shi-hui-biao">Q: 什么是回表？</a></li>
-<li><a href="#q-na-me-dang-fa-sheng-hui-biao-shi-zen-me-bi-mian-ni">Q: 那么当发生回表时，怎么避免呢？</a></li>
-<li><a href="#q-fei-zhu-jian-suo-yin-a-zuo-where-a-3-shi-neng-chong-fen-li-yong-suo-yin-zuo-jian-dan-de-fan-wei-du-qu-me">Q: 非主键索引a， 做where a&gt;3时， 能充分利用索引做简单的范围读取么？</a></li>
-<li><a href="#er-ji-suo-yin-he-zhu-jian">二级索引和主键</a></li>
-<li><a href="#q-zhu-jian-suo-yin-he-wei-yi-suo-yin-you-shi-me-qu-bie-ni">Q: 主键索引和唯一索引有什么区别呢？</a></li>
-<li><a href="#q-que-ding-bu-neng-you-duo-ge-zhu-jian-suo-yin-ma-na-fan-shi-li-ti-dao-de-duo-ge-zhu-jian-shi-zen-me-hui-shi-ni">Q: 确定不能有多个主键索引吗？那泛式里提到的多个主键是怎么回事呢？</a></li>
-</ul>
-</li>
-<li><a href="#suo-yin-de-cha-ru">索引的插入</a>
-<ul>
-<li><a href="#suo-yin-cha-ru-de-gui-fan">索引插入的规范</a></li>
-<li><a href="#q-wei-shi-me-zi-zeng-id-ke-neng-hui-chu-xian-bu-lian-xu-de-qing-kuang">Q: 为什么自增id可能会出现不连续的情况？</a></li>
-<li><a href="#q-wei-shi-me-zi-zeng-id-bu-neng-hui-gun-ni">Q: 为什么自增id不能回滚呢？</a></li>
-</ul>
-</li>
-<li><a href="#qi-ta-suo-yin">其他索引</a>
-<ul>
-<li><a href="#fu-gai-suo-yin">覆盖索引</a></li>
-<li><a href="#yong-suo-yin-zuo-pai-xu">用索引做排序</a></li>
-<li><a href="#ya-suo-qian-zhui-suo-yin">压缩（前缀索引）</a></li>
-<li><a href="#chong-fu-suo-yin">重复索引</a></li>
-<li><a href="#rong-yu-suo-yin">冗余索引</a></li>
-<li><a href="#wei-shi-yong-de-suo-yin">未使用的索引</a></li>
-<li><a href="#suo-yin-he-suo">索引和锁</a></li>
-</ul>
-</li>
-<li><a href="#suo-yin-ying-yong">索引应用</a>
-<ul>
-<li><a href="#duo-chong-guo-lu-tiao-jian-you-hua">多种过滤条件优化</a></li>
-<li><a href="#bi-mian-duo-ge-fan-wei-tiao-jian">避免多个范围条件</a></li>
-<li><a href="#q-xie-ru-biao-de-shi-hou-wei-shi-me-yi-ban-jian-yi-zi-zeng-de-zhu-jian-id-lai-xie-ru">Q: 写入表的时候， 为什么一般建议自增的主键id来写入？</a></li>
-</ul>
-</li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="suo-yin-de-ji-ben-gai-nian">索引的基本概念</span><a href="#suo-yin-de-ji-ben-gai-nian" class="header-anchor">#</a></h1>
-<h2><span id="suo-yin-de-you-dian">索引的优点</span><a href="#suo-yin-de-you-dian" class="header-anchor">#</a></h2>
-<ol>
-<li>大大减少服务器需要扫描的数据量（本来O(n)的扫描，在B-Tree或者哈希索引的帮助下， 变成O(logn)或者O(1)）</li>
-<li>避免了不必要的排序或者临时表（order by和排序需要先弄一个临时存储的表）</li>
-<li>把随机IO改成为了顺序IO，IO速度加快</li>
-</ol>
-<h2><span id="suo-yin-lei-xing">索引类型</span><a href="#suo-yin-lei-xing" class="header-anchor">#</a></h2>
-<hr>
-<ul>
-<li>支持的类型</li>
-</ul>
-<ol>
-<li>全值匹配——key中所有索引列全部匹配中，单个的</li>
-<li>匹配最左索引——匹配key中的第一个索引值</li>
-<li>匹配列前缀——可以只匹配某个索引的前缀（适用于字符串的情况）</li>
-<li>可以匹配最左索引+列前缀——可以只匹配  索引1、索引2加上索引3的前缀。</li>
-</ol>
-<ul>
-<li>注意上面的匹配，都是从左往右的匹配， 因此不支持只匹配中间那个索引的情况。</li>
-<li>如果有一列索引用了范围， 那么后面的列都不能再用来匹配了。</li>
-<li>B-Tree也可用于排序或者group by key，会加快速度，毕竟默认都是排好序的了。</li>
-</ul>
-<h3><span id="ha-xi-suo-yin">哈希索引</span><a href="#ha-xi-suo-yin" class="header-anchor">#</a></h3>
-<ul>
-<li>指的是把 索引列计算出一个哈希值， 存到一个哈希表中， key是哈希值，val是行指针。</li>
-<li>只有Memory引擎支持（key using hash(索引值） ）， inndb不支持。</li>
-<li>因为不是按照顺序存的， 所以不可用于优化排序， 只能优化查询。</li>
-<li>不支持部分索引匹配， 因为哈希值是根据全索引计算的。</li>
-<li>也不支持范围。</li>
-<li>如果有哈希冲突，且很多，就可能造成性能变慢，</li>
-</ul>
-<h4><span id="zi-ding-yi-ha-xi-suo-yin">自定义哈希索引</span><a href="#zi-ding-yi-ha-xi-suo-yin" class="header-anchor">#</a></h4>
-<ul>
-<li>可以利用B-tree弄一个自定义的哈希索引</li>
-<li>例如想哈希的列是url， 于是我弄了一个hash_url的列,  里面的值是url经过CRC32(url）后的值， 然后把hash_url这一列作为索引。</li>
-<li>然后select语句的时候，  where url = ‘xx’ and hash_url=CRC32(‘xx’)  ，即可 快速定位。</li>
-<li>hash_url的值可以通过insert触发器，每次插入url的时候进行更新</li>
-<li>查询时必须带上哈希前原本的值（就是上面的url = ‘xxx’)，否则可能会因为哈希冲突返回多行。</li>
-<li>不可用SHA1和MDK做哈希函数。</li>
-</ul>
-<h3><span id="kong-jian-shu-ju-suo-yin-r-tree">空间数据索引（R-Tree)</span><a href="#kong-jian-shu-ju-suo-yin-r-tree" class="header-anchor">#</a></h3>
-<ul>
-<li>只有MyISAM才支持</li>
-<li>从所有维度来索引数据，用于地理信息存储之类的</li>
-</ul>
-<h3><span id="quan-wen-suo-yin">全文索引</span><a href="#quan-wen-suo-yin" class="header-anchor">#</a></h3>
-<ul>
-<li>查找文本中的关键词</li>
-<li>可以同时创建全文索引和基于值的B-Tree索引</li>
-</ul>
-<h2><span id="san-xing-suo-yin-de-ping-jie">三星索引的评价</span><a href="#san-xing-suo-yin-de-ping-jie" class="header-anchor">#</a></h2>
-<ul>
-<li>一星：需要拿的记录都放到同一行（即不用再关联其他表）</li>
-<li>二星：索引数据顺序和查找顺序一致</li>
-<li>三星: 索引的列包含了查询中需要的全部的列（即不用去返回行中所有顺序，直接返回key就好了）</li>
-</ul>
-<h1><span id="suo-yin-yuan-li">索引原理</span><a href="#suo-yin-yuan-li" class="header-anchor">#</a></h1>
-<h2><span id="b-tree-shi-xian">B+ tree实现</span><a href="#b-tree-shi-xian" class="header-anchor">#</a></h2>
-<ul>
-<li>如果没有指明类型，基本上都是用的B+ tree索引</li>
-<li>B+ tree结构</li>
-</ul>
-<p><img src="/images/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/6969d29b8468739b7480fa2315ed0478c0ad46d3.png" alt="6969d29b8468739b7480fa2315ed0478c0ad46d3"><br>
-里面的key就是 你选定的索引值<br>
-然后按照范围，指向后面其他的范围，直到定位到具体的叶子节点即行所对应的值。<br>
-同时因为最后叶子都是按照顺序连起来的，所以也很适合按照范围返回数据。</p>
-<ul>
-<li>B+tree里的key可以包含多个列的值， 并且这些列匹配时有顺序关系，按照定义key时的优先级来排序。（就是说可以多个key组成一个节点，里面自定义了对应的判定顺序）<br>
-<img src="/images/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/0856365975e56e39b87ec59c6e52c6c2260027e1.png" alt="0856365975e56e39b87ec59c6e52c6c2260027e1"></li>
-</ul>
-<hr>
-<h2><span id="q-wei-shi-me-bu-xuan-ze-shi-yong-b-shu-er-shi-shi-yong-b-shu">Q: 为什么不选择使用B树， 而是使用B+树？</span><a href="#q-wei-shi-me-bu-xuan-ze-shi-yong-b-shu-er-shi-shi-yong-b-shu" class="header-anchor">#</a></h2>
-<p>A:<br>
-数据库索引采用B+树的主要原因是 B树在提高了磁盘IO性能的同时并没有解决元素遍历的效率低下的问题<br>
-正是为了解决这个问题，B+树应运而生。B+树只要遍历叶子节点就可以实现整棵树的遍历<br>
-在数据库中基于范围的查询是非常频繁的，而B树不支持这样的操作，或者说效率太低。</p>
-<p>另外B树的索引节点上也存了数据，导致搜索过程种读了很多不必要的数据，加大了磁盘IO时间</p>
-<hr>
-<h2><span id="q-na-wei-shi-me-bu-xuan-yong-hong-hei-shu">Q: 那为什么不选用红黑树？</span><a href="#q-na-wei-shi-me-bu-xuan-yong-hong-hei-shu" class="header-anchor">#</a></h2>
-<p>A:<br>
-红黑树往往出现由于树的深度过大。<br>
-磁盘IO代价主要花费在查找所需的柱面上，树的深度过大会造成磁盘IO频繁读写</p>
-<hr>
-<h2><span id="q-na-wei-shi-me-bu-yong-ha-xi-biao">Q: 那为什么不用哈希表？</span><a href="#q-na-wei-shi-me-bu-yong-ha-xi-biao" class="header-anchor">#</a></h2>
-<p>A:<br>
-哈希表没法做范围查询以及前缀索引匹配查询。</p>
-<hr>
-<h1><span id="gao-xing-neng-de-suo-yin-ce-lue">高性能的索引策略</span><a href="#gao-xing-neng-de-suo-yin-ce-lue" class="header-anchor">#</a></h1>
-<h2><span id="du-li-de-lie-de-wen-ti">独立的列的问题</span><a href="#du-li-de-lie-de-wen-ti" class="header-anchor">#</a></h2>
-<ul>
-<li>索引列不可以作为表达式的一部分， 必须是独立的<br>
-例如 where id+1=5 或者 where Func(id) &lt; 5 都是错误的<br>
-应该改成<br>
-where id = 5-1 或者  where id &lt; uFunc(5)</li>
-</ul>
-<h2><span id="qian-zhui-suo-yin-you-hua">前缀索引优化</span><a href="#qian-zhui-suo-yin-you-hua" class="header-anchor">#</a></h2>
-<ul>
-<li>索引列如果是text之类特别长的，必须使用前缀索引， 不可以用完整长度去做索引，mysql不支持。</li>
-</ul>
-<h4><span id="qian-zhui-suo-yin-de-chuang-jian">前缀索引的创建</span><a href="#qian-zhui-suo-yin-de-chuang-jian" class="header-anchor">#</a></h4>
-<p>… KEY(city(7)),   那么你按照city去where时，就会用city的前缀去索引了。</p>
-<h4><span id="que-ding-qian-zhui-chang-du">确定前缀长度</span><a href="#que-ding-qian-zhui-chang-du" class="header-anchor">#</a></h4>
-<ul>
-<li>前缀索引的选择性 =   不重复的个数/记录总数</li>
-<li>如何确定较优的前缀长度？</li>
-</ul>
-<p>全列选择性：</p>
-<p>SELECT COUNT(DISTINCT column_name) / COUNT(*) FROM table_name;</p>
-<p>某一长度前缀的选择性：</p>
-<p>SELECT COUNT(DISTINCT LEFT(column_name, prefix_length)) / COUNT(*) FROM table_name;</p>
-<p>当你不断调整prefix_length，让前缀的选择性越接近全列选择性的时候，索引效果越好。如果发现继续增加prefi_length，变动幅度不大了，则选取那个值</p>
-<ul>
-<li>也要注意前缀最大值， 例如该长度n下，平均选择性不高，但是有1-2个前缀数量特别大，也不行。</li>
-</ul>
-<h4><span id="ru-he-zuo-hou-zhui-suo-yin">如何做后缀索引？</span><a href="#ru-he-zuo-hou-zhui-suo-yin" class="header-anchor">#</a></h4>
-<p>存储的时候把字符串 <em><strong>翻转</strong></em> 存进表里，然后再做前缀索引</p>
-<h2><span id="duo-lie-suo-yin">多列索引</span><a href="#duo-lie-suo-yin" class="header-anchor">#</a></h2>
-<ul>
-<li>多列索引指的是 多个独立的索引。就是给表定义了Key(a), key(b) ， 而不是Key(a,b)</li>
-<li>如果在多列索引的情况下，要where a=1 or b= 2， 且要性能好， 需要改成  union(a,b) 即查询union的形式。 mysql5.0之后都会优化成union， 简称 <em><strong>索引合并</strong></em></li>
-<li>上述默认优化的缺点:  联合操作会耗费大量的CPU和内存。 可是统计时间时又不会统计进来，导致低估时间成本。</li>
-<li>可以通过explanin sql语句， 查看extra中是否有using union(a,b)来判断是否有索引合并的情况</li>
-</ul>
-<h2><span id="ru-he-que-ding-suo-yin-lie-shun-xu">如何确定索引列顺序</span><a href="#ru-he-que-ding-suo-yin-lie-shun-xu" class="header-anchor">#</a></h2>
-<ul>
-<li>这里指的是如何确定key(a,b,c)里abc的顺序</li>
-<li>通用法则：把选择性最高的那个列放前面</li>
-<li>选择性计算：  distinct(列)/count(*)  越大，选择性越好。</li>
-<li>因为这样的话，可以减少在叶子节点上的遍历。</li>
-<li>特殊情况：  某场景下突然表里的username都变成了一样的用户名， 然后对username索引做查询时， 就很慢， 因为相当于在叶子节点上遍历去查了，O(n)的复杂度。</li>
-<li>对于特殊场景，要尽量在数据输入避免， 或者查询避免（例如避免在那个时间段去查询那个统一的username）</li>
-</ul>
-<hr>
-<h1><span id="ju-cu-suo-yin">聚簇索引</span><a href="#ju-cu-suo-yin" class="header-anchor">#</a></h1>
-<ul>
-<li>聚簇索引是一种存储结构，而不是索引类型。</li>
-<li>InnoDb默认使用主键列做聚簇索引</li>
-<li>如果没有主键，则用第一个非空not NULL unique的索引作为聚簇索引</li>
-<li>如果没主键没索引，则会创建一个隐藏的行id作为聚簇索引（毕竟他总要搞一个B+树)</li>
-</ul>
-<h2><span id="ju-cu-he-fei-ju-cu-de-qu-bie">聚簇和非聚簇的区别</span><a href="#ju-cu-he-fei-ju-cu-de-qu-bie" class="header-anchor">#</a></h2>
-<ul>
-<li>聚簇索引其实就是指，当你搜索到B+树的叶子之后， 叶子里存的就是数据行了，因此叶子的左右都是与自己索引值相邻的数据行，可以串起来直接一起获取。</li>
-<li>而非聚簇索引时， 当你搜到叶子时， 叶子里依然只有索引值， 而后面的指针才指向真正的位置， 这意味着数据行的存放是不连续的， 没有办法用一根线串起来。</li>
-</ul>
-<h2><span id="ju-cu-de-you-dian">聚簇的优点</span><a href="#ju-cu-de-you-dian" class="header-anchor">#</a></h2>
-<ol>
-<li>可以一次性读取到 某主键范围的所有行，减少磁盘IO</li>
-<li>相比非聚簇，少跑一层（就是最后一层）。</li>
-</ol>
-<h2><span id="ju-cu-de-que-dian">聚簇的缺点</span><a href="#ju-cu-de-que-dian" class="header-anchor">#</a></h2>
-<ol>
-<li>如果数据都放在内存中，就没优势了，毕竟非聚簇通过指针一样很快。</li>
-<li>更新聚簇索引会很慢，因为会重新组织B+树重新移动。</li>
-<li>B+树插入新行时，可能导致叶子节点的页出现分裂，导致更多的空间。（聚簇索引的叶子非常大！）<br>
-非聚簇的话都是指针，数据不放在叶子中，也就不会出现那种大叶子的分裂。</li>
-</ol>
-<h2><span id="ju-cu-he-fei-ju-cu-de-dui-bi">聚簇和非聚簇的对比</span><a href="#ju-cu-he-fei-ju-cu-de-dui-bi" class="header-anchor">#</a></h2>
-<p>Innodb都是聚簇索引，叶子节点一般就是数据，数据按顺序存储了。<br>
-MyIsam都是非聚簇索引， 叶子节点还是索引，凌乱指向存储位置。<br>
-<img src="/images/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/c29493c31974255e9ce7dbb32c788130b5de1b76.png" alt="c29493c31974255e9ce7dbb32c788130b5de1b76"></p>
-<hr>
-<h2><span id="q-shi-me-shi-hui-biao">Q:  什么是回表？</span><a href="#q-shi-me-shi-hui-biao" class="header-anchor">#</a></h2>
-<p>A:<br>
-非聚簇索引查询时， 因为最终只查到的是主键值，最终还需要经过聚簇索引找到数据行<br>
-<img src="/images/%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3/93d013b61925f7f744e0aad9bdb1062b32874881.png" alt="93d013b61925f7f744e0aad9bdb1062b32874881"><br>
-如粉红色路径，需要扫码两遍索引树：</p>
-<ol>
-<li>先通过普通索引定位到主键值id=5；</li>
-<li>在通过聚集索引定位到行记录；<br>
-这就是所谓的回表查询，先定位主键值，再定位行记录，它的性能较扫一遍索引树更低</li>
-</ol>
-<hr>
-<h2><span id="q-na-me-dang-fa-sheng-hui-biao-shi-zen-me-bi-mian-ni">Q: 那么当发生回表时，怎么避免呢？</span><a href="#q-na-me-dang-fa-sheng-hui-biao-shi-zen-me-bi-mian-ni" class="header-anchor">#</a></h2>
-<p>A:<br>
-把普通索引列升级到联合主键中。<br>
-例如将单列索引(name)升级为联合索引(name, sex)，即可避免回表(代价是name要放到第一个，或者sex in ‘男，女’）</p>
-<hr>
-<h2><span id="q-fei-zhu-jian-suo-yin-a-zuo-where-a-gt-3-shi-neng-chong-fen-li-yong-suo-yin-zuo-jian-dan-de-fan-wei-du-qu-me">Q: 非主键索引a， 做where a&gt;3时， 能充分利用索引做简单的范围读取么？</span><a href="#q-fei-zhu-jian-suo-yin-a-zuo-where-a-gt-3-shi-neng-chong-fen-li-yong-suo-yin-zuo-jian-dan-de-fan-wei-du-qu-me" class="header-anchor">#</a></h2>
-<p>A:<br>
-不能。<br>
-因为非主键索引最终还是要做回表， 到主键（聚簇）索引树中进行查询。此时a&gt;3是无法直接取出一堆数据的。</p>
-<p>mysql5.5之前， 是每个a&gt;3的记录都进行随机回表读取数据。<br>
-mysql5.5之后，做了一个MR2优化</p>
-<ol>
-<li>当a&gt;3的记录不是很多时， 会读取到内存中</li>
-<li>接着按照主键id（聚簇索引）进行排序</li>
-<li>然后根据id排序后的情况进行回表， 如果有一堆id都是挤在一起的，就对这一批id进行范围查询。</li>
-</ol>
-<hr>
-<h2><span id="er-ji-suo-yin-he-zhu-jian">二级索引和主键</span><a href="#er-ji-suo-yin-he-zhu-jian" class="header-anchor">#</a></h2>
-<ul>
-<li>注意， 如果有1个key(xx)加一个primKey(yy)，  相当于有2个索引（主键默认索引）<br>
-而这2个索引的意思是指：<br>
-<em><strong>建立了2个B+树！！</strong></em><br>
-对于主键的B+树， 数据就放在叶子<br>
-而对于另一个索引的B+树， 叶子节点是主键+索引，  后面才是指向数据</li>
-<li>即对于聚簇索引，如果存在主键和二级索引，则选择主键做聚簇， 二级索引和非聚簇索引的B+树没两样。</li>
-</ul>
-<hr>
-<h2><span id="q-zhu-jian-suo-yin-he-wei-yi-suo-yin-you-shi-me-qu-bie-ni">Q:  主键索引和唯一索引有什么区别呢？</span><a href="#q-zhu-jian-suo-yin-he-wei-yi-suo-yin-you-shi-me-qu-bie-ni" class="header-anchor">#</a></h2>
-<p>A:</p>
-<ol>
-<li>主键索引一定是唯一索引， 但唯一索引不一定是主键。</li>
-<li>主键索引列默认不支持空值，  而唯一索引本身没有这个限制。</li>
-<li>主键产生唯一的聚集索引（即聚集索引和主键相关），非主键唯一索引产生唯一的非聚集索引</li>
-<li>唯一索引可以有多个， 但是主键只能有一个。</li>
-</ol>
-<hr>
-<h2><span id="q-que-ding-bu-neng-you-duo-ge-zhu-jian-suo-yin-ma-na-fan-shi-li-ti-dao-de-duo-ge-zhu-jian-shi-zen-me-hui-shi-ni">Q:  确定不能有多个主键索引吗？那泛式里提到的多个主键是怎么回事呢？</span><a href="#q-que-ding-bu-neng-you-duo-ge-zhu-jian-suo-yin-ma-na-fan-shi-li-ti-dao-de-duo-ge-zhu-jian-shi-zen-me-hui-shi-ni" class="header-anchor">#</a></h2>
-<p>A:</p>
-<ol>
-<li>
-<p>数据库的每张表只能有一个主键，不可能有多个主键。</p>
-</li>
-<li>
-<p>所谓的一张表多个主键，我们称之为联合主键。</p>
-</li>
-</ol>
-<p>注：联合主键：就是用多个字段一起作为一张表的主键。</p>
-<ol start="3">
-<li>主键的主键的作用是保证数据的唯一性和完整性，同时通过主键检索表能够增加检索速度。</li>
-</ol>
-<hr>
-<h1><span id="suo-yin-de-cha-ru">索引的插入</span><a href="#suo-yin-de-cha-ru" class="header-anchor">#</a></h1>
-<h2><span id="suo-yin-cha-ru-de-gui-fan">索引插入的规范</span><a href="#suo-yin-cha-ru-de-gui-fan" class="header-anchor">#</a></h2>
-<ul>
-<li>尽量保证在插入时是按索引的顺序插入的</li>
-<li>如果没按顺序插入，会导致经常性的中间分页，移动数据。性能可以差距四倍以上。</li>
-<li>所以尽量选用自增的id做索引，尽量不要用随机的UUID做大批量插入的操作。</li>
-<li>如果用了UUID做插入，插入之后还要要用一个命令<br>
-Optimize Table 表名<br>
-来重建表并优化页的填充</li>
-<li>什么时候顺序主键的插入是不好的？<br>
-同一时刻并发插入（非单线程插入）的情况<br>
-这会导致在 数据表末尾发生激烈的竞争冲突（如果是随机的反而可以避免这个情况） P171</li>
-</ul>
-<hr>
-<h2><span id="q-wei-shi-me-zi-zeng-id-ke-neng-hui-chu-xian-bu-lian-xu-de-qing-kuang">Q: 为什么自增id可能会出现不连续的情况？</span><a href="#q-wei-shi-me-zi-zeng-id-ke-neng-hui-chu-xian-bu-lian-xu-de-qing-kuang" class="header-anchor">#</a></h2>
-<p>A:<br>
-插入时，如果insert语句中不包含id，但是id设成了自增<br>
-mysql此时就会从某个自增表中申请一个主键，当申请成功之后，就会拿着这个主键+1去做真实的Insert操作。（注意，是先申请，再插入）<br>
-如果主键/唯一键冲突，或者事务回滚， <em><strong>这个自增id不会回滚</strong></em>。 下一次会继续主键+1使用。<br>
-因此</p>
-<hr>
-<h2><span id="q-wei-shi-me-zi-zeng-id-bu-neng-hui-gun-ni">Q: 为什么自增id不能回滚呢？</span><a href="#q-wei-shi-me-zi-zeng-id-bu-neng-hui-gun-ni" class="header-anchor">#</a></h2>
-<p>A:<br>
-为什么不回退，是避免回退导致重复的冲突，也为了避免太大范围的锁</p>
-<ul>
-<li>避免回退导致多个id同时插入引发重复的冲突，也为了避免太大范围的锁</li>
-<li>自增主键比较大的作用是避免页分割，我们只需要数据是递增而无需连续</li>
-</ul>
-<hr>
-<hr>
-<h1><span id="qi-ta-suo-yin">其他索引</span><a href="#qi-ta-suo-yin" class="header-anchor">#</a></h1>
-<h2><span id="fu-gai-suo-yin">覆盖索引</span><a href="#fu-gai-suo-yin" class="header-anchor">#</a></h2>
-<p>指查询语句中 只有索引相关的列。</p>
-<ul>
-<li>这样的话，可以不需要回表访问聚簇索引树了， 直接拿索引节点里的索引结果返回，效率非常高。</li>
-<li>全覆盖的情况比较少见，一般用于<br>
-先用覆盖索引的查询语句得到一个小表<br>
-再利用这个小表的结果对原表做查询（相当于省去了一些条件里的判断）</li>
-<li>Explanin 解析时，如果extra显示 using index，则说明使用了覆盖索引。</li>
-</ul>
-<h2><span id="yong-suo-yin-zuo-pai-xu">用索引做排序</span><a href="#yong-suo-yin-zuo-pai-xu" class="header-anchor">#</a></h2>
-<ul>
-<li>索引和排序语句写对的话，可以不需要弄临时表做排序，直接按照顺序取出返回即可。</li>
-<li>索引列的顺序， 必须和order by中声明的索引顺序一致</li>
-<li>即你的key是(a,b,c)， 那么oder by a b c才行，不能打乱顺序</li>
-<li>order by 索引满足 前缀定理，  即必须是  a 或者 a+b或者  a+b前缀</li>
-<li>特例： 如果where中定义了a=‘某个常量’，  那么order by中只需要b和c也满足 前缀定义。</li>
-<li>如果是范围就不行了</li>
-</ul>
-<h2><span id="ya-suo-qian-zhui-suo-yin">压缩（前缀索引）</span><a href="#ya-suo-qian-zhui-suo-yin" class="header-anchor">#</a></h2>
-<ul>
-<li>就是把索引在存储的做压缩，减少字节数</li>
-<li>例如第一个索引是perform， 第二个是performance， 那么第二个存储的时候就表示为7,ance</li>
-<li>可以在Create Table语句中指定PACK_KEYS来控制索引压缩</li>
-<li>压缩索引主要是为了减少磁盘和内存占用量， 但因为压缩了，每次到节点时要先解开压缩再计算（即只有用到才解压），再去查找，会降低性能。</li>
-</ul>
-<h2><span id="chong-fu-suo-yin">重复索引</span><a href="#chong-fu-suo-yin" class="header-anchor">#</a></h2>
-<p>primary key、 unique(key)、 index(key）这3个本质上都会形成索引，很容易有人定义了主键后， 又给主键加个索引， 这就会出现多个相同的B+树。</p>
-<h2><span id="rong-yu-suo-yin">冗余索引</span><a href="#rong-yu-suo-yin" class="header-anchor">#</a></h2>
-<ul>
-<li>创建了索引（A，B）之后， 又创建了（A）， 那么就是冗余， 因为（A，B） 可以实现单独A的索引功能。</li>
-<li>所以尽量修改索引，而不是去新增索引， 新增索引容易出现冗余索引。</li>
-<li>修改索引的缺陷:  可能导致一些老的查询语句的性能下降。<br>
-例如本来是用索引（A） + 主键ID排序做查询，  那个脚本一直在跑很正常， 后来改成了索引（A.B）  + 主键ID排序， 于是原先的脚本性能GG， 因为A和ID被B分开了（只是我们看不到ID放在我们定义的key里）</li>
-</ul>
-<h2><span id="wei-shi-yong-de-suo-yin">未使用的索引</span><a href="#wei-shi-yong-de-suo-yin" class="header-anchor">#</a></h2>
-<ul>
-<li>就是定义了但是平时不用的索引！</li>
-<li>定位未使用索引的方法：  打开userstates变量， 然后让服务器运行几天之后， 查询INFORMATION_SCHEMA.INDEX_STATISTICS用来查看索引的使用频率。</li>
-<li>具体见P188</li>
-</ul>
-<h2><span id="suo-yin-he-suo">索引和锁</span><a href="#suo-yin-he-suo" class="header-anchor">#</a></h2>
-<ul>
-<li>索引能够减少访问的行数，从而减少锁的数量</li>
-</ul>
-<hr>
-<h1><span id="suo-yin-ying-yong">索引应用</span><a href="#suo-yin-ying-yong" class="header-anchor">#</a></h1>
-<h2><span id="duo-chong-guo-lu-tiao-jian-you-hua">多种过滤条件优化</span><a href="#duo-chong-guo-lu-tiao-jian-you-hua" class="header-anchor">#</a></h2>
-<ul>
-<li>如果我们的索引是 sex country age， 但是我们的查询里不关心sex，怎么办？ 如果不走sex，索引就失效了<br>
-可以在where中加入  sex in (‘m’,‘f’)  这样就能用到sex了</li>
-<li>原则1：<br>
-枚举少的放前面， 这样可以用in方式来处理</li>
-<li>原则2：<br>
-经常范围性查询的索引列放后面 ，例如age， 毕竟范围查的话，后面的索引就肯定用不了了。</li>
-</ul>
-<h2><span id="bi-mian-duo-ge-fan-wei-tiao-jian">避免多个范围条件</span><a href="#bi-mian-duo-ge-fan-wei-tiao-jian" class="header-anchor">#</a></h2>
-<ul>
-<li>mysql会把in(1,2,3)和 &gt;1 and &lt; 3 都认为是range的type，  不过在索引的使用，  in之后还可以接其他索引，  但是大于1小于3就不行了</li>
-<li>如果出现了  lastoneline  &gt; xxx  and age  between x and y<br>
-这种2个范围的索引查询，就会导致age索引失效</li>
-<li>一种优化的办法：  如果lastoneline &gt; xxx 仅仅是表示 这个用户是否未过期，则可以新增一个经常维护的字段active，来吧lasttime&gt;xxx的这个条件转成true和false这两种值。</li>
-<li>那么后面就可以改成lastline = true and age between… 了， 用等值的话，就不会影响后面的索引</li>
-</ul>
-<hr>
-<h2><span id="q-xie-ru-biao-de-shi-hou-wei-shi-me-yi-ban-jian-yi-zi-zeng-de-zhu-jian-id-lai-xie-ru">Q: 写入表的时候， 为什么一般建议自增的主键id来写入？</span><a href="#q-xie-ru-biao-de-shi-hou-wei-shi-me-yi-ban-jian-yi-zi-zeng-de-zhu-jian-id-lai-xie-ru" class="header-anchor">#</a></h2>
-<p>A:<br>
-因为底层的索引本质上是B+树<br>
-有页分裂<br>
-如果id随机，则写入时会碎片化，无法做到顺序写</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/21/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC307%E5%9C%BA%E5%91%A8%E8%B5%9B-1232%E5%90%8D-3%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/21/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC307%E5%9C%BA%E5%91%A8%E8%B5%9B-1232%E5%90%8D-3%E9%A2%98/" class="post-title-link" itemprop="url">第307场周赛-1232名-3题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-08-21 22:12:42 / 修改时间：15:42:55" itemprop="dateCreated datePublished" datetime="2022-08-21T22:12:42+08:00">2022-08-21</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">力扣周赛记录</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/21/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC307%E5%9C%BA%E5%91%A8%E8%B5%9B-1232%E5%90%8D-3%E9%A2%98/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/21/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC307%E5%9C%BA%E5%91%A8%E8%B5%9B-1232%E5%90%8D-3%E9%A2%98/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="/images/%E7%AC%AC307%E5%9C%BA%E5%91%A8%E8%B5%9B-1232%E5%90%8D-3%E9%A2%98/1661066854478.png" alt="1661066854478"></p>
-<h2><span id="ben-qi-zong-jie">本期总结：</span><a href="#ben-qi-zong-jie" class="header-anchor">#</a></h2>
-<ol>
-<li>N种东西组成最大字典序回文时，先把成双的都处理掉，每组留下1个或者0个， 最后再考虑怎么拼接这些</li>
-<li>子序列和第K个，可以考虑从最小数字开始， 每次保留当前数字，选下一个数字， 或者废弃当前数字，选下一个数字，  并都放入堆中， 这样每次可更新得到最小的子序列。</li>
-</ol>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/minimum-hours-of-training-to-win-a-competition/">6152. 赢得比赛需要的最少训练时长 - 力扣（LeetCode）</a></p>
-<p><img src="/images/%E7%AC%AC307%E5%9C%BA%E5%91%A8%E8%B5%9B-1232%E5%90%8D-3%E9%A2%98/1661066882187.png" alt="1661066882187"></p>
-<p>最开始有点事情，解决完之后发现脑子很乱，这题目其实很简答</p>
-<p>对于精力，可以提前算出需要的精力， 而经验可以在每次对战时判断是否要再增加。</p>
-<p>但这题就是条件容易看漏，导致错了2次：</p>
-<p><strong>需要在经验和精力上都</strong> <strong>严格超过对手才能击败他们</strong></p>
-<p>严格超过意味着不能等于，导致很多地方得+1</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">minNumberOfHours</span><span class="params">(<span class="type">int</span> initialEnergy, <span class="type">int</span> initialExperience, <span class="type">int</span>[] energy, <span class="type">int</span>[] experience)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">exp</span> <span class="operator">=</span> initialExperience;</span><br><span class="line">        <span class="type">int</span> <span class="variable">sum</span> <span class="operator">=</span> Arrays.stream(energy).sum();</span><br><span class="line">        <span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> Math.max(<span class="number">0</span>, sum + <span class="number">1</span> - initialEnergy);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; experience.length;i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (exp &lt;  experience[i] + <span class="number">1</span>) &#123;</span><br><span class="line">                res += experience[i] - exp + <span class="number">1</span>;</span><br><span class="line">                exp = experience[i]+<span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            exp += experience[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/largest-palindromic-number/">6166. 最大回文数字 - 力扣（LeetCode）</a></p>
-<p><img src="/images/%E7%AC%AC307%E5%9C%BA%E5%91%A8%E8%B5%9B-1232%E5%90%8D-3%E9%A2%98/1661067068832.png" alt="1661067068832"></p>
-<p>这题也搞晕了，实际上很简单。</p>
-<p>一堆已知数量的字母要组成回文数， 记住你先把所有成双成对的单独都按拿出来， 剩下的都是1个或者0个字母</p>
-<p>然后成双的按大小顺序从外向内组成回文 ，  最后最里面那个单字母的用最大的。</p>
-<p>我最开始直接把奇数个数的字母当整体去思考了，其实应该先剔除奇数个数字母中成双的部分，只留下单个的， 最后再去考虑他</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">largestPalindromic</span><span class="params">(String num)</span> &#123;</span><br><span class="line">        <span class="type">int</span>[] charCounts = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">10</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">char</span> c : num.toCharArray()) &#123;</span><br><span class="line">            charCounts[c-<span class="string">&#x27;0&#x27;</span>]++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> <span class="variable">numCount</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="comment">// 最小的字母且是奇数个数的选择放最后</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">endUseChar</span> <span class="operator">=</span> -<span class="number">1</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="type">boolean</span>[] oneChar = <span class="keyword">new</span> <span class="title class_">boolean</span>[<span class="number">10</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">9</span>; i &gt;=<span class="number">0</span>;i--) &#123;</span><br><span class="line">            oneChar[i] = (charCounts[i] %<span class="number">2</span> == <span class="number">1</span>);</span><br><span class="line">            charCounts[i] /= <span class="number">2</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">StringBuilder</span> <span class="variable">sb1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">        <span class="type">StringBuilder</span> <span class="variable">sb2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">9</span>;i&gt;=<span class="number">0</span>;i--) &#123;</span><br><span class="line">            <span class="keyword">if</span> (i == endUseChar) &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="type">char</span> <span class="variable">c</span> <span class="operator">=</span> (<span class="type">char</span>)(<span class="string">&#x27;0&#x27;</span> + i);</span><br><span class="line">            <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> charCounts[i];</span><br><span class="line">            <span class="keyword">if</span> (i == <span class="number">0</span> &amp;&amp; sb1.length() == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">while</span> (count--&gt;<span class="number">0</span>) &#123;</span><br><span class="line">                sb1.append(c);</span><br><span class="line">                sb2.append(c);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">9</span>;i&gt;=<span class="number">0</span>;i--) &#123;</span><br><span class="line">            <span class="keyword">if</span> (oneChar[i]) &#123;</span><br><span class="line">                sb1.append((<span class="type">char</span>) (<span class="string">&#x27;0&#x27;</span> + i));</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (sb1.length() == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;0&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> sb1.append(sb2.reverse()).toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/amount-of-time-for-binary-tree-to-be-infected/">6154. 感染二叉树需要的总时间 - 力扣（LeetCode）</a></p>
-<p><img src="/images/%E7%AC%AC307%E5%9C%BA%E5%91%A8%E8%B5%9B-1232%E5%90%8D-3%E9%A2%98/1661067234487.png" alt="1661067234487"></p>
-<p>很容易想到bfs， 先dfs一遍，把每个点的父节点也得到。</p>
-<p>然后做bfs即可</p>
-<p>另外二叉树的题目中如果涉及map或者set，最好还是直接用引用做key，不容易写错</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for a binary tree node.</span></span><br><span class="line"><span class="comment"> * public class TreeNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     TreeNode left;</span></span><br><span class="line"><span class="comment"> *     TreeNode right;</span></span><br><span class="line"><span class="comment"> *     TreeNode() &#123;&#125;</span></span><br><span class="line"><span class="comment"> *     TreeNode(int val) &#123; this.val = val; &#125;</span></span><br><span class="line"><span class="comment"> *     TreeNode(int val, TreeNode left, TreeNode right) &#123;</span></span><br><span class="line"><span class="comment"> *         this.val = val;</span></span><br><span class="line"><span class="comment"> *         this.left = left;</span></span><br><span class="line"><span class="comment"> *         this.right = right;</span></span><br><span class="line"><span class="comment"> *     &#125;</span></span><br><span class="line"><span class="comment"> * &#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">        Map&lt;TreeNode,TreeNode&gt; parents = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">    TreeNode startNode;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">amountOfTime</span><span class="params">(TreeNode root, <span class="type">int</span> start)</span> &#123;</span><br><span class="line">        Queue&lt;TreeNode&gt; queue = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;&gt;();</span><br><span class="line">        find(root, <span class="literal">null</span>, start);</span><br><span class="line">        queue.offer(startNode);</span><br><span class="line">        Set&lt;TreeNode&gt; vis = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">        vis.add(startNode);</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (!queue.isEmpty()) &#123;</span><br><span class="line">            <span class="comment">// 全部出队</span></span><br><span class="line">            res++;</span><br><span class="line">            List&lt;TreeNode&gt; nowNodes = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;(queue);</span><br><span class="line">            queue.clear();</span><br><span class="line">            <span class="keyword">for</span> (TreeNode node : nowNodes) &#123;</span><br><span class="line">                <span class="keyword">if</span> (node.left != <span class="literal">null</span> &amp;&amp; !vis.contains(node.left)) &#123;</span><br><span class="line">                    queue.offer(node.left);</span><br><span class="line">                    vis.add(node.left);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (node.right != <span class="literal">null</span> &amp;&amp; !vis.contains(node.right)) &#123;</span><br><span class="line">                    queue.offer(node.right);</span><br><span class="line">                    vis.add(node.right);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (parents.get(node) != <span class="literal">null</span> &amp;&amp; !vis.contains(parents.get(node))) &#123;</span><br><span class="line">                    queue.offer(parents.get(node));</span><br><span class="line">                    vis.add(parents.get(node));</span><br><span class="line"></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res-<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">find</span><span class="params">(TreeNode node, TreeNode parent, <span class="type">int</span> start)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (node == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        parents.put(node, parent);</span><br><span class="line">        <span class="keyword">if</span> (node.val == start) &#123;</span><br><span class="line">            startNode = node;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        find(node.left, node, start);</span><br><span class="line">        find(node.right, node, start);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/find-the-k-sum-of-an-array/">6155. 找出数组的第 K 大和 - 力扣（LeetCode）</a></p>
-<p>这题好难，其实知道套路就可以了</p>
-<p>我是已经想到先得到 正数的和sum， 然后以这个sum不断减去其他的值，这个减去的就是子序列而且要尽可能小， 同时负数要转整数， 到底是加还是减不需要我们关心。</p>
-<p>但是怎么得到第K小的子序列和呢？</p>
-<p>答案是用最小堆</p>
-<p>先按从小到大排序</p>
-<p>然后第0个数字肯定是最小的子序列</p>
-<p>接着有2个选择：</p>
-<p>① 保留第0个数字， 并继续选取第1个数字</p>
-<p>② 废弃第0个数字， 并继续选取第1个数字</p>
-<p>这样又得到2个子序列， 最小序列肯定在者2个里面</p>
-<p>你会奇怪，者肯定是第②个最小啊？</p>
-<p>但是继续走下去</p>
-<p>当对于“废弃第0个数字， 并继续选取第1个数字”这个位置，你想废弃第1个数字，选第2个数字时，前面的“保留第0个数字， 并继续选取第1个数字”是可能比它小的， 所以要用堆进行保存，且这样的操作处理时不用考虑任何回溯或者重复的情况！</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">   <span class="keyword">public</span> <span class="type">long</span> <span class="title function_">kSum</span><span class="params">(<span class="type">int</span>[] nums, <span class="type">int</span> k)</span> &#123;</span><br><span class="line">        <span class="type">long</span> <span class="variable">sum</span> <span class="operator">=</span> Arrays.stream(nums).filter(num -&gt; num &gt; <span class="number">0</span>).mapToLong(num -&gt; Long.valueOf(num)).sum();</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span> ; i &lt; nums.length;i++) &#123;</span><br><span class="line">            nums[i] = Math.abs(nums[i]);</span><br><span class="line">        &#125;</span><br><span class="line">        Arrays.sort(nums);</span><br><span class="line">        <span class="comment">// [0]是选择剔除的子序列的和，[1]是当前这个子序列的最右边索引</span></span><br><span class="line">        <span class="comment">// 每次选最小的出来</span></span><br><span class="line">        Queue&lt;<span class="type">long</span>[]&gt; queue = <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>&lt;&gt;((a,b) -&gt; (a[<span class="number">0</span>] &gt; b[<span class="number">0</span>] ? <span class="number">1</span> : -<span class="number">1</span>));</span><br><span class="line">        queue.offer(<span class="keyword">new</span> <span class="title class_">long</span>[]&#123;<span class="number">0</span>, <span class="number">0L</span>&#125;);</span><br><span class="line">        <span class="keyword">while</span> (!queue.isEmpty()) &#123;</span><br><span class="line">            <span class="type">long</span> <span class="variable">subSum</span> <span class="operator">=</span> queue.peek()[<span class="number">0</span>];</span><br><span class="line">            <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> (<span class="type">int</span>)queue.poll()[<span class="number">1</span>];</span><br><span class="line">            <span class="keyword">if</span> (k == <span class="number">1</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> (sum - subSum);</span><br><span class="line">            &#125;</span><br><span class="line">            k--;</span><br><span class="line">            <span class="keyword">if</span> (index &gt;= nums.length) &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            queue.offer(<span class="keyword">new</span> <span class="title class_">long</span>[]&#123;subSum + nums[index], index+<span class="number">1</span>&#125;);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (index -<span class="number">1</span> &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">                queue.offer(<span class="keyword">new</span> <span class="title class_">long</span>[]&#123;subSum - nums[index - <span class="number">1</span>] + nums[index], index + <span class="number">1</span>&#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/9/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="extend next" rel="next" href="/page/11/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/9/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="extend next" rel="next" href="/page/11/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -2837,18 +2826,18 @@ mysql此时就会从某个自增表中申请一个主键，当申请成功之后
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">159</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">47</span>
+        <span class="site-state-item-count">51</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -2908,7 +2897,7 @@ mysql此时就会从某个自增表中申请一个主键，当申请成功之后
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共290k字</span>
+  <span class="post-count">博客全站共292.3k字</span>
 </div>
 
         

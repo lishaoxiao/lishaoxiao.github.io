@@ -181,6 +181,301 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/29/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E4%BD%8D%E8%BF%90%E7%AE%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/29/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E4%BD%8D%E8%BF%90%E7%AE%97/" class="post-title-link" itemprop="url">位运算</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-29 23:12:42" itemprop="dateCreated datePublished" datetime="2022-08-29T23:12:42+08:00">2022-08-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-30 00:58:14" itemprop="dateModified" datetime="2022-08-30T00:58:14+08:00">2022-08-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">算法大全</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%95%B0%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">数学</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/29/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E4%BD%8D%E8%BF%90%E7%AE%97/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/29/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E4%BD%8D%E8%BF%90%E7%AE%97/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>719</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#q-yi-huo-you-na-xie-xing-zhi">Q: 异或^有哪些性质？</a></li>
+<li><a href="#kuai-su-zhi-bao-liu-mo-wei-de-1-qi-ta-quan-zhi-0-li-ru-1010100-0000100">快速只保留末尾的1，其他全置0（例如1010100-&gt;0000100）</a></li>
+<li><a href="#kuai-su-ti-chu-mo-wei-de-1-qi-ta-bao-liu-li-ru-1010100-1010000">快速剔除末尾的1，其他保留(例如1010100-&gt;1010000)</a></li>
+<li><a href="#ru-he-kuai-su-qiu-0000100-de-1-shi-di-ji-ge-wei-zhi">如何快速求0000100的1是第几个位置？</a></li>
+<li><a href="#li-yong-bu-tong-de-wei-jin-xing-fen-zu">利用不同的位进行分组</a></li>
+<li><a href="#xiang-guan-ti-mu">相关题目</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<hr>
+<h1><span id="q-yi-huo-you-na-xie-xing-zhi">Q: 异或^有哪些性质？</span><a href="#q-yi-huo-you-na-xie-xing-zhi" class="header-anchor">#</a></h1>
+<p>A:<br>
+a^a = 0<br>
+如果知道a<sup>b</sup>c<br>
+那么a = (a<sup>b</sup>c) <sup>(b</sup>c)</p>
+<hr>
+<h1><span id="kuai-su-zhi-bao-liu-mo-wei-de-1-qi-ta-quan-zhi-0-li-ru-1010100-gt-0000100">快速只保留末尾的1，其他全置0（例如1010100-&gt;0000100）</span><a href="#kuai-su-zhi-bao-liu-mo-wei-de-1-qi-ta-quan-zhi-0-li-ru-1010100-gt-0000100" class="header-anchor">#</a></h1>
+<p>b &amp;(-b)</p>
+<hr>
+<h1><span id="kuai-su-ti-chu-mo-wei-de-1-qi-ta-bao-liu-li-ru-1010100-gt-1010000">快速剔除末尾的1，其他保留(例如1010100-&gt;1010000)</span><a href="#kuai-su-ti-chu-mo-wei-de-1-qi-ta-bao-liu-li-ru-1010100-gt-1010000" class="header-anchor">#</a></h1>
+<p>b &amp;(b-1)<br>
+这个操作可以用来快速遍历位数组中的1。</p>
+<p>[判断数字是否是2的幂](</p>
+<h1><span id="ru-he-kuai-su-qiu-0000100-de-1-shi-di-ji-ge-wei-zhi">如何快速求0000100的1是第几个位置？</span><a href="#ru-he-kuai-su-qiu-0000100-de-1-shi-di-ji-ge-wei-zhi" class="header-anchor">#</a></h1>
+<p>A:<br>
+java的Integer.bigCount可以快速计算1的数量<br>
+那么减1就变成了0000011<br>
+int digit = Integer.bitCount(digitMask - 1); 得到是第2位。</p>
+<hr>
+<hr>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/power-of-two/submissions/">https://leetcode-cn.com/problems/power-of-two/submissions/</a>)</p>
+<hr>
+<h1><span id="li-yong-bu-tong-de-wei-jin-xing-fen-zu">利用不同的位进行分组</span><a href="#li-yong-bu-tong-de-wei-jin-xing-fen-zu" class="header-anchor">#</a></h1>
+<p>可能的位运算问题，可以考虑“各位的数量&quot;<br>
+例如只有1个数字是1个，其他都是3个3个出现，那么可以从每位的1的个数，推断出那个数字（其他肯定要么是1的3倍或者0倍，加起来）<br>
+例题：<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/single-number-ii/">137. 只出现一次的数字 II</a><br>
+上面的状态变化也可以用数字电路的卡诺图进行处理，每次都是一次明确的位状态变更，不需要遍历32次。</p>
+<p>也可也i注意利用a^b的结果，找到其中第一个不同的位进行分组（可以用b &amp;(-b)）</p>
+<hr>
+<hr>
+<h1><span id="xiang-guan-ti-mu">相关题目</span><a href="#xiang-guan-ti-mu" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/sudoku-solver/">37. 解数独 用位运算可以节省空间</a></p>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/backspace-string-compare/">844. 比较含退格的字符串 - 力扣（LeetCode）</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/28/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%8B%93%E6%89%91%E6%8E%92%E5%BA%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/28/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%8B%93%E6%89%91%E6%8E%92%E5%BA%8F/" class="post-title-link" itemprop="url">拓扑排序</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-28 23:12:42 / 修改时间：23:56:17" itemprop="dateCreated datePublished" datetime="2022-08-28T23:12:42+08:00">2022-08-28</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">算法大全</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%8E%92%E5%BA%8F/" itemprop="url" rel="index"><span itemprop="name">排序</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/28/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%8B%93%E6%89%91%E6%8E%92%E5%BA%8F/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/28/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%8B%93%E6%89%91%E6%8E%92%E5%BA%8F/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#gai-nian-he-chang-jing">概念和场景</a></li>
+<li><a href="#zuo-fa">做法</a></li>
+<li><a href="#mo-ban">模板</a>
+<ul>
+<li><a href="#jian-yi-ban-ben-n-1000">简易版本（n&lt;=1000)</a></li>
+<li><a href="#dai-dui-lie-de-gao-xing-neng-ban-ben-dan-rong-yi-xie-cuo">带队列的高性能版本（但容易写错）</a></li>
+</ul>
+</li>
+<li><a href="#xiang-guan-ti-mu">相关题目</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="gai-nian-he-chang-jing">概念和场景</span><a href="#gai-nian-he-chang-jing" class="header-anchor">#</a></h1>
+<h1><span id="zuo-fa">做法</span><a href="#zuo-fa" class="header-anchor">#</a></h1>
+<p>拓扑排序算法步骤：</p>
+<ol>
+<li>得到所有节点的相邻点列表</li>
+<li>得到所有节点的入度数量数组（切记，不可用相邻点列表代替入度数量，会炸的，因为过程中会改变，很麻烦的）</li>
+<li>每次选入度为0的点做处理，对相邻点的入度数量做更新，减1</li>
+<li>如果每次选很费时间，可以引入队列，队列时，每次要把队列里的全取出来再处理，而不是依次处理。每次出队的那一堆都是临时答案。</li>
+</ol>
+<h1><span id="mo-ban">模板</span><a href="#mo-ban" class="header-anchor">#</a></h1>
+<h2><span id="jian-yi-ban-ben-n-lt-1000">简易版本（n&lt;=1000)</span><a href="#jian-yi-ban-ben-n-lt-1000" class="header-anchor">#</a></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>[] inCount = <span class="keyword">new</span> <span class="title class_">int</span>[k+<span class="number">1</span>];</span><br><span class="line">List&lt;Integer&gt;[] outLists = <span class="keyword">new</span> <span class="title class_">List</span>[k+<span class="number">1</span>];</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;=k;i++) &#123;</span><br><span class="line">    outLists[i] = <span class="keyword">new</span> <span class="title class_">ArrayList</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span>[] row : rowConditions) &#123;</span><br><span class="line">    inCount[row[<span class="number">1</span>]]++;</span><br><span class="line">    outLists[row[<span class="number">0</span>]].add(row[<span class="number">1</span>]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="variable">y</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"><span class="type">boolean</span>[] vis = <span class="keyword">new</span> <span class="title class_">boolean</span>[k+<span class="number">1</span>];</span><br><span class="line"><span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> inCount.length; </span><br><span class="line"><span class="keyword">while</span> (n--&gt;<span class="number">0</span>) &#123;</span><br><span class="line">    <span class="type">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= k; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (inCount[i]  &gt; <span class="number">0</span> || vis[i]) &#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        vis[i] = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> out : outLists[i]) &#123;</span><br><span class="line">            inCount[out]--;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 记录这个点</span></span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2><span id="dai-dui-lie-de-gao-xing-neng-ban-ben-dan-rong-yi-xie-cuo">带队列的高性能版本（但容易写错）</span><a href="#dai-dui-lie-de-gao-xing-neng-ban-ben-dan-rong-yi-xie-cuo" class="header-anchor">#</a></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Integer&gt; result = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line"><span class="keyword">while</span>(!queue.isEmpty()) &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">size</span> <span class="operator">=</span> queue.size();</span><br><span class="line">    List&lt;Integer&gt; needDeleteNodes = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    needDeleteNodes.addAll(queue);</span><br><span class="line">    queue.clear();</span><br><span class="line">    <span class="comment">// 要每次都更新这个result</span></span><br><span class="line">    result = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> needDeleNode : needDeleteNodes) &#123;</span><br><span class="line">        result.add(needDeleNode);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> nextNode : nextNodes[needDeleNode]) &#123;</span><br><span class="line">            <span class="comment">// 不能delete</span></span><br><span class="line">            edgCounts[nextNode]--;</span><br><span class="line">            <span class="keyword">if</span> (edgCounts[nextNode] == <span class="number">1</span>) &#123;</span><br><span class="line">                queue.offer(nextNode);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1><span id="xiang-guan-ti-mu">相关题目</span><a href="#xiang-guan-ti-mu" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/minimum-height-trees/">310. 最小高度树 - 力扣（LeetCode）</a></p>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/build-a-matrix-with-conditions/">6163. 给定条件下构造矩阵 - 力扣（LeetCode）</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/28/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC308%E5%9C%BA%E5%91%A8%E8%B5%9B-357%E5%90%8D-4%E9%A2%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -824,7 +1119,7 @@ singletonObjects：A,B</p>
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/grpc/grpc%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/abd.png">
@@ -838,7 +1133,7 @@ singletonObjects：A,B</p>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/08/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">grpc底层原理</a>
+            <a href="/2022/08/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/grpc/grpc%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">grpc底层原理</a>
         </h2>
 
         <div class="post-meta">
@@ -848,21 +1143,31 @@ singletonObjects：A,B</p>
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-08-26 00:47:49 / 修改时间：00:32:19" itemprop="dateCreated datePublished" datetime="2022-08-26T00:47:49+08:00">2022-08-26</time>
+              <time title="创建时间：2022-08-26 00:47:49" itemprop="dateCreated datePublished" datetime="2022-08-26T00:47:49+08:00">2022-08-26</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-09-24 00:17:09" itemprop="dateModified" datetime="2022-09-24T00:17:09+08:00">2022-09-24</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/" itemprop="url" rel="index"><span itemprop="name">开源代码</span></a>
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index"><span itemprop="name">grpc远程调用框架</span></a>
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E9%80%9A%E4%BF%A1%E7%B1%BB%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">通信类组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E9%80%9A%E4%BF%A1%E7%B1%BB%E7%BB%84%E4%BB%B6/grpc%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index"><span itemprop="name">grpc远程调用框架</span></a>
                 </span>
             </span>
 
@@ -875,8 +1180,8 @@ singletonObjects：A,B</p>
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2022/08/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" itemprop="commentCount"></span>
+    <a title="valine" href="/2022/08/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/grpc/grpc%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/grpc/grpc%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -996,7 +1301,7 @@ grpc连接池：</p>
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%8F%8C%E5%90%91%E6%B5%81%E5%8F%8A%E5%BA%94%E7%94%A8/">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/grpc/grpc%E5%8F%8C%E5%90%91%E6%B5%81%E5%8F%8A%E5%BA%94%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/abd.png">
@@ -1010,7 +1315,7 @@ grpc连接池：</p>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%8F%8C%E5%90%91%E6%B5%81%E5%8F%8A%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">grpc双向流及应用</a>
+            <a href="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/grpc/grpc%E5%8F%8C%E5%90%91%E6%B5%81%E5%8F%8A%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">grpc双向流及应用</a>
         </h2>
 
         <div class="post-meta">
@@ -1028,7 +1333,7 @@ grpc连接池：</p>
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-26 00:29:56" itemprop="dateModified" datetime="2022-08-26T00:29:56+08:00">2022-08-26</time>
+                <time title="修改时间：2022-09-24 00:17:19" itemprop="dateModified" datetime="2022-09-24T00:17:19+08:00">2022-09-24</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1036,11 +1341,15 @@ grpc连接池：</p>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/" itemprop="url" rel="index"><span itemprop="name">开源代码</span></a>
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index"><span itemprop="name">grpc远程调用框架</span></a>
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E9%80%9A%E4%BF%A1%E7%B1%BB%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">通信类组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E9%80%9A%E4%BF%A1%E7%B1%BB%E7%BB%84%E4%BB%B6/grpc%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index"><span itemprop="name">grpc远程调用框架</span></a>
                 </span>
             </span>
 
@@ -1053,8 +1362,8 @@ grpc连接池：</p>
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%8F%8C%E5%90%91%E6%B5%81%E5%8F%8A%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%8F%8C%E5%90%91%E6%B5%81%E5%8F%8A%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
+    <a title="valine" href="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/grpc/grpc%E5%8F%8C%E5%90%91%E6%B5%81%E5%8F%8A%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/grpc/grpc%E5%8F%8C%E5%90%91%E6%B5%81%E5%8F%8A%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -1280,7 +1589,7 @@ grpc连接池：</p>
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/grpc/grpc%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/abd.png">
@@ -1294,7 +1603,7 @@ grpc连接池：</p>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" class="post-title-link" itemprop="url">grpc基础概念</a>
+            <a href="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/grpc/grpc%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" class="post-title-link" itemprop="url">grpc基础概念</a>
         </h2>
 
         <div class="post-meta">
@@ -1312,7 +1621,7 @@ grpc连接池：</p>
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-26 00:28:25" itemprop="dateModified" datetime="2022-08-26T00:28:25+08:00">2022-08-26</time>
+                <time title="修改时间：2022-09-24 00:17:26" itemprop="dateModified" datetime="2022-09-24T00:17:26+08:00">2022-09-24</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1320,11 +1629,15 @@ grpc连接池：</p>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/" itemprop="url" rel="index"><span itemprop="name">开源代码</span></a>
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index"><span itemprop="name">grpc远程调用框架</span></a>
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E9%80%9A%E4%BF%A1%E7%B1%BB%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">通信类组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E9%80%9A%E4%BF%A1%E7%B1%BB%E7%BB%84%E4%BB%B6/grpc%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index"><span itemprop="name">grpc远程调用框架</span></a>
                 </span>
             </span>
 
@@ -1337,8 +1650,8 @@ grpc连接池：</p>
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/grpc/grpc%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" itemprop="commentCount"></span>
+    <a title="valine" href="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/grpc/grpc%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/grpc/grpc%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -1452,360 +1765,10 @@ grpc只有api（代码配置）的方式，只有failover。<br>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BB%AC%E8%A6%81%E5%AD%A6%E4%B9%A0TCP-IP/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BB%AC%E8%A6%81%E5%AD%A6%E4%B9%A0TCP-IP/" class="post-title-link" itemprop="url">为什么我们要学习TCP-IP</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-08-25 22:47:49 / 修改时间：00:21:37" itemprop="dateCreated datePublished" datetime="2022-08-25T22:47:49+08:00">2022-08-25</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BB%AC%E8%A6%81%E5%AD%A6%E4%B9%A0TCP-IP/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BB%AC%E8%A6%81%E5%AD%A6%E4%B9%A0TCP-IP/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#chun-jie-hou-de-1-ci-xiao-wen-ti">春节后的1次小问题</a></li>
-<li><a href="#fan-si">反思</a></li>
-<li><a href="#yi-xue-xi-xie-yi-ge-shi-de-chang-jian-she-ji-si-lu">一、学习协议格式的常见设计思路</a></li>
-<li><a href="#er-xue-xi-tu-suan-fa-de-ying-yong">二、学习图算法的应用</a></li>
-<li><a href="#san-xue-xi-ke-kao-xing-liu-cheng-de-she-ji">三、学习可靠性流程的设计</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="chun-jie-hou-de-1-ci-xiao-wen-ti">春节后的1次小问题</span><a href="#chun-jie-hou-de-1-ci-xiao-wen-ti" class="header-anchor">#</a></h1>
-<p>春节假期之后，我回到工位，发现开发用的3台实验机器中，有1台使用EIP（外网ip）登不上了， 只能使用vpn去连接小网ip登录。<br>
-咨询了一下物理机管理员，说假期因为实验室维护,  重启了机器，线路正常， 应该是机器的网络配置之前只临时生效，重启后就没了，让我自己查查看。<br>
-<img src="/images/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BB%AC%E8%A6%81%E5%AD%A6%E4%B9%A0TCP-IP/20210315002844629.png" alt="在这里插入图片描述"></p>
-<p>于是只能努力从大脑里挖掘有关计算机网络的回忆， 发现没啥好思路，去内网搜了下类似问题，才知道路由会影响eip， 对比了1下失效机器 和其他正常机器的路由表配置， 才发现缺少到NAT网关的路由，导致报文无法往回发。<br>
-<img src="/images/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BB%AC%E8%A6%81%E5%AD%A6%E4%B9%A0TCP-IP/20210315003852233.png" alt="在这里插入图片描述"><br>
-修改了一波路由配置后 便通了。</p>
-<h1><span id="fan-si">反思</span><a href="#fan-si" class="header-anchor">#</a></h1>
-<p>这时候我才发现删减改查的业务做得多了，很多经典知识都忘记了。<br>
-心想要不要去找本书系统回忆下网络知识？</p>
-<p>但是又懒得去番以前的教材，谢老的《计算机网络》?<br>
-算了，学生时代它那从物理层开始，再到链路层的超长阴影记忆尤新。<br>
-<img src="/images/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BB%AC%E8%A6%81%E5%AD%A6%E4%B9%A0TCP-IP/20210315002324250.png" alt="在这里插入图片描述"></p>
-<p>于是整了本经典的《TCP/IP详解》，抱着学习者的心态重新学习了1下。<br>
-<img src="/images/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BB%AC%E8%A6%81%E5%AD%A6%E4%B9%A0TCP-IP/20210315000102277.png" alt="在这里插入图片描述"></p>
-<p>可是，决定开始看之前，又犹豫了一下：<br>
-业务需求写完了吗？sql性能优化到最佳了吗？ 模块可信、稳健了吗？有必要费时间看这些烂大街的，应届生们面经必背的常见知识？</p>
-<p>换言之，作为浮于业务应用上层的java开发小兵，我需要去思考1个问题：<strong>当我们学习TCP/IP时，我们在学什么？</strong></p>
-<p>抛去以往的功利、应试等心态，我抱着这个问题看完了全书，给了我自己的几个思考</p>
-<h1><span id="yi-xue-xi-xie-yi-ge-shi-de-chang-jian-she-ji-si-lu">一、学习协议格式的常见设计思路</span><a href="#yi-xue-xi-xie-yi-ge-shi-de-chang-jian-she-ji-si-lu" class="header-anchor">#</a></h1>
-<p>IP和TCP的章节里，分别花了大章节，讲述协议首部内容。<br>
-学生时代很反感这个东西，感觉就是为了出计算题和记忆题， 我们又不去改报文，看这啥用。<br>
-然而工作后，发现这是计算机初学者们，最早能接触到的通讯协议格式设计思想了。<br>
-以IP报文格式为例，  可以看到<br>
-有  首部长度、总长度，， 还有用于处理报文切分的字段，， 以及校验字段，避免首部错误。<br>
-<img src="/images/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BB%AC%E8%A6%81%E5%AD%A6%E4%B9%A0TCP-IP/20210315005616676.png" alt="在这里插入图片描述"><br>
-而如果自己需要设计一套以二进制流为基础的应用层通信协议，很大概率，也要包含以上的内容。<br>
-例如我们怎么确定数据多长，怎么保证数据不被篡改，怎么分多次而保证不会乱， 这些都是常见的协议设计重点问题。   而这些问题的解决思路，就可以从TCP、IP等经典协议中初见端倪。</p>
-<h1><span id="er-xue-xi-tu-suan-fa-de-ying-yong">二、学习图算法的应用</span><a href="#er-xue-xi-tu-suan-fa-de-ying-yong" class="header-anchor">#</a></h1>
-<p>数据结构里，最让很多人头疼的就是图那章了。然而图的内容却是应用最强力的东西。<br>
-IP层路由概念的设计，简直是图算法的完美应用常见：</p>
-<ul>
-<li>路由表就是很经典的图数据结构设计。</li>
-<li>如何动态更新最短路， RIP和OSPF协议也分别给了我们思路</li>
-</ul>
-<p>甚至路由表里对子网最长匹配的应用，也用到了前缀树算法（线索树），让人感觉oj网站上算法题都亲切了不少。</p>
-<h1><span id="san-xue-xi-ke-kao-xing-liu-cheng-de-she-ji">三、学习可靠性流程的设计</span><a href="#san-xue-xi-ke-kao-xing-liu-cheng-de-she-ji" class="header-anchor">#</a></h1>
-<p>当重看TCP协议的握手挥手设计，以及重连机制，我还是会感到惊叹连连。<br>
-于是给自己提了个问题，如果不考虑TCP的可靠性，基于应用层，设计一套能稳定可靠的消息交互程序，我能想到有哪些要考虑的地方吗？基于那章，我大概想到了是以下几点</p>
-<ol>
-<li>如何能确保对方收到了我的信息？——TCP引入了ack响应</li>
-<li>怎样算两边开始正式交互？——能够证明两边的网络通道都能通，所以你我各需要1次ack响应来相互证明。</li>
-<li>怎么直到我的消息丢了？——每次消息发出，都有个定时器检查，超时时间内没收到，就会重发，直到到达次数上限，则认为超时</li>
-<li>超时时间怎么确定？——根据每次的时间样本定时更新</li>
-<li>超时后怎么办？——拥塞避免算法</li>
-<li>发少了太慢，发多了会阻塞，怎么确定1次可以发多少？——慢启动算法</li>
-</ol>
-<p>可以看到TCP协议里，基本把上述可靠性的设计问题都考虑到了，而且到了及其细致的地步。当你有这类需求时，不妨第一时间回忆下TCP的优秀之处</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E7%89%A9%E7%90%86%E5%B1%82%E8%AF%A6%E8%A7%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E7%89%A9%E7%90%86%E5%B1%82%E8%AF%A6%E8%A7%A3/" class="post-title-link" itemprop="url">计网之物理层详解</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-24 23:47:49" itemprop="dateCreated datePublished" datetime="2022-08-24T23:47:49+08:00">2022-08-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-25 00:01:21" itemprop="dateModified" datetime="2022-08-25T00:01:21+08:00">2022-08-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E7%89%A9%E7%90%86%E5%B1%82%E8%AF%A6%E8%A7%A3/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E7%89%A9%E7%90%86%E5%B1%82%E8%AF%A6%E8%A7%A3/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>642</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#wu-li-ceng-zuo-yong">物理层作用</a></li>
-<li><a href="#ru-he-ping-jie-wu-li-ceng-jie-kou-hao-pi">如何评价物理层接口好坏</a></li>
-<li><a href="#chuan-shu-mei-ti">传输媒体</a>
-<ul>
-<li><a href="#dao-yin-xing-chuan-shu-gu-ti-chuan-bo">导引型传输（固体传播）</a>
-<ul>
-<li><a href="#shuang-jiao-xian">双绞线</a></li>
-<li><a href="#tong-zhou-dian-lan">同轴电缆</a></li>
-<li><a href="#guang-lan">光缆</a></li>
-<li><a href="#fei-dao-yin">非导引</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#qi-ta-te-xing">其他特性</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="wu-li-ceng-zuo-yong">物理层作用</span><a href="#wu-li-ceng-zuo-yong" class="header-anchor">#</a></h1>
-<ul>
-<li>在传输媒体上传输比特流</li>
-<li>对链路层而言， 不需要关心通信手段、传输媒体的差异，因为这些东西都由物理层去处理</li>
-<li>这个层面怎么优化？</li>
-</ul>
-<ol>
-<li>提升线路质量，提升带宽</li>
-<li>通信原理应用，如何设计电平传输波形， 频分、波分、码分</li>
-</ol>
-<h1><span id="ru-he-ping-jie-wu-li-ceng-jie-kou-hao-pi">如何评价物理层接口好坏</span><a href="#ru-he-ping-jie-wu-li-ceng-jie-kou-hao-pi" class="header-anchor">#</a></h1>
-<ul>
-<li>机械特性： 接线器大小、尺寸</li>
-<li>电气特性： 电压范围高低</li>
-<li>功能特性：某电平对应某个功能， 信号线。</li>
-<li>过程特性：各事件顺序</li>
-<li>传输方式转换</li>
-</ul>
-<h1><span id="chuan-shu-mei-ti">传输媒体</span><a href="#chuan-shu-mei-ti" class="header-anchor">#</a></h1>
-<h2><span id="dao-yin-xing-chuan-shu-gu-ti-chuan-bo">导引型传输（固体传播）</span><a href="#dao-yin-xing-chuan-shu-gu-ti-chuan-bo" class="header-anchor">#</a></h2>
-<h3><span id="shuang-jiao-xian">双绞线</span><a href="#shuang-jiao-xian" class="header-anchor">#</a></h3>
-<ul>
-<li>2根绝缘铜线并排校合，可以减少电磁干扰</li>
-<li>电话到交换机就是这个</li>
-<li>线要接的距离太长怎么办。总是衰减？</li>
-</ul>
-<ol>
-<li>放大器——模拟电路方式，对信号简单放大，噪音也会变大</li>
-<li>中继器（转发器)——数字电路方式， 对信号做再生， 扩大网络规模</li>
-<li>多款口中继器： 一个输入，转发到其他所有端口<br>
-集线器Hub属于多款口中继器<br>
-可以和交换器连接</li>
-</ol>
-<h3><span id="tong-zhou-dian-lan">同轴电缆</span><a href="#tong-zhou-dian-lan" class="header-anchor">#</a></h3>
-<ul>
-<li>有线电视用这个</li>
-<li>比双绞线要厚，抗干扰更强</li>
-<li>包含内导体线、绝缘层、外导体屏蔽、保护外层</li>
-</ul>
-<h3><span id="guang-lan">光缆</span><a href="#guang-lan" class="header-anchor">#</a></h3>
-<ul>
-<li>抗雷抗噪</li>
-<li>带宽大，100G/bits!</li>
-<li>核心是那个反射率超低的包层，全反射</li>
-<li>分为单模（细，远，贵）和多模（便宜，反射率比单模高一点，所以容易失真）</li>
-</ul>
-<h3><span id="fei-dao-yin">非导引</span><a href="#fei-dao-yin" class="header-anchor">#</a></h3>
-<ul>
-<li>短波/微波： 通过电离层反射</li>
-<li>无线电微波： 卫星</li>
-</ul>
-<h1><span id="qi-ta-te-xing">其他特性</span><a href="#qi-ta-te-xing" class="header-anchor">#</a></h1>
-<ul>
-<li>通信原理相关性质和应用都在物理层体现</li>
-<li>什么香农公式、奈式准则之类的</li>
-<li>信息交换3种方式</li>
-</ul>
-<ol>
-<li>电路交换： 类似拨号， 始终占用固定带宽， 拨号结束则才挂断</li>
-<li>报文交换： 报文可以很大， 大报文会占据一整片带宽</li>
-<li>分组交换：报文拆成分组发送，可以大家一起传。</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/7/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="extend next" rel="next" href="/page/9/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/7/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="extend next" rel="next" href="/page/9/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1873,18 +1836,18 @@ IP层路由概念的设计，简直是图算法的完美应用常见：</p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">159</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">47</span>
+        <span class="site-state-item-count">51</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -1944,7 +1907,7 @@ IP层路由概念的设计，简直是图算法的完美应用常见：</p>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共290k字</span>
+  <span class="post-count">博客全站共292.3k字</span>
 </div>
 
         

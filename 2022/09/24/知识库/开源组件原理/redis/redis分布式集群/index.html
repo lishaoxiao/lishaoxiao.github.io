@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Q: 单纯的redis主从模式有什么缺点？ Q:redis集群，集群中每个节点是存储了相同的数据吗？ Q:客户端怎么知道数据分布到哪个节点上？难道需要每个客户端自己根据集群信息+分片算法进行计算吗？ Q: 每次都要MOVED，那岂不是每次都多访问了1次？ Q: 除了返回MOVED，还有可能可能返回ASK，这2个的区别是什么？ Q: 每次客户端代码都要这样自己写一堆逻辑吗？ Q: 那redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis分布式集群">
+<meta property="og:url" content="http://breakdawncoder.com/2022/09/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="Q: 单纯的redis主从模式有什么缺点？ Q:redis集群，集群中每个节点是存储了相同的数据吗？ Q:客户端怎么知道数据分布到哪个节点上？难道需要每个客户端自己根据集群信息+分片算法进行计算吗？ Q: 每次都要MOVED，那岂不是每次都多访问了1次？ Q: 除了返回MOVED，还有可能可能返回ASK，这2个的区别是什么？ Q: 每次客户端代码都要这样自己写一堆逻辑吗？ Q: 那redis">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4/09f75652c2947c595051504c1986b159563dde7f.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4/7c5e44925851728deab7eb381408ec94057480a6.png">
+<meta property="article:published_time" content="2022-09-24T14:46:12.000Z">
+<meta property="article:modified_time" content="2022-09-23T16:16:29.955Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="开源组件原理,redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4/09f75652c2947c595051504c1986b159563dde7f.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/2022/09/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>redis分布式集群 | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/home/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          redis分布式集群
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-24 22:46:12 / 修改时间：00:16:29" itemprop="dateCreated datePublished" datetime="2022-09-24T22:46:12+08:00">2022-09-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">redis高可用原理</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#q-dan-chun-de-redis-zhu-cong-mo-shi-you-shi-me-que-dian">Q: 单纯的redis主从模式有什么缺点？</a></li>
+<li><a href="#q-redis-ji-qun-ji-qun-zhong-mei-ge-jie-dian-shi-cun-chu-liao-xiang-tong-de-shu-ju-ma">Q:redis集群，集群中每个节点是存储了相同的数据吗？</a></li>
+<li><a href="#q-ke-hu-duan-zen-me-zhi-dao-shu-ju-fen-bu-dao-na-ge-jie-dian-shang-nan-dao-xu-yao-mei-ge-ke-hu-duan-zi-ji-gen-ju-ji-qun-xin-xi-fen-pian-suan-fa-jin-xing-ji-suan-ma">Q:客户端怎么知道数据分布到哪个节点上？难道需要每个客户端自己根据集群信息+分片算法进行计算吗？</a></li>
+<li><a href="#q-mei-ci-du-yao-moved-na-qi-bu-shi-mei-ci-du-duo-fang-wen-liao-1-ci">Q: 每次都要MOVED，那岂不是每次都多访问了1次？</a></li>
+<li><a href="#q-chu-liao-fan-hui-moved-huan-you-ke-neng-ke-neng-fan-hui-ask-zhe-2-ge-de-qu-bie-shi-shi-me">Q: 除了返回MOVED，还有可能可能返回ASK，这2个的区别是什么？</a></li>
+<li><a href="#q-mei-ci-ke-hu-duan-dai-ma-du-yao-zhe-yang-zi-ji-xie-yi-dui-luo-ji-ma">Q: 每次客户端代码都要这样自己写一堆逻辑吗？</a></li>
+<li><a href="#q-na-redis-ji-qun-de-fen-pian-suan-fa-shi-zen-yang-de-ha-xi-hou-an-zhao-jie-dian-shu-liang-qu-yu-me-huan-shi">Q: 那redis集群的分片算法是怎样的，哈希后按照节点数量取余么还是？</a></li>
+<li><a href="#q-wei-shi-me-zhi-you-16384-ge-cao-hui-bu-hui-tai-shao-liao-yi-zhi-xing-ha-xi-suan-fa-shi-2-16-de-quan-chang-du">Q: 为什么只有16384个槽？会不会太少了？ 一致性哈希算法是2^16的圈长度</a></li>
+<li><a href="#q-ru-guo-mou-ge-redis-jie-dian-gua-liao-shi-bu-shi-ma-shang-jiu-yao-chong-xin-fen-pei-ha-xi-cao-liao">Q: 如果某个redis节点挂了， 是不是马上就要重新分配哈希槽了？</a></li>
+<li><a href="#q-na-me-shi-me-qing-kuang-xia-hui-jin-xing-ha-xi-cao-de-chong-xin-fen-pei">Q: 那么什么情况下，会进行哈希槽的重新分配？</a></li>
+<li><a href="#q-xin-zeng-yi-ge-jie-dian-shi-kuo-rong-de-guo-cheng-shi-zen-me-yang-de">Q:新增一个节点时， 扩容的过程是怎么样的？</a></li>
+<li><a href="#q-gang-cai-ti-dao-mei-ge-redis-ji-qun-jie-dian-zhong-cun-liao-shi-ji-de-ha-xi-cao-fen-bu-zhe-ge-shi-zen-me-chuan-shu-de-huan-shi-shuo-ta-men-du-you-quan-ju-xin-xi-jin-xing-zi-ji-ji-suan">Q: 刚才提到每个redis集群节点中存了实际的哈希槽分布， 这个是怎么传输的，还是说他们都有全局信息进行自己计算？</a></li>
+<li><a href="#q-dan-ji-qun-zui-kai-shi-de-jie-duan-zhi-you-zi-ji-de-xin-xi-zen-me-zhi-dao-gei-shui-fa-ping-xiao-xi-ni">Q: 但集群最开始的阶段，只有自己的信息，怎么知道给谁发ping消息呢？</a></li>
+<li><a href="#q-gang-cai-zhi-ti-dao-liao-jie-dian-jia-ru-na-ru-guo-you-yi-ge-zhu-cong-jie-dian-gua-liao-huo-zhe-xia-xian-ye-shi-yao-guan-li-yuan-zi-ji-jian-ce-ran-hou-xia-xian-ma">Q: 刚才只提到了节点加入， 那如果有一个主从节点挂了或者下线， 也是要管理员自己检测然后下线吗？</a></li>
+<li><a href="#q-e-jie-dian-zen-me-zhi-dao-chao-guo-liao-ban-shu-ta-nan-dao-you-quan-ju-de-shi-ye-ma">Q: E节点怎么知道超过了半数？他难道有全局的视野吗？</a></li>
+<li><a href="#q-wei-shi-me-yao-yi-ban-yi-shang-xia-xian-cai-zhen-zheng-ren-wei-xia-xian-zhi-jie-guang-bo-bu-xing-me">Q: 为什么要一半以上下线，才真正认为下线？ 直接广播不行么？</a></li>
+<li><a href="#q-fa-ping-shi-de-yuan-li-jiang-yi-xia-bi-ru-zen-me-xuan-ze-gei-shui-fa-ping-ge-duo-jiu-fa-yi-ci">Q: 发ping时的原理讲一下？比如怎么选择给谁发ping， 隔多久发一次？</a></li>
+<li><a href="#q-xin-tiao-zhong-bao-han-liao-na-xie-nei-rong">Q: 心跳中包含了哪些内容？</a></li>
+<li><a href="#q-gossip-de-tong-bu-guo-cheng-ke-yi-kan-dao-shi-hen-hun-luan-de-wan-yi-redis-master-jie-dian-xian-shou-dao-liao-xin-de-slot-xin-xi-hou-zai-shou-dao-liao-jiu-de-slot-xin-xi-zen-me-ban">Q: gossip的同步过程可以看到是很混乱的，万一redis-master节点先收到了新的slot信息后， 再收到了旧的slot信息，怎么办？</a></li>
+<li><a href="#q-cluster-bus-shi-shi-me">Q: cluster bus是什么？</a></li>
+<li><a href="#q-redis-ji-qun-zhong-ke-yi-shi-yong-publish-ma-wei-shi-me">Q: redis集群中可以使用publish吗？为什么？</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<hr>
+<h1><span id="q-dan-chun-de-redis-zhu-cong-mo-shi-you-shi-me-que-dian">Q: 单纯的redis主从模式有什么缺点？</span><a href="#q-dan-chun-de-redis-zhu-cong-mo-shi-you-shi-me-que-dian" class="header-anchor">#</a></h1>
+<p>A:<br>
+单纯的读写分离，无法应对大规范的请求访问。</p>
+<ul>
+<li>读的话可以通过主-从-从-从实现多节点读，但是同步的过程会导致不一致。</li>
+<li>主从模式，内存里能存储的缓存大小也有限</li>
+<li>只能主节点写， 写能力有限</li>
+</ul>
+<hr>
+<h1><span id="q-redis-ji-qun-ji-qun-zhong-mei-ge-jie-dian-shi-cun-chu-liao-xiang-tong-de-shu-ju-ma">Q:redis集群，集群中每个节点是存储了相同的数据吗？</span><a href="#q-redis-ji-qun-ji-qun-zhong-mei-ge-jie-dian-shi-cun-chu-liao-xiang-tong-de-shu-ju-ma" class="header-anchor">#</a></h1>
+<p>A:<br>
+不是的， 采用是类似数据库水平扩容的方式。（主从模式才是数据完全相同）<br>
+通过响应的分片算法， 每个redis节点处理的key是不同的，保证每个key映射到唯一的redis节点。</p>
+<hr>
+<h1><span id="q-ke-hu-duan-zen-me-zhi-dao-shu-ju-fen-bu-dao-na-ge-jie-dian-shang-nan-dao-xu-yao-mei-ge-ke-hu-duan-zi-ji-gen-ju-ji-qun-xin-xi-fen-pian-suan-fa-jin-xing-ji-suan-ma">Q:客户端怎么知道数据分布到哪个节点上？难道需要每个客户端自己根据集群信息+分片算法进行计算吗？</span><a href="#q-ke-hu-duan-zen-me-zhi-dao-shu-ju-fen-bu-dao-na-ge-jie-dian-shang-nan-dao-xu-yao-mei-ge-ke-hu-duan-zi-ji-gen-ju-ji-qun-xin-xi-fen-pian-suan-fa-jin-xing-ji-suan-ma" class="header-anchor">#</a></h1>
+<p>A:<br>
+客户端在初始化的时候只需要知道一个节点的地址即可<br>
+客户端会先尝试向这个节点执行命令<br>
+如果key所在的slot刚好在该节点上，则能够直接执行成功。<br>
+如果slot不在该节点，则节点会返回MOVED错误，并告知实际节点ip<br>
+换句话说， redis集群中每个节点都知道实际的slot分布，并会告知客户端真实地址进行重定向</p>
+<hr>
+<h1><span id="q-mei-ci-du-yao-moved-na-qi-bu-shi-mei-ci-du-duo-fang-wen-liao-1-ci">Q: 每次都要MOVED，那岂不是每次都多访问了1次？</span><a href="#q-mei-ci-du-yao-moved-na-qi-bu-shi-mei-ci-du-duo-fang-wen-liao-1-ci" class="header-anchor">#</a></h1>
+<p>A:<br>
+当客户端拿到了MOVED信息的响应后，可通过cluster nodes命令获取整个数据分布表，并缓存在客户端内存中。 这样每次就能根据分布表每次请求到正确的节点<br>
+一旦数据分布表发生变化，请求到错误的节点，返回MOVED信息后，重新重新执行cluster nodes命令更新数据分布表。</p>
+<hr>
+<h1><span id="q-chu-liao-fan-hui-moved-huan-you-ke-neng-ke-neng-fan-hui-ask-zhe-2-ge-de-qu-bie-shi-shi-me">Q: 除了返回MOVED，还有可能可能返回ASK，这2个的区别是什么？</span><a href="#q-chu-liao-fan-hui-moved-huan-you-ke-neng-ke-neng-fan-hui-ask-zhe-2-ge-de-qu-bie-shi-shi-me" class="header-anchor">#</a></h1>
+<p>A:<br>
+ASK这种错误是在key对应的slot正在进行数据迁移时产生的。<br>
+这时候向slot的原节点访问，如果key在迁移源节点上，则该次命令能直接执行。<br>
+如果key不在迁移源节点上，则会返回ASK错误，描述信息会附上迁移目的节点的地址。<br>
+客户端这时候要先向迁移目的节点发送ASKING命令，然后执行之前的命令。</p>
+<hr>
+<h1><span id="q-mei-ci-ke-hu-duan-dai-ma-du-yao-zhe-yang-zi-ji-xie-yi-dui-luo-ji-ma">Q: 每次客户端代码都要这样自己写一堆逻辑吗？</span><a href="#q-mei-ci-ke-hu-duan-dai-ma-du-yao-zhe-yang-zi-ji-xie-yi-dui-luo-ji-ma" class="header-anchor">#</a></h1>
+<p>A:<br>
+这些细节一般都会被redis客户端sdk封装起来，使用者完全感受不到访问的是集群还是单节点。即不需要使用者来写这块的重定向、缓存分布表等逻辑。<br>
+类似的有JedisCluster。<br>
+<img src="/images/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4/09f75652c2947c595051504c1986b159563dde7f.png" alt="09f75652c2947c595051504c1986b159563dde7f"></p>
+<hr>
+<h1><span id="q-na-redis-ji-qun-de-fen-pian-suan-fa-shi-zen-yang-de-ha-xi-hou-an-zhao-jie-dian-shu-liang-qu-yu-me-huan-shi">Q: 那redis集群的分片算法是怎样的，哈希后按照节点数量取余么还是？</span><a href="#q-na-redis-ji-qun-de-fen-pian-suan-fa-shi-zen-yang-de-ha-xi-hou-an-zhao-jie-dian-shu-liang-qu-yu-me-huan-shi" class="header-anchor">#</a></h1>
+<p>A:<br>
+Redis-cluster中有16384(即2的14次方）个哈希槽。<br>
+每个key通过CRC16校验生成一个数字后， 对16383取模来决定放置哪个槽。<br>
+Cluster中的每个节点负责一部分hash槽（hash slot）。<br>
+例如节点A负责0到5000， 节点B负责5001-10000，节点C负责10000-16384.</p>
+<hr>
+<h1><span id="q-wei-shi-me-zhi-you-16384-ge-cao-hui-bu-hui-tai-shao-liao-yi-zhi-xing-ha-xi-suan-fa-shi-2-16-de-quan-chang-du">Q: 为什么只有16384个槽？会不会太少了？ 一致性哈希算法是2^16的圈长度</span><a href="#q-wei-shi-me-zhi-you-16384-ge-cao-hui-bu-hui-tai-shao-liao-yi-zhi-xing-ha-xi-suan-fa-shi-2-16-de-quan-chang-du" class="header-anchor">#</a></h1>
+<p>A:<br>
+16384个槽时，只需要16k(压缩后2k）来存和传输槽信息<br>
+65535时，需要65k（压缩后8k）<br>
+而redis作者认为redis集群一般不会有超过1000个master节点。</p>
+<hr>
+<h1><span id="q-ru-guo-mou-ge-redis-jie-dian-gua-liao-shi-bu-shi-ma-shang-jiu-yao-chong-xin-fen-pei-ha-xi-cao-liao">Q: 如果某个redis节点挂了， 是不是马上就要重新分配哈希槽了？</span><a href="#q-ru-guo-mou-ge-redis-jie-dian-gua-liao-shi-bu-shi-ma-shang-jiu-yao-chong-xin-fen-pei-ha-xi-cao-liao" class="header-anchor">#</a></h1>
+<p>A:<br>
+不是的，每个redis-cluster节点本身都是主从双活， 即有5个cluster节点的话，就有5个主和5个从（甚至更多从）， 来尽可能让哈希槽不要重新分配。</p>
+<hr>
+<h1><span id="q-na-me-shi-me-qing-kuang-xia-hui-jin-xing-ha-xi-cao-de-chong-xin-fen-pei">Q: 那么什么情况下，会进行哈希槽的重新分配？</span><a href="#q-na-me-shi-me-qing-kuang-xia-hui-jin-xing-ha-xi-cao-de-chong-xin-fen-pei" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>有新的redis-master节点加入（新增从节点不影响分配）</li>
+<li>某组节点要统一下线，即主从都不在了</li>
+<li>检测到负载不均匀，需要调整，例如均分成0-5000、5000-10000、10000、16384时， 发现0-5000比其他2个节点的压力多太多，则调小0-5000，分配给其他节点。</li>
+</ul>
+<hr>
+<h1><span id="q-xin-zeng-yi-ge-jie-dian-shi-kuo-rong-de-guo-cheng-shi-zen-me-yang-de">Q:新增一个节点时， 扩容的过程是怎么样的？</span><a href="#q-xin-zeng-yi-ge-jie-dian-shi-kuo-rong-de-guo-cheng-shi-zen-me-yang-de" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ol>
+<li>
+<p>当需要将新节点加入到集群中时， 可以通过管理redis集群的客户端执行“cluster meet 新节点ip:端口”命令，或者通过“redis-trib add node”命令添加新节点</p>
+<p>新添加的节点默认在集群中都是主节点</p>
+</li>
+<li>
+<p>客户端向节点B发送状态变更命令，将B的对应slot状态置为IMPORTING</p>
+</li>
+<li>
+<p>客户端向节点A发送状态变更命令，将A的对应slot状态置为MIGRATING</p>
+</li>
+<li>
+<p>客户端针对A的slot上的所有的key，分别向A发送MIGRATE命令，告知A将对应key的数据迁移到B。</p>
+</li>
+<li>
+<p>客户端向集群所有主节点广播槽（数据）全部迁移到了目标节点</p>
+<p><img src="/images/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4/7c5e44925851728deab7eb381408ec94057480a6.png" alt="7c5e44925851728deab7eb381408ec94057480a6"></p>
+</li>
+</ol>
+<ul>
+<li>注意这个功能是由客户端完成，而非集群内自动完成。</li>
+<li>redis-trib工具做数据迁移</li>
+</ul>
+<hr>
+<h1><span id="q-gang-cai-ti-dao-mei-ge-redis-ji-qun-jie-dian-zhong-cun-liao-shi-ji-de-ha-xi-cao-fen-bu-zhe-ge-shi-zen-me-chuan-shu-de-huan-shi-shuo-ta-men-du-you-quan-ju-xin-xi-jin-xing-zi-ji-ji-suan">Q: 刚才提到每个redis集群节点中存了实际的哈希槽分布， 这个是怎么传输的，还是说他们都有全局信息进行自己计算？</span><a href="#q-gang-cai-ti-dao-mei-ge-redis-ji-qun-jie-dian-zhong-cun-liao-shi-ji-de-ha-xi-cao-fen-bu-zhe-ge-shi-zen-me-chuan-shu-de-huan-shi-shuo-ta-men-du-you-quan-ju-xin-xi-jin-xing-zi-ji-ji-suan" class="header-anchor">#</a></h1>
+<p>A:<br>
+通过gossip协议实现信息交换。</p>
+<ul>
+<li>
+<p>节点每秒会向集群中其他节点发送 ping 消息，消息中带有自己已知的两个节点的地址、槽、状态信息、最后一次通信时间等。（肯定</p>
+</li>
+<li>
+<p>节点收到 ping 消息后会回复 pong 消息，消息中同样带有自己已知的两个节点信息。</p>
+<p>注意每次消息里只有2个已知的信息。</p>
+</li>
+</ul>
+<p>换句话说， 经过一番杂乱无章的通信，最终所有节点的状态都会达成一致。每个节点可能知道所有其他节点，也可能仅知道几个邻居节点，只要这些节可以通过网络连通，最终他们的状态都是一致的</p>
+<hr>
+<h1><span id="q-dan-ji-qun-zui-kai-shi-de-jie-duan-zhi-you-zi-ji-de-xin-xi-zen-me-zhi-dao-gei-shui-fa-ping-xiao-xi-ni">Q: 但集群最开始的阶段，只有自己的信息，怎么知道给谁发ping消息呢？</span><a href="#q-dan-ji-qun-zui-kai-shi-de-jie-duan-zhi-you-zi-ji-de-xin-xi-zen-me-zhi-dao-gei-shui-fa-ping-xiao-xi-ni" class="header-anchor">#</a></h1>
+<p>A:<br>
+通过MEET消息进行最初的建立。</p>
+<ul>
+<li>redis的集群管理员给第一个redis集群发送“CLUSTER MEET ip port”命令， 然后就能建立2个之间的连接。</li>
+<li>后面逐步添加时，给任意一个节点发送meet即可。 他们会通过之前提到的ping+pong机制乱序地建立关联</li>
+<li>可以先建立2个集群， 再通过MEET进行集群连接，合并成一个集群。（有点像并查集）</li>
+</ul>
+<hr>
+<h1><span id="q-gang-cai-zhi-ti-dao-liao-jie-dian-jia-ru-na-ru-guo-you-yi-ge-zhu-cong-jie-dian-gua-liao-huo-zhe-xia-xian-ye-shi-yao-guan-li-yuan-zi-ji-jian-ce-ran-hou-xia-xian-ma">Q: 刚才只提到了节点加入， 那如果有一个主从节点挂了或者下线， 也是要管理员自己检测然后下线吗？</span><a href="#q-gang-cai-zhi-ti-dao-liao-jie-dian-jia-ru-na-ru-guo-you-yi-ge-zhu-cong-jie-dian-gua-liao-huo-zhe-xia-xian-ye-shi-yao-guan-li-yuan-zi-ji-jian-ce-ran-hou-xia-xian-ma" class="header-anchor">#</a></h1>
+<p>A:<br>
+节点下线问题不能全依赖管理员，因为一旦因为异常情况主从节点都挂了，会导致对应key不可用，必须尽快响应。</p>
+<ol>
+<li>当节点A ping不通某节点B后，标记为“疑似下线”状态， 会继续用ping命令向集群其他节点同步这个疑似下线的状态</li>
+<li>节点C收到消息后，把B节点纳入到fail_reports链表中。并同样发送FAIL消息给其他节点。</li>
+<li>当越发越多，最终有一半以上的节点收到B节点下线的消息时，节点B将被标记成真正下线。</li>
+<li>标记B下线的这个节点E会直接用FAIL消息进行广播， 而不再慢慢通过ping同步。</li>
+</ol>
+<hr>
+<h1><span id="q-e-jie-dian-zen-me-zhi-dao-chao-guo-liao-ban-shu-ta-nan-dao-you-quan-ju-de-shi-ye-ma">Q: E节点怎么知道超过了半数？他难道有全局的视野吗？</span><a href="#q-e-jie-dian-zen-me-zhi-dao-chao-guo-liao-ban-shu-ta-nan-dao-you-quan-ju-de-shi-ye-ma" class="header-anchor">#</a></h1>
+<p>A:<br>
+当E受到的来自其他master节点的B:PFAIL消息达到一定数量后，会将B的PFAIL升级为FAIL状态，表示B已确认为故障，后续将会发起slave选举流程<br>
+换句话说， 当E收到B的PFAIL后，会维护一个fail_reports链表， 记录一下是谁认为B离线了。<br>
+当收到的B离线报告越来越多，且人数超过了一半，E就认为可以宣布B真正离线了</p>
+<hr>
+<h1><span id="q-wei-shi-me-yao-yi-ban-yi-shang-xia-xian-cai-zhen-zheng-ren-wei-xia-xian-zhi-jie-guang-bo-bu-xing-me">Q: 为什么要一半以上下线，才真正认为下线？ 直接广播不行么？</span><a href="#q-wei-shi-me-yao-yi-ban-yi-shang-xia-xian-cai-zhen-zheng-ren-wei-xia-xian-zhi-jie-guang-bo-bu-xing-me" class="header-anchor">#</a></h1>
+<p>A: 因为有可能是某个节点自己网络故障，导致不通。<br>
+当他发了疑似下线的状态给别的节点时， 别的节点也许能ping通，那么就会覆盖他的疑似下线状态。<br>
+所以需要半数选举，如果节点真的挂了， 那么就不会存在状态覆盖，多次ping同步中肯定会超过半数。</p>
+<hr>
+<h1><span id="q-fa-ping-shi-de-yuan-li-jiang-yi-xia-bi-ru-zen-me-xuan-ze-gei-shui-fa-ping-ge-duo-jiu-fa-yi-ci">Q: 发ping时的原理讲一下？比如怎么选择给谁发ping， 隔多久发一次？</span><a href="#q-fa-ping-shi-de-yuan-li-jiang-yi-xia-bi-ru-zen-me-xuan-ze-gei-shui-fa-ping-ge-duo-jiu-fa-yi-ci" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>每x秒从所有已知节点中随机选取5个，向其中上次收到pong最久远的一个发送ping</li>
+<li>如果有未建立连接，但是从别人那里收到过信息的节点，则有限ping或者meet一下。</li>
+</ul>
+<hr>
+<h1><span id="q-xin-tiao-zhong-bao-han-liao-na-xie-nei-rong">Q: 心跳中包含了哪些内容？</span><a href="#q-xin-tiao-zhong-bao-han-liao-na-xie-nei-rong" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ol>
+<li>Header部分，发送者自己的信息</li>
+</ol>
+<ul>
+<li>所负责slots的信息</li>
+<li>主从信息</li>
+<li>ip+port信息</li>
+<li>自己的状态信息</li>
+</ul>
+<ol>
+<li>Gossip，发送者所了解的部分其他节点的信息</li>
+</ol>
+<ul>
+<li>ping_sent, pong_received</li>
+<li>ip, port信息</li>
+<li>状态信息，比如发送者认为该节点已经不可达，会在状态信息中标记其为PFAIL或FAIL</li>
+</ul>
+<hr>
+<h1><span id="q-gossip-de-tong-bu-guo-cheng-ke-yi-kan-dao-shi-hen-hun-luan-de-wan-yi-redis-master-jie-dian-xian-shou-dao-liao-xin-de-slot-xin-xi-hou-zai-shou-dao-liao-jiu-de-slot-xin-xi-zen-me-ban">Q: gossip的同步过程可以看到是很混乱的，万一redis-master节点先收到了新的slot信息后， 再收到了旧的slot信息，怎么办？</span><a href="#q-gossip-de-tong-bu-guo-cheng-ke-yi-kan-dao-shi-hen-hun-luan-de-wan-yi-redis-master-jie-dian-xian-shou-dao-liao-xin-de-slot-xin-xi-hou-zai-shou-dao-liao-jiu-de-slot-xin-xi-zen-me-ban" class="header-anchor">#</a></h1>
+<p>A:<br>
+Redis Cluster 使用了类似于 Raft 算法 term（任期）的概念称为 epoch（纪元），用来给事件增加版本号。<br>
+每当收到ping里的slots信息， 会判断发送者声明的slots信息，跟本地记录的是否有不同</p>
+<ul>
+<li>如果不同，且发送者epoch较大，更新本地记录</li>
+<li>如果不同，且发送者epoch小，发送Update信息通知发送者</li>
+</ul>
+<hr>
+<h1><span id="q-cluster-bus-shi-shi-me">Q: cluster bus是什么？</span><a href="#q-cluster-bus-shi-shi-me" class="header-anchor">#</a></h1>
+<p>A:<br>
+中文名词 集群总线。其实就是特定的集群端口，专用于gossip协议交互。<br>
+Redis Cluster Bus通过单独的端口进行连接<br>
+bus是节点间的内部通信机制，交互的是字节序列化信息，而不是client到Redis服务器的字符序列化以提升交互效率。</p>
+<hr>
+<h1><span id="q-redis-ji-qun-zhong-ke-yi-shi-yong-publish-ma-wei-shi-me">Q: redis集群中可以使用publish吗？为什么？</span><a href="#q-redis-ji-qun-zhong-ke-yi-shi-yong-publish-ma-wei-shi-me" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>在集群模式下，所有的publish命令都会向所有节点（包括从节点）进行广播</li>
+<li>这会造成每条publish数据都会在集群内所有节点传播一次，加重了带宽负担</li>
+</ul>
+<p>换言之， 如果要用到publish操作，建议换一个redis集群专门做publish， 不要去占用做缓存作用的redis集群带宽。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/2022/09/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4/" title="redis分布式集群">http://breakdawncoder.com/2022/09/24/知识库/开源组件原理/redis/redis分布式集群/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86-redis/" rel="tag"># 开源组件原理,redis</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/09/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E4%B8%BB%E4%BB%8E%E5%88%87%E6%8D%A2%EF%BC%88%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB%EF%BC%89/" rel="prev" title="redis主从切换（故障转移）">
+      <i class="fa fa-chevron-left"></i> redis主从切换（故障转移）
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">Q: 单纯的redis主从模式有什么缺点？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">Q:redis集群，集群中每个节点是存储了相同的数据吗？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">Q:客户端怎么知道数据分布到哪个节点上？难道需要每个客户端自己根据集群信息+分片算法进行计算吗？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">Q: 每次都要MOVED，那岂不是每次都多访问了1次？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">Q: 除了返回MOVED，还有可能可能返回ASK，这2个的区别是什么？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">Q: 每次客户端代码都要这样自己写一堆逻辑吗？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">Q: 那redis集群的分片算法是怎样的，哈希后按照节点数量取余么还是？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">8.</span> <span class="nav-text">Q: 为什么只有16384个槽？会不会太少了？ 一致性哈希算法是2^16的圈长度</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">9.</span> <span class="nav-text">Q: 如果某个redis节点挂了， 是不是马上就要重新分配哈希槽了？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">10.</span> <span class="nav-text">Q: 那么什么情况下，会进行哈希槽的重新分配？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">11.</span> <span class="nav-text">Q:新增一个节点时， 扩容的过程是怎么样的？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">12.</span> <span class="nav-text">Q: 刚才提到每个redis集群节点中存了实际的哈希槽分布， 这个是怎么传输的，还是说他们都有全局信息进行自己计算？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">13.</span> <span class="nav-text">Q: 但集群最开始的阶段，只有自己的信息，怎么知道给谁发ping消息呢？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">14.</span> <span class="nav-text">Q: 刚才只提到了节点加入， 那如果有一个主从节点挂了或者下线， 也是要管理员自己检测然后下线吗？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">15.</span> <span class="nav-text">Q: E节点怎么知道超过了半数？他难道有全局的视野吗？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">16.</span> <span class="nav-text">Q: 为什么要一半以上下线，才真正认为下线？ 直接广播不行么？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">17.</span> <span class="nav-text">Q: 发ping时的原理讲一下？比如怎么选择给谁发ping， 隔多久发一次？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">18.</span> <span class="nav-text">Q: 心跳中包含了哪些内容？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">19.</span> <span class="nav-text">Q: gossip的同步过程可以看到是很混乱的，万一redis-master节点先收到了新的slot信息后， 再收到了旧的slot信息，怎么办？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">20.</span> <span class="nav-text">Q: cluster bus是什么？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">21.</span> <span class="nav-text">Q: redis集群中可以使用publish吗？为什么？</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">51</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共292.3k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
