@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Q: kafka中有哪些关键角色? Q: 详细解释下broker？ Q: zk在kafka中的作用？ Q: kafka中consumer group 是什么概念 Q: 怎么实现消费者消费不同的数据？ Q: 生产环境一般要求消费者消费的数据一样且多个，比如一个写到hdfs，一个放到spark计算，怎么做 Q: 为什么说kafka是分布式的？ Q: 项目选型kafka的理由? Q: kafka一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kafka基础概念">
+<meta property="og:url" content="http://breakdawncoder.com/2022/09/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="Q: kafka中有哪些关键角色? Q: 详细解释下broker？ Q: zk在kafka中的作用？ Q: kafka中consumer group 是什么概念 Q: 怎么实现消费者消费不同的数据？ Q: 生产环境一般要求消费者消费的数据一样且多个，比如一个写到hdfs，一个放到spark计算，怎么做 Q: 为什么说kafka是分布式的？ Q: 项目选型kafka的理由? Q: kafka一">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/redis%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/24f762e635f83413edc0b674a62e264556511e1c.png">
+<meta property="article:published_time" content="2022-09-26T15:35:12.000Z">
+<meta property="article:modified_time" content="2022-09-26T15:46:30.317Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="开源组件原理,kafka">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/redis%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/24f762e635f83413edc0b674a62e264556511e1c.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/2022/09/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>kafka基础概念 | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/home/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          kafka基础概念
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-26 23:35:12 / 修改时间：23:46:30" itemprop="dateCreated datePublished" datetime="2022-09-26T23:35:12+08:00">2022-09-26</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">微服务组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/kafka/" itemprop="url" rel="index"><span itemprop="name">kafka</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#q-kafka-zhong-you-na-xie-guan-jian-jiao-se">Q: kafka中有哪些关键角色?</a></li>
+<li><a href="#q-xiang-xi-jie-shi-xia-broker">Q: 详细解释下broker？</a></li>
+<li><a href="#q-zk-zai-kafka-zhong-de-zuo-yong">Q: zk在kafka中的作用？</a></li>
+<li><a href="#q-kafka-zhong-consumer-group-shi-shi-me-gai-nian">Q: kafka中consumer group 是什么概念</a></li>
+<li><a href="#q-zen-me-shi-xian-xiao-fei-zhe-xiao-fei-bu-tong-de-shu-ju">Q: 怎么实现消费者消费不同的数据？</a></li>
+<li><a href="#q-sheng-chan-huan-jing-yi-ban-yao-qiu-xiao-fei-zhe-xiao-fei-de-shu-ju-yi-yang-qie-duo-ge-bi-ru-yi-ge-xie-dao-hdfs-yi-ge-fang-dao-spark-ji-suan-zen-me-zuo">Q: 生产环境一般要求消费者消费的数据一样且多个，比如一个写到hdfs，一个放到spark计算，怎么做</a></li>
+<li><a href="#q-wei-shi-me-shuo-kafka-shi-fen-bu-shi-de">Q: 为什么说kafka是分布式的？</a></li>
+<li><a href="#q-xiang-mu-xuan-xing-kafka-de-li-you">Q: 项目选型kafka的理由?</a></li>
+<li><a href="#q-kafka-yi-ban-de-ying-yong-chang-jing">Q: kafka一般的应用场景？</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<p>它最初是由LinkedIn公司开发的，之后成为Apache项目的一部分<br>
+主要用于处理流式数据。</p>
+<h1><span id="q-kafka-zhong-you-na-xie-guan-jian-jiao-se">Q: kafka中有哪些关键角色?</span><a href="#q-kafka-zhong-you-na-xie-guan-jian-jiao-se" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>Kafka对消息保存时根据Topic进行归类，Topic可以理解为一个队列</li>
+<li>发送消息者称为Producer</li>
+<li>消息接受者称为Consumer</li>
+<li>此外kafka集群有多个kafka实例组成，每个实例(server)称为broker。</li>
+<li>无论是kafka集群，还是consumer都依赖于zookeeper集群保存一些meta信息，来保证系统可用性。</li>
+<li>Partition：一个topic可以分为多个partition，每个partition是一个有序的队列</li>
+<li>Offset：kafka的存储文件都是按照offset.kafka来命名。你想找位于2049的位置，只要找到2048.kafka的文件即可</li>
+<li>ISR:In-Sync Replicas 副本同步队列</li>
+<li>AR:Assigned Replicas 所有副本</li>
+</ul>
+<hr>
+<h1><span id="q-xiang-xi-jie-shi-xia-broker">Q: 详细解释下broker？</span><a href="#q-xiang-xi-jie-shi-xia-broker" class="header-anchor">#</a></h1>
+<p>A:<br>
+Producers（生产者程序）往Brokers里面的指定Topic中写消息<br>
+Consumers（消费者程序）从Brokers里面拉取指定Topic的消息，然后进行业务处理，broker在中间起到一个代理保存消息的中转站。</p>
+<hr>
+<h1><span id="q-zk-zai-kafka-zhong-de-zuo-yong">Q: zk在kafka中的作用？</span><a href="#q-zk-zai-kafka-zhong-de-zuo-yong" class="header-anchor">#</a></h1>
+<p>早期版本的kafka用zk做meta信息存储，consumer的消费状态，group的管理以及 offset的值<br>
+zookeeper 在kafka中还用来选举controller 和 检测broker是否存活等等。<br>
+Zookeeper保存kafka的集群状态信息的，包括每个broker，为什么？<br>
+因为zk和broker建立监听，一旦有一个broker宕机了，另一个备份就可以变为领导，第二，zk保存消费者的消费信息，为什么要保存？就是为了消费者下一次再次消费可以得知offset这个偏移量，consumer信息高版本在本地维护<br>
+1</p>
+<hr>
+<h1><span id="q-kafka-zhong-consumer-group-shi-shi-me-gai-nian">Q: kafka中consumer group 是什么概念</span><a href="#q-kafka-zhong-consumer-group-shi-shi-me-gai-nian" class="header-anchor">#</a></h1>
+<p>A:<br>
+对于同一个topic，每个group都可以拿到同样的所有数据，但是数据进入group后只能被其中的一个worker消费<br>
+worker的数量通常不超过partition的数量，且二者最好保持整数倍关系，因为Kafka在设计时假定了一个partition只能被一个worker消费（同一group内）</p>
+<ul>
+<li>同一个消费者组里面不能是同时消费者消费消息，只能有一个消费者去消费</li>
+<li>同一个消费者组里面是不会重复消费消息的</li>
+<li>同一个消费者组的一个消费者不是以一条一条数据为单元的，是以分区为单元，就相当于消费者和分区建立某种socket，进行传输数据，所以，一旦建立这个关系，这个分区的内容只能是由这个消费者消费</li>
+</ul>
+<hr>
+<h1><span id="q-zen-me-shi-xian-xiao-fei-zhe-xiao-fei-bu-tong-de-shu-ju">Q: 怎么实现消费者消费不同的数据？</span><a href="#q-zen-me-shi-xian-xiao-fei-zhe-xiao-fei-bu-tong-de-shu-ju" class="header-anchor">#</a></h1>
+<p>A: 将消费者放在同一组取数据</p>
+<hr>
+<h1><span id="q-sheng-chan-huan-jing-yi-ban-yao-qiu-xiao-fei-zhe-xiao-fei-de-shu-ju-yi-yang-qie-duo-ge-bi-ru-yi-ge-xie-dao-hdfs-yi-ge-fang-dao-spark-ji-suan-zen-me-zuo">Q: 生产环境一般要求消费者消费的数据一样且多个，比如一个写到hdfs，一个放到spark计算，怎么做</span><a href="#q-sheng-chan-huan-jing-yi-ban-yao-qiu-xiao-fei-zhe-xiao-fei-de-shu-ju-yi-yang-qie-duo-ge-bi-ru-yi-ge-xie-dao-hdfs-yi-ge-fang-dao-spark-ji-suan-zen-me-zuo" class="header-anchor">#</a></h1>
+<p>A:<br>
+这样就得要求相同数据拷贝，放到不同的消费者组里， 各消费者在不同的消费组里进行消费。</p>
+<hr>
+<h1><span id="q-wei-shi-me-shuo-kafka-shi-fen-bu-shi-de">Q: 为什么说kafka是分布式的？</span><a href="#q-wei-shi-me-shuo-kafka-shi-fen-bu-shi-de" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>同一个topic又拥有不同的分区，不同的分区可以分布在不同的borker上也就是不同的机子上</li>
+<li>消费者组里的消费者可以在不同的机器上，有什么好处？消费的方式可以是存储可以是计算，如果是放在一台机子上，Io等压力很大</li>
+<li>kafka上面的所有想到的角色都是分布式的，不管是消费者还是生产者还是分区，他们之间沟通的唯一桥梁就是zookeeper</li>
+</ul>
+<hr>
+<h1><span id="q-xiang-mu-xuan-xing-kafka-de-li-you">Q: 项目选型kafka的理由?</span><a href="#q-xiang-mu-xuan-xing-kafka-de-li-you" class="header-anchor">#</a></h1>
+<p>A:<br>
+kafka：适合数据下游消费众多的情况；适合数据安全性要求较高的操作，支持replication。为什么适合数据下游消费众多？因为有就算有多个消费者，kafka里面存的数据是一样的，不会再增加副本。<br>
+在实际生产应用中，一般会使用kafka做为消息传输的数据管道<br>
+rabbitmq做为交易数据做为数据传输管道<br>
+主要的取舍因素则是是否存在丢数据的可能；<br>
+rabbitmq在金融场景中常用，具备较高的严谨性，数据丢失的可能性更小，同事具有更高的实时性；<br>
+而kafka优点主要体如今吞吐量上，虽然能够经过策略实现数据不丢失，但从严谨性角度来说，大不如rabbitmq；并且因为kafka保证每条消息最少送达一次，有较小的几率会出现数据重复发送的状况；</p>
+<ul>
+<li>吞吐量较低：Kafka和RabbitMQ都可以。:</li>
+<li>吞吐量高：Kafka。</li>
+</ul>
+<p>flume 适合多个生产者；适合下游数据消费者不多的情况</p>
+<hr>
+<h1><span id="q-kafka-yi-ban-de-ying-yong-chang-jing">Q: kafka一般的应用场景？</span><a href="#q-kafka-yi-ban-de-ying-yong-chang-jing" class="header-anchor">#</a></h1>
+<p>A:<br>
+线上数据 --&gt; flume --&gt; kafka --&gt; HDFS：所以一般情况下，企业用flume收集日志数据，然后下游sink选择kafka</p>
+<hr>
+<p>架构图如下：<br>
+<img src="/images/redis%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/24f762e635f83413edc0b674a62e264556511e1c.png" alt="24f762e635f83413edc0b674a62e264556511e1c"></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/2022/09/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" title="kafka基础概念">http://breakdawncoder.com/2022/09/26/知识库/开源组件原理/kafka/kafka基础概念/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86-kafka/" rel="tag"># 开源组件原理,kafka</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/09/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4/" rel="prev" title="redis分布式集群">
+      <i class="fa fa-chevron-left"></i> redis分布式集群
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/09/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%A4%9A%E5%89%AF%E6%9C%AC%E6%9C%BA%E5%88%B6/" rel="next" title="kafka多副本机制">
+      kafka多副本机制 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">Q: kafka中有哪些关键角色?</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">Q: 详细解释下broker？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">Q: zk在kafka中的作用？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">Q: kafka中consumer group 是什么概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">Q: 怎么实现消费者消费不同的数据？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">Q: 生产环境一般要求消费者消费的数据一样且多个，比如一个写到hdfs，一个放到spark计算，怎么做</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">Q: 为什么说kafka是分布式的？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">8.</span> <span class="nav-text">Q: 项目选型kafka的理由?</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">9.</span> <span class="nav-text">Q: kafka一般的应用场景？</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">164</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">51</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共296.7k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -181,6 +181,567 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/19/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-19/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/19/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-19/" class="post-title-link" itemprop="url">2022-0819</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-19 23:12:42" itemprop="dateCreated datePublished" datetime="2022-08-19T23:12:42+08:00">2022-08-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-20 00:51:03" itemprop="dateModified" datetime="2022-08-20T00:51:03+08:00">2022-08-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">刷题日记</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022%E5%B9%B48%E6%9C%88/" itemprop="url" rel="index"><span itemprop="name">2022年8月</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/19/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-19/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/19/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-19/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<!-- tocstop -->
+</div> 
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/super-ugly-number/">313. 超级丑数 - 力扣（LeetCode）</a></p>
+<p><img src="/images/2022-08-19/1660927304363.png" alt="1660927304363"></p>
+<p>这个好难啊</p>
+<p>之前做264的时候，我是直接用bfs+优先队列做的</p>
+<p>但这一题里n很大，质因数也很大， 所以bfs要么超时要么内存溢出，这是我写的超时bfs：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">nthSuperUglyNumber</span><span class="params">(<span class="type">int</span> n, <span class="type">int</span>[] primes)</span> &#123;</span><br><span class="line">        Queue&lt;Long&gt; queue = <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>&lt;&gt;();</span><br><span class="line">        queue.offer(<span class="number">1L</span>);</span><br><span class="line">        Set&lt;Long&gt; vis = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">        <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(!queue.isEmpty()) &#123;</span><br><span class="line">            <span class="type">long</span> <span class="variable">num</span> <span class="operator">=</span> queue.poll();</span><br><span class="line">            index++;</span><br><span class="line">            <span class="keyword">if</span> (index == n) &#123;</span><br><span class="line">                <span class="keyword">return</span> (<span class="type">int</span>)num;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> prim : primes) &#123;</span><br><span class="line">                <span class="type">long</span> <span class="variable">newNum</span> <span class="operator">=</span> prim * num;</span><br><span class="line">                <span class="keyword">if</span> (vis.contains(newNum)) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                vis.add(newNum);</span><br><span class="line">                queue.offer(newNum);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这题我是只能看了答案才知道怎么做，甚至看答案还研究了半天，好累。</p>
+<p>前置题目： <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/ugly-number-ii/">264. 丑数 II - 力扣（LeetCode）</a> ， 里面的质因数只有[2,3,5]，以这个为例</p>
+<p>相当于对于1~x个丑数而言，想要求第x+1个丑数</p>
+<p>首先知道下面这个概念：</p>
+<ul>
+<li>
+<p>当第8个丑数被2乘了之后，下一个可以尝试被2乘的且尽可能小的，一定是第9个丑数，不可能跳级到第10个丑数，即乘2的动作，应当<strong>按顺序</strong>发生在之前已经算出来的丑数上。</p>
+</li>
+<li>
+<p>3和5都同理</p>
+</li>
+<li>
+<p>且每个丑数（注意是丑数而不是非丑数）都可以被2、3、5乘一次</p>
+</li>
+</ul>
+<p>那我就维护2、3、5的三个指针，每次从 各指针位置丑数 * （2或3或5） 选出最小值， 然后更新指针即可。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">nthSuperUglyNumber</span><span class="params">(<span class="type">int</span> n, <span class="type">int</span>[] primes)</span> &#123;</span><br><span class="line">        <span class="type">long</span>[] dp = <span class="keyword">new</span> <span class="title class_">long</span>[n+<span class="number">1</span>];</span><br><span class="line">        dp[<span class="number">1</span>] = <span class="number">1</span>;</span><br><span class="line">        <span class="type">int</span>[] pIndex = <span class="keyword">new</span> <span class="title class_">int</span>[primes.length];</span><br><span class="line">        Arrays.fill(pIndex, <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">2</span>;i&lt;=n;i++) &#123;</span><br><span class="line">            <span class="type">long</span> <span class="variable">min</span> <span class="operator">=</span> Integer.MAX_VALUE;</span><br><span class="line">            List&lt;Integer&gt; selectPis = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">            <span class="comment">// 找到最小值以及符合的指针</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">pi</span> <span class="operator">=</span> <span class="number">0</span>;pi&lt; primes.length;pi++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (dp[pIndex[pi]] * primes[pi] &lt; min) &#123;</span><br><span class="line">                    min = dp[pIndex[pi]] * primes[pi];</span><br><span class="line">                    selectPis.clear();</span><br><span class="line">                    selectPis.add(pi);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (dp[pIndex[pi]] * primes[pi] == min) &#123;</span><br><span class="line">                    selectPis.add(pi);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            dp[i] = min;</span><br><span class="line">            <span class="comment">// 也可以先得到最小值，再逐个排除</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> selectPi : selectPis) &#123;</span><br><span class="line">                pIndex[selectPi]++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> (<span class="type">int</span>)dp[n];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/partition-list-lcci/">面试题 02.04. 分割链表 - 力扣（LeetCode）</a></p>
+<p><img src="/images/2022-08-19/1660927840571.png" alt="1660927840571"></p>
+<p>设置2个头节点，按x的值区分处理即可</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * public class ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) &#123; val = x; &#125;</span></span><br><span class="line"><span class="comment"> * &#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> ListNode <span class="title function_">partition</span><span class="params">(ListNode head, <span class="type">int</span> x)</span> &#123;</span><br><span class="line">        <span class="type">ListNode</span> <span class="variable">h1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ListNode</span>(<span class="number">0</span>);</span><br><span class="line">        <span class="type">ListNode</span> <span class="variable">h2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ListNode</span>(<span class="number">0</span>);</span><br><span class="line">        <span class="type">ListNode</span> <span class="variable">node1</span> <span class="operator">=</span> h1,node2 = h2;</span><br><span class="line">        <span class="type">ListNode</span> <span class="variable">node</span> <span class="operator">=</span> head;</span><br><span class="line">        <span class="keyword">while</span>(node != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="type">ListNode</span> <span class="variable">nextNode</span> <span class="operator">=</span> node.next;</span><br><span class="line">            <span class="keyword">if</span> (node.val &lt; x) &#123;</span><br><span class="line">                node1.next = node;</span><br><span class="line">                node1 = node1.next;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                node2.next = node;</span><br><span class="line">                node2 = node2.next;</span><br><span class="line">            &#125;</span><br><span class="line">            node = nextNode;</span><br><span class="line">        &#125;</span><br><span class="line">        node1.next = h2.next;</span><br><span class="line">        node2.next = <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">return</span> h1.next;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/bracket-lcci/">面试题 08.09. 括号 - 力扣（LeetCode）</a></p>
+<p><img src="/images/2022-08-19/1660927848000.png" alt="1660927848000"></p>
+<p>直接dfs即可，不会有重复，无需记忆化</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> List&lt;String&gt; <span class="title function_">generateParenthesis</span><span class="params">(<span class="type">int</span> n)</span> &#123;</span><br><span class="line">        dfs(<span class="number">0</span>, n, n, <span class="keyword">new</span> <span class="title class_">StringBuilder</span>());</span><br><span class="line">        <span class="keyword">return</span> results;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    List&lt;String&gt; results = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">dfs</span><span class="params">(<span class="type">int</span> leftInStackCount, <span class="type">int</span> leftRealCount, <span class="type">int</span> rightRealCount, StringBuilder sb)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (rightRealCount == <span class="number">0</span>) &#123;</span><br><span class="line">            results.add(sb.toString());</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (leftInStackCount &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            sb.append(<span class="string">&quot;)&quot;</span>);</span><br><span class="line">            dfs(leftInStackCount-<span class="number">1</span>, leftRealCount, rightRealCount - <span class="number">1</span>, sb);</span><br><span class="line">            sb.deleteCharAt(sb.length()-<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (leftRealCount &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            sb.append(<span class="string">&quot;(&quot;</span>);</span><br><span class="line">            dfs(leftInStackCount+<span class="number">1</span>, leftRealCount-<span class="number">1</span>, rightRealCount, sb);</span><br><span class="line">            sb.deleteCharAt(sb.length()-<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E4%BB%8E%E5%B0%8F%E5%88%B0%E5%A4%A7%E6%BC%94%E5%8F%98%E8%BF%87%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E4%BB%8E%E5%B0%8F%E5%88%B0%E5%A4%A7%E6%BC%94%E5%8F%98%E8%BF%87%E7%A8%8B/" class="post-title-link" itemprop="url">服务架构从小到大演变过程</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-19 00:30:12" itemprop="dateCreated datePublished" datetime="2022-08-19T00:30:12+08:00">2022-08-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-29 00:04:54" itemprop="dateModified" datetime="2022-08-29T00:04:54+08:00">2022-08-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">系统设计</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E4%BB%8E%E5%B0%8F%E5%88%B0%E5%A4%A7%E6%BC%94%E5%8F%98%E8%BF%87%E7%A8%8B/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E4%BB%8E%E5%B0%8F%E5%88%B0%E5%A4%A7%E6%BC%94%E5%8F%98%E8%BF%87%E7%A8%8B/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#1-dan-ji-jia-gou">1、 单机架构</a></li>
+<li><a href="#2-ji-qun-jia-gou-shui-ping-kuo-chong">2、 集群架构（水平扩充）</a></li>
+<li><a href="#3-chui-zhi-chai-fen">3、 垂直拆分</a>
+<ul>
+<li><a href="#q-ye-wu-luo-ji-quan-bu-ou-he-zai-yi-ge-fu-wu-zhong-you-shi-me-que-dian">Q: 业务逻辑全部耦合在一个服务中有什么缺点？</a></li>
+<li><a href="#da-xing-dian-shang-de-chai-fen-luo-ji-ju-li">大型电商的拆分逻辑举例</a></li>
+<li><a href="#q-ye-wu-chai-fen-de-yue-xi-yue-hao-ma-hui-you-shi-me-wen-ti">Q: 业务拆分得越细越好吗， 会有什么问题？</a></li>
+</ul>
+</li>
+<li><a href="#4-fu-wu-hua-jia-gou">4、服务化架构</a>
+<ul>
+<li><a href="#shi-me-shi-fu-wu-hua">什么是服务化？</a></li>
+<li><a href="#mian-xiang-fu-wu-de-jia-gou">面向服务的架构</a></li>
+<li><a href="#q-ji-qun-he-fen-bu-shi-de-qu-bie-shi-shi-me">Q: 集群和分布式的区别是什么？</a></li>
+<li><a href="#q-wei-fu-wu-he-fen-bu-shi-de-qu-bie-shi-shi-me">Q: 微服务和分布式的区别是什么？</a></li>
+<li><a href="#q-apig-wang-guan-jie-ru-ceng-de-zuo-yong-shi-shi-me">Q: APIG网关接入层的作用是什么？</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="1-dan-ji-jia-gou">1、 单机架构</span><a href="#1-dan-ji-jia-gou" class="header-anchor">#</a></h1>
+<p>server、文件、mysql都在同一台物理服务器上。<br>
+用于前期研发测试、或者访问量较小的内部管理页网站等。</p>
+<h1><span id="2-ji-qun-jia-gou-shui-ping-kuo-chong">2、 集群架构（水平扩充）</span><a href="#2-ji-qun-jia-gou-shui-ping-kuo-chong" class="header-anchor">#</a></h1>
+<p>这里的集群，是指各节点服务的处理能力完全一致，单纯提升业务的水平处理能力。</p>
+<p>集群架构需要做以下重点改造：</p>
+<ol>
+<li>业务处理服务器 server 无状态化+集群化， 部署多台对等节点。</li>
+<li>设置负载均衡调度服务，用于专门的负载均衡，例如ngnix自带负载均衡设置</li>
+<li>负载均衡调度服务也要可靠， 可利用公共的公网流量接入组件（apig、elb、slb）来负责做负载均衡服务的dns轮询。</li>
+<li>缓存使用设置分布式redis</li>
+<li>mysql数据库做到主从分离。</li>
+<li>静态文件下放到cdn节点， 由ISP互联网服务提供商进行下发，提升响应速度。</li>
+</ol>
+<h1><span id="3-chui-zhi-chai-fen">3、 垂直拆分</span><a href="#3-chui-zhi-chai-fen" class="header-anchor">#</a></h1>
+<h2><span id="q-ye-wu-luo-ji-quan-bu-ou-he-zai-yi-ge-fu-wu-zhong-you-shi-me-que-dian">Q: 业务逻辑全部耦合在一个服务中有什么缺点？</span><a href="#q-ye-wu-luo-ji-quan-bu-ou-he-zai-yi-ge-fu-wu-zhong-you-shi-me-que-dian" class="header-anchor">#</a></h2>
+<p>A：某个无关紧要的业务，可能因为请求量突然过大，导致影响了所有业务的使用 。  例如ths的cs里同时包含了用户埋点数据采集转发的业务逻辑， 如果这块流量突然过大， 可能导致正常行情数据都无法使用。</p>
+<hr>
+<h2><span id="da-xing-dian-shang-de-chai-fen-luo-ji-ju-li">大型电商的拆分逻辑举例</span><a href="#da-xing-dian-shang-de-chai-fen-luo-ji-ju-li" class="header-anchor">#</a></h2>
+<p>首页、用户、搜索、广告、购物、订单、商品、收益结算<br>
+<img src="/images/%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E4%BB%8E%E5%B0%8F%E5%88%B0%E5%A4%A7%E6%BC%94%E5%8F%98%E8%BF%87%E7%A8%8B/2bf084dadd4bdf645c9643d71b5a8d76e11a7855.png" alt="2bf084dadd4bdf645c9643d71b5a8d76e11a7855"></p>
+<hr>
+<h2><span id="q-ye-wu-chai-fen-de-yue-xi-yue-hao-ma-hui-you-shi-me-wen-ti">Q: 业务拆分得越细越好吗， 会有什么问题？</span><a href="#q-ye-wu-chai-fen-de-yue-xi-yue-hao-ma-hui-you-shi-me-wen-ti" class="header-anchor">#</a></h2>
+<p>A:<br>
+维护成本会很大，并且数据库改造等都需要跟上，有时候要考虑工期进度、以及必要性等。</p>
+<h1><span id="4-fu-wu-hua-jia-gou">4、服务化架构</span><a href="#4-fu-wu-hua-jia-gou" class="header-anchor">#</a></h1>
+<h2><span id="shi-me-shi-fu-wu-hua">什么是服务化？</span><a href="#shi-me-shi-fu-wu-hua" class="header-anchor">#</a></h2>
+<p>Service-Oriented Architecture  SOA架构</p>
+<h2><span id="mian-xiang-fu-wu-de-jia-gou">面向服务的架构</span><a href="#mian-xiang-fu-wu-de-jia-gou" class="header-anchor">#</a></h2>
+<p>可以理解为将原本的 controller- service- dao 这个过程再做拆分， 抽出公共的数据或者业务提供服务，  提供给其他服务使用。</p>
+<p>从mvc上理解时，可以是将dao层独立成一个服务， 其他服务不再需要自己重复写dao代码，而是直接调数据获取接口即可。 这样数据获取的逻辑只要改单个服务即可，不需要多个服务同时修改。</p>
+<p>代价就是服务间存在大量依赖关系，需要引入服务治理能力。<br>
+<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/42061683?sort=created">如何通俗易懂地解释什么是SOA</a></p>
+<hr>
+<h2><span id="q-ji-qun-he-fen-bu-shi-de-qu-bie-shi-shi-me">Q:  集群和分布式的区别是什么？</span><a href="#q-ji-qun-he-fen-bu-shi-de-qu-bie-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A:<br>
+集群是把多台服务器集中在一起， 目的是实现同一个业务。<br>
+分布式是把不同的业务分布在不同的地方， 目的是实现不同的业务。</p>
+<p>分布式中的每个节点都可以构成一个集群<br>
+但是集群却不一定是分布式的。</p>
+<hr>
+<h2><span id="q-wei-fu-wu-he-fen-bu-shi-de-qu-bie-shi-shi-me">Q: 微服务和分布式的区别是什么？</span><a href="#q-wei-fu-wu-he-fen-bu-shi-de-qu-bie-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A:<br>
+微服务是“架构设计”方式，分布式是“系统部署”方式，两者概念不同</p>
+<p>微服务是指很小的服务，可以小到只完成一个功能，这个服务可以单独部署运行，不同服务之间通过rpc调用。</p>
+<p>分布式是指服务部署在不同的机器上，一个服务可以提供一个或多个功能，服务之间也是通过rpc来交互或者是webservice来交互的。</p>
+<p>两者的关系是，系统应用部署在“超过一台”服务器或虚拟机上，且各分开部署的部分彼此通过各种通讯协议交互信息，就可算作分布式部署<br>
+生产环境下的微服务肯定是分布式部署的，分布式部署的应用不一定是微服务架构的，比如集群部署，它是把相同应用复制到不同服务器上，但是逻辑功能上还是单体应用。</p>
+<p>简答来说</p>
+<ul>
+<li>微服务——拆出多种业务，不管几台机器</li>
+<li>集群——1种业务，拆到多台机器</li>
+<li>分布式—— x种业务，拆到1台以上，且业务之间有关联。  分布式不一定是微服务，集群也不一定是分布式， 但是分布式一定满足集群，因为机器数量肯定大于1。</li>
+</ul>
+<hr>
+<h2><span id="q-apig-wang-guan-jie-ru-ceng-de-zuo-yong-shi-shi-me">Q:  APIG网关接入层的作用是什么？</span><a href="#q-apig-wang-guan-jie-ru-ceng-de-zuo-yong-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>当业务拆分复杂时， 可通过APIG网关确定转发逻辑， 不用维护webServer的公共逻辑。</li>
+<li>灰度发布（配置白名单或者正则，将部分用户请求导入到灰度环境）</li>
+<li>流控</li>
+<li>安全防护</li>
+</ul>
+<p>避免webServer做过多的安全修复和改造，通过网关保证外部输入安全。</p>
+<hr>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">HTTPS双向认证核心原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-19 00:30:12 / 修改时间：00:33:51" itemprop="dateCreated datePublished" datetime="2022-08-19T00:30:12+08:00">2022-08-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">网络安全</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/19/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#yi-chuang-ye-qian-de-zi-zhi-shen-qing-zheng-shu-qian-fa">一、创业前的资质申请——证书签发</a></li>
+<li><a href="#er-jiu-ji-jin-shen-de-gu-ke-zheng-shu-yan-zheng">二、究极谨慎的顾客——证书验证</a></li>
+<li><a href="#san-chao-ji-er-yin-mi-de-jiao-yi">三、超级而隐秘的交易</a></li>
+<li><a href="#si-qi-ta-guan-jian-wen-ti">四、其他关键问题</a>
+<ul>
+<li><a href="#q-wei-shi-me-bu-shi-yong-fei-dui-cheng-mi-yao-jia-mi-chuan-shu-shu-ju-er-yao-yong-dui-cheng-mi-yao-zhe-yang-rao-yi-da-quan">Q: 为什么不使用非对称密钥加密 传输数据， 而要用对称密钥这样绕一大圈？</a></li>
+<li><a href="#q-wei-shi-me-shu-ju-kai-shi-chuan-shu-zhi-hou-bu-xu-yao-zai-zuo-yan-qian-nan-dao-zhe-zhong-jian-de-shu-ju-jiu-bu-hui-zai-bei-ren-cuan-gai-huo-zhe-ti-huan-ma">Q: 为什么数据开始传输之后不需要再做验签， 难道者中间的数据就不会再被人篡改或者替换吗？</a></li>
+<li><a href="#q-ca-gen-zheng-shu-ke-neng-bei-zao-jia-ma">Q: CA根证书可能被造假吗？</a></li>
+<li><a href="#q-hei-ke-ba-zhe-ge-fu-wu-duan-fan-hui-de-zheng-shu-bao-cun-xia-lai-ran-hou-xia-ci-bie-ren-fang-wen-hei-ke-de-diao-yu-wang-zhan-shi-hei-ke-ba-zhe-ge-zheng-shu-yuan-feng-bu-dong-fa-hui-qu-hui-tong-guo-yan-zheng-ma">Q: 黑客把这个服务端返回的证书， 保存下来，然后下次别人访问黑客的钓鱼网站时， 黑客把这个证书原封不动发回去，会通过验证吗？</a></li>
+</ul>
+</li>
+<li><a href="#wu-zong-jie-he-wan-zheng-da-tu">五、总结和完整大图</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]<br>
+讲解HTTPS认证原理的文章非常多，也算是做web开发的基础知识了。但是这类文章看过去都有一个特点——知识点超级多，很乱。</p>
+<p>证书、签名、公钥、私钥、哈希、CA证书、网站证书、对称非对称加解密……一堆概念夹杂在一起，导致很多人对这块只能说个所以然，却无法做到完全理解。</p>
+<p>这里我就用 从签发证书到数据加密交互，按流程完整解释， 并在其中穿插图片和问题，来完整解释这个原理。</p>
+<hr>
+<h1><span id="yi-chuang-ye-qian-de-zi-zhi-shen-qing-zheng-shu-qian-fa">一、创业前的资质申请——证书签发</span><a href="#yi-chuang-ye-qian-de-zi-zhi-shen-qing-zheng-shu-qian-fa" class="header-anchor">#</a></h1>
+<p>某天，我做了一个网站， 如果直接开放给所有人访问，那么就属于无证经营，  每个访问我网站的人，都会收到浏览器如下的警告。<br>
+<img src="/images/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/46ac05606fa54e179c3792c53703420d.png" alt="在这里插入图片描述"><br>
+为了解决这个问题， 我需要去工商局也就是证书颁发机构CA（ Certificate Authority），去获取一个证书，来证明我这个网站是安全的。</p>
+<p>CA机构要求我提供身份证 、 店铺信息等一系列申请信息，整合成一个server.req的文件， 提交给他。<br>
+<img src="/images/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/986d2b75a7d54935a8f27af8f64e6ea3.png" alt="在这里插入图片描述"></p>
+<p>CA机构会有专门的人进行审查，确认我的资质、合法性。审查通过后，他们就开始了证书签发工作。</p>
+<ol>
+<li>
+<p>首先， 他们觉得我的网站信息太长了，不好用来做检查或者对比，于是用一个 哈希算法（可以是sha256），将其变成一个固定长度的字符串， 这个字符串被他们叫做 <strong>摘要（Digest）</strong>。</p>
+</li>
+<li>
+<p>接着，他们请出了CA机构中的最高领导，将这个摘要加上领导名字 重新在纸上写了一遍，然而写出来时却是一串看不懂的线条。 这是领导独有的写法，除了他自己，任何人都无法模仿。而且普通人也根本看不懂。<br>
+<img src="/images/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/756f291db9d3454386e666dd4a36560e.png" alt="在这里插入图片描述"></p>
+<p>这个领导的名字叫做 <strong>CA私钥</strong>。<br>
+而这个看似瞎写的过程， 叫做<strong>私钥签名</strong>，即对摘要重写并暗含了自己的名字，只是一般人根本看不懂罢了。</p>
+</li>
+<li>
+<p>接着他们把我的网站信息、CA签名 打包成了一个证书，颁发给我，叫我好好保管， 如果有顾客问我，我就可以把这个证书拿出来给他们看。</p>
+</li>
+</ol>
+<p>我疑惑地问道： “你这个签名写得乱七八糟，谁也看不懂啊，顾客咋确认我这个是合法的证书？”<br>
+CA证书的机构笑了笑，说：“你只管提供就好了，顾客们自有办法”。</p>
+<p>最终整个颁发的过程如下所示：<br>
+<img src="/images/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/c390b12d434440c7a30d9445f881e486.png" alt="在这里插入图片描述"></p>
+<h1><span id="er-jiu-ji-jin-shen-de-gu-ke-zheng-shu-yan-zheng">二、究极谨慎的顾客——证书验证</span><a href="#er-jiu-ji-jin-shen-de-gu-ke-zheng-shu-yan-zheng" class="header-anchor">#</a></h1>
+<p>那天，我游荡在街头，无意发现一个我很感兴趣的店，我进入了店内，却发现这家店是新开的。</p>
+<p>如果我不确认这家店的合法性，那么很有可能进入一家黑店，被宰或者被犯罪都有可能。</p>
+<p>此刻我必须确认这个店家的证书是CA机构签发的，还是他自己造假的证书。</p>
+<p>而我正好认识一位和CA私钥一起出生长大的兄弟 CA公钥（公私钥都是同时生成的），  虽然无法模仿领导的笔迹，但是能够勉强看懂。</p>
+<p>CA公钥确认了签名是CA私钥所写，而且能够正确解读出签名中的摘要信息。<br>
+他还将其与经营证书上所有文字生成的新摘要进行比对， 发现确实一致，因此他认定这是合法的证书。</p>
+<p>上面这个过程，就叫做<strong>验签</strong>， 如下所示<br>
+<img src="/images/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/fd3a71f471c24ea18fa6377c3c493ee2.png" alt="在这里插入图片描述"><br>
+可是，一般能解读出签名是CA私钥所写就够了，  为什么还要比对一下摘要信息呢？</p>
+<p>因为签名公钥只能识别出这个字是私钥所写，但是私钥曾经为别人写过很多的签名。<br>
+万一造假者把签名换成了其他正规店铺里抄来的签名，那怎么办？ 所以肯定得确认下这个签名的内容是不是和证书上所写的店铺是同一家。</p>
+<p>上面的过程是<strong>单向认证</strong>，即客户端验证服务端。</p>
+<p>如果商家担心碰到居心不良的顾客， 那么同样可以让顾客提供 类似签发过程的证书，以证明自己也是可信的顾客，  这就是<strong>双向认证。</strong></p>
+<h1><span id="san-chao-ji-er-yin-mi-de-jiao-yi">三、超级而隐秘的交易</span><a href="#san-chao-ji-er-yin-mi-de-jiao-yi" class="header-anchor">#</a></h1>
+<p>上面的店家和顾客，通过证书验证，确认了各自的身份。接着便决定互相进行快递交易。<br>
+但因为路上不安全，经常有强盗或者小偷出没，如何保证快递不被盗取很重要。</p>
+<p>顾客打算把钱（通信数据）放在一个密码箱里， 然后设置好密码，再快递过去。<br>
+这个密码叫做<strong>会话密钥</strong>，任何人拿到密码都能打开密码箱，所以也叫<strong>对称密钥</strong></p>
+<p>但是店家该怎么知道这个密码呢？</p>
+<p>如果顾客直接把密码箱的密码快递过去， 密码在路上被小偷看到了， 那后面发出去的钱岂不是就能被小偷解开并拿到了？<br>
+<img src="/images/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/cef207794c864ca8b74e2570ad0d39f6.png" alt="在这里插入图片描述"></p>
+<p>这时候顾客想起来，当时拿到的商家经营证书里，  携带了一个叫 公钥的东西，  通过这个东西， 可以把 密码箱密码  变成另一串看不懂的数字， 只有商家自己能够解读这个数字。</p>
+<p>于是顾客用公钥生成了一个 加密后的密码， 并成功送到了店家手中。</p>
+<p><img src="/images/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/2b3bfbe9877e4ba88a8d90e0b3288578.png" alt="在这里插入图片描述"></p>
+<p>店家拿到后， 使用自己的私钥成功解读出了这个密码。<br>
+接着店家和顾客就 都把密码箱设置成密码，进行快递， 除了店家和顾客， 其他人都无法知道这个密码是多少，  劫匪们也就无从下手了。<br>
+<img src="/images/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/d5067c736c374aa98af50804e60ce213.png" alt="在这里插入图片描述"></p>
+<h1><span id="si-qi-ta-guan-jian-wen-ti">四、其他关键问题</span><a href="#si-qi-ta-guan-jian-wen-ti" class="header-anchor">#</a></h1>
+<p>上面过程中，还有几个关键问题，这里提出，可以先自己思考，再看答案：</p>
+<hr>
+<h2><span id="q-wei-shi-me-bu-shi-yong-fei-dui-cheng-mi-yao-jia-mi-chuan-shu-shu-ju-er-yao-yong-dui-cheng-mi-yao-zhe-yang-rao-yi-da-quan">Q: 为什么不使用非对称密钥加密 传输数据， 而要用对称密钥这样绕一大圈？</span><a href="#q-wei-shi-me-bu-shi-yong-fei-dui-cheng-mi-yao-jia-mi-chuan-shu-shu-ju-er-yao-yong-dui-cheng-mi-yao-zhe-yang-rao-yi-da-quan" class="header-anchor">#</a></h2>
+<p>A:<br>
+对称算法的加解密性能比非对称算法快很多， 所以非对称只用于会话密钥的传输即可， 只需要一次。</p>
+<hr>
+<h2><span id="q-wei-shi-me-shu-ju-kai-shi-chuan-shu-zhi-hou-bu-xu-yao-zai-zuo-yan-qian-nan-dao-zhe-zhong-jian-de-shu-ju-jiu-bu-hui-zai-bei-ren-cuan-gai-huo-zhe-ti-huan-ma">Q:  为什么数据开始传输之后不需要再做验签， 难道者中间的数据就不会再被人篡改或者替换吗？</span><a href="#q-wei-shi-me-shu-ju-kai-shi-chuan-shu-zhi-hou-bu-xu-yao-zai-zuo-yan-qian-nan-dao-zhe-zhong-jian-de-shu-ju-jiu-bu-hui-zai-bei-ren-cuan-gai-huo-zhe-ti-huan-ma" class="header-anchor">#</a></h2>
+<p>A:<br>
+不会，有3个原因保证：</p>
+<ol>
+<li>会话密钥是会话级别， 动态生成的，只有这一次连接才会用到。因此以前废弃的会话密钥不用担心被人拿去利用。</li>
+<li>建立连接并传递会话密钥之前，已经通过验签确认过对方身份是可信的。</li>
+<li>没有任何第三方知道会话密钥是什么。因此第三方攻击人无法用正确的会话密钥加密数据，即无法做到伪造会话密钥来欺骗接收者的目的。</li>
+</ol>
+<hr>
+<h2><span id="q-ca-gen-zheng-shu-ke-neng-bei-zao-jia-ma">Q:  CA根证书可能被造假吗？</span><a href="#q-ca-gen-zheng-shu-ke-neng-bei-zao-jia-ma" class="header-anchor">#</a></h2>
+<p>例如黑客修改了用户机器中的CA证书，导致CA的公钥被替换了，   后面访问了黑客所在的网址时，就会验签成功。</p>
+<p>A:<br>
+如果真的能修改的话，那么是可行的。<br>
+但是操作系统基本会内置著名CA的公钥，除非黑客已经能直接触碰你的操作系统底层了，否则基本办不到。</p>
+<hr>
+<h2><span id="q-hei-ke-ba-zhe-ge-fu-wu-duan-fan-hui-de-zheng-shu-bao-cun-xia-lai-ran-hou-xia-ci-bie-ren-fang-wen-hei-ke-de-diao-yu-wang-zhan-shi-hei-ke-ba-zhe-ge-zheng-shu-yuan-feng-bu-dong-fa-hui-qu-hui-tong-guo-yan-zheng-ma">Q:  黑客把这个服务端返回的证书， 保存下来，然后下次别人访问黑客的钓鱼网站时， 黑客把这个证书原封不动发回去，会通过验证吗？</span><a href="#q-hei-ke-ba-zhe-ge-fu-wu-duan-fan-hui-de-zheng-shu-bao-cun-xia-lai-ran-hou-xia-ci-bie-ren-fang-wen-hei-ke-de-diao-yu-wang-zhan-shi-hei-ke-ba-zhe-ge-zheng-shu-yuan-feng-bu-dong-fa-hui-qu-hui-tong-guo-yan-zheng-ma" class="header-anchor">#</a></h2>
+<p>A：<br>
+客户端会验证成功，<br>
+但是客户端做公钥时<br>
+于是对数据进行对称+非对称加密<br>
+重点来了<br>
+钓鱼网站接收到的数据，他没法用，他没有正规网站的私钥！ 因为客户端用的是正规网站签发的公钥才可以。<br>
+黑客做中间人两边相互拦截，把假的签发过的公钥+证书发给客户端<br>
+客户端验签过程就会发现端倪， 发现他这个证书不对劲， 不是自己这边持有的CA机构正常签发出来证书。</p>
+<hr>
+<h1><span id="wu-zong-jie-he-wan-zheng-da-tu">五、总结和完整大图</span><a href="#wu-zong-jie-he-wan-zheng-da-tu" class="header-anchor">#</a></h1>
+<p>上文的顾客就是客户端（也可以是浏览器），    店家就是服务端（网站）， 工商局就是可信CA机构（或者某域内自己设置的颁发机构也行）。</p>
+<p>而一些要点总结如下：</p>
+<ul>
+<li>CA私钥用于签名， CA公钥用于验签</li>
+<li>要先生成摘要，再签名。目的是为了验签后确认来源是所签的服务端。</li>
+<li>服务端公钥用于加密，  服务端私钥用于解密。</li>
+<li>传输数据使用对称密钥进行加密和解密。</li>
+</ul>
+<p><img src="/images/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/913d97b11e50460681e99eae9f0e272d.jpg" alt="在这里插入图片描述"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/18/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-18/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -702,6 +1263,185 @@ var s = “abcd”;</p>
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/17/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-JNI%E5%BA%94%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/17/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-JNI%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">java-JNI应用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-17 23:44:16 / 修改时间：00:13:32" itemprop="dateCreated datePublished" datetime="2022-08-17T23:44:16+08:00">2022-08-17</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">java高级应用</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/17/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-JNI%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/17/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-JNI%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#shi-me-shi-jni">什么是JNI？</a></li>
+<li><a href="#jni-ying-yong-bu-zou">JNI应用步骤</a></li>
+<li><a href="#jni-de-di-ceng-yuan-li">JNI的底层原理</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<hr>
+<h1><span id="shi-me-shi-jni">什么是JNI？</span><a href="#shi-me-shi-jni" class="header-anchor">#</a></h1>
+<p>JNI即Java Native Interface(Java本地接口)<br>
+是一个协议，主要作用为：实现Java调用c/c<ins>代码（类库）,或者C/C</ins>调用Java代码</p>
+<hr>
+<h1><span id="jni-ying-yong-bu-zou">JNI应用步骤</span><a href="#jni-ying-yong-bu-zou" class="header-anchor">#</a></h1>
+<ol>
+<li>首先定义java类</li>
+</ol>
+<ul>
+<li>类里需要有一个native关键字的方法</li>
+<li>静态代码块加载一个C++生成的dll</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//JNI.java文件</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JNI</span>&#123;</span><br><span class="line">   <span class="comment">//创建一个native接口方法，此方法在C++代码中实现</span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">native</span> <span class="type">int</span> <span class="title function_">call</span><span class="params">()</span>;</span><br><span class="line">   <span class="comment">//静态代码块，加载由C++代码生成的.dll动态链接文件（.dll相当于Java中的jar包吧...）</span></span><br><span class="line">   <span class="keyword">static</span>&#123;</span><br><span class="line">       System.loadLibrary(<span class="string">&quot;JNIdll&quot;</span>);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>
+<p>使用javac 编译JNI.java生成字节码文件JNI.class<br>
+<img src="/images/java-JNI%E5%BA%94%E7%94%A8/2e3b00fcc7db910ee0cc332308f69b08448d0333.png" alt="2e3b00fcc7db910ee0cc332308f69b08448d0333"></p>
+</li>
+<li>
+<p>使用javah 编译JNI.class， 将class文件转成头文件<br>
+<img src="/images/java-JNI%E5%BA%94%E7%94%A8/c5a38ef4c9ca5f2aaf60ee8a01699958fe0f0ece.png" alt="c5a38ef4c9ca5f2aaf60ee8a01699958fe0f0ece"><br>
+头文件中包含了call方法的声明<br>
+<img src="/images/java-JNI%E5%BA%94%E7%94%A8/ef461a898064377ae54e50e2c75daac5ad35b3a3.png" alt="ef461a898064377ae54e50e2c75daac5ad35b3a3"></p>
+</li>
+<li>
+<p>编写cpp文件，实现头文件中的call方法</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//JNIdll.cpp文件</span></span><br><span class="line"></span><br><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">#include&lt;jni.h&gt;</span><br><span class="line">#include <span class="string">&quot;JNI.h&quot;</span></span><br><span class="line"></span><br><span class="line">JNIEXPORT jint JNICALL <span class="title function_">Java_JNI_call</span></span><br><span class="line">  <span class="params">(JNIEnv *, jobject)</span>&#123;</span><br><span class="line">      <span class="comment">//实现代码</span></span><br><span class="line">      <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">777</span>;</span><br><span class="line">      <span class="keyword">return</span> i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="5">
+<li>
+<p>将java目录下的include目录下的两个文件jni.h和jni_md.h（jni_md.h在include目录下的win32目录中）拷贝到vc的include目录下, 好让C++环境支持jni</p>
+</li>
+<li>
+<p>用C/C++编译命令编译cpp和h文件，生成dll动态链接库<br>
+<img src="/images/java-JNI%E5%BA%94%E7%94%A8/7da23cd5f25cc82ce66c07e3ee06f7e09717a5f9.png" alt="7da23cd5f25cc82ce66c07e3ee06f7e09717a5f9"></p>
+</li>
+</ol>
+<hr>
+<h1><span id="jni-de-di-ceng-yuan-li">JNI的底层原理</span><a href="#jni-de-di-ceng-yuan-li" class="header-anchor">#</a></h1>
+<ol>
+<li>
+<p>jvm调用native方法时， 其方法指针nativeFunc默认先指向resolveNativeMethod方法</p>
+</li>
+<li>
+<p>resolveNativeMethod方法中， 是一段通用的实现代码<br>
+首先，判断这个方法如果是静态方法，首先确保所属的class已经初始化，否则会报错<br>
+<img src="/images/java-JNI%E5%BA%94%E7%94%A8/c1b4d05e0a5342c8159fbc8187caf6c2fb514775.png" alt="c1b4d05e0a5342c8159fbc8187caf6c2fb514775"></p>
+</li>
+<li>
+<p>接着先在内部本地方法表中查询。<br>
+内部本地方法表是一个集合，这个集合里包含了java语言和虚拟机本身用到的所有native方法<br>
+根据类描述符的hash值从集合中寻找对应的方法<br>
+如果找到了，就修改nativeFunc的指针，指向对应方法</p>
+</li>
+<li>
+<p>如果内部本地方法表里没找到， 才会通过System.loadLibrary加载的so，虚拟机会将所有的so存入一个表中<br>
+gDvm.nativeLibs是一个HashTable，其中存的是动态链接库的信息。其中的数据是通过System.loadLibrary添加进去的。</p>
+</li>
+</ol>
+<p>① 检查是否已经加载过该so，如果是还需要判断加载so的classLoader是否相同，不同的话也会报错，<br>
+②如果没有加载过，则使用dlopen打开so，然后创建一个ShareLib加入到gDvm.nativeLibs哈希表中。<br>
+③如果so中有JNI_OnLoad方法，则执行该方法。我们可以在该方法中做一些初始化工作，还可以手动建立java类中的native方法和so中的native方法的对应关系。</p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/0b7976fbf81b">【源码解读】JNI的实现原理</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/17/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-JDBC-API/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -920,185 +1660,6 @@ SPI机制（Service Provider Interface)其实源自服务提供者框架（Servi
 </li>
 <li></li>
 </ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/17/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-JNI%E5%BA%94%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/17/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-JNI%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">java-JNI应用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-08-17 23:44:16 / 修改时间：00:13:32" itemprop="dateCreated datePublished" datetime="2022-08-17T23:44:16+08:00">2022-08-17</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">java高级应用</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/17/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-JNI%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/17/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-JNI%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#shi-me-shi-jni">什么是JNI？</a></li>
-<li><a href="#jni-ying-yong-bu-zou">JNI应用步骤</a></li>
-<li><a href="#jni-de-di-ceng-yuan-li">JNI的底层原理</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<hr>
-<h1><span id="shi-me-shi-jni">什么是JNI？</span><a href="#shi-me-shi-jni" class="header-anchor">#</a></h1>
-<p>JNI即Java Native Interface(Java本地接口)<br>
-是一个协议，主要作用为：实现Java调用c/c<ins>代码（类库）,或者C/C</ins>调用Java代码</p>
-<hr>
-<h1><span id="jni-ying-yong-bu-zou">JNI应用步骤</span><a href="#jni-ying-yong-bu-zou" class="header-anchor">#</a></h1>
-<ol>
-<li>首先定义java类</li>
-</ol>
-<ul>
-<li>类里需要有一个native关键字的方法</li>
-<li>静态代码块加载一个C++生成的dll</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//JNI.java文件</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JNI</span>&#123;</span><br><span class="line">   <span class="comment">//创建一个native接口方法，此方法在C++代码中实现</span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">native</span> <span class="type">int</span> <span class="title function_">call</span><span class="params">()</span>;</span><br><span class="line">   <span class="comment">//静态代码块，加载由C++代码生成的.dll动态链接文件（.dll相当于Java中的jar包吧...）</span></span><br><span class="line">   <span class="keyword">static</span>&#123;</span><br><span class="line">       System.loadLibrary(<span class="string">&quot;JNIdll&quot;</span>);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ol start="2">
-<li>
-<p>使用javac 编译JNI.java生成字节码文件JNI.class<br>
-<img src="/images/java-JNI%E5%BA%94%E7%94%A8/2e3b00fcc7db910ee0cc332308f69b08448d0333.png" alt="2e3b00fcc7db910ee0cc332308f69b08448d0333"></p>
-</li>
-<li>
-<p>使用javah 编译JNI.class， 将class文件转成头文件<br>
-<img src="/images/java-JNI%E5%BA%94%E7%94%A8/c5a38ef4c9ca5f2aaf60ee8a01699958fe0f0ece.png" alt="c5a38ef4c9ca5f2aaf60ee8a01699958fe0f0ece"><br>
-头文件中包含了call方法的声明<br>
-<img src="/images/java-JNI%E5%BA%94%E7%94%A8/ef461a898064377ae54e50e2c75daac5ad35b3a3.png" alt="ef461a898064377ae54e50e2c75daac5ad35b3a3"></p>
-</li>
-<li>
-<p>编写cpp文件，实现头文件中的call方法</p>
-</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//JNIdll.cpp文件</span></span><br><span class="line"></span><br><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">#include&lt;jni.h&gt;</span><br><span class="line">#include <span class="string">&quot;JNI.h&quot;</span></span><br><span class="line"></span><br><span class="line">JNIEXPORT jint JNICALL <span class="title function_">Java_JNI_call</span></span><br><span class="line">  <span class="params">(JNIEnv *, jobject)</span>&#123;</span><br><span class="line">      <span class="comment">//实现代码</span></span><br><span class="line">      <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">777</span>;</span><br><span class="line">      <span class="keyword">return</span> i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ol start="5">
-<li>
-<p>将java目录下的include目录下的两个文件jni.h和jni_md.h（jni_md.h在include目录下的win32目录中）拷贝到vc的include目录下, 好让C++环境支持jni</p>
-</li>
-<li>
-<p>用C/C++编译命令编译cpp和h文件，生成dll动态链接库<br>
-<img src="/images/java-JNI%E5%BA%94%E7%94%A8/7da23cd5f25cc82ce66c07e3ee06f7e09717a5f9.png" alt="7da23cd5f25cc82ce66c07e3ee06f7e09717a5f9"></p>
-</li>
-</ol>
-<hr>
-<h1><span id="jni-de-di-ceng-yuan-li">JNI的底层原理</span><a href="#jni-de-di-ceng-yuan-li" class="header-anchor">#</a></h1>
-<ol>
-<li>
-<p>jvm调用native方法时， 其方法指针nativeFunc默认先指向resolveNativeMethod方法</p>
-</li>
-<li>
-<p>resolveNativeMethod方法中， 是一段通用的实现代码<br>
-首先，判断这个方法如果是静态方法，首先确保所属的class已经初始化，否则会报错<br>
-<img src="/images/java-JNI%E5%BA%94%E7%94%A8/c1b4d05e0a5342c8159fbc8187caf6c2fb514775.png" alt="c1b4d05e0a5342c8159fbc8187caf6c2fb514775"></p>
-</li>
-<li>
-<p>接着先在内部本地方法表中查询。<br>
-内部本地方法表是一个集合，这个集合里包含了java语言和虚拟机本身用到的所有native方法<br>
-根据类描述符的hash值从集合中寻找对应的方法<br>
-如果找到了，就修改nativeFunc的指针，指向对应方法</p>
-</li>
-<li>
-<p>如果内部本地方法表里没找到， 才会通过System.loadLibrary加载的so，虚拟机会将所有的so存入一个表中<br>
-gDvm.nativeLibs是一个HashTable，其中存的是动态链接库的信息。其中的数据是通过System.loadLibrary添加进去的。</p>
-</li>
-</ol>
-<p>① 检查是否已经加载过该so，如果是还需要判断加载so的classLoader是否相同，不同的话也会报错，<br>
-②如果没有加载过，则使用dlopen打开so，然后创建一个ShareLib加入到gDvm.nativeLibs哈希表中。<br>
-③如果so中有JNI_OnLoad方法，则执行该方法。我们可以在该方法中做一些初始化工作，还可以手动建立java类中的native方法和so中的native方法的对应关系。</p>
-<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/0b7976fbf81b">【源码解读】JNI的实现原理</a></p>
 
       
     </div>
@@ -1874,583 +2435,6 @@ epoll原理见<a target="_blank" rel="noopener" href="http://doc.minidown.cn/ejx
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-Socket%E5%BA%94%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-Socket%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">java-Socket应用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-08-15 23:44:16 / 修改时间：23:54:43" itemprop="dateCreated datePublished" datetime="2022-08-15T23:44:16+08:00">2022-08-15</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">java高级应用</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-Socket%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java-Socket%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#fu-wu-duan">服务端</a>
-<ul>
-<li><a href="#fu-wu-duan-kai-qi-guo-cheng">服务端开启过程</a></li>
-<li><a href="#q-server-duan-ru-he-you-xiao-pan-duan-client-xiao-xi-chuan-shu-wan-bi">Q：server端如何有效判断client消息传输完毕？</a></li>
-<li><a href="#q-ru-he-bi-mian-shang-mian-yong-while-xun-huan-chu-li-yi-ge-qing-qiu-chu-li-shi-yong-shi-jiao-jiu-ying-xiang-liao-qi-ta-qing-qiu-de-chu-li">Q：如何避免上面用while循环处理一个请求处理时用时较久，影响了其他请求的处理?</a></li>
-<li><a href="#serversocket-xuan-xiang">ServerSocket选项</a></li>
-</ul>
-</li>
-<li><a href="#ke-hu-duan">客户端</a>
-<ul>
-<li><a href="#q-ke-hu-duan-jin-xing-shu-chu-liu-shu-chu-shi-ru-guo-zhi-xing-liao-outputstream-close-hou-huan-xu-yao-zhi-xing-socket-close-ma">Q: 客户端进行输出流输出时，如果执行了outputStream.close()后， 还需要执行socket.close()吗？</a></li>
-</ul>
-</li>
-<li><a href="#udp">UDP</a>
-<ul>
-<li><a href="#q-ru-guo-yao-zuo-udp-tong-xin-na-me-yao-yong-shi-me-socket">Q：如果要做UDP通信， 那么要用什么socket？</a></li>
-<li><a href="#q-datagramsocket-he-java-zhong-pu-tong-serversocket-huo-zhe-socket-ke-hu-duan-de-qu-bie">Q: DatagramSocket和java中普通ServerSocket或者 Socket客户端的区别？</a></li>
-<li><a href="#q-multicastsocket-shi-shi-me">Q： MulticastSocket是什么？</a></li>
-<li><a href="#q-shang-mian-de-socketa-hui-fa-song-gei-zi-ji-ma">Q: 上面的socketA会发送给自己吗？</a></li>
-</ul>
-</li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="fu-wu-duan">服务端</span><a href="#fu-wu-duan" class="header-anchor">#</a></h1>
-<h2><span id="fu-wu-duan-kai-qi-guo-cheng">服务端开启过程</span><a href="#fu-wu-duan-kai-qi-guo-cheng" class="header-anchor">#</a></h2>
-<p>用accept开启一个Socket</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ServerSocket</span> <span class="variable">server</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ServerSocket</span>(port);</span><br><span class="line"><span class="type">Socket</span> <span class="variable">socket</span> <span class="operator">=</span> server.accept();</span><br></pre></td></tr></table></figure>
-<p>调用后会进入阻塞。</p>
-<ul>
-<li>用socket.getInputStream()， 得到一个socket输入流， 进行read时，就是从客户端那边读取发来的数据</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">InputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> socket.getInputStream();</span><br><span class="line"><span class="keyword">while</span>(len = inputStream.read(bytes))!=-<span class="number">1</span>) &#123;</span><br><span class="line">	<span class="comment">//注意指定编码格式，发送方和接收方需要统一</span></span><br><span class="line">	sb.append(<span class="keyword">new</span> <span class="title class_">String</span>(bytes, <span class="number">0</span>, len, <span class="string">&quot;UTF-8&quot;</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>如果server端要返回数据，就再从socket对象里get输出流，往输出流写东西，就会传到客户端那边了。</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">OuputStream</span> <span class="variable">outputStream</span> <span class="operator">=</span> socket.getOuputStream();</span><br><span class="line">outputStream.write(<span class="string">&quot;hahah, this is response&quot;</span>.getBytes(<span class="string">&quot;UTF-8&quot;</span>))</span><br></pre></td></tr></table></figure>
-<hr>
-<h2><span id="q-server-duan-ru-he-you-xiao-pan-duan-client-xiao-xi-chuan-shu-wan-bi">Q：server端如何有效判断client消息传输完毕？</span><a href="#q-server-duan-ru-he-you-xiao-pan-duan-client-xiao-xi-chuan-shu-wan-bi" class="header-anchor">#</a></h2>
-<p>A：</p>
-<ul>
-<li>客户端不再发送时，那边会调用socket.shutdownOutput(),  对方的read()方法就会返回-1.<br>
-*建议使用长度+类型+数据的协议传输方式， 这样服务端可以明确直到自己这一次这要读多少字节以及是什么样的消息， 减少做消息结束判断导致的异常问题。</li>
-</ul>
-<hr>
-<h2><span id="q-ru-he-bi-mian-shang-mian-yong-while-xun-huan-chu-li-yi-ge-qing-qiu-chu-li-shi-yong-shi-jiao-jiu-ying-xiang-liao-qi-ta-qing-qiu-de-chu-li">Q：如何避免上面用while循环处理一个请求处理时用时较久，影响了其他请求的处理?</span><a href="#q-ru-he-bi-mian-shang-mian-yong-while-xun-huan-chu-li-yi-ge-qing-qiu-chu-li-shi-yong-shi-jiao-jiu-ying-xiang-liao-qi-ta-qing-qiu-de-chu-li" class="header-anchor">#</a></h2>
-<p>A:<br>
-每当accept 返回1个socket之后， 把这个socket放进一个线程中，交给线程池去处理。</p>
-<hr>
-<h2><span id="serversocket-xuan-xiang">ServerSocket选项</span><a href="#serversocket-xuan-xiang" class="header-anchor">#</a></h2>
-<ol>
-<li>SO_TIMEOUT  accept的超时时间</li>
-<li>SO_REUSEADDR   是否支持复用端口<br>
-即另一个serverSocket还没有close的时候， 新的serverSocket能否重用那个端口。</li>
-<li>SO_RCVBUF 缓冲区大小<br>
-收到到特定缓存的大小才会从inputStream中返回。</li>
-</ol>
-<ul>
-<li>设置方式：serverScoket.setSoXXX(…)</li>
-</ul>
-<hr>
-<h1><span id="ke-hu-duan">客户端</span><a href="#ke-hu-duan" class="header-anchor">#</a></h1>
-<h2><span id="q-ke-hu-duan-jin-xing-shu-chu-liu-shu-chu-shi-ru-guo-zhi-xing-liao-outputstream-close-hou-huan-xu-yao-zhi-xing-socket-close-ma">Q: 客户端进行输出流输出时，如果执行了outputStream.close()后， 还需要执行socket.close()吗？</span><a href="#q-ke-hu-duan-jin-xing-shu-chu-liu-shu-chu-shi-ru-guo-zhi-xing-liao-outputstream-close-hou-huan-xu-yao-zhi-xing-socket-close-ma" class="header-anchor">#</a></h2>
-<p>A：<br>
-不需要。对于同一个socket， 如果关闭了输出流比如pw.close()， 则与该输出流关联的socket也会关闭， 所以一般不需要关闭输出流。  当关闭socket的时候， 输出流也会同时关闭。<br>
-因此如果执行了以下代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从socket中拿到inputStream和outputStream</span></span><br><span class="line">...</span><br><span class="line">outputStream.close()</span><br><span class="line">inputStream.read();</span><br><span class="line">inputStream.close();</span><br></pre></td></tr></table></figure>
-<p>这时候inputStream.read()的就会报错， 因为socket已经被关闭了。</p>
-<h1><span id="udp">UDP</span><a href="#udp" class="header-anchor">#</a></h1>
-<h2><span id="q-ru-guo-yao-zuo-udp-tong-xin-na-me-yao-yong-shi-me-socket">Q：如果要做UDP通信， 那么要用什么socket？</span><a href="#q-ru-guo-yao-zuo-udp-tong-xin-na-me-yao-yong-shi-me-socket" class="header-anchor">#</a></h2>
-<p>A: DatagramSocket</p>
-<hr>
-<h2><span id="q-datagramsocket-he-java-zhong-pu-tong-serversocket-huo-zhe-socket-ke-hu-duan-de-qu-bie">Q: DatagramSocket和java中普通ServerSocket或者 Socket客户端的区别？</span><a href="#q-datagramsocket-he-java-zhong-pu-tong-serversocket-huo-zhe-socket-ke-hu-duan-de-qu-bie" class="header-anchor">#</a></h2>
-<p>A:</p>
-<ul>
-<li>TCP的socket建立时， 需要先指定对端口的op和端口， 并用输出流去输出数据</li>
-<li>而java中的UDP客户端建立时， 不需要在socket里指定ip和端口， 而是将ip+端口放在datagramPacket包里去指定。(所以一个socket可以用来发送好几份不同目的组的UDP包）</li>
-<li>另一个区别是， tcp两边用流来传输数据， 而UDP用datagramPacket来传递数据</li>
-</ul>
-<hr>
-<h2><span id="q-multicastsocket-shi-shi-me">Q： MulticastSocket是什么？</span><a href="#q-multicastsocket-shi-shi-me" class="header-anchor">#</a></h2>
-<p>A：<br>
-多点广播的socket实现， 也是用DatagramPacket来传输数据。<br>
-类似于一个客户端可以把数据包发给号借给目的端。<br>
-multicastSocket.joinGroup(多播ip)<br>
-则这个socket会加入到这个多播组中。<br>
-举例：</p>
-<blockquote>
-<blockquote>
-<p>假设环境中有4个MulticastSocket,  分别为socketA、socketB、socketC、socketD。<br>
-socketA、socketB、socketC都通过joinGroup方法，加入到了224.0.0.1这个多播组中<br>
-那么当socketA发送了某个DatagramPacket时，会只发送给B和C， 不会发送给D。</p>
-</blockquote>
-</blockquote>
-<hr>
-<h2><span id="q-shang-mian-de-socketa-hui-fa-song-gei-zi-ji-ma">Q: 上面的socketA会发送给自己吗？</span><a href="#q-shang-mian-de-socketa-hui-fa-song-gei-zi-ji-ma" class="header-anchor">#</a></h2>
-<p>A:<br>
-默认会的。</p>
-<p>发送给自己的话， 那就是设置了环回。<br>
-如果执行过 multicastSocket.setLoopbackMode(true)，那就是禁止环回机制。<br>
-注意：默认是开启的。</p>
-<hr>
-<p>参考资料：<br>
-<a target="_blank" rel="noopener" href="https://blog.csdn.net/a78270528/article/details/80318571%EF%BC%88%E8%BF%99%E7%AF%87%E5%86%99%E5%BE%97%E5%BE%88%E6%A3%92%EF%BC%89">https://blog.csdn.net/a78270528/article/details/80318571（这篇写得很棒）</a><br>
-<a target="_blank" rel="noopener" href="https://blog.csdn.net/woshisap/article/details/6597413">https://blog.csdn.net/woshisap/article/details/6597413</a><br>
-<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_44618862/article/details/98480120">https://blog.csdn.net/weixin_44618862/article/details/98480120</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">java安全管理器应用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-08-15 23:44:16 / 修改时间：23:57:37" itemprop="dateCreated datePublished" datetime="2022-08-15T23:44:16+08:00">2022-08-15</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">java高级应用</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/15/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java-base/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#java-an-quan-lei-ku-chang-jian-wen-ti">Java安全类库常见问题</a>
-<ul>
-<li><a href="#q-you-ji-chong-fang-shi-ke-yi-qi-dong-an-quan-guan-li-qi">Q：有几种方式可以启动安全管理器？</a></li>
-<li><a href="#q-ru-guo-wo-bu-she-zhi-an-quan-guan-li-qi-zhi-jie-pao-system-getproperty-hui-bao-quan-xian-cuo-wu-ma">Q：如果我不设置安全管理器，直接跑System.getProperty，会报权限错误吗？</a></li>
-<li><a href="#q-yin-shi-qi-dong-zhong-ru-guo-zhi-pei-liao-djava-security-manager-dan-mei-you-pei-djava-security-policy-na-me-shang-mian-de-wen-jian-yi-ji-xi-tong-pei-zhi-shi-du-yun-xu-du-huan-shi-du-bu-yun-xu-du">Q: 隐式启动中，如果只配了-Djava.security.manager ，但没有配-Djava.security.policy， 那么上面的文件以及系统配置是都允许读，还是都不允许读？</a></li>
-<li><a href="#q-ru-guo-wo-zhi-qian-you-yin-shi-qi-dong-ci-shi-new-liao-yi-ge-xin-de-securitymanager-fang-jin-qu-ci-shi-shi-fou-huan-you-gai-shu-xing-de-read-quan-xian">Q：如果我之前有隐式启动，此时new了一个新的SecurityManager放进去，此时是否还有该属性的read权限？</a></li>
-<li><a href="#chang-jian-de-java-an-quan-quan-xian">常见的java 安全权限</a></li>
-<li><a href="#q-xiang-xi-jiang-jiang-an-quan-guan-li-qi-de-ying-yong-chang-jing">Q： 详细讲讲安全管理器的应用场景？</a></li>
-<li><a href="#q-shang-mian-zhe-ge-li-zi-zhong-ru-guo-e-yi-diao-yong-zhe-zi-ji-zai-an-quan-guan-li-qi-zhong-zeng-jia-zhe-chong-quan-xian-de-chu-li-zen-me-ban">Q： 上面这个例子中， 如果恶意调用者自己在安全管理器中增加这种权限的处理怎么办？</a></li>
-<li><a href="#q-jia-she-mou-fu-wu-shi-xian-liao-yi-ge-zi-ding-yi-classloader-zhi-chi-cong-wang-luo-huo-qu-xin-ren-ke-hu-chuan-lai-de-jar-bao-bing-zai-zi-ji-de-fu-wu-zhong-zhi-xing-na-me-ying-gai-ru-he-fang-zhi-jia-zai-bu-ke-xin-de-jar-bao-ni">Q： 假设某服务实现了一个自定义classLoader， 支持从网络获取信任客户传来的jar包并在自己的服务中执行， 那么应该如何防止加载不可信的jar包呢？</a></li>
-<li><a href="#q-bu-jia-yan-zhi-de-ha-xi-kou-ling-ha-xi-you-shi-me-que-xian">Q：不加盐值的哈希口令哈希有什么缺陷？</a></li>
-<li><a href="#q-dui-kou-ling-zuo-ha-xi-jia-yan-zhi-shi-you-shi-me-yao-qiu">Q：对口令做哈希加盐值时有什么要求？</a></li>
-</ul>
-</li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="java-an-quan-lei-ku-chang-jian-wen-ti">Java安全类库常见问题</span><a href="#java-an-quan-lei-ku-chang-jian-wen-ti" class="header-anchor">#</a></h1>
-<h2><span id="q-you-ji-chong-fang-shi-ke-yi-qi-dong-an-quan-guan-li-qi">Q：有几种方式可以启动安全管理器？</span><a href="#q-you-ji-chong-fang-shi-ke-yi-qi-dong-an-quan-guan-li-qi" class="header-anchor">#</a></h2>
-<p>A：两种方式<br>
-隐式启动： 启动命令里加-Djava.security.manager， 即可开启安全管理器。<br>
-显示启动： 代码里自己new一个SecurityManager或者继承一个新子类， 然后用System.setSecurityManager(xxxSecurityManager)来设置</p>
-<hr>
-<p>看以下代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SecurityManagerTest</span> &#123;    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> FileNotFoundException &#123;    </span><br><span class="line">    System.out.println(System.getProperty(<span class="string">&quot;file.encoding&quot;</span>));  </span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2><span id="q-ru-guo-wo-bu-she-zhi-an-quan-guan-li-qi-zhi-jie-pao-system-getproperty-hui-bao-quan-xian-cuo-wu-ma">Q：如果我不设置安全管理器，直接跑System.getProperty，会报权限错误吗？</span><a href="#q-ru-guo-wo-bu-she-zhi-an-quan-guan-li-qi-zhi-jie-pao-system-getproperty-hui-bao-quan-xian-cuo-wu-ma" class="header-anchor">#</a></h2>
-<p>A：<br>
-不会报错误。 如果隐式和显示启动都没做，那么System里的SecurityManager就是null，那么就不会进行检查。<br>
-可以看下System.getProperty里的源码：<br>
-<img src="/images/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/492830d481c84ff56c99dec832d0939d6616b824.png" alt="492830d481c84ff56c99dec832d0939d6616b824"></p>
-<hr>
-<h2><span id="q-yin-shi-qi-dong-zhong-ru-guo-zhi-pei-liao-djava-security-manager-dan-mei-you-pei-djava-security-policy-na-me-shang-mian-de-wen-jian-yi-ji-xi-tong-pei-zhi-shi-du-yun-xu-du-huan-shi-du-bu-yun-xu-du">Q: 隐式启动中，如果只配了-Djava.security.manager ，但没有配-Djava.security.policy， 那么上面的文件以及系统配置是都允许读，还是都不允许读？</span><a href="#q-yin-shi-qi-dong-zhong-ru-guo-zhi-pei-liao-djava-security-manager-dan-mei-you-pei-djava-security-policy-na-me-shang-mian-de-wen-jian-yi-ji-xi-tong-pei-zhi-shi-du-yun-xu-du-huan-shi-du-bu-yun-xu-du" class="header-anchor">#</a></h2>
-<p>A：<br>
-都不允许读。 即开启后，不在policy允许范围内的，都默认不允许读。</p>
-<hr>
-<ul>
-<li>
-<p>如果要允许读文件以及读file.encoding那个系统配置， 需要加上-Djava.security.policy=xxx.policy ， 指明policy文件。</p>
-</li>
-<li>
-<p>文件里大概长这样<br>
-<img src="/images/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/9fe292ac9397f17154eb131f2b7ac65ae6bbfa7a.png" alt="9fe292ac9397f17154eb131f2b7ac65ae6bbfa7a"><br>
-注意policy是拼在-Djava.security.manager的后面<br>
-<img src="/images/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/5ef1de92e4ef3956fc00c8830f82479b77213629.png" alt="5ef1de92e4ef3956fc00c8830f82479b77213629"></p>
-</li>
-</ul>
-<hr>
-<p>显示启动，就是自己new一个SecurityManager，并set进去。</p>
-<h2><span id="q-ru-guo-wo-zhi-qian-you-yin-shi-qi-dong-ci-shi-new-liao-yi-ge-xin-de-securitymanager-fang-jin-qu-ci-shi-shi-fou-huan-you-gai-shu-xing-de-read-quan-xian">Q：如果我之前有隐式启动，此时new了一个新的SecurityManager放进去，此时是否还有该属性的read权限？</span><a href="#q-ru-guo-wo-zhi-qian-you-yin-shi-qi-dong-ci-shi-new-liao-yi-ge-xin-de-securitymanager-fang-jin-qu-ci-shi-shi-fou-huan-you-gai-shu-xing-de-read-quan-xian" class="header-anchor">#</a></h2>
-<p><img src="/images/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/eb6b0119d97e6e30fd93f610fde5a8e5dc4ecd6b.png" alt="eb6b0119d97e6e30fd93f610fde5a8e5dc4ecd6b"></p>
-<p>A：没有了，之前由启动参数配进去的安全管理器已经被你覆盖掉了</p>
-<p>对于隐式启动和显示启动， 都是默认没有任何可用权限！</p>
-<p>都是白名单机制， 无黑名单机制。</p>
-<hr>
-<h2><span id="chang-jian-de-java-an-quan-quan-xian">常见的java 安全权限</span><a href="#chang-jian-de-java-an-quan-quan-xian" class="header-anchor">#</a></h2>
-<p>都是能从名字就知道什么作用的，瞄一眼有个印象就行，大概知道java里这些功能可能都会有权限。</p>
-<ul>
-<li>
-<p>java.security.AllPermission 所有权限的集合</p>
-</li>
-<li>
-<p>java.util.PropertyPermission 系统/环境属性权限<br>
-就是System.getProperty(<a target="_blank" rel="noopener" href="http://xxx.xxx.xxx">xxx.xxx.xxx</a>)的权限</p>
-</li>
-<li>
-<p>java.lang.RuntimePermission 运行时权限<br>
-这个安卓用的很多，</p>
-</li>
-<li>
-<p>java.net.SocketPermission Socket权限</p>
-</li>
-<li>
-<p>java.io.FilePermission 文件权限,包括读写,删除,执行</p>
-</li>
-<li>
-<p>java.io.SerializablePermission 序列化权限</p>
-</li>
-<li>
-<p>java.lang.reflect.ReflectPermission 反射权限</p>
-</li>
-<li>
-<p>java.security.UnresolvedPermission 未解析的权限</p>
-</li>
-<li>
-<p>java.net.NetPermission 网络权限</p>
-</li>
-<li>
-<p>java.awt.AWTPermission AWT权限</p>
-</li>
-<li>
-<p>java.sql.SQLPermission 数据库sql权限</p>
-</li>
-<li>
-<p>java.security.SecurityPermission 安全控制方面的权限</p>
-</li>
-<li>
-<p>java.util.logging.LoggingPermission 日志控制权限</p>
-</li>
-<li>
-<p>javax.net.ssl.SSLPermission 安全连接权限</p>
-</li>
-<li>
-<p>javax.security.auth.AuthPermission 认证权限</p>
-</li>
-<li>
-<p>javax.sound.sampled.AudioPermission 音频系统资源的访问权限</p>
-</li>
-</ul>
-<hr>
-<p>关于上面的permission权限，有一个重要的应用，就是在ClassLoader中。<br>
-如果JVM开启了SecurityManager，  ClasserLoader就会在加载类的时候调用Policy.getPermissions来获取代码权限集， 并将代码来源和权限集封装到保护域。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyClassLoader</span> <span class="keyword">extends</span> <span class="title class_">URLClassLoader</span> &#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	protect PermissionCollection <span class="title function_">getPermissions</span><span class="params">(CodeSource cs)</span> &#123;</span><br><span class="line">		<span class="type">PermissionCollection</span> <span class="variable">pc</span> <span class="operator">=</span> <span class="built_in">super</span>.getPermissions(cs);</span><br><span class="line">		<span class="comment">// 添加权限</span></span><br><span class="line">		pc.add(<span class="keyword">new</span> <span class="title class_">XXXPersion</span>());</span><br><span class="line">		<span class="keyword">return</span> pc;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<h2><span id="q-xiang-xi-jiang-jiang-an-quan-guan-li-qi-de-ying-yong-chang-jing">Q： 详细讲讲安全管理器的应用场景？</span><a href="#q-xiang-xi-jiang-jiang-an-quan-guan-li-qi-de-ying-yong-chang-jing" class="header-anchor">#</a></h2>
-<p>A：</p>
-<ul>
-<li>如果你是某个平台开发者，提供了某个SDK给其他人使用， 这里面涉及了某个文件读取或者文件写入操作。<br>
-但是你只希望他用这个sdk去操作平台下特定目录的文件，而不是去动其他的位置（比如根目录之类的）<br>
-于是你就可以给sdk代码封装上一层权限， 在这个代码块中只能读特定目录（就像上面的filePermission）</li>
-<li>或者你通过的公开类中有个高危方法deleteXXX， 你希望拥有管理员权限的人才能调用，其他人不能调用， 于是可以在高危方法中加一层权限， 下面的例子来自安全编码规范， removeEncryt就是高危方法， 调用前会检查一下是否具有这个自定义的权限类型</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SensitiveHash</span> &#123;</span><br><span class="line">	<span class="keyword">void</span> <span class="title function_">removeEntry</span><span class="params">(Object key)</span> &#123;</span><br><span class="line">		check(<span class="string">&quot;removeKeyPerssion&quot;</span>);</span><br><span class="line">		ht.remove(key);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">check</span><span class="params">(String dire)</span> &#123;</span><br><span class="line">		<span class="type">SecurityManager</span> <span class="variable">sm</span> <span class="operator">=</span> System.getSecurityManager();</span><br><span class="line">		<span class="keyword">if</span> (sm!=<span class="literal">null</span>) &#123;</span><br><span class="line">			sm.checkSecurityAccess(dire)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<h2><span id="q-shang-mian-zhe-ge-li-zi-zhong-ru-guo-e-yi-diao-yong-zhe-zi-ji-zai-an-quan-guan-li-qi-zhong-zeng-jia-zhe-chong-quan-xian-de-chu-li-zen-me-ban">Q： 上面这个例子中， 如果恶意调用者自己在安全管理器中增加这种权限的处理怎么办？</span><a href="#q-shang-mian-zhe-ge-li-zi-zhong-ru-guo-e-yi-diao-yong-zhe-zi-ji-zai-an-quan-guan-li-qi-zhong-zeng-jia-zhe-chong-quan-xian-de-chu-li-zen-me-ban" class="header-anchor">#</a></h2>
-<p>A： setSecurityManager方法API也是需要权限的。 作为客户端程序一般没有权限去设置SDK的安全管理器。 java默认的policy配置文件也没有放开这个权限。需要支持在policy里setSecurityManager才行。</p>
-<hr>
-<h2><span id="q-jia-she-mou-fu-wu-shi-xian-liao-yi-ge-zi-ding-yi-classloader-zhi-chi-cong-wang-luo-huo-qu-xin-ren-ke-hu-chuan-lai-de-jar-bao-bing-zai-zi-ji-de-fu-wu-zhong-zhi-xing-na-me-ying-gai-ru-he-fang-zhi-jia-zai-bu-ke-xin-de-jar-bao-ni">Q： 假设某服务实现了一个自定义classLoader， 支持从网络获取信任客户传来的jar包并在自己的服务中执行， 那么应该如何防止加载不可信的jar包呢？</span><a href="#q-jia-she-mou-fu-wu-shi-xian-liao-yi-ge-zi-ding-yi-classloader-zhi-chi-cong-wang-luo-huo-qu-xin-ren-ke-hu-chuan-lai-de-jar-bao-bing-zai-zi-ji-de-fu-wu-zhong-zhi-xing-na-me-ying-gai-ru-he-fang-zhi-jia-zai-bu-ke-xin-de-jar-bao-ni" class="header-anchor">#</a></h2>
-<p>A	：</p>
-<ol>
-<li>取出jar包中的证书资源</li>
-<li>获取服务自身的密钥</li>
-<li>校验证书是否是这些密钥的受信任签名（即我要识别你的这个证书是不是从我这里签发出去的）</li>
-</ol>
-<blockquote>
-<blockquote>
-<p>注意，不要使用URLClassLoaer和java.util.jar里的自动签名校验机制，他只是检查jar包中的签名和公钥是否匹配，这仅仅是完整性校验， 这2者是可以被全部替换的</p>
-</blockquote>
-</blockquote>
-<hr>
-<h2><span id="q-bu-jia-yan-zhi-de-ha-xi-kou-ling-ha-xi-you-shi-me-que-xian">Q：不加盐值的哈希口令哈希有什么缺陷？</span><a href="#q-bu-jia-yan-zhi-de-ha-xi-kou-ling-ha-xi-you-shi-me-que-xian" class="header-anchor">#</a></h2>
-<p>A：</p>
-<p>生日判定，可以快速找到一个口令</p>
-<p>可以利用事先计算好的哈希列表几秒钟破解。</p>
-<hr>
-<h2><span id="q-dui-kou-ling-zuo-ha-xi-jia-yan-zhi-shi-you-shi-me-yao-qiu">Q：对口令做哈希加盐值时有什么要求？</span><a href="#q-dui-kou-ling-zuo-ha-xi-jia-yan-zhi-shi-you-shi-me-yao-qiu" class="header-anchor">#</a></h2>
-<p>A:</p>
-<p>盐值至少应该包含8字节而且必须是由安全随机数产生。( 例如如果问你，sha256+4字节盐值，那肯定就是错误的！）</p>
-<p>应使用强哈希函数，推荐使用SHA-256或者更加安全的哈希函数。</p>
-<p>迭代次数默认推荐10000次，对于性能有特殊要求（比如嵌入式系统）的产品低可迭代1000次。</p>
-<p>对于单向哈希时，其输出长度应该不小于256比特</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/15/%E9%9A%8F%E7%AC%94/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/15/%E9%9A%8F%E7%AC%94/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/" class="post-title-link" itemprop="url">原神旅游日记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-08-15 00:07:32 / 修改时间：00:14:35" itemprop="dateCreated datePublished" datetime="2022-08-15T00:07:32+08:00">2022-08-15</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9A%8F%E7%AC%94/" itemprop="url" rel="index"><span itemprop="name">随笔</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9A%8F%E7%AC%94/%E6%B8%B8%E6%88%8F/" itemprop="url" rel="index"><span itemprop="name">游戏</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/15/%E9%9A%8F%E7%AC%94/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/15/%E9%9A%8F%E7%AC%94/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>0</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<!-- tocstop -->
-</div> 
-<p><img src="/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" alt="1660493655011"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2522,7 +2506,7 @@ socketA、socketB、socketC都通过joinGroup方法，加入到了224.0.0.1这�
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-count">164</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -2533,7 +2517,7 @@ socketA、socketB、socketC都通过joinGroup方法，加入到了224.0.0.1这�
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -2593,7 +2577,7 @@ socketA、socketB、socketC都通过joinGroup方法，加入到了224.0.0.1这�
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共292.3k字</span>
+  <span class="post-count">博客全站共296.7k字</span>
 </div>
 
         

@@ -181,6 +181,474 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/grpc/grpc%E5%8F%8C%E5%90%91%E6%B5%81%E5%8F%8A%E5%BA%94%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/grpc/grpc%E5%8F%8C%E5%90%91%E6%B5%81%E5%8F%8A%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">grpc双向流及应用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-25 23:47:49" itemprop="dateCreated datePublished" datetime="2022-08-25T23:47:49+08:00">2022-08-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-09-24 00:17:19" itemprop="dateModified" datetime="2022-09-24T00:17:19+08:00">2022-09-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E9%80%9A%E4%BF%A1%E7%B1%BB%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">通信类组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E9%80%9A%E4%BF%A1%E7%B1%BB%E7%BB%84%E4%BB%B6/grpc%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index"><span itemprop="name">grpc远程调用框架</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/grpc/grpc%E5%8F%8C%E5%90%91%E6%B5%81%E5%8F%8A%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/grpc/grpc%E5%8F%8C%E5%90%91%E6%B5%81%E5%8F%8A%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#ke-hu-duan-de-shuang-xiang-liu-diao-yong">客户端的双向流调用</a></li>
+<li><a href="#fu-wu-duan-de-chu-li-fang-shi">服务端的处理方式：</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<p><a target="_blank" rel="noopener" href="http://doc.oschina.net/grpc?t=60134">http://doc.oschina.net/grpc?t=60134</a><br>
+一个 双向流式 RPC 是双方使用读写流去发送一个消息序列。<br>
+两个流独立操作，因此客户端和服务器 可以以任意喜欢的顺序读写：<br>
+比如， 服务器可以在写入响应前等待接收所有的客户端消息<br>
+或者可以交替 的读取和写入消息<br>
+或者其他读写的组合。</p>
+<p>每个流中的消息顺序被预留。你可以通过在请求和响应前加 stream 关键字去制定方法的类型。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Accepts a stream of RouteNotes sent while a route is being traversed,</span></span><br><span class="line"><span class="comment">// while receiving other RouteNotes (e.g. from other users).</span></span><br><span class="line">rpc <span class="title function_">RouteChat</span><span class="params">(stream RouteNote)</span> returns (stream RouteNote) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h1><span id="ke-hu-duan-de-shuang-xiang-liu-diao-yong">客户端的双向流调用</span><a href="#ke-hu-duan-de-shuang-xiang-liu-diao-yong" class="header-anchor">#</a></h1>
+<ol>
+<li>定义一个reponseOberserver， 即响应观察者，用于定义如何处理服务端返回的消息。 一般都是把消息放到一个某个阻塞队列或者单容量队列SettableFuture中。</li>
+<li>调用stub.sendMessage(reponseOberserver)，  即告诉grpc框架， 我要用这个reponseOberserver去处理sendMessage消息的响应。<br>
+注意，这个sendMesage方法名，取决于我们的proto中怎么定义的。</li>
+<li>然后stub.sendMessage()方法回返回给我们一个requestObserver，让我们用这个观察者.onNext()去发送请求，可以任意发多次，都是立刻返回的。</li>
+<li>当不需要再发送时，可以调用onCompleted告知对方可以结束了</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">routeChat</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">   info(<span class="string">&quot;*** RoutChat&quot;</span>);</span><br><span class="line">   <span class="keyword">final</span> SettableFuture&lt;Void&gt; finishFuture = SettableFuture.create();</span><br><span class="line">   <span class="comment">// 定义了如何处理收到的返回消息观察者</span></span><br><span class="line"><span class="type">StreamObserver</span> <span class="variable">reponseObserver</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StreamObserver</span>&lt;RouteNote&gt;() &#123;</span><br><span class="line">         <span class="meta">@Override</span></span><br><span class="line">         <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNext</span><span class="params">(RouteNote note)</span> &#123;</span><br><span class="line">           info(<span class="string">&quot;Got message \&quot;&#123;0&#125;\&quot; at &#123;1&#125;, &#123;2&#125;&quot;</span>, note.getMessage(), note.getLocation()</span><br><span class="line">               .getLatitude(), note.getLocation().getLongitude());</span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">         <span class="meta">@Override</span></span><br><span class="line">         <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onError</span><span class="params">(Throwable t)</span> &#123;</span><br><span class="line">           finishFuture.setException(t);</span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">         <span class="meta">@Override</span></span><br><span class="line">         <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onCompleted</span><span class="params">()</span> &#123;</span><br><span class="line">		<span class="comment">// 往finishFuture设置空时，说明完成了消息流关闭了</span></span><br><span class="line">           finishFuture.set(<span class="literal">null</span>);</span><br><span class="line">         &#125;</span><br><span class="line">       &#125;;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 框架返回给我一个请求流观察者，让我用这个观察者.onNext（message）去发请求， 返回结果和我传给他的responseServer绑定了。</span></span><br><span class="line">   StreamObserver&lt;RouteNote&gt; requestObserver =</span><br><span class="line">       asyncStub.routeChat();</span><br><span class="line"></span><br><span class="line">   <span class="keyword">try</span> &#123;</span><br><span class="line">     RouteNote[] requests =</span><br><span class="line">         &#123;newNote(<span class="string">&quot;First message&quot;</span>, <span class="number">0</span>, <span class="number">0</span>), newNote(<span class="string">&quot;Second message&quot;</span>, <span class="number">0</span>, <span class="number">1</span>),</span><br><span class="line">             newNote(<span class="string">&quot;Third message&quot;</span>, <span class="number">1</span>, <span class="number">0</span>), newNote(<span class="string">&quot;Fourth message&quot;</span>, <span class="number">1</span>, <span class="number">1</span>)&#125;;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">for</span> (RouteNote request : requests) &#123;</span><br><span class="line">       info(<span class="string">&quot;Sending message \&quot;&#123;0&#125;\&quot; at &#123;1&#125;, &#123;2&#125;&quot;</span>, request.getMessage(), request.getLocation()</span><br><span class="line">           .getLatitude(), request.getLocation().getLongitude());</span><br><span class="line">       requestObserver.onNext(request);</span><br><span class="line">     &#125;</span><br><span class="line">     requestObserver.onCompleted();</span><br><span class="line"></span><br><span class="line">     finishFuture.get();</span><br><span class="line">     info(<span class="string">&quot;Finished RouteChat&quot;</span>);</span><br><span class="line">   &#125; <span class="keyword">catch</span> (Exception t) &#123;</span><br><span class="line">     requestObserver.onError(t);</span><br><span class="line">     logger.log(Level.WARNING, <span class="string">&quot;RouteChat Failed&quot;</span>, t);</span><br><span class="line">     <span class="keyword">throw</span> t;</span><br><span class="line">   &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<h1><span id="fu-wu-duan-de-chu-li-fang-shi">服务端的处理方式：</span><a href="#fu-wu-duan-de-chu-li-fang-shi" class="header-anchor">#</a></h1>
+<ol>
+<li>我们建立服务端的时候，需要调用nettyServer，建立netty服务，并绑定一个xxxServiceImpl抽象类。 这个xxxServiceImpl就是我们在proto中定义的server结构，支持处理我们定义的消息。</li>
+<li>xxxServiceImpl中， 有很多需要覆写的方法， 需要你定义如何处理收到的请求， 以及如何给客户端发送响应。发送响应的动作就是参数里的requestObserver.onNext(响应消息)</li>
+<li>返回的xxxService类，会在第一步提供给netty以及grpc框架，  收到消息时，会通过他的异步机制，分隔网络线程和业务线程，走到这边执行的地方。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span>	<span class="title class_">xxxService</span> extend   xxxServiceImpl&#123;</span><br><span class="line">     <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">listFeatures</span><span class="params">(Rectangle request, StreamObserver&lt;Feature&gt; responseObserver)</span> &#123;</span><br><span class="line">      <span class="type">int</span> <span class="variable">left</span> <span class="operator">=</span> min(request.getLo().getLongitude(), request.getHi().getLongitude());</span><br><span class="line">      <span class="type">int</span> <span class="variable">right</span> <span class="operator">=</span> max(request.getLo().getLongitude(), request.getHi().getLongitude());</span><br><span class="line">      <span class="type">int</span> <span class="variable">top</span> <span class="operator">=</span> max(request.getLo().getLatitude(), request.getHi().getLatitude());</span><br><span class="line">      <span class="type">int</span> <span class="variable">bottom</span> <span class="operator">=</span> min(request.getLo().getLatitude(), request.getHi().getLatitude());</span><br><span class="line"></span><br><span class="line">      <span class="keyword">for</span> (Feature feature : features) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!RouteGuideUtil.exists(feature)) &#123;</span><br><span class="line">          <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> <span class="variable">lat</span> <span class="operator">=</span> feature.getLocation().getLatitude();</span><br><span class="line">        <span class="type">int</span> <span class="variable">lon</span> <span class="operator">=</span> feature.getLocation().getLongitude();</span><br><span class="line">        <span class="keyword">if</span> (lon &gt;= left &amp;&amp; lon &lt;= right &amp;&amp; lat &gt;= bottom &amp;&amp; lat &lt;= top) &#123;</span><br><span class="line">          responseObserver.onNext(feature);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      responseObserver.onCompleted();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/25/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-25/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/25/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-25/" class="post-title-link" itemprop="url">2022-0825</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-25 23:12:42" itemprop="dateCreated datePublished" datetime="2022-08-25T23:12:42+08:00">2022-08-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-26 00:08:43" itemprop="dateModified" datetime="2022-08-26T00:08:43+08:00">2022-08-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">刷题日记</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022%E5%B9%B48%E6%9C%88/" itemprop="url" rel="index"><span itemprop="name">2022年8月</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/25/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-25/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/25/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-25/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#di-yi-ti-shuang-zhi-zhen">第一题双指针</a></li>
+<li><a href="#di-er-ti-bo-yi-lun-ji-yi-hua-sou-suo">第二题博弈论，记忆化搜索</a></li>
+<li><a href="#di-san-ti-er-fen-cha-zhao">第三题二分查找</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="di-yi-ti-shuang-zhi-zhen">第一题双指针</span><a href="#di-yi-ti-shuang-zhi-zhen" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/XltzEq/">剑指 Offer II 018. 有效的回文 - 力扣（LeetCode）</a></p>
+<p><img src="/images/2022-08-25/1661443175105.png" alt="1661443175105"></p>
+<p>双指针，处理字符串比较麻烦</p>
+<p>反正都是O(n)，不追求空间的话，用收集字符后反转再比较更块</p>
+<p>双指针做法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isPalindrome</span><span class="params">(String s)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">left</span> <span class="operator">=</span> <span class="number">0</span>, right = s.length()-<span class="number">1</span>;</span><br><span class="line">        s = s.toUpperCase();</span><br><span class="line">        <span class="comment">// todo:Character.isLetterOrDigit(s.charAt(right))可以代替</span></span><br><span class="line">         <span class="keyword">while</span>(left &lt;= right &amp;&amp; left &lt;s.length() &amp;&amp; !Character.isDigit(s.charAt(left)) &amp;&amp; !Character.isAlphabetic(s.charAt(left))) &#123;</span><br><span class="line">                left++;</span><br><span class="line">            &#125;   </span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span>(left &lt;= right &amp;&amp; right &gt;=<span class="number">0</span> &amp;&amp; !Character.isDigit(s.charAt(right)) &amp;&amp; !Character.isAlphabetic(s.charAt(right))) &#123;</span><br><span class="line">                right--;</span><br><span class="line">            &#125;   </span><br><span class="line">        <span class="keyword">while</span>(left &lt;right) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (s.charAt(left) != s.charAt(right)) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            left++;</span><br><span class="line">            right--;</span><br><span class="line">            <span class="keyword">while</span>(left &lt;= right &amp;&amp; left &lt;s.length() &amp;&amp; !Character.isDigit(s.charAt(left)) &amp;&amp; !Character.isAlphabetic(s.charAt(left))) &#123;</span><br><span class="line">                left++;</span><br><span class="line">            &#125;   </span><br><span class="line"></span><br><span class="line">            <span class="keyword">while</span>(left &lt;= right &amp;&amp; right &gt;=<span class="number">0</span> &amp;&amp; !Character.isDigit(s.charAt(right)) &amp;&amp; !Character.isAlphabetic(s.charAt(right))) &#123;</span><br><span class="line">                right--;</span><br><span class="line">            &#125;     </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>字符串翻转做法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isPalindrome</span><span class="params">(String s)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">left</span> <span class="operator">=</span> <span class="number">0</span>, right = s.length()-<span class="number">1</span>;</span><br><span class="line">        s = s.toUpperCase();</span><br><span class="line">        <span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span><span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">char</span> c : s.toCharArray()) &#123;</span><br><span class="line">            <span class="keyword">if</span> (Character.isLetterOrDigit(c)) &#123;</span><br><span class="line">                sb.append(c);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sb.toString().equals(sb.reverse().toString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意Character.isLetterOrDigit©就是判断是否是字母或者数字的意思</p>
+<p>注意sb.reverse()会改变自身</p>
+<h1><span id="di-er-ti-bo-yi-lun-ji-yi-hua-sou-suo">第二题博弈论，记忆化搜索</span><a href="#di-er-ti-bo-yi-lun-ji-yi-hua-sou-suo" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/stone-game-ii/">1140. 石子游戏 II - 力扣（LeetCode）</a></p>
+<p><img src="/images/2022-08-25/1661443467395.png" alt="1661443467395"></p>
+<p>这种博弈论问题，请直接dfs+记忆化搜索好吧，别纠结动态规划了</p>
+<p>而且直接考虑根据当前人的不同，选取最大或者最小值，不要考虑那个简化正负的那种策略。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    Integer[][][] dp;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">stoneGameII</span><span class="params">(<span class="type">int</span>[] piles)</span> &#123;</span><br><span class="line">        dp = <span class="keyword">new</span> <span class="title class_">Integer</span>[<span class="number">2</span>][piles.length][<span class="number">101</span>];</span><br><span class="line">        <span class="keyword">return</span> dfs(<span class="number">0</span>, <span class="number">1</span>, piles, <span class="literal">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 返回alice能拿到的石头</span></span><br><span class="line">    <span class="type">int</span> <span class="title function_">dfs</span><span class="params">(<span class="type">int</span> index, <span class="type">int</span> m, <span class="type">int</span>[] piles, <span class="type">boolean</span> isAlice)</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (index == piles.length) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (dp[isAlice ? <span class="number">0</span> : <span class="number">1</span>][index][m] != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> dp[isAlice ? <span class="number">0</span> : <span class="number">1</span>][index][m];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> <span class="variable">needDfsRes</span> <span class="operator">=</span> (isAlice ? Integer.MIN_VALUE :</span><br><span class="line">                Integer.MAX_VALUE);</span><br><span class="line">        <span class="type">int</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> index;i&lt;index + <span class="number">2</span>*m &amp;&amp; i &lt; piles.length;i++) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">dfsRes</span> <span class="operator">=</span> dfs(i+<span class="number">1</span>, Math.max(i - index + <span class="number">1</span>, m),</span><br><span class="line">                    piles, !isAlice);</span><br><span class="line">            <span class="keyword">if</span> (isAlice) &#123;</span><br><span class="line">                sum += piles[i];</span><br><span class="line">                needDfsRes = Math.max(needDfsRes, sum + dfsRes);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                needDfsRes = Math.min(needDfsRes, dfsRes);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        dp[isAlice ? <span class="number">0</span> : <span class="number">1</span>][index][m] = needDfsRes;</span><br><span class="line">        <span class="keyword">return</span> needDfsRes;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1><span id="di-san-ti-er-fen-cha-zhao">第三题二分查找</span><a href="#di-san-ti-er-fen-cha-zhao" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/single-element-in-a-sorted-array/">540. 有序数组中的单一元素 - 力扣（LeetCode）</a></p>
+<p><img src="/images/2022-08-25/1661443586836.png" alt="1661443586836"></p>
+<p>要求O(logn)，显然不能用异或的那个方法了</p>
+<p>既然是有序的，说明相同的2个数字一定是连在一起的</p>
+<p>那么在目标左边的连体数字，一定是偶数索引开头</p>
+<p>目标右边的连体数字，一定是奇数索引开头</p>
+<p>搞定</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">singleNonDuplicate</span><span class="params">(<span class="type">int</span>[] nums)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">left</span> <span class="operator">=</span> <span class="number">0</span>, right = nums.length;</span><br><span class="line">        <span class="keyword">while</span>(left &lt; right) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">mid</span> <span class="operator">=</span> left + (right - left)/<span class="number">2</span>;</span><br><span class="line">            <span class="type">int</span> <span class="variable">num1</span> <span class="operator">=</span> nums[mid];</span><br><span class="line">            <span class="type">int</span> <span class="variable">index1</span> <span class="operator">=</span> -<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span> (mid-<span class="number">1</span> &gt;=<span class="number">0</span> &amp;&amp; nums[mid-<span class="number">1</span>] == num1) &#123;</span><br><span class="line">                index1 = mid-<span class="number">1</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (mid+<span class="number">1</span>&lt;nums.length &amp;&amp; nums[mid+<span class="number">1</span>] == num1) &#123;</span><br><span class="line">                index1 = mid;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (index1 == -<span class="number">1</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> num1;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 相同2个数的第一个数的索引是偶数，说明那个要求的数字在右边</span></span><br><span class="line">            <span class="comment">// 如果第一个索引是奇书，说明前面被某个单个数字插入过，改变了索引情况</span></span><br><span class="line">            <span class="keyword">if</span> (index1 %<span class="number">2</span> == <span class="number">0</span>) &#123;</span><br><span class="line">                left = mid+<span class="number">1</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                right = mid;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/grpc/grpc%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/grpc/grpc%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" class="post-title-link" itemprop="url">grpc基础概念</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-25 22:47:49" itemprop="dateCreated datePublished" datetime="2022-08-25T22:47:49+08:00">2022-08-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-09-24 00:17:26" itemprop="dateModified" datetime="2022-09-24T00:17:26+08:00">2022-09-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E9%80%9A%E4%BF%A1%E7%B1%BB%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">通信类组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E9%80%9A%E4%BF%A1%E7%B1%BB%E7%BB%84%E4%BB%B6/grpc%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index"><span itemprop="name">grpc远程调用框架</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/grpc/grpc%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/grpc/grpc%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#q-grpc-xiang-bi-http-de-you-shi">Q: GRPC相比HTTP的优势？</a></li>
+<li><a href="#q-gang-cai-jiang-dao-liao-http2-neng-xiang-xi-shuo-xia-qu-bie-ma">Q: 刚才讲到了HTTP2/，能详细说下区别吗？</a></li>
+<li><a href="#q-wei-shi-me-http-1-1-bu-neng-shi-xian-duo-lu-fu-yong-er-http2-0-ke-yi">Q: 为什么http/1.1不能实现多路复用而http2.0可以？ -</a></li>
+<li><a href="#q-wei-shi-me-shuo-protobuf-bi-json-kuai">Q: 为什么说protobuf比json快？</a></li>
+<li><a href="#q-grep-he-dubbo-zhe-ge-grpc-kuang-jia-de-dui-bi-na-ge-hao">Q: grep和dubbo这个grpc框架的对比？哪个好？</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<p>RPC全程 Remote Procedure Call ，远程过程调用<br>
+gRpc是使用protobuf协议的RPC框架。</p>
+<p>在服务端，服务器应用实现方法并启动一个gRPC服务器来处理客户端调用。<br>
+在客户端，客户端有一个叫做stub的组件（在很多语言中称为客户端），提供和服务端一致的方法。<br>
+<img src="/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/c8d8584b41419d707fe757fa64e38706b0219f5e.png" alt="c8d8584b41419d707fe757fa64e38706b0219f5e"></p>
+<p>服务service器代码和stub客户端代码都可以通过protobuf自动生成。</p>
+<p>因为使用protobuf做协议交换， 因此多语言都可以支持， python、java、golang、C++都有protobuf的实现。</p>
+<hr>
+<h1><span id="q-grpc-xiang-bi-http-de-you-shi">Q: GRPC相比HTTP的优势？</span><a href="#q-grpc-xiang-bi-http-de-you-shi" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ol>
+<li>底层使用HTTP/2协议， HTTP/2的长期实时通信支持比HTTP要好。、</li>
+<li>，用的protocBuf对数据进行序列化，  是一种轻量级的消息格式， 成本是json是要小的。</li>
+<li>多语言通用， python、C++、</li>
+<li>逻辑上支持双向流，简化了操作便携度。</li>
+<li>支持tcp多路复用，避免了频繁的tcp连接建立。</li>
+</ol>
+<hr>
+<h1><span id="q-gang-cai-jiang-dao-liao-http2-neng-xiang-xi-shuo-xia-qu-bie-ma">Q: 刚才讲到了HTTP2/，能详细说下区别吗？</span><a href="#q-gang-cai-jiang-dao-liao-http2-neng-xiang-xi-shuo-xia-qu-bie-ma" class="header-anchor">#</a></h1>
+<p>A;</p>
+<ul>
+<li>HTTP / 1.1使用文本数据，这通常在网络上效率较低。而HTTP / 2是二进制数据。</li>
+<li>HTTP / 1.1的标头没有压缩，而HTTP / 2的标头是gzip压缩的。</li>
+<li>在HTTP / 1.1中，服务器必须以接收请求的相同顺序发送响应。而，HTTP / 2是异步处理响应的</li>
+<li>HTTP / 2允许同时在同一（单个）连接上发送多个请求和响应消息（多路复用）。某个请求任务耗时严重，不会影响到其它连接的正常执行</li>
+<li>HTTP/2可以不需要响应必须先接请求，  而是可以自己响应（服务端主动推送）<br>
+比如你需要两个文件1.html,1.css，如果是http1.0则需要请求两次，服务端返回两次。但是http2.0则可以客户端请求一次，然后服务端直接回吐两次</li>
+</ul>
+<hr>
+<h1><span id="q-wei-shi-me-http-1-1-bu-neng-shi-xian-duo-lu-fu-yong-er-http2-0-ke-yi">Q: 为什么http/1.1不能实现多路复用而http2.0可以？ -</span><a href="#q-wei-shi-me-http-1-1-bu-neng-shi-xian-duo-lu-fu-yong-er-http2-0-ke-yi" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>在二进制分帧层上，HTTP 2.0 会将所有传输的信息分割为更小的消息和帧,并对它们采用二进制格式的编码 ，</li>
+<li>这样分帧以后这些帧就可以乱序发送，然后根据每个帧首部的流标识符号进行组装</li>
+<li>对比http/1.1， 因为http1.1是基于文本以换行符分割每一条key：value，则会有以下问题：</li>
+</ul>
+<ol>
+<li>一次只能处理一个请求或者响应，因为这种以分隔符分割消息的数据，在完成之前不能停止解析</li>
+<li>解析这种数据无法预知需要多少内存，会给服务端有很大压力</li>
+</ol>
+<hr>
+<hr>
+<h1><span id="q-wei-shi-me-shuo-protobuf-bi-json-kuai">Q: 为什么说protobuf比json快？</span><a href="#q-wei-shi-me-shuo-protobuf-bi-json-kuai" class="header-anchor">#</a></h1>
+<p>A:<br>
+protobuf比json快6倍，原因如下：</p>
+<ul>
+<li>protobuf的存储格式为 tag-length-value，通过tag+length能快速对value进行解码。</li>
+<li>通过length控制长度，不需要分隔符（逗号，双引号等）就能分隔字段</li>
+<li>空字段会省略</li>
+</ul>
+<hr>
+<h1><span id="q-grep-he-dubbo-zhe-ge-grpc-kuang-jia-de-dui-bi-na-ge-hao">Q: grep和dubbo这个grpc框架的对比？哪个好？</span><a href="#q-grep-he-dubbo-zhe-ge-grpc-kuang-jia-de-dui-bi-na-ge-hao" class="header-anchor">#</a></h1>
+<p>A:<br>
+dubbo适合需要完整管理体系、高可靠性的分布式微服务调用体系。 它的配置方式多、负载均衡方式多、容错多、支持4种注册中心。</p>
+<p>grep的话， 负载均衡和注册中心都要自己扩展实现，但有提供插拔接口等。<br>
+grpc只有api（代码配置）的方式，只有failover。<br>
+和dubbo相比， grpc的亮点在于http/2的高性能，以及protobuf的多语言兼容。<br>
+<img src="/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/146220bbd653f4c601a5ae989065ee0c1d01bd2b.png" alt="146220bbd653f4c601a5ae989065ee0c1d01bd2b"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/25/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BB%AC%E8%A6%81%E5%AD%A6%E4%B9%A0TCP-IP/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1930,1484 +2398,6 @@ PORT h1,h2,h3,h4,p1,p2 (h1-h4是IP地址，p1-p2是端口号)<br>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E6%9C%AC%E5%90%8D%E8%AF%8D%E5%92%8C%E6%A6%82%E5%BF%B5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E6%9C%AC%E5%90%8D%E8%AF%8D%E5%92%8C%E6%A6%82%E5%BF%B5/" class="post-title-link" itemprop="url">数据库基本名词和概念</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-08-24 20:47:49 / 修改时间：00:22:36" itemprop="dateCreated datePublished" datetime="2022-08-24T20:47:49+08:00">2022-08-24</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/SQL%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">SQL数据库</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E6%9C%AC%E5%90%8D%E8%AF%8D%E5%92%8C%E6%A6%82%E5%BF%B5/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E6%9C%AC%E5%90%8D%E8%AF%8D%E5%92%8C%E6%A6%82%E5%BF%B5/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.7k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#mysql-fu-wu-qi-xiang-ying-yuan-li-dc40bbcdffcfae8017e64a957a15a800a640516e-images-e6-95-b0-e6-8d-ae-e5-ba-93-e5-9f-ba-e6-9c-ac-e5-90-8d-e8-af-8d-e5-92-8c-e6-a6-82-e5-bf-b5-dc40bbcdffcfae8017e64a957a15a800a640516e-png">mysql服务器响应原理<img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E6%9C%AC%E5%90%8D%E8%AF%8D%E5%92%8C%E6%A6%82%E5%BF%B5/dc40bbcdffcfae8017e64a957a15a800a640516e.png" alt="dc40bbcdffcfae8017e64a957a15a800a640516e"></a></li>
-<li><a href="#shi-wu-acid">事务ACID</a></li>
-<li><a href="#3-chong-du-wen-ti">3种读问题</a></li>
-<li><a href="#4-chong-ge-chi-ji-bie">4种隔离级别</a></li>
-<li><a href="#shu-ju-ku-3-chong-wan-zheng-xing-yue-shu">数据库3种完整性约束</a></li>
-<li><a href="#4-chong-fan-shi">4种范式</a></li>
-<li><a href="#cun-chu-yin-qing-bi-jiao">存储引擎比较</a>
-<ul>
-<li><a href="#cun-chu-yin-qing-de-bi-jiao-innodb">存储引擎的比较InnoDB</a></li>
-<li><a href="#myisam">MyISAM</a></li>
-<li><a href="#qi-ta-yin-qing">其他引擎</a></li>
-<li><a href="#q-bu-tong-chang-jing-xia-de-cun-chu-yin-qing-xuan-ze">Q: 不同场景下的存储引擎选择</a></li>
-<li><a href="#q-mysql5-7-he-8-0-de-qu-bie">Q： mysql5.7和8.0的区别</a></li>
-</ul>
-</li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="mysql-fu-wu-qi-xiang-ying-yuan-li">mysql服务器响应原理<img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E6%9C%AC%E5%90%8D%E8%AF%8D%E5%92%8C%E6%A6%82%E5%BF%B5/dc40bbcdffcfae8017e64a957a15a800a640516e.png" alt="dc40bbcdffcfae8017e64a957a15a800a640516e"></span><a href="#mysql-fu-wu-qi-xiang-ying-yuan-li" class="header-anchor">#</a></h1>
-<hr>
-<h1><span id="shi-wu-acid">事务ACID</span><a href="#shi-wu-acid" class="header-anchor">#</a></h1>
-<ul>
-<li>A是 atomicity原子性,     事务内的行为一次性执行完，要么就回退</li>
-<li>C是consistency一致性    有a+b=c的限制条件，然后a变化的同时，b也必须跟着变化</li>
-<li>I是isolation隔离性   事务隔离，即事务的中间执行过程，对另外一个事务不可见。</li>
-<li>D是durability持久性  提交i成功后，修改不会改变，也会被记录。</li>
-</ul>
-<p>不同的存储引擎支持不同的事务处理<br>
-不支持事务的话，性能会高，但是可靠性就差。</p>
-<h1><span id="3-chong-du-wen-ti">3种读问题</span><a href="#3-chong-du-wen-ti" class="header-anchor">#</a></h1>
-<ul>
-<li>脏读：数据被更新了，但是还没提交， 然后另一个事务读到了更新后的数据，结果事务回滚了，导致读的数据其实是脏数据，</li>
-<li>不可重复读：  1个事务要读2次数据（注意是单条数据），结果第一次读和第二次读数据不一致了。<br>
-换个说法：事务T1读取某一数据，事务T2读取并修改了该数据，T1为了对读取值进行检验而再次读取该数据，便得到了不同的结果。（主要是update触发）</li>
-<li>幻读： 1个事务按照某搜索条件读了2次 数据，发现2次的记录数不一致，可能多了或者少了记录（注意是多条记录的情况， 不可重复读只针对单条数据的内容变化）（主要是insert、delete触发）<br>
-换个说法，就是你发现数据莫名奇妙多了一条：<br>
-第一个事务对一个表中的数据进行了修改，比如这种修改涉及到表中的“全部数据行”。同时，第二个事务也修改这个表中的数据，这种修改是向表中插入“一行新数据”。那么，以后就会发生操作第一个事务的用户发现表中还存在没有修改的数据行</li>
-</ul>
-<h1><span id="4-chong-ge-chi-ji-bie">4种隔离级别</span><a href="#4-chong-ge-chi-ji-bie" class="header-anchor">#</a></h1>
-<p>简易记法： RU\RC\RR\SE<br>
-第一个R是read， U是uncommit， C是uncommit， R是repeated， SE是顺序</p>
-<ul>
-<li>Read Uncommited  最低隔离级别。 写的时候可以被读取。 3个读问题都无法避免。<br>
-如果一个事务已经开始写数据，则另外一个事务则不允许同时进行写操作，但允许其他事务读此行数据<br>
-注意，RU级别，是有写锁的，并不是什么都没做</li>
-<li>Read Committed  大部分数据库的默认隔离级别。 只有在事务提交后，另一个事务才能看到同一笔数据更新后的结果。</li>
-</ul>
-<p>允许其他事务继续访问该行数据，但是<strong>未提交的写事务</strong>将会禁止其他事务访问该行，会对该写锁一直保持直到到事务提交。</p>
-<p>区别就是写的时候，未提交的事务会禁止，相当于写的过程会让读不可见。</p>
-<p>能解决脏读， RC隔离级别保证了对读取到的记录加锁(记录锁)</p>
-<ul>
-<li>
-<p>Repeateable Read 保证同一笔数据在事务中，必须是相同的，不会让他变化。<br>
-能避免不可重复度和脏读，   “可能”避免幻读<br>
-RR隔离级别保证对读取到的记录加锁(记录锁)，同时保证对读取的范围加锁，新的满足查询条件的记录不能够插入(间隙锁)。</p>
-</li>
-<li>
-<p>Serializable  所有事务都必须依次顺序执行。 都能解决<br>
-所有的读操作都是当前读，读加读锁(S锁)，写加写锁(X锁)。在该隔离级别下，读写冲突，因此并发性能急剧下降，在MySQL/InnoDB中不建议使用。</p>
-</li>
-</ul>
-<p><img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E6%9C%AC%E5%90%8D%E8%AF%8D%E5%92%8C%E6%A6%82%E5%BF%B5/2486676b1dd91f04b79a37922663c2aada317781.png" alt="2486676b1dd91f04b79a37922663c2aada317781"></p>
-<h1><span id="shu-ju-ku-3-chong-wan-zheng-xing-yue-shu">数据库3种完整性约束</span><a href="#shu-ju-ku-3-chong-wan-zheng-xing-yue-shu" class="header-anchor">#</a></h1>
-<ul>
-<li>域完整性（值约束）：域完整性是保证数据库字段取值的合理性</li>
-<li>实体完整性（主键约束）：指关系的主关键字不能重复也不能取“空值&quot;。</li>
-<li>参照完整性（外键约束）： 主关键字与外部关键字引用的约束条件。</li>
-</ul>
-<h1><span id="4-chong-fan-shi">4种范式</span><a href="#4-chong-fan-shi" class="header-anchor">#</a></h1>
-<ol>
-<li>第一范式比较简单，属性不可拆分。电话号码一个字段可以分为手机号码和座机号码两个字段。</li>
-<li>第二范式不难理解，非主属性对候选键完全依赖，不能存在部分依赖。 即主键唯一时，能确定这个非主属性值。<br>
-候选键只有一个主属性时则一定符合第二范式。<br>
-候选键包含多个主属性时，可能出现不符合第二范式的情况，</li>
-<li>第三范式去除冗余，非主属性只能存在一个表中，不应该存在多个表中，要去除无意义的数据冗余。</li>
-<li>BC范式则不应存在关键字决定关键字的情况。也就是在关联关系表中，一个表有多个属性构成复合的候选键，主属性直接不应该有互相依赖。工号和身份证号是相互依赖。</li>
-<li>第四范式，对于候选键只能存在不超过1个多值属性。要求把同一表内的多对多关系删除。</li>
-</ol>
-<p>简易版：</p>
-<ul>
-<li>第一范式：不可拆</li>
-<li>第二范式：多个主键时，不能只用到1个主键。</li>
-<li>第三范式：非主键属性不能冗余，最好集中到一个表</li>
-<li>第四范式：不常问， 好象是1个主键只能对应一个属性值，不要多对多，到时候就说我也不太理解，很少用到吧。</li>
-</ul>
-<h1><span id="cun-chu-yin-qing-bi-jiao">存储引擎比较</span><a href="#cun-chu-yin-qing-bi-jiao" class="header-anchor">#</a></h1>
-<h2><span id="cun-chu-yin-qing-de-bi-jiao-innodb">存储引擎的比较InnoDB</span><a href="#cun-chu-yin-qing-de-bi-jiao-innodb" class="header-anchor">#</a></h2>
-<p>这是mysql的默认事务型引擎</p>
-<p>用于处理短期事务（不常回滚的），但本质上还是事务型的存储引擎<br>
-数据存储在tablespace中（一堆又innoDB管理的文件，我们看不懂的那种文件）<br>
-使用MVCC支持高并发，实现4个隔离级别，  有间隙锁<br>
-使用聚簇索引</p>
-<h2><span id="myisam">MyISAM</span><a href="#myisam" class="header-anchor">#</a></h2>
-<p>MYSQL5.1之前，是默认的存储引擎<br>
-不支持事务和行级锁！也就是说不支持修复！<br>
-表存在2个文件中： 数据文件和索引文件<br>
-只能针对表加锁，不能针对行<br>
-有修复操作，但是用于修复表的错误（而不是回滚这种操作)<br>
-支持全文索引<br>
-如果表导入数据后不再更新，可以用MyISAM压缩表， 而且解压开销不大。</p>
-<h2><span id="qi-ta-yin-qing">其他引擎</span><a href="#qi-ta-yin-qing" class="header-anchor">#</a></h2>
-<p>Archive： 只支持insert和select、压缩写、支持行级锁、不是事务引擎<br>
-blackhole： 会丢弃所有插入的数据，但是会记录日志。（一般用于数据备份、日志审计）<br>
-csv：把csv文件当作mysql表。不支持索引<br>
-Federated： 是访问mysql的一个代理引擎。本质还是连接mysql。默认禁用<br>
-memory引擎：  希望快速访问不存盘， 重启后丢失也无所谓，可以i用这个，类似于H2内存数据库。<br>
-用作缓存非常不错。<br>
-NDB集群引擎： 分布式mysql集群</p>
-<h2><span id="q-bu-tong-chang-jing-xia-de-cun-chu-yin-qing-xuan-ze">Q: 不同场景下的存储引擎选择</span><a href="#q-bu-tong-chang-jing-xia-de-cun-chu-yin-qing-xuan-ze" class="header-anchor">#</a></h2>
-<p>A:</p>
-<ul>
-<li>日志记录：  要求插入快，可使用myisam</li>
-<li>读多写少： InnoDB， 避免崩溃恢复问题。</li>
-<li>订单处理： 事务时必须的，innoDB</li>
-<li>电子公告牌：多数应用只有几个表保存数据，核心表的压力很大</li>
-<li>大数据量： 数据仓库， infobright、NDB或者hive哈哈</li>
-</ul>
-<hr>
-<h2><span id="q-mysql5-7-he-8-0-de-qu-bie">Q： mysql5.7和8.0的区别</span><a href="#q-mysql5-7-he-8-0-de-qu-bie" class="header-anchor">#</a></h2>
-<p>A:</p>
-<ul>
-<li>新增INVISIBLE和VISIBLE语法， 以支持隐藏索引的功能，用于调试</li>
-<li>MySQL 8 开始，数据库的缺省编码将改为 utf8mb4</li>
-<li>支持用命令 SET PERSIST进行配置的修改，而不是登录后台修改。</li>
-<li>新增窗口函数，支持先生成一个排序的窗口表，再做rank<br>
-<img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E6%9C%AC%E5%90%8D%E8%AF%8D%E5%92%8C%E6%A6%82%E5%BF%B5/4678c23a55172ed1d7db48f6a8f6765f97e66e74.png" alt="4678c23a55172ed1d7db48f6a8f6765f97e66e74"></li>
-<li>更安全，支持SQL角色设置和权限设置</li>
-</ul>
-<p>更详细的：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/7259a2f0e95a">MySQL5.7.X用的好好的，为什么要用MySQL8.0</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/" class="post-title-link" itemprop="url">计网之传输层（TCP/IP）详解</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-24 01:47:49" itemprop="dateCreated datePublished" datetime="2022-08-24T01:47:49+08:00">2022-08-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-25 00:12:52" itemprop="dateModified" datetime="2022-08-25T00:12:52+08:00">2022-08-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>8.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>8 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#1-chuan-shu-ceng-he-wang-luo-ceng-de-qu-bie">1 传输层和网络层的区别：</a>
-<ul>
-<li><a href="#1-1-fu-ze-dui-xiang-de-bu-tong">1.1 负责对象的不同</a></li>
-<li><a href="#1-2-xiao-yan-shang-de-bu-tong">1.2 校验上的不同</a></li>
-</ul>
-</li>
-<li><a href="#2-duan-kou-hao">2 端口号</a>
-<ul>
-<li><a href="#2-1-duan-kou-hao-de-yi-yi">2.1 端口号的意义</a></li>
-<li><a href="#2-2-duan-kou-hao-fan-wei">2.2 端口号范围</a></li>
-</ul>
-</li>
-<li><a href="#3-tcp">3 TCP</a>
-<ul>
-<li><a href="#3-1-tcp-shou-bu">3.1 TCP首部</a>
-<ul>
-<li><a href="#q-jiang-yi-xia-tcp-bao-wen-du-you-sha-ke-yi-bu-an-shun-xu-jiang">Q: 讲一下TCP报文都有啥，可以不按顺序讲</a></li>
-</ul>
-</li>
-<li><a href="#3-2-hua-dong-chuang-kou">3.2 滑动窗口</a>
-<ul>
-<li><a href="#3-2-1-fa-song-duan-chuang-kou">3.2.1发送端窗口</a></li>
-<li><a href="#3-2-2-jie-shou-duan-chuang-kou">3.2.2 接收端窗口</a></li>
-<li><a href="#3-2-3-jian-chi-ding-shi-qi">3.2.3 坚持定时器</a></li>
-<li><a href="#3-2-4-hu-tu-chuang-kou">3.2.4 糊涂窗口</a></li>
-</ul>
-</li>
-<li><a href="#3-3-tcp-lian-jie-liu-cheng">3.3 TCP连接流程</a>
-<ul>
-<li><a href="#3-3-1-wo-shou-he-hui-shou-liu-cheng">3.3.1 握手和挥手流程</a>
-<ul>
-<li><a href="#wei-shi-me-jian-li-yao-3-ci-wo-shou">为什么建立要3次握手？</a></li>
-<li><a href="#wei-shi-me-jie-shu-lian-jie-yao-4-ci-hui-shou">为什么结束连接要4次挥手？</a></li>
-<li><a href="#neng-fou-hui-shou-3-ci">能否挥手3次</a></li>
-<li><a href="#si-ci-hui-shou-zhong-de-time-wait-zhuang-tai-zuo-yong">四次挥手中的TIME_WAIT状态作用？</a></li>
-<li><a href="#liang-bian-tong-shi-xiang-hu-jian-li-lian-jie-hui-fa-sheng-shi-me">两边同时相互建立连接会发生什么？</a></li>
-<li><a href="#liang-bian-tong-shi-guan-bi-lian-jie-hui-fa-sheng-shi-me">两边同时关闭连接会发生什么</a></li>
-</ul>
-</li>
-<li><a href="#3-3-4-jiao-hu-shu-ju">3.3.4 交互数据</a>
-<ul>
-<li><a href="#nagle-suan-fa">nagle算法</a></li>
-<li><a href="#q-shi-me-shi-tcp-nian-bao">Q: 什么是TCP粘包？</a></li>
-<li><a href="#q-zao-cheng-nian-bao-de-yuan-yin-shi-shi-me">Q: 造成粘包的原因是什么？</a></li>
-<li><a href="#q-shi-me-shi-hou-xu-yao-chu-li-nian-bao-xian-xiang">Q:什么时候需要处理粘包现象？</a></li>
-<li><a href="#q-ru-he-chu-li-nian-bao-xian-xiang">Q: 如何处理粘包现象？</a></li>
-<li><a href="#q-udp-hui-bu-hui-chan-sheng-nian-bao-wen-ti-ni">Q：UDP会不会产生粘包问题呢？</a></li>
-</ul>
-</li>
-<li><a href="#3-3-5-yi-chang-qing-kuang">3.3.5 异常情况</a></li>
-</ul>
-</li>
-<li><a href="#3-4-yong-sai-bi-mian-ji-zhi">3.4 拥塞避免机制</a>
-<ul>
-<li><a href="#q-jian-li-lian-jie-hou-mei-ci-fa-song-de-bao-wen-shu-liang-shi-gu-ding-de-ma-ji-mei-ci-du-fa-1-tiao-huo-zhe-10-tiao">Q: 建立连接后，每次发送的报文数量是固定的吗？即每次都发1条或者10条？</a></li>
-<li><a href="#q-man-qi-dong-guo-cheng-zhong-na-me-fa-song-shu-liang-yong-sai-chuang-kou-shi-me-shi-hou-bu-zai-bei-zeng-shi-wu-xian-bei-zeng-ma">Q: 慢启动过程中，那么发送数量（拥塞窗口）什么时候不再倍增？是无限倍增吗？</a></li>
-<li><a href="#q-na-me-dang-jin-ru-yong-sai-bi-mian-mei-ci-1-shi-shi-me-shi-hou-cai-hui-bu-zai-ji-xu-jia">Q:那么，当进入拥塞避免，每次+1时，什么时候才会不再继续加？</a></li>
-<li><a href="#q-shang-mian-ti-dao-liao-chao-shi-na-me-tcp-ke-hu-duan-shi-zen-me-pan-duan-bao-wen-fa-song-chao-shi-de-ni">Q: 上面提到了超时， 那么TCP客户端是怎么判断报文发送超时的呢？</a></li>
-<li><a href="#q-shang-mian-ti-dao-de-chao-shi-shi-jian-rto-shi-zen-me-lai-de-wan-yi-she-de-tai-da-ke-neng-dao-zhi-hen-chi-cai-neng-fan-ying-guo-lai-she-de-tai-xiao-ze-ke-neng-dao-zhi-mei-tiao-du-chao-shi">Q:上面提到的超时时间RTO是怎么来的？万一设得太大可能导致很迟才能反应过来， 设得太小则可能导致每条都超时</a></li>
-<li><a href="#q-ru-guo-fa-sheng-chong-chuan-que-huan-shi-mei-you-shou-dao-ack-na-me-zui-xin-de-rtt-yang-ben-ying-gai-zen-me-suan-ji-ni-du-shou-bu-dao-zui-xin-de-ack-liao-rtt-nan-dao-qu-chao-shi-shi-jian-ma">Q: 如果发生重传，却还是没有收到ack，那么最新的RTT样本应该怎么算？即你都收不到最新的ack了， RTT难道取超时时间吗？</a></li>
-<li><a href="#q-shang-mian-ti-dao-de-ack-chao-shi-pan-duan-hui-bu-hui-tai-jiu-liao-jia-ru-zhi-shi-fa-de-shi-hou-diu-liao-zhong-jian-bu-fen-bao-wen-er-yi-dan-da-bu-fen-bao-wen-ack-huan-neng-zheng-chang-fan-hui-ye-yao-yi-zhi-deng-chao-shi-ma">Q: 上面提到的ACK超时判断会不会太久了？ 假如只是发的时候丢了中间部分报文而已， 但大部分报文ACK还能正常返回，也要一直等超时吗？</a></li>
-<li><a href="#q-qian-mian-chao-shi-chong-chuan-de-shi-hou-shi-bian-cheng-cong-1-kai-shi-man-qi-dong-wei-shi-me-zhe-ge-kuai-chong-chuan-que-shi-cong-ssthreshold-2-kai-shi-bing-qie-zou-yong-sai-bi-mian-wei-shi-me-hui-you-zhe-ge-qu-bie">Q: 前面“超时重传”的时候，是变成从1开始慢启动， 为什么这个“快重传”却是从ssthreshold/2开始，并且走拥塞避免？ 为什么会有这个区别？</a></li>
-<li><a href="#q-wei-sha-fa-song-di-duo-liao-shu-ju-jiu-hui-bu-fen-diu-shi-zhe-ge-shi-zen-me-ge-yuan-li">Q: 为啥发送地多了，数据就会部分丢失？这个是怎么个原理？</a></li>
-<li><a href="#q-tcp-chu-liao-shang-mian-de-chong-chuan-ding-shi-qi-hao-xiang-huan-you-ge-jian-chi-ding-shi-qi-qu-bie-shi-sha">Q: TCP除了上面的重传定时器， 好象还有个坚持定时器？区别是啥？</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#4-udp">4 UDP</a>
-<ul>
-<li><a href="#4-1-tcp-he-udp-de-qu-bie">4.1 TCP和UDP的区别：</a></li>
-<li><a href="#4-2-udp-de-yi-xie-te-dian">4.2 UDP的一些特点</a></li>
-<li><a href="#4-3-udp-de-ying-yong">4.3 UDP的应用</a></li>
-<li><a href="#q-udp-ke-yi-shi-xian-ke-kao-chuan-shu-ma">Q: UDP可以实现可靠传输吗？</a></li>
-</ul>
-</li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="1-chuan-shu-ceng-he-wang-luo-ceng-de-qu-bie">1 传输层和网络层的区别：</span><a href="#1-chuan-shu-ceng-he-wang-luo-ceng-de-qu-bie" class="header-anchor">#</a></h1>
-<h2><span id="1-1-fu-ze-dui-xiang-de-bu-tong">1.1 负责对象的不同</span><a href="#1-1-fu-ze-dui-xiang-de-bu-tong" class="header-anchor">#</a></h2>
-<ul>
-<li>传输层负责建立进程间的通信（即只关心进程A和进程B的消息传递，不考虑底下的东西）</li>
-<li>网络层负责建立主机间的通信（即只关心主机A怎么发给主机B）</li>
-</ul>
-<blockquote>
-<blockquote>
-<p>同理链路层就是物理上相邻的2个机器如何通信，物理层是电路上的通信</p>
-</blockquote>
-</blockquote>
-<h2><span id="1-2-xiao-yan-shang-de-bu-tong">1.2 校验上的不同</span><a href="#1-2-xiao-yan-shang-de-bu-tong" class="header-anchor">#</a></h2>
-<ul>
-<li>传输层会对数据和首部一起做校验</li>
-<li>网络层只对首部做校验，数据报部分不会关心。</li>
-</ul>
-<h1><span id="2-duan-kou-hao">2 端口号</span><a href="#2-duan-kou-hao" class="header-anchor">#</a></h1>
-<p>端口号是传输层重要的概念。</p>
-<h2><span id="2-1-duan-kou-hao-de-yi-yi">2.1 端口号的意义</span><a href="#2-1-duan-kou-hao-de-yi-yi" class="header-anchor">#</a></h2>
-<p>① 为进程适应不同操作系统提供一个复用和分用的软件</p>
-<blockquote>
-<blockquote>
-<p>复用：发送方不同进程都用同一种协议传输，目的端口号承担了这个工作<br>
-分用：接收方把IP报文组装交付时，通过端口号确认交付给谁</p>
-<p>② 端口是进程的重要交互地址。<br>
-即由端口确定交给主机上的哪个进程。<br>
-③ 只具有本地意义，只对本机有效</p>
-</blockquote>
-</blockquote>
-<h2><span id="2-2-duan-kou-hao-fan-wei">2.2 端口号范围</span><a href="#2-2-duan-kou-hao-fan-wei" class="header-anchor">#</a></h2>
-<p>端口号共16位，因此最大为65535</p>
-<ul>
-<li>
-<p>服务器端口号（做listen用的端口号）有2类：</p>
-<ol>
-<li>熟知端口号：0~1023</li>
-</ol>
-<blockquote>
-<blockquote>
-<p>熟知端口号有以下：<br>
-HTTP:80<br>
-HTTPS:443<br>
-DNS:53<br>
-FTP:21<br>
-TFTP:69<br>
-SNMP:161<br>
-TELNET:23<br>
-SMTP:25</p>
-</blockquote>
-</blockquote>
-<ol start="2">
-<li>注册端口号: 1024~49151，也叫系统端口号。有许多服务绑定于这些端口。</li>
-<li>动态和/或私有端口：49152~65535，理论上，不应为监听服务分配这些端口，一般是用于客户端的短暂端口号。</li>
-</ol>
-</li>
-<li>
-<p>UDP和TCP有各自的专属端口号，因此不会重复和干扰。</p>
-</li>
-</ul>
-<h1><span id="3-tcp">3 TCP</span><a href="#3-tcp" class="header-anchor">#</a></h1>
-<p>TCP全称<br>
-Transmission Control Protocol， 即传输控制协议。</p>
-<p>基于套接字传输<br>
-套接字：IP+端口号</p>
-<p>tcp的可靠性如下：</p>
-<ol>
-<li>数据被分隔成很多份合适的块来发送</li>
-<li>有超时重传机制</li>
-<li>会校验首部和数据内容。</li>
-<li>会对收到的数据报文做排序，按顺序组装上交<br>
-5.会丢弃重复的数据<br>
-6.提供流量控制，发送主机不会一下子发送太快<br>
-7.每次传输都有序号和ack应答，全双工。</li>
-</ol>
-<h2><span id="3-1-tcp-shou-bu">3.1 TCP首部</span><a href="#3-1-tcp-shou-bu" class="header-anchor">#</a></h2>
-<table>
-<thead>
-<tr>
-<th>位数</th>
-<th>含义</th>
-<th>详情</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>16</td>
-<td>源端口</td>
-<td>因此端口号最多16位</td>
-</tr>
-<tr>
-<td>16</td>
-<td>目的端口</td>
-<td></td>
-</tr>
-<tr>
-<td>32</td>
-<td>报文序号</td>
-<td>该报文的序号</td>
-</tr>
-<tr>
-<td>32</td>
-<td>确认号</td>
-<td>期望收到的下一个报文序号。如果确认号位N，说明N-1都已经收到</td>
-</tr>
-<tr>
-<td>4</td>
-<td>数据偏移</td>
-<td>数据部分的起始位置，可以理解为首部长度。单位是4字节。</td>
-</tr>
-<tr>
-<td>6</td>
-<td>保留位</td>
-<td>没用，全部置成0</td>
-</tr>
-<tr>
-<td>1</td>
-<td>URG紧急指针标志</td>
-<td>是否存在紧急数据</td>
-</tr>
-<tr>
-<td>1</td>
-<td>ACK标志</td>
-<td>是否是确认报文</td>
-</tr>
-<tr>
-<td>1</td>
-<td>PSH推送标志</td>
-<td>是否需要尽快上交进程</td>
-</tr>
-<tr>
-<td>1</td>
-<td>RST复位标志</td>
-<td>是否需要重建连接</td>
-</tr>
-<tr>
-<td>1</td>
-<td>SYN同步建立连接标志</td>
-<td>是不是连接建立期间的报文</td>
-</tr>
-<tr>
-<td>1</td>
-<td>FIN终止标志</td>
-<td>是否是终止连接期间的报文</td>
-</tr>
-<tr>
-<td>16</td>
-<td>窗口</td>
-<td>收到ack前对方可发送回来的数据量</td>
-</tr>
-<tr>
-<td>16</td>
-<td>校验和</td>
-<td>校验首部+数据+伪首部（伪首部指携带了ip的首部）</td>
-</tr>
-<tr>
-<td>16</td>
-<td>紧急指针位置</td>
-<td>紧急数据放在末尾，需要给出紧急数据的长度，便可推断位置</td>
-</tr>
-<tr>
-<td>0-320</td>
-<td>可变选项</td>
-<td>一些TCP选项，例如 最大报文长度、时间戳等。最长40字节</td>
-</tr>
-<tr>
-<td>?</td>
-<td>填充位</td>
-<td>保证首部长度为4字节整数倍</td>
-</tr>
-</tbody>
-</table>
-<p>从上面可以看到：</p>
-<ol>
-<li>TCP报文中不包含ip信息，只包含端口信息。</li>
-<li>校验和中使用到了伪首部来做校验，即实际上是有ip信息被处理后包含在校验和中了。</li>
-<li>TCP首部最小长度为20字节，最大长度为60字节，取决于可变选项。</li>
-<li>首部长度必定是4字节整数倍，不足会填充，因为数据偏移里的单位设置是4字节。</li>
-</ol>
-<hr>
-<h3><span id="q-jiang-yi-xia-tcp-bao-wen-du-you-sha-ke-yi-bu-an-shun-xu-jiang">Q:  讲一下TCP报文都有啥，可以不按顺序讲</span><a href="#q-jiang-yi-xia-tcp-bao-wen-du-you-sha-ke-yi-bu-an-shun-xu-jiang" class="header-anchor">#</a></h3>
-<p>A:</p>
-<ol>
-<li>首先是首部长度（数据偏移），确定读到哪</li>
-<li>重要的源端口 目的端口</li>
-<li>TCP 可靠性机制关键的一些数字：<br>
-报文号、ACK号、窗口、 校验和</li>
-<li>建连接、关连接用的标记<br>
-一堆标记（SYNC、FIN、RST之类的）</li>
-<li>其他无关紧要的紧急指针位置、可变选项，填充位</li>
-</ol>
-<h2><span id="3-2-hua-dong-chuang-kou">3.2 滑动窗口</span><a href="#3-2-hua-dong-chuang-kou" class="header-anchor">#</a></h2>
-<p>在TCP的发送端和接收端，有一个窗口的概念，直接用图片的方式简单明了回忆一下：</p>
-<h3><span id="3-2-1-fa-song-duan-chuang-kou">3.2.1发送端窗口</span><a href="#3-2-1-fa-song-duan-chuang-kou" class="header-anchor">#</a></h3>
-<p><img src="/images/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/20210218011330509.png" alt="在这里插入图片描述"></p>
-<hr>
-<h3><span id="3-2-2-jie-shou-duan-chuang-kou">3.2.2 接收端窗口</span><a href="#3-2-2-jie-shou-duan-chuang-kou" class="header-anchor">#</a></h3>
-<p><img src="/images/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/20210218011340404.png" alt="在这里插入图片描述"></p>
-<p>这里可以看到接收端一次性接收的缓存是有限的，所以进程出现问题迟迟没有接收数据，那么会在ack里告知还能发多少份。<br>
-这个叫通告窗口，即告知接收端还能收几份数据（TCP报文里的窗口位就是这个）</p>
-<h3><span id="3-2-3-jian-chi-ding-shi-qi">3.2.3 坚持定时器</span><a href="#3-2-3-jian-chi-ding-shi-qi" class="header-anchor">#</a></h3>
-<p>如果接收端的接收缓存用完，导致返回的ack报文里提示窗口为0，则发送端无法发送数据，此时会启动坚持定时器：<br>
-每隔5s发送1个字节的小报文，来查看对方窗口响应。当窗口不再为0，则结束坚持定时器</p>
-<h3><span id="3-2-4-hu-tu-chuang-kou">3.2.4 糊涂窗口</span><a href="#3-2-4-hu-tu-chuang-kou" class="header-anchor">#</a></h3>
-<p>上面提到的坚持定时器机制里，导致了每次只发一小点数据。<br>
-避免措施：<br>
-1. 接收方设定一个最小窗口阈值，不通告小窗口<br>
-2. 发送方设定一个最小窗口阈值，每次发送满一定长度的报文<br>
-3. 发送手头所有数据切不接收ack</p>
-<h2><span id="3-3-tcp-lian-jie-liu-cheng">3.3 TCP连接流程</span><a href="#3-3-tcp-lian-jie-liu-cheng" class="header-anchor">#</a></h2>
-<p>TCP通过三次握手建立连接，四次挥手结束连接</p>
-<h3><span id="3-3-1-wo-shou-he-hui-shou-liu-cheng">3.3.1 握手和挥手流程</span><a href="#3-3-1-wo-shou-he-hui-shou-liu-cheng" class="header-anchor">#</a></h3>
-<p>把这个图牢记于心就不会有问题：<br>
-<img src="/images/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/20210218011409757.png" alt="在这里插入图片描述"></p>
-<p>CLOSED状态：建立连接前的初始状态即关闭状态在建立连接前，先从CLOSED状态变成LISTEN状态（监听状态，表示可以传信号了）</p>
-<ol>
-<li>当客户首先发送SYN后，客户变成SYN_SENT状态。</li>
-<li>当服务器接收到SYN后，服务器变成了SYN_REVD状态。</li>
-<li>当服务器传给客户一个SYN和ACK后，变成了ESTABLISHED状态（表述开始进行数据传输）</li>
-<li>当服务器接受到客户传来的ACK后，也变成ESTABLISHED状态。</li>
-<li>当客户发送FIN（主动关闭）后，客户变成了FIN_WAIT1状态。服务器收到FIN后，执行被动关6. 闭，服务器变成了CLOSEWAIT状态。</li>
-<li>服务器先发送ACK，客户收到ACK后变成FIN_WAIT2状态。</li>
-<li>过了一段时间，服务器才发送FIN，这时候服务器变成LAST_ACK状态客户收到FIN后，变成了TIME_WAIT状态，同时发送ACK，进行2MSL等待。之后2者一起变为CLOSED状态</li>
-</ol>
-<hr>
-<h4><span id="wei-shi-me-jian-li-yao-3-ci-wo-shou">为什么建立要3次握手？</span><a href="#wei-shi-me-jian-li-yao-3-ci-wo-shou" class="header-anchor">#</a></h4>
-<p>建立握手3次原因：一方接收到syn报文后，需向对方回应一个ack。三次握手中，第一个是sync报文，第二个是ack、sync报文合在一起，第三个ack报文。这样就都回应了ack，需要3次。<br>
-关键在于最后一次需要一个对 接收端sync的ack响应。</p>
-<hr>
-<h4><span id="wei-shi-me-jie-shu-lian-jie-yao-4-ci-hui-shou">为什么结束连接要4次挥手？</span><a href="#wei-shi-me-jie-shu-lian-jie-yao-4-ci-hui-shou" class="header-anchor">#</a></h4>
-<p>TCP中发送端发送fin后，就会将自己关闭。<br>
-但是接收端一方接收到fin报文后，数据可能还没发送完成。<br>
-所以需要先发完ack，再发fin，所以这里会多一次挥手。 最后ack是对fin的确认</p>
-<hr>
-<h4><span id="neng-fou-hui-shou-3-ci">能否挥手3次</span><a href="#neng-fou-hui-shou-3-ci" class="header-anchor">#</a></h4>
-<p><strong>能</strong>。收到第一个fin报文后，它可能刚好没有数据要传输了，fin和ack报文一起回应，对方再回应ack，总共三次，挥手完毕。实际中抓报文，有很多这样的情况。</p>
-<hr>
-<h4><span id="si-ci-hui-shou-zhong-de-time-wait-zhuang-tai-zuo-yong">四次挥手中的TIME_WAIT状态作用？</span><a href="#si-ci-hui-shou-zhong-de-time-wait-zhuang-tai-zuo-yong" class="header-anchor">#</a></h4>
-<p>A:</p>
-<p>1.若最后一步客户发出的ACK丢失了，那么服务器将重发FIN，所以必须维持TIME_WAIT状态到可能的第二次重发FIN的时间。</p>
-<p>2.为了避免在终止连接后再次重新建立新连接时，收到之前那次连接“迷路”的分组，要维持一个TIME_WAIT状态以便吸收掉迷路的分组。</p>
-<hr>
-<h4><span id="liang-bian-tong-shi-xiang-hu-jian-li-lian-jie-hui-fa-sheng-shi-me">两边同时相互建立连接会发生什么？</span><a href="#liang-bian-tong-shi-xiang-hu-jian-li-lian-jie-hui-fa-sheng-shi-me" class="header-anchor">#</a></h4>
-<p>2边同时发送SYNC<br>
-2边同时收到后， 就会发现自己在还没收到SYNC-ACK的情况下收到了新的SYNC，说明发生了&quot;同时打开&quot;的情况。<br>
-此时他会直接发送ack，并且不再等待sync-ack响应了，直接进入ESTABLISHED状态。所以此时仅需2次握手（当然整体上看是4次，一边各2次）</p>
-<h4><span id="liang-bian-tong-shi-guan-bi-lian-jie-hui-fa-sheng-shi-me">两边同时关闭连接会发生什么</span><a href="#liang-bian-tong-shi-guan-bi-lian-jie-hui-fa-sheng-shi-me" class="header-anchor">#</a></h4>
-<p>当2者发生同时关闭，即同时发出FIN时，会进入CLOSING状态，收到相互的ACK后进入TIME_WAIT状态. 即此时需2次挥手（整体上看是4次）</p>
-<h3><span id="3-3-4-jiao-hu-shu-ju">3.3.4 交互数据</span><a href="#3-3-4-jiao-hu-shu-ju" class="header-anchor">#</a></h3>
-<p><img src="/images/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/20210218011424408.png" alt="在这里插入图片描述"></p>
-<p>每一个交互按键都会产生一个数据分组，每次从客户传到服务器的是一个字节的按键。而Rlogin需要远程系统回显客户键入的字符，这样就会产生4个报文段：<br>
-（1）来自客户的交互按键<br>
-（2）来自服务器的按键确认<br>
-（3）来自服务器的按键回显<br>
-（4）来自客户的按键回显确认</p>
-<ul>
-<li>
-<h4><span id="nagle-suan-fa">nagle算法</span><a href="#nagle-suan-fa" class="header-anchor">#</a></h4>
-<p>当数据交互很快时， 可能会有很多小分组。<br>
-开启nagle后，会把小分组做合并一起发送。</p>
-</li>
-</ul>
-<hr>
-<h4><span id="q-shi-me-shi-tcp-nian-bao">Q: 什么是TCP粘包？</span><a href="#q-shi-me-shi-tcp-nian-bao" class="header-anchor">#</a></h4>
-<p>A:<br>
-TCP粘包就是指发送方发送的若干包数据到达接收方时粘成了一包<br>
-从接收缓冲区来看，后一包数据的头紧接着前一包数据的尾<br>
-出现粘包的原因是多方面的，可能是来自发送方，也可能是来自接收方。</p>
-<hr>
-<h4><span id="q-zao-cheng-nian-bao-de-yuan-yin-shi-shi-me">Q: 造成粘包的原因是什么？</span><a href="#q-zao-cheng-nian-bao-de-yuan-yin-shi-shi-me" class="header-anchor">#</a></h4>
-<p>A:<br>
-发送方原因： 开启了nagle算法<br>
-接收方原因：如果TCP接收数据包到缓存的速度大于应用程序从缓存中读取数据包的速度，多个包就会被缓存，应用程序就有可能读取到多个首尾相接粘到一起的包</p>
-<hr>
-<h4><span id="q-shi-me-shi-hou-xu-yao-chu-li-nian-bao-xian-xiang">Q:什么时候需要处理粘包现象？</span><a href="#q-shi-me-shi-hou-xu-yao-chu-li-nian-bao-xian-xiang" class="header-anchor">#</a></h4>
-<p>A:<br>
-如果发送方发送的多组数据本来就是同一块数据的不同部分，比如说一个文件被分成多个部分发送，这时当然不需要处理粘包现象<br>
-如果多个分组毫不相干，甚至是并列关系，导致应用层取出时无法识别各份数据，那么这个时候就一定要处理粘包现象了</p>
-<hr>
-<h4><span id="q-ru-he-chu-li-nian-bao-xian-xiang">Q: 如何处理粘包现象？</span><a href="#q-ru-he-chu-li-nian-bao-xian-xiang" class="header-anchor">#</a></h4>
-<p>A:</p>
-<ol>
-<li>发送方<br>
-对于发送方造成的粘包问题，可以通过关闭Nagle算法来解决，使用TCP_NODELAY选项来关闭算法。</li>
-<li>接收方<br>
-接收方没有办法来处理粘包现象，只能将问题交给应用层来处理。</li>
-<li>应用层<br>
-解决办法：循环处理，应用程序从接收缓存中读取分组时，读完一条数据，就应该循环读取下一条数据，直到所有数据都被处理完成，但是如何判断每条数据的长度呢？</li>
-</ol>
-<ul>
-<li>格式化数据：每条数据有固定的格式（开始符，结束符），这种方法简单易行，但是选择开始符和结束符时一定要确保每条数据的内部不包含开始符和结束</li>
-<li>发送长度：发送每条数据时，将数据的长度一并发送，例如规定数据的前4位是数据的长度，应用层在处理时可以根据长度来判断每个分组的开始和结束位置</li>
-</ul>
-<hr>
-<h4><span id="q-udp-hui-bu-hui-chan-sheng-nian-bao-wen-ti-ni">Q：UDP会不会产生粘包问题呢？</span><a href="#q-udp-hui-bu-hui-chan-sheng-nian-bao-wen-ti-ni" class="header-anchor">#</a></h4>
-<p>A:<br>
-UDP则是面向消息传输的，是有保护消息边界的，接收方一次只接受一条独立的信息，所以不存在粘包问题。<br>
-举个例子：有三个数据包，大小分别为2k、4k、6k，如果采用UDP发送的话，不管接受方的接收缓存有多大，我们必须要进行至少三次以上的发送才能把数据包发送完，但是使用TCP协议发送的话，我们只需要接受方的接收缓存有12k的大小，就可以一次把这3个数据包全部发送完毕。</p>
-<h3><span id="3-3-5-yi-chang-qing-kuang">3.3.5 异常情况</span><a href="#3-3-5-yi-chang-qing-kuang" class="header-anchor">#</a></h3>
-<ul>
-<li>
-<p>异常情况时，会把报文里的复位表示RST置为1。有3种情况会发送复位报文<br>
-①端口不存在<br>
-②进程异常终止<br>
-③客户端异常退出， 服务器没有收到任何fin，此时称为TCP<strong>半打开</strong>状态。如果TCP配置了心跳，则可以检测</p>
-</li>
-<li>
-<p>半关闭<br>
-TCP的半关连接是指：TCP连接只有一方发送了FIN，另一方没有发出FIN包，仍然可以在一个方向上正常发送数据。</p>
-</li>
-<li>
-<p>半连接<br>
-三次握手中，主动发起握手的一方不发最后一次ACK，使得服务器端阻塞在SYN_RECV状态半连接攻击（SYN攻击）：会耗尽服务器资源，使得真正的请求无法建立连接。</p>
-</li>
-</ul>
-<h2><span id="3-4-yong-sai-bi-mian-ji-zhi">3.4 拥塞避免机制</span><a href="#3-4-yong-sai-bi-mian-ji-zhi" class="header-anchor">#</a></h2>
-<p>这块概念很多很乱，我按问题整理了一下，一步步来<br>
-TCP的拥塞避免等机制对于初学者来说还是比较复杂的，工作中如果开发时偏应用层，那么大部分时候就会摸不到这个机制，感受也就没那么深了。<br>
-但如果你的开发过程涉及数据传输，一直在重传、超时之类的方案里有困惑的话，不妨重新学一学可靠性最精致的TCP协议。</p>
-<p>所以这里我抛去死记硬背的那堆概念，用10个连续的问题来学习这个机制，注意看的时候先自己思考一下如果是自己，会怎么设计，再去看实际的TCP设计，来理解它的精妙之处。</p>
-<hr>
-<h3><span id="q-jian-li-lian-jie-hou-mei-ci-fa-song-de-bao-wen-shu-liang-shi-gu-ding-de-ma-ji-mei-ci-du-fa-1-tiao-huo-zhe-10-tiao">Q: 建立连接后，每次发送的报文数量是固定的吗？即每次都发1条或者10条？</span><a href="#q-jian-li-lian-jie-hou-mei-ci-fa-song-de-bao-wen-shu-liang-shi-gu-ding-de-ma-ji-mei-ci-du-fa-1-tiao-huo-zhe-10-tiao" class="header-anchor">#</a></h3>
-<p>A:<br>
-不是。<br>
-建立连接后，会先只发1条， 然后发2条，接着再发4条，逐步增加。<br>
-这个过程叫 <strong>“慢启动”</strong>。<br>
-这个1、2、4递增的数量被称之为 <strong>拥塞窗口</strong> cwnd</p>
-<p>可以理解为TCP希望刚开始，可以大胆点，不断加数量。但为了保险期间还是从1条还是倍增。</p>
-<hr>
-<h3><span id="q-man-qi-dong-guo-cheng-zhong-na-me-fa-song-shu-liang-yong-sai-chuang-kou-shi-me-shi-hou-bu-zai-bei-zeng-shi-wu-xian-bei-zeng-ma">Q: 慢启动过程中，那么发送数量（拥塞窗口）什么时候不再倍增？是无限倍增吗？</span><a href="#q-man-qi-dong-guo-cheng-zhong-na-me-fa-song-shu-liang-yong-sai-chuang-kou-shi-me-shi-hou-bu-zai-bei-zeng-shi-wu-xian-bei-zeng-ma" class="header-anchor">#</a></h3>
-<p>A:<br>
-不会无限倍增。<br>
-当到达<strong>慢启动门限ssthreshold</strong>时，会变成每次都增加1条。<br>
-这个过程叫<strong>拥塞避免过程</strong>， 也有叫他拥塞避免算法的</p>
-<p>可以理解为tcp感觉到有风险了，于是开始慢慢地、小心翼翼地1条1条地添加发送条数。</p>
-<hr>
-<h3><span id="q-na-me-dang-jin-ru-yong-sai-bi-mian-mei-ci-1-shi-shi-me-shi-hou-cai-hui-bu-zai-ji-xu-jia">Q:那么，当进入拥塞避免，每次+1时，什么时候才会不再继续加？</span><a href="#q-na-me-dang-jin-ru-yong-sai-bi-mian-mei-ci-1-shi-shi-me-shi-hou-cai-hui-bu-zai-ji-xu-jia" class="header-anchor">#</a></h3>
-<p>A:<br>
-随着每次发送的数量越发越多， 最终会超出带宽限制，于是就会有某条报文发生超时。<br>
-有可能是发的中途丢了， 亦或者是返回的数据全阻塞住了，一条都回不来。</p>
-<p>当发送端检测到发生超时时，就会让 <strong>慢启动门限ssthreshold = 当前拥塞窗口cwnd/2</strong><br>
-接着<strong>cwnd 重新置为1</strong>，从新开始 慢启动算法。</p>
-<p>这样的好处在于可以检测到每次发送的上限，动态调整发送窗口。<br>
-上面的过程叫做 <strong>超时重传</strong>。<br>
-注意发生超时重传时， cwnd会重置成1。</p>
-<hr>
-<h3><span id="q-shang-mian-ti-dao-liao-chao-shi-na-me-tcp-ke-hu-duan-shi-zen-me-pan-duan-bao-wen-fa-song-chao-shi-de-ni">Q: 上面提到了超时， 那么TCP客户端是怎么判断报文发送超时的呢？</span><a href="#q-shang-mian-ti-dao-liao-chao-shi-na-me-tcp-ke-hu-duan-shi-zen-me-pan-duan-bao-wen-fa-song-chao-shi-de-ni" class="header-anchor">#</a></h3>
-<p>A:<br>
-每次发送数据包的时候， 都会有一个相应的计时器，一旦超过 RTO(超时时间） 而没有收到 ACK， TCP就会重发该数据包。<br>
-没收到 ACK 的数据包都会存在重传缓冲区里，等到 ACK 后，就从缓冲区里删除。</p>
-<hr>
-<h3><span id="q-shang-mian-ti-dao-de-chao-shi-shi-jian-rto-shi-zen-me-lai-de-wan-yi-she-de-tai-da-ke-neng-dao-zhi-hen-chi-cai-neng-fan-ying-guo-lai-she-de-tai-xiao-ze-ke-neng-dao-zhi-mei-tiao-du-chao-shi">Q:上面提到的超时时间RTO是怎么来的？万一设得太大可能导致很迟才能反应过来， 设得太小则可能导致每条都超时</span><a href="#q-shang-mian-ti-dao-de-chao-shi-shi-jian-rto-shi-zen-me-lai-de-wan-yi-she-de-tai-da-ke-neng-dao-zhi-hen-chi-cai-neng-fan-ying-guo-lai-she-de-tai-xiao-ze-ke-neng-dao-zhi-mei-tiao-du-chao-shi" class="header-anchor">#</a></h3>
-<p>A:<br>
-通过“每次报文的往返时间样本”和“之前样本的偏差值”<strong>动态计算</strong>出来的。</p>
-<ul>
-<li>RTT ： 报文往返时间（指从发送到收到ack的时间）。每个报文发出后都有个定时器，收到后都会计算出一个RTT样本</li>
-</ul>
-<hr>
-<ul>
-<li>RTTs： 加权平均往返时间，类似于一个估算的往返时间，实时在变。<br>
-RTTs = （1-a) * RTTs + a * RTT最新样本<br>
-即每次得到RTT样本后， ?都会使用a这个占比去更新RTTs。</li>
-</ul>
-<hr>
-<ul>
-<li>RTTd: ?RTT偏差加权平均值（就是用来计算超时时间应该比RTT多多少）<br>
-RTTd = (1 - b) * RTTd + b*RTTs - RTT最新样本<br>
-即每次会用新的RTTs以b的占比去更新一下RTTd，并减去RTT样本</li>
-</ul>
-<hr>
-<ul>
-<li>RTO ： 超时重传时间<br>
-等于平均往返时间 加上 4倍偏差值<br>
-RTO = RTTs + 4*RTTd?</li>
-</ul>
-<hr>
-<h3><span id="q-ru-guo-fa-sheng-chong-chuan-que-huan-shi-mei-you-shou-dao-ack-na-me-zui-xin-de-rtt-yang-ben-ying-gai-zen-me-suan-ji-ni-du-shou-bu-dao-zui-xin-de-ack-liao-rtt-nan-dao-qu-chao-shi-shi-jian-ma">Q: 如果发生重传，却还是没有收到ack，那么最新的RTT样本应该怎么算？即你都收不到最新的ack了， RTT难道取超时时间吗？</span><a href="#q-ru-guo-fa-sheng-chong-chuan-que-huan-shi-mei-you-shou-dao-ack-na-me-zui-xin-de-rtt-yang-ben-ying-gai-zen-me-suan-ji-ni-du-shou-bu-dao-zui-xin-de-ack-liao-rtt-nan-dao-qu-chao-shi-shi-jian-ma" class="header-anchor">#</a></h3>
-<p>A:<br>
-会使用karn算法： 发生重传时，不更新这次的RTT样。选用后面收到的ack<br>
-修正karn： 为了避免发生重传后，实际RTT都变慢了，导致一下子所有请求都超时， 会在发生重传时，把RTO假大1倍。</p>
-<hr>
-<h3><span id="q-shang-mian-ti-dao-de-ack-chao-shi-pan-duan-hui-bu-hui-tai-jiu-liao-jia-ru-zhi-shi-fa-de-shi-hou-diu-liao-zhong-jian-bu-fen-bao-wen-er-yi-dan-da-bu-fen-bao-wen-ack-huan-neng-zheng-chang-fan-hui-ye-yao-yi-zhi-deng-chao-shi-ma">Q: 上面提到的ACK超时判断会不会太久了？ 假如只是发的时候丢了中间部分报文而已， 但大部分报文ACK还能正常返回，也要一直等超时吗？</span><a href="#q-shang-mian-ti-dao-de-ack-chao-shi-pan-duan-hui-bu-hui-tai-jiu-liao-jia-ru-zhi-shi-fa-de-shi-hou-diu-liao-zhong-jian-bu-fen-bao-wen-er-yi-dan-da-bu-fen-bao-wen-ack-huan-neng-zheng-chang-fan-hui-ye-yao-yi-zhi-deng-chao-shi-ma" class="header-anchor">#</a></h3>
-<p>A:<br>
-如果能正常接收其他报文的ACK， 只是中间的部分报文丢了， 则有另一个办法。</p>
-<p>接收端有一个冗余确认机制：</p>
-<ol>
-<li>发送端A 发送 1、2、3、4、5四条</li>
-<li>但是B接收端只收到1、2、4、5，而3因为网络拥塞丢了。</li>
-<li>于是B会发送ack=3而不是ack=5 给A。 <strong>这就是冗余确认机制，只发送缺失那部分的ack，后面的4和5都不管。</strong></li>
-<li>A收到ack=3后， 继续发送3、4、5、6、7， 结果3还是丢了。</li>
-<li>于是B又发送ack=3。</li>
-</ol>
-<p>当A发现连续3次收到了ack=3时，就会觉察到不对劲，我都发3次了你还是说没收到，可你又能正常返回其他ACK给我，是不是我发的太多了？</p>
-<p>上面这个判断3次的重传算法叫“快重传”。</p>
-<p>于是A会马上进入 “快速恢复”。<br>
-和之前类似，慢启动门限ssthreshold = 当前拥塞窗口cwnd/2<br>
-但是！！  新的拥塞窗口cwnd会设置成ssthreshold/2，  而不是1。<br>
-而且不会走慢启动倍增的那种，而是走拥塞避免， 逐步+1的那种。<br>
-<img src="/images/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/1638808791348065758.png" alt="image.png"></p>
-<hr>
-<h3><span id="q-qian-mian-chao-shi-chong-chuan-de-shi-hou-shi-bian-cheng-cong-1-kai-shi-man-qi-dong-wei-shi-me-zhe-ge-kuai-chong-chuan-que-shi-cong-ssthreshold-2-kai-shi-bing-qie-zou-yong-sai-bi-mian-wei-shi-me-hui-you-zhe-ge-qu-bie">Q: 前面“超时重传”的时候，是变成从1开始慢启动， 为什么这个“快重传”却是从ssthreshold/2开始，并且走拥塞避免？ 为什么会有这个区别？</span><a href="#q-qian-mian-chao-shi-chong-chuan-de-shi-hou-shi-bian-cheng-cong-1-kai-shi-man-qi-dong-wei-shi-me-zhe-ge-kuai-chong-chuan-que-shi-cong-ssthreshold-2-kai-shi-bing-qie-zou-yong-sai-bi-mian-wei-shi-me-hui-you-zhe-ge-qu-bie" class="header-anchor">#</a></h3>
-<p>A:<br>
-因为前面发生超时重传时，  是比较严重的情况， 超时时间内一个ACK都没收到。就好像来回数据都凭空消失了。</p>
-<p>而快速重传发生时， 还是能收到部分ack的， 只是丢失了部分数据， 说明拥塞没那么严重，于是可以大胆一点将cwnd削减到1/4， 而不是直接从1开始。</p>
-<p>到了这里，基本就能理清楚超时重传和快重传的区别了，重点是理解这2个区别是怎么来的。后面再补几个问题，避免你和其他概念搞混，但不会说得太深，具体需要你自己去扩展学习了。</p>
-<h3><span id="q-wei-sha-fa-song-di-duo-liao-shu-ju-jiu-hui-bu-fen-diu-shi-zhe-ge-shi-zen-me-ge-yuan-li">Q: 为啥发送地多了，数据就会部分丢失？这个是怎么个原理？</span><a href="#q-wei-sha-fa-song-di-duo-liao-shu-ju-jiu-hui-bu-fen-diu-shi-zhe-ge-shi-zen-me-ge-yuan-li" class="header-anchor">#</a></h3>
-<p>A:<br>
-路由器有缓存，IP分组接收过多时就会耗尽空间，丢弃数据。详细可以看路由器的数据转发原理。</p>
-<hr>
-<h3><span id="q-tcp-chu-liao-shang-mian-de-chong-chuan-ding-shi-qi-hao-xiang-huan-you-ge-jian-chi-ding-shi-qi-qu-bie-shi-sha">Q: TCP除了上面的重传定时器， 好象还有个坚持定时器？区别是啥？</span><a href="#q-tcp-chu-liao-shang-mian-de-chong-chuan-ding-shi-qi-hao-xiang-huan-you-ge-jian-chi-ding-shi-qi-qu-bie-shi-sha" class="header-anchor">#</a></h3>
-<p>A:<br>
-坚持定时器和超时、网络拥塞没有关系， 和通告窗口即对端的接收能力有关。<br>
-简单来说， 就是对方的传输层缓冲区（接收端窗口）满了，告诉你别发了，我吃不下了，于是返回通告窗口为0。<br>
-但你想知道啥时候可以发，于是就启动一个坚持定时器，每隔5s发送1个字节的小报文，小小地试探下。当通告窗口不为0了，就重新开始发。</p>
-<h1><span id="4-udp">4 UDP</span><a href="#4-udp" class="header-anchor">#</a></h1>
-<p>网络层的多播和广播机制，需要依赖传输层的UDP。</p>
-<h2><span id="4-1-tcp-he-udp-de-qu-bie">4.1 TCP和UDP的区别：</span><a href="#4-1-tcp-he-udp-de-qu-bie" class="header-anchor">#</a></h2>
-<ul>
-<li>TCP有连接， UDP无连接</li>
-<li>TCP可靠， UDP不可靠，发出去不管了。也没有拥塞控制等机制。 不过UDP会做数据正确性校验。</li>
-<li>UDP会一次性交付一个完整报文，不会做拆分，TCP可能会有小的分组。</li>
-<li>UDP首部比较简单， 只有源端口、目的端口、报文长度、校验和、填充位。</li>
-</ul>
-<h2><span id="4-2-udp-de-yi-xie-te-dian">4.2 UDP的一些特点</span><a href="#4-2-udp-de-yi-xie-te-dian" class="header-anchor">#</a></h2>
-<ul>
-<li>
-<p>每次调用程序里多播的接口时，都会产生1个UDP消息，没有那种可以复用的UDP连接。</p>
-</li>
-<li>
-<p>UDP数据报的最大长度，和应用程序可读写的数据报最大长度有关，和TCP/IP内核有关。<br>
-当数据报长度大于程序可读写长度，会引发 数据截断。所以udp数据的长度必须要控制好，毕竟他无法根据MTU做分片。</p>
-</li>
-<li>
-<p>怎么确认MTU多大？<br>
-可以用taceroute命令检测MTU， 本质上是把TCP报文设置成不分片，然后逐步增大，直到发生了ICMP不可达的报错。</p>
-</li>
-<li>
-<p>如果一次性发送了6个UDP数据报， 并且在链路层有6次ARP请求， 接收端收到6个UDP后，只会发送一个ARP响应。</p>
-</li>
-<li>
-<p>UDP一般用于本地小范围通信， 所以差错其实相比TCP还小一点。</p>
-</li>
-</ul>
-<h2><span id="4-3-udp-de-ying-yong">4.3 UDP的应用</span><a href="#4-3-udp-de-ying-yong" class="header-anchor">#</a></h2>
-<p>TFTP（小文件传输）<br>
-DNS（域名解析）<br>
-SNMP(简单网络管理协议）<br>
-IGMP<br>
-BOOTP（无盘系统引导）<br>
-RTP(实时传输协议)<br>
-多媒体应用</p>
-<hr>
-<h2><span id="q-udp-ke-yi-shi-xian-ke-kao-chuan-shu-ma">Q: UDP可以实现可靠传输吗？</span><a href="#q-udp-ke-yi-shi-xian-ke-kao-chuan-shu-ma" class="header-anchor">#</a></h2>
-<p>A:<br>
-可以实现，但必须在应用层做改造。</p>
-<ol>
-<li>添加seq/ack机制，确保数据发送到对端</li>
-<li>添加发送和接收缓冲区，主要是用户超时重传。</li>
-<li>添加超时重传机制。</li>
-</ol>
-<ul>
-<li>
-<p>详细说明：送端发送数据时，生成一个随机seq=x，然后每一片按照数据大小分配seq。数据到达接收端后接收端放入缓存，并发送一个ack=x的包，表示对方已经收到了数据。发送端收到了ack包后，删除缓冲区对应的数据。时间到后，定时任务检查是否需要重传数据。</p>
-</li>
-<li>
-<p>目前有多种开源程序利用udp实现了可靠的数据传输。分别为RUDP、RTP、UDT</p>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%B1%82%E8%AF%A6%E8%A7%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%B1%82%E8%AF%A6%E8%A7%A3/" class="post-title-link" itemprop="url">计网之网络层（IP协议）详解</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-24 00:47:49" itemprop="dateCreated datePublished" datetime="2022-08-24T00:47:49+08:00">2022-08-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-25 00:06:15" itemprop="dateModified" datetime="2022-08-25T00:06:15+08:00">2022-08-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%B1%82%E8%AF%A6%E8%A7%A3/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/24/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%B1%82%E8%AF%A6%E8%A7%A3/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>6.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#1-ip-di-zhi">1.IP地址</a>
-<ul>
-<li><a href="#1-1-fen-lei-biao-shi-fa">1.1 分类表示法：</a>
-<ul>
-<li><a href="#1-1-2-fen-lei-biao-shi-di-zhi-de-qi-ta-shuo-ming">1.1.2 分类表示地址的其他说明</a></li>
-</ul>
-</li>
-<li><a href="#1-2-wu-fen-lei-bian-zhi-cidr">1.2 无分类编址CIDR</a></li>
-</ul>
-</li>
-<li><a href="#2-ip-shu-ju-bao-wen-ge-shi">2 IP数据报文格式</a>
-<ul>
-<li><a href="#q-ip-bao-wen-li-you-shi-me-ke-yi-bu-an-shun-xu-huo-zhe-zi-jie-lai-jiang-yi-jiang">Q: IP报文里有什么？可以不按顺序或者字节来讲一讲</a></li>
-</ul>
-</li>
-<li><a href="#3-lu-you-gai-nian">3.路由概念</a>
-<ul>
-<li><a href="#3-1-lu-you-biao">3.1 路由表</a></li>
-<li><a href="#3-2-lu-you-wang-luo-pi-pei">3.2 路由网络匹配</a></li>
-<li><a href="#3-3-arp-jie-xi">3.3 ARP解析</a></li>
-<li><a href="#3-4-rarp-ni-di-zhi-jie-xi-xie-yi">3.4 RARP逆地址解析协议</a></li>
-</ul>
-</li>
-<li><a href="#4-icmp-xie-yi">4 ICMP协议</a></li>
-<li><a href="#5-dhcp-xie-yi">5 DHCP协议</a></li>
-<li><a href="#6-lu-you-biao-de-zui-you-xia-yi-tiao-di-zhi-ru-he-ji-suan">6.路由表的最优下一跳地址如何计算？</a>
-<ul>
-<li><a href="#6-1-rip-xie-yi">6.1 RIP协议</a></li>
-<li><a href="#6-2-ospf-xie-yi">6.2 OSPF协议</a></li>
-<li><a href="#6-3-bgp-xie-yi">6.3 BGP协议</a></li>
-<li><a href="#q-rip-xie-yi-xia-lu-you-biao-shi-me-shi-hou-geng-xin">Q: RIP协议下路由表什么时候更新？</a></li>
-<li><a href="#q-lu-you-zhong-du-shi-shi-me">Q: 路由中毒是什么？</a></li>
-<li><a href="#q-shou-dao-zhong-du-lu-you-de-lu-you-qi-hui-zen-me-zuo">Q: 收到中毒路由的路由器会怎么做？</a></li>
-</ul>
-</li>
-<li><a href="#7-duo-bo">7 多播</a>
-<ul>
-<li><a href="#7-1-igmp-xie-yi">7.1 IGMP协议</a></li>
-<li><a href="#7-2-mospf-duo-bo-lu-you-xuan-ze-xie-yi">7.2 MOSPF多播路由选择协议</a></li>
-</ul>
-</li>
-<li><a href="#8-qi-ta-wang-luo-ceng-gai-nian">8 其他网络层概念</a>
-<ul>
-<li><a href="#8-1-vpn">8.1 VPN</a></li>
-<li><a href="#8-2-nat">8.2 NAT</a></li>
-<li><a href="#8-3-yi-dong-ip">8.3 移动IP</a></li>
-</ul>
-</li>
-<li><a href="#9-chang-jian-wang-luo-ceng-ming-ling">9 常见网络层命令</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="1-ip-di-zhi">1.IP地址</span><a href="#1-ip-di-zhi" class="header-anchor">#</a></h1>
-<h2><span id="1-1-fen-lei-biao-shi-fa">1.1 分类表示法：</span><a href="#1-1-fen-lei-biao-shi-fa" class="header-anchor">#</a></h2>
-<p>分类表示法已经不常用了。</p>
-<ul>
-<li>A类地址：<br>
-格式为<br>
-1[7位网络号][24位主机号]<br>
-网络号全0指本网络<br>
-网络号全1用于环回地址（127.0.0.1）<br>
-主机号全0时指本住机所在网络<br>
-全1时指本网络所有主机（广播地址）<br>
-因此A类地址实际可选范围为1.x.x.x ~ 126.x.x.x</li>
-</ul>
-<hr>
-<ul>
-<li>B类地址<br>
-格式为<br>
-10[14位网络号][16位主机号]<br>
-网络号不可全0，但可以全1<br>
-范围为128.x.x.x~191.x.x.x</li>
-</ul>
-<hr>
-<ul>
-<li>C类地址<br>
-格式为<br>
-110[21位网络号][8位主机号]<br>
-网络号不可全0<br>
-范围为192.x.x.x~223.x.x.x</li>
-</ul>
-<hr>
-<ul>
-<li>D类地址（多播地址）<br>
-格式为<br>
-1110[28位多播地址]<br>
-范围为224.x.x.x~239.x.x.x<br>
-因此看到224以上的ip要注意</li>
-</ul>
-<hr>
-<ul>
-<li>E类地址<br>
-格式为11110[保留]<br>
-用于实验用，因此看到240以上的认定不是正常节点ip</li>
-</ul>
-<h3><span id="1-1-2-fen-lei-biao-shi-di-zhi-de-qi-ta-shuo-ming">1.1.2 分类表示地址的其他说明</span><a href="#1-1-2-fen-lei-biao-shi-di-zhi-de-qi-ta-shuo-ming" class="header-anchor">#</a></h3>
-<ul>
-<li>
-<p>网络号全0，但主机号非全0的某个ip就是指本网络的某个主机</p>
-</li>
-<li>
-<p>网络号不为全1，但主机号为1的ip，则指某个网络的广播地址</p>
-</li>
-<li>
-<p>全0，指本网络的本主机</p>
-</li>
-<li>
-<p>全1，指本网络的广播地址</p>
-</li>
-<li>
-<p>环回地址，指127.0.0.1，在同一台主机上进行网络传输</p>
-</li>
-<li>
-<p>私有地址，指不会参与路由器转发的地址,， 只会参与本局域网，发给本局域网的交换机：<br>
-A类： 10.0.0.0-10.25.255.255<br>
-B类： 172.16.0.0-172.31.0.0<br>
-C类： 192.168.0.0-192.168.255.255</p>
-</li>
-</ul>
-<h2><span id="1-2-wu-fen-lei-bian-zhi-cidr">1.2 无分类编址CIDR</span><a href="#1-2-wu-fen-lei-bian-zhi-cidr" class="header-anchor">#</a></h2>
-<p>Classless Inter-Domain Routing 无类型域间选路</p>
-<ul>
-<li>CIDR将路由集中起来，使一个IP地址代表主要骨干提供商服务的几千个IP地址，从而减轻Internet路由器的负担。</li>
-<li>该编址用于子网划分，子网号和上面提到的网络号是不同的。</li>
-<li>IP地址 ::= {&lt;网络号&gt;， &lt;子网号&gt;， &lt;主机号&gt;}</li>
-</ul>
-<p>CIDR有三种编址方式：</p>
-<ul>
-<li>128.14.35.7/20  ， 完整ip加子网位数</li>
-<li>10.0.0.0/10 -&gt; 10/10， 可省略末尾的0</li>
-<li>00010100*， 即用星号代替子网后的主机号</li>
-</ul>
-<p>对于CIDR编址<br>
-子网号的全0和全1没有特殊含义，但不可设置成全0或者全1。<br>
-主机号的全0指本网络， 全1指广播。（网络号仍然遵从ABCD地址的规则）</p>
-<ul>
-<li>子网掩码：<br>
-值1的位置指该ip中该位置是网络号和子网号区域<br>
-值0的位置指该ip中该位置是主机号区域。<br>
-例子：111111100000000…， 那么前面8个1就是网络号+子网号，后面都代表了主机号</li>
-<li>路由寻址时，一般先比较网络号，再比较子网号，再比较主机。<br>
-子网掩码可以简化先比网络再比子网的过程。</li>
-</ul>
-<h1><span id="2-ip-shu-ju-bao-wen-ge-shi">2 IP数据报文格式</span><a href="#2-ip-shu-ju-bao-wen-ge-shi" class="header-anchor">#</a></h1>
-<p>IP报文的首部至少有20个字节（160位），首部如下：</p>
-<table>
-<thead>
-<tr>
-<th>位数</th>
-<th>含义</th>
-<th>详情</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>4</td>
-<td>版本</td>
-<td>IPV4或者IPV6</td>
-</tr>
-<tr>
-<td>4</td>
-<td>首部长度</td>
-<td>单位是字（4字节</td>
-</tr>
-<tr>
-<td>8</td>
-<td>区分服务</td>
-<td>设置服务的时延、吞吐量、可靠性，一般不用</td>
-</tr>
-<tr>
-<td>16</td>
-<td>IP报文总长度</td>
-<td>单位字节</td>
-</tr>
-<tr>
-<td>16</td>
-<td>报文标识</td>
-<td>用于分片后的同报文组装。相同报文的不同分片，该值相同</td>
-</tr>
-<tr>
-<td>3</td>
-<td>分片标志</td>
-<td>判断是否可分片或者是否是分配最后一个</td>
-</tr>
-<tr>
-<td>13</td>
-<td>片偏移</td>
-<td>用于按顺序组装同报文的分片</td>
-</tr>
-<tr>
-<td>8</td>
-<td>生存时间TTL</td>
-<td>该报文最大跳数，每经过一次转发就减一</td>
-</tr>
-<tr>
-<td>8</td>
-<td>协议类型</td>
-<td>ICMP/IGMP/TCP/UDP</td>
-</tr>
-<tr>
-<td>16</td>
-<td>首部校验和</td>
-<td>用于和首部做校验，看首部是否正确</td>
-</tr>
-<tr>
-<td>32</td>
-<td>源IP地址</td>
-<td></td>
-</tr>
-<tr>
-<td>32</td>
-<td>目的IP地址</td>
-<td></td>
-</tr>
-<tr>
-<td>？</td>
-<td>任选项</td>
-<td>很少被使用，最多40字节</td>
-</tr>
-</tbody>
-</table>
-<p>上面可以看到IP报文的以下限制：</p>
-<ol>
-<li>首部长度字段可以看出首部长度最多可以位60字节，所以任选项最多40字节</li>
-<li>报文总长度最大为65535， 但是由于MTU的限制（链路层防冲突机制导致的），一般都要做分片， 分片后就会用上分片标识和片偏移了。</li>
-</ol>
-<hr>
-<h2><span id="q-ip-bao-wen-li-you-shi-me-ke-yi-bu-an-shun-xu-huo-zhe-zi-jie-lai-jiang-yi-jiang">Q: IP报文里有什么？可以不按顺序或者字节来讲一讲</span><a href="#q-ip-bao-wen-li-you-shi-me-ke-yi-bu-an-shun-xu-huo-zhe-zi-jie-lai-jiang-yi-jiang" class="header-anchor">#</a></h2>
-<p>A:</p>
-<ul>
-<li>首先要知道报文多长，  首部长度+报文长度</li>
-<li>为了校验首部，还需要校验首部和</li>
-<li>很重要的源ip 目的ip<br>
-那么如何确定ip类型？这就需要 ipv版本，来确认是ip4还是ip6。</li>
-<li>ip支持分片，那么就需要<br>
-分片id、是否是最后分片标记、分片偏移</li>
-<li>协议类型（icmp、igmp）</li>
-<li>TTL生存</li>
-<li>其他任选项（40字节）</li>
-</ul>
-<h1><span id="3-lu-you-gai-nian">3.路由概念</span><a href="#3-lu-you-gai-nian" class="header-anchor">#</a></h1>
-<ul>
-<li>路由器可分隔广播域，指的是不同网络号的地址，路由器不会转发广播报文</li>
-</ul>
-<blockquote>
-<blockquote>
-<p>Hub集线器在同一个冲突域通信无法分割；交换机在同一个广播域通信，可分割冲突域；路由器实现不同广播域间通信，可分隔广播域。</p>
-</blockquote>
-</blockquote>
-<ul>
-<li>IP报文在传输中不会被改变，但是链路层报文的mac地址会不断变化。</li>
-<li>当2个主机在不同的子网时，必须要借助路由才能通信</li>
-</ul>
-<h2><span id="3-1-lu-you-biao">3.1 路由表</span><a href="#3-1-lu-you-biao" class="header-anchor">#</a></h2>
-<p>假设某个路由器在N1网络，他的路由表如下：</p>
-<table>
-<thead>
-<tr>
-<th>目的网络</th>
-<th>下一跳地址</th>
-<th>解释</th>
-<th>到目的网络距离</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>N1</td>
-<td>0.0.0.0</td>
-<td>假设目的网络就是路由器所在网络，说明可以直接交付给本网络的主机了，不用再转发，所以地址为全0</td>
-<td>0</td>
-</tr>
-<tr>
-<td>N2</td>
-<td>R2</td>
-<td>如果为N2，则会发给R2路由</td>
-<td>4</td>
-</tr>
-<tr>
-<td>0.0.0.0</td>
-<td>R1默认路由</td>
-<td>如果路由表找不到目的网络，则会默认转给R1处理，0.0.0.0是默认转发网络的标识</td>
-<td>？</td>
-</tr>
-<tr>
-<td>特定IP地址</td>
-<td>R3</td>
-<td>这种特定地址的选择是管理员配置的</td>
-<td>3</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>特定IP地址的子网掩码为全1，所以一般都是x.x.x.x/32</li>
-<li>DNS服务器一般会配置在路由表中的特定IP地址</li>
-<li>未知网络在路由表里的目的网络被写为0.0.0.0， 如果么有，则就是未设置默认路由</li>
-<li>路由器不会转发私有地址。</li>
-<li>距离指的是跨越路由器的数量，而不是实际长度单位</li>
-</ul>
-<h2><span id="3-2-lu-you-wang-luo-pi-pei">3.2 路由网络匹配</span><a href="#3-2-lu-you-wang-luo-pi-pei" class="header-anchor">#</a></h2>
-<p>如果路由表中的目的网络由很多，怎么确定IP和路由表中的目的网络是匹配的？<br>
-使用 最长前缀匹配， 即前缀匹配得最多的就是目的网络。<br>
-优化算法可用二叉线索树来确认最长前缀。</p>
-<hr>
-<p>Q： 为什么要用二叉线索树来 判断最长匹配前缀？ 字典树不可以吗？<br>
-A:</p>
-<h2><span id="3-3-arp-jie-xi">3.3 ARP解析</span><a href="#3-3-arp-jie-xi" class="header-anchor">#</a></h2>
-<p>全称Address Resolution Protocol，地址解析协议。</p>
-<p>从主机发给路由， 或者路由发给路由时，底层还是得封装一层mac地址然后往下交给交换机。<br>
-那么ip和mac地址的对应关系， 是怎么得知的？<br>
-答案就是ARP协议</p>
-<p>本质就是当mac缓存表里没有ip和mac的对应关系时， 主机或者路由会广播ARP报文， 对应ip方向的交换机会把报文发送回来，这时候就直到mac地址和ip的对饮关系了。</p>
-<ul>
-<li>arp -a可以检查ARP告诉缓存</li>
-<li>ARP缓存有超时时间</li>
-<li>目的主机不存在时，会反复发送，有个超期期限的存在。</li>
-<li>主机发送ARP查找自己的Mac地址称为“免费ARP&quot;</li>
-<li>发送给某1主机的arp请求被中间路由器接收了，则称为“ARP代理”， 发送者不管不管你是中间路由还是目的ip主机，只知道这个ip需要发给这个mac。</li>
-</ul>
-<h2><span id="3-4-rarp-ni-di-zhi-jie-xi-xie-yi">3.4 RARP逆地址解析协议</span><a href="#3-4-rarp-ni-di-zhi-jie-xi-xie-yi" class="header-anchor">#</a></h2>
-<p>由mac地址反取ip。<br>
-因为ip不存在，无法直接转给给路由。所以会比ARP难。<br>
-过程：<br>
-1）将源设备和目标设备的MAC地址字段都设为发送者的MAC地址和IP地址，发送主机发送一个本地的RARP广播，能够到达网络上的所有设备，在此广播包中，声明自己的MAC地址并且请求任何收到此请求的RARP服务器分配一个IP地址；<br>
-? 2）本地网段上的RARP服务器收到此请求后，检查其RARP列表，查找该MAC地址对应的IP地址；<br>
-? 3）如果存在，RARP服务器就给源主机发送一个响应数据包并将此IP地址提供给对方主机使用；如果不存在，RARP服务器对此不做任何的响应；<br>
-? 4） 源主机收到从RARP服务器的响应信息，就利用得到的IP地址进行通讯；如果一直没有收到RARP服务器的响应信息，表示初始化失败。</p>
-<h1><span id="4-icmp-xie-yi">4 ICMP协议</span><a href="#4-icmp-xie-yi" class="header-anchor">#</a></h1>
-<p>全称Internet control message protocl，网络控制报文协议<br>
-他会包装在IP的数据报文中，并把首部的协议类型改成ICMP那个数字。</p>
-<p>首部总共8个字节，分别为<br>
-2字节的ICMP类型<br>
-2字节的ICMP报文代码（类似错误码）<br>
-4字节的校验和<br>
-后面就是数据部分了。</p>
-<p>常见的2种用途：</p>
-<ol>
-<li>发送网络层之间的差错报告，例如：
-<ul>
-<li>源点抑制——发送网络拥塞</li>
-<li>终点不可达——无法找到对应ip交付地点</li>
-<li>时间超时——报文种的TTL降为0，或者分片一直没收集完</li>
-<li>参数错误——首部中字段有错</li>
-<li>路由改变（重定向）——　主机把数据发给了路由器R2，但是路由器R2发现主机自己本来就可以直达了，于是发给主机该消息，告诉他你要更新路由表了。</li>
-</ul>
-</li>
-</ol>
-<p>差错报告有以下其他特点：<br>
-* ICMP自身出错时，不会再发ICMP差错报文<br>
-* 如果是报文分配后发生错误，则只会发1次，而不会每个分片发一次<br>
-* 不针对多播，不针对127.0.0.1、0.0.0.0等特殊的地址发送差错报文，不可广播（避免广播风暴）</p>
-<p>​</p>
-<ol start="2">
-<li>发送一些询问报文，例如：
-<ul>
-<li>回送请求和应答——例如ping命令就是借助ICMP</li>
-<li>超时报文——traceroute就是用这个，把TTL从1慢慢增加，发好多份，通过TTL为0时的差错报告，定位跟踪路上有哪些路由</li>
-<li>时间戳请求——同步时间</li>
-</ul>
-</li>
-</ol>
-<h1><span id="5-dhcp-xie-yi">5 DHCP协议</span><a href="#5-dhcp-xie-yi" class="header-anchor">#</a></h1>
-<p>全称Dynamic Host Configuration Protocol， 动态主机配置协议</p>
-<p>当某个局域网内新增了一台主机，这个主机的ip是怎么生成的呢？这就会用到DHCP协议</p>
-<p>主机所在网内会有一台DCHP服务器。<br>
-当新主机加入时，发生如下之事：</p>
-<ol>
-<li>主机先“广播”自己，告诉大家“我来了，谁给我一个IP地址”（他一开始不知道DHCP在哪）</li>
-<li>DCHP服务器收到后，会分配一个IP地址，但因为不知道发给谁，所以也只能“广播”，告诉大家“我这有个ip，刚才谁要的，自己来领一下”</li>
-<li>主机收到DHCP广播的报文后，就能知道自己的ip和dhcp服务器位置了。于是给DCHP服务器发送请求，告诉他“我收到了你发来的ip了”</li>
-<li>DCHP收到后，确认了他的信息，并加入到DHCP本地的数据库中，后面分配新ip时就会排除掉这个ip了。</li>
-</ol>
-<p>有以下几个注意点：</p>
-<ol>
-<li>如果有多个主机同时应答了DHCP的广播， 则会选择最先到达的做分配。</li>
-<li>分配的ip是临时的</li>
-</ol>
-<p><strong>DCHP可以认为是基于UDP的应用层协议，但本质是为了寻求新主机的动态ip地址</strong></p>
-<h1><span id="6-lu-you-biao-de-zui-you-xia-yi-tiao-di-zhi-ru-he-ji-suan">6.路由表的最优下一跳地址如何计算？</span><a href="#6-lu-you-biao-de-zui-you-xia-yi-tiao-di-zhi-ru-he-ji-suan" class="header-anchor">#</a></h1>
-<p>可以理解为 在一个复杂的拓扑图下， 怎么选择最优的一个路由做目的地址的下一跳。<br>
-有2种方式：</p>
-<h2><span id="6-1-rip-xie-yi">6.1 RIP协议</span><a href="#6-1-rip-xie-yi" class="header-anchor">#</a></h2>
-<p>全称Routing Information Protocol,路由信息协议<br>
-是一种动态路由信息协议。</p>
-<ul>
-<li>
-<p>路由只会和相邻的其他路由交换信息。</p>
-</li>
-<li>
-<p>交换的是路由表的信息，关键在于目的网络和距离</p>
-</li>
-<li>
-<p>之前路由表里知道了表里会存储 到目的网络的距离即跨越路由数量，那么只要拿到周边所有路由的距离表，  看下哪个方向最小， 然后把下一跳地址选为最小的那个路由方向即可。</p>
-</li>
-<li>
-<p>使用UDP广播，把自己的路由报文发给周边的其他路由。</p>
-</li>
-<li>
-<p>当路径不可达时，会导致2个路由之间不断叠加该目的地址的距离，直到16时，会被设置成不可达。</p>
-</li>
-</ul>
-<p>所以RIP本质也是基于UDP的应用层协议，但是目的是为了网络层的最优路由选取。</p>
-<h2><span id="6-2-ospf-xie-yi">6.2 OSPF协议</span><a href="#6-2-ospf-xie-yi" class="header-anchor">#</a></h2>
-<p>open shortest path first，开放最短路径优先协议<br>
-指路由器里有全网的拓扑结构，使用最短路算法计算最优路由<br>
-因此路由会把自己的连接情况通过OSPF协议发给所有其他路由，以建立拓扑图。<br>
-这个是属于IP层的协议，不借助UDP。</p>
-<hr>
-<p>RIP和OSPF是自治网络系统AS里的选路措施。<br>
-AS里的选路措施被称作IGP（内部网关协议）<br>
-1个AS里只会有一种选路措施。</p>
-<p>而跨自治系统的协议叫EGP（外部网关协议）<br>
-通常使用BGP协议</p>
-<hr>
-<h2><span id="6-3-bgp-xie-yi">6.3 BGP协议</span><a href="#6-3-bgp-xie-yi" class="header-anchor">#</a></h2>
-<p>Border Gateway Protocol边界网关协议</p>
-<ul>
-<li>每个AS都知道自己为了到达网络N，需要经过哪些AS（相当于知道以AS为节点的拓扑图）</li>
-<li>每个AS都有一个BGP发言人,会与其他BGP网络之间交换自身的AS拓扑信息，从而构建全局连通图</li>
-<li>使用TCP 179端口工作</li>
-</ul>
-<hr>
-<h2><span id="q-rip-xie-yi-xia-lu-you-biao-shi-me-shi-hou-geng-xin">Q: RIP协议下路由表什么时候更新？</span><a href="#q-rip-xie-yi-xia-lu-you-biao-shi-me-shi-hou-geng-xin" class="header-anchor">#</a></h2>
-<p>A:</p>
-<ul>
-<li>正常情况下，路由器会基于更新计时器每30s将路由表发送给邻居路由器，而触发更新是立刻发送路由更新信息</li>
-<li>触发更新就是当检测到网络拓扑发生变动时，路由器会立即发送一个更新信息给邻居路由器，并依次产生触发更新通知它们的邻居路由器，此过程就叫触发更新</li>
-</ul>
-<hr>
-<h2><span id="q-lu-you-zhong-du-shi-shi-me">Q:  路由中毒是什么？</span><a href="#q-lu-you-zhong-du-shi-shi-me" class="header-anchor">#</a></h2>
-<p>A:<br>
-路由中毒是指在路由信息在路由表中失效时，先将度量值变为无穷大的数，而不是马上从路由表中删掉这条路由信息。 然后再将中毒路由信息发布出去，当相邻的路由器收到该中毒路由就可以通过其度量值是16，说明该路由是无效的。</p>
-<p>??因为RIP协议中的度量值其实就是跳数，而RIP协议的跳数最大是15，大于15的目的地被认为是不可达，所以当其度量值为16，就表示这是一个无效路由，这就是所谓的路由中毒，这个数字在限制了网络大小的同时也防止了一个叫做“记数到无穷大”的问题。</p>
-<hr>
-<h2><span id="q-shou-dao-zhong-du-lu-you-de-lu-you-qi-hui-zen-me-zuo">Q: 收到中毒路由的路由器会怎么做？</span><a href="#q-shou-dao-zhong-du-lu-you-de-lu-you-qi-hui-zen-me-zuo" class="header-anchor">#</a></h2>
-<p>A:<br>
-收到中毒路由信息的相邻的路由器会发送一个毒性逆转的信息，表示已经收到中毒路由信息。</p>
-<p>??那么为什么收到中毒路由的路由器为什么要回复一个毒性逆转的信息？这是因为如果不回复的话，那么发送中毒路由的路由器就会一直以广播的形式发送中毒路由，直到相邻的路由器收到并回复一个毒性逆转的信息。</p>
-<h1><span id="7-duo-bo">7 多播</span><a href="#7-duo-bo" class="header-anchor">#</a></h1>
-<p>UDP的时候会用到多播</p>
-<h2><span id="7-1-igmp-xie-yi">7.1 IGMP协议</span><a href="#7-1-igmp-xie-yi" class="header-anchor">#</a></h2>
-<p>internet group message protol，  网络组管理协议<br>
-负责收集和解释一个网络中的组成员信息<br>
-IGMP协议应用于路由器</p>
-<ul>
-<li>某主机加入新的多播组时，发送报文，并转发多播的关系给其他相邻主机或者路由</li>
-<li>会周期性探寻，确认自身这个主机是否还在多播组内</li>
-<li>无法直到总成员数</li>
-<li>IGMP属于网络层的协议</li>
-</ul>
-<h2><span id="7-2-mospf-duo-bo-lu-you-xuan-ze-xie-yi">7.2 MOSPF多播路由选择协议</span><a href="#7-2-mospf-duo-bo-lu-you-xuan-ze-xie-yi" class="header-anchor">#</a></h2>
-<p>多播开放最短通路优先（Multicast Open Shortest PathFirst，MOSPF）协议是OSPF协议的扩展<br>
-使用多播链路状态路由选择来创建源点基准树。<br>
-这个协议需要一个新的链路状态更新分组，把主机的单播地址和组地址或主机负责的地址联系起来，这个分组就称为组成员关系LSA。<br>
-此外，这个数可以保存在高速缓存中，以便以后有同样源点/组地址对的分组可以使用它。<br>
-多播的其他更详细概念见<a target="_blank" rel="noopener" href="https://blog.csdn.net/williananjhon/article/details/94166311">链接</a></p>
-<h1><span id="8-qi-ta-wang-luo-ceng-gai-nian">8 其他网络层概念</span><a href="#8-qi-ta-wang-luo-ceng-gai-nian" class="header-anchor">#</a></h1>
-<h2><span id="8-1-vpn">8.1 VPN</span><a href="#8-1-vpn" class="header-anchor">#</a></h2>
-<p>需要建立专用通道<br>
-当专用A试图向专用B通信时，会先加密，再通过加密隧道发到对方内网，具体报文内容不会和互联网直接接触。</p>
-<h2><span id="8-2-nat">8.2 NAT</span><a href="#8-2-nat" class="header-anchor">#</a></h2>
-<p>内外网转换用的一个东西， 公网ip和内网ip互转。</p>
-<h2><span id="8-3-yi-dong-ip">8.3 移动IP</span><a href="#8-3-yi-dong-ip" class="header-anchor">#</a></h2>
-<p>ip从子网A变道子网B。<br>
-在本网时，按TCP通信<br>
-要漫游到外网时， 注册一个转交地址<br>
-本地代理接收地址，开启隧道<br>
-数据发送到外网<br>
-在外网时，使用代理ip发送数据<br>
-回到本地时，会注册并转交之前的地址</p>
-<h1><span id="9-chang-jian-wang-luo-ceng-ming-ling">9 常见网络层命令</span><a href="#9-chang-jian-wang-luo-ceng-ming-ling" class="header-anchor">#</a></h1>
-<ul>
-<li>ifconfig　可显示本机的IP地址</li>
-<li>netstat　－ｒ可显示路由表</li>
-<li>tcpdump　可显示硬件地址</li>
-<li>ping　测试另一个主机是否可达</li>
-<li>traceroute　利用ICMP跟踪途径的所有路由</li>
-<li>route　命令可查看和修改路由表</li>
-<li>gated可查看IGP（内部网关协议）和EGP（外部网关协</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -3479,7 +2469,7 @@ IGMP协议应用于路由器</p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-count">164</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -3490,7 +2480,7 @@ IGMP协议应用于路由器</p>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -3550,7 +2540,7 @@ IGMP协议应用于路由器</p>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共292.3k字</span>
+  <span class="post-count">博客全站共296.7k字</span>
 </div>
 
         

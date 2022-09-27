@@ -21,17 +21,22 @@
     var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="君子终日乾乾,夕惕若厉,无咎">
-<meta property="og:type" content="website">
-<meta property="og:title" content="破晓的知识屋">
-<meta property="og:url" content="http://breakdawncoder.com/categories/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/index.html">
+  <meta name="description" content="Q: kafka为什么那么快？底层原理是什么？ Q: kafka的message格式是什么样的？ Q: kafka如何实现延迟队列？     [toc] Q: kafka为什么那么快？底层原理是什么？# A:  Cache Filesystem Cache PageCache缓存 顺序写 由于现代的操作系统提供了预读和写技术，磁盘的顺序写大多数情况下比随机写内存还要快。 Zero-copy">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kafka底层核心原理">
+<meta property="og:url" content="http://breakdawncoder.com/2022/09/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/index.html">
 <meta property="og:site_name" content="破晓的知识屋">
-<meta property="og:description" content="君子终日乾乾,夕惕若厉,无咎">
+<meta property="og:description" content="Q: kafka为什么那么快？底层原理是什么？ Q: kafka的message格式是什么样的？ Q: kafka如何实现延迟队列？     [toc] Q: kafka为什么那么快？底层原理是什么？# A:  Cache Filesystem Cache PageCache缓存 顺序写 由于现代的操作系统提供了预读和写技术，磁盘的顺序写大多数情况下比随机写内存还要快。 Zero-copy">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/kafka%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/72e821130dc3997f28f34e6898927a9c7caa73a2.png">
+<meta property="article:published_time" content="2022-09-26T15:55:12.000Z">
+<meta property="article:modified_time" content="2022-09-26T15:49:45.532Z">
 <meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="开源组件原理,kafka">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/kafka%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/72e821130dc3997f28f34e6898927a9c7caa73a2.png">
 
-<link rel="canonical" href="http://breakdawncoder.com/categories/%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81/">
+<link rel="canonical" href="http://breakdawncoder.com/2022/09/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/">
 
 
 <script id="page-configurations">
@@ -39,12 +44,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>知识索引地图: 开源代码 | 破晓的知识屋</title>
+  <title>kafka底层核心原理 | 破晓的知识屋</title>
   
 
 
@@ -175,77 +180,200 @@
         <div class="content-wrap">
           
 
-          <div class="content category">
+          <div class="content post posts-expand">
             
 
+    
   
   
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          kafka底层核心原理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-26 23:55:12 / 修改时间：23:49:45" itemprop="dateCreated datePublished" datetime="2022-09-26T23:55:12+08:00">2022-09-26</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">微服务组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/kafka/" itemprop="url" rel="index"><span itemprop="name">kafka</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
   
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <h2 class="collection-header">开源代码
-          <small>知识索引地图</small>
-        </h2>
-      </div>
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>881</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2022</span>
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#q-kafka-wei-shi-me-na-me-kuai-di-ceng-yuan-li-shi-shi-me">Q: kafka为什么那么快？底层原理是什么？</a></li>
+<li><a href="#q-kafka-de-message-ge-shi-shi-shi-me-yang-de">Q: kafka的message格式是什么样的？</a></li>
+<li><a href="#q-kafka-ru-he-shi-xian-yan-chi-dui-lie">Q: kafka如何实现延迟队列？</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="q-kafka-wei-shi-me-na-me-kuai-di-ceng-yuan-li-shi-shi-me">Q: kafka为什么那么快？底层原理是什么？</span><a href="#q-kafka-wei-shi-me-na-me-kuai-di-ceng-yuan-li-shi-shi-me" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>Cache Filesystem Cache PageCache缓存</li>
+<li>顺序写 由于现代的操作系统提供了预读和写技术，磁盘的顺序写大多数情况下比随机写内存还要快。</li>
+<li>Zero-copy 零拷技术减少拷贝次数</li>
+<li>Batching of Messages 批量量处理。合并小的请求，然后以流的方式进行交互，直顶网络上限。</li>
+<li>Pull 拉模式 使用拉模式进行消息的获取消费，与消费端处理能力相符。</li>
+</ul>
+<hr>
+<h1><span id="q-kafka-de-message-ge-shi-shi-shi-me-yang-de">Q: kafka的message格式是什么样的？</span><a href="#q-kafka-de-message-ge-shi-shi-shi-me-yang-de" class="header-anchor">#</a></h1>
+<p>A:<br>
+一个Kafka的Message由一个固定长度的header和一个变长的消息体body组成</p>
+<ul>
+<li>
+<p>header部分由一个字节的magic(文件格式)和四个字节的CRC32(用于判断body消息体是否正常)构成。</p>
+</li>
+<li>
+<p>当magic的值为1的时候，会在magic和crc32之间多一个字节的数据：attributes(保存一些相关属性，</p>
+</li>
+<li>
+<p>比如是否压缩、压缩格式等等);如果magic的值为0，那么不存在attributes属性</p>
+</li>
+<li>
+<p>body是由N个字节构成的一个消息体，包含了具体的key/value消息</p>
+<p><img src="/images/kafka%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/72e821130dc3997f28f34e6898927a9c7caa73a2.png" alt="72e821130dc3997f28f34e6898927a9c7caa73a2"></p>
+<p>kafka的消息格式其实具有演变：<a target="_blank" rel="noopener" href="https://blog.csdn.net/u013256816/article/details/80300225">一文看懂Kafka消息格式的演变</a></p>
+</li>
+</ul>
+<hr>
+<h1><span id="q-kafka-ru-he-shi-xian-yan-chi-dui-lie">Q: kafka如何实现延迟队列？</span><a href="#q-kafka-ru-he-shi-xian-yan-chi-dui-lie" class="header-anchor">#</a></h1>
+<p>A:<br>
+Kafka并没有使用JDK自带的Timer或者DelayQueue来实现延迟的功能，而是基于时间轮自定义了一个用于实现延迟功能的定时器（SystemTimer）。JDK的Timer和DelayQueue插入和删除操作的平均时间复杂度为O(nlog(n))，并不能满足Kafka的高性能要求，而基于时间轮可以将插入和删除操作的时间复杂度都降为O(1)。时间轮的应用并非Kafka独有，其应用场景还有很多，在Netty、Akka、Quartz、Zookeeper等组件中都存在时间轮的踪影。<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/u013256816/article/details/80697456">https://blog.csdn.net/u013256816/article/details/80697456</a></p>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    
+    
+    
+        
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2022-09-23T23:47:49+08:00"
-              content="2022-09-23">
-          09-23
-        </time>
-      </div>
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/2022/09/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/" title="kafka底层核心原理">http://breakdawncoder.com/2022/09/26/知识库/开源组件原理/kafka/kafka底层核心原理/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2022/09/23/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/zookeeper/zk%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6/" itemprop="url">
-            <span itemprop="name">zk选举机制</span>
-          </a>
-      </div>
 
-    </header>
-  </article>
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86-kafka/" rel="tag"># 开源组件原理,kafka</a>
+          </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+        
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2022-09-23T22:47:49+08:00"
-              content="2022-09-23">
-          09-23
-        </time>
-      </div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2022/09/23/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/zookeeper/zk%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E7%90%86/" itemprop="url">
-            <span itemprop="name">zk分布式锁原理</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/09/26/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%A4%9A%E5%89%AF%E6%9C%AC%E6%9C%BA%E5%88%B6/" rel="prev" title="kafka多副本机制">
+      <i class="fa fa-chevron-left"></i> kafka多副本机制
+    </a></div>
+      <div class="post-nav-item"></div>
     </div>
-  </div>
+      </footer>
+    
+  </article>
   
   
-  
-
   
 
 
 
           </div>
           
+    <div class="comments" id="valine-comments"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -292,6 +420,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">Q: kafka为什么那么快？底层原理是什么？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">Q: kafka的message格式是什么样的？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">Q: kafka如何实现延迟队列？</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -307,7 +436,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-count">164</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -318,7 +447,7 @@
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -378,7 +507,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共292.3k字</span>
+  <span class="post-count">博客全站共296.7k字</span>
 </div>
 
         
