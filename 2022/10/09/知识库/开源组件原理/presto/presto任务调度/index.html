@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="presto内部4种计算类型的节点 Source Stage调度过程 signle和fixed调度过程     [toc] 【知乎】Presto 是如何 schedule task 的? presto查询处理流程-queryexecution提交  presto内部4种计算类型的节点#   source节点，读源数据的节点，负责读取数据、Map阶段的计算任务。分配的个数由SplitManag">
+<meta property="og:type" content="article">
+<meta property="og:title" content="presto任务调度">
+<meta property="og:url" content="http://breakdawncoder.com/2022/10/09/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/presto/presto%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="presto内部4种计算类型的节点 Source Stage调度过程 signle和fixed调度过程     [toc] 【知乎】Presto 是如何 schedule task 的? presto查询处理流程-queryexecution提交  presto内部4种计算类型的节点#   source节点，读源数据的节点，负责读取数据、Map阶段的计算任务。分配的个数由SplitManag">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/presto%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/162390543fb35c9e5eff2ee2370e224eac411724.png">
+<meta property="article:published_time" content="2022-10-09T15:55:12.000Z">
+<meta property="article:modified_time" content="2022-10-09T14:04:17.269Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="开源组件原理,presto">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/presto%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/162390543fb35c9e5eff2ee2370e224eac411724.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/2022/10/09/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/presto/presto%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>presto任务调度 | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/home/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/10/09/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/presto/presto%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          presto任务调度
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-10-09 23:55:12 / 修改时间：22:04:17" itemprop="dateCreated datePublished" datetime="2022-10-09T23:55:12+08:00">2022-10-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">大数据组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6/presto/" itemprop="url" rel="index"><span itemprop="name">presto</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/10/09/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/presto/presto%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/10/09/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/presto/presto%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#presto-nei-bu-4-chong-ji-suan-lei-xing-de-jie-dian">presto内部4种计算类型的节点</a></li>
+<li><a href="#source-stage-diao-du-guo-cheng">Source Stage调度过程</a></li>
+<li><a href="#signle-he-fixed-diao-du-guo-cheng">signle和fixed调度过程</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/58959725">【知乎】Presto 是如何 schedule task 的?</a><br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/sinat_27545249/article/details/78697044">presto查询处理流程-queryexecution提交</a></p>
+<hr>
+<h1><span id="presto-nei-bu-4-chong-ji-suan-lei-xing-de-jie-dian">presto内部4种计算类型的节点</span><a href="#presto-nei-bu-4-chong-ji-suan-lei-xing-de-jie-dian" class="header-anchor">#</a></h1>
+<ol>
+<li>
+<p>source节点，读源数据的节点，负责读取数据、Map阶段的计算任务。分配的个数由SplitManager根据数据决定。</p>
+</li>
+<li>
+<p>fixed节点，shuffle节点，用于处理reduce任务。比如group by计算，source阶段的数据按照hash发送到fixed节点。分配的个数由3. hash_partition_count这个session参数决定，由于是固定个数，所以对于不同的数据规模采用同样的个数也不是很合适，这也是需要改进的点。</p>
+</li>
+<li>
+<p>single节点，单节点计算任务，某些计算需要在单一节点计算，比如MergeReduce，output等，需要分配一个节点。</p>
+</li>
+<li>
+<p>coordinator only，只在coordinator节点计算的任务，一般是meta类操作。</p>
+<p><img src="/images/presto%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/162390543fb35c9e5eff2ee2370e224eac411724.png" alt="162390543fb35c9e5eff2ee2370e224eac411724"></p>
+</li>
+</ol>
+<hr>
+<p>preosto种的split是什么？<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/zhanyuanlin/article/details/109215177">【CSDN】presto-spilt详解</a></p>
+<hr>
+<h1><span id="source-stage-diao-du-guo-cheng">Source Stage调度过程</span><a href="#source-stage-diao-du-guo-cheng" class="header-anchor">#</a></h1>
+<p>由SectionExecutionFactory.createStageScheduler我们可以知道<br>
+具体的节点分配split策略的实现类为DynamicSplitPlacementPolicy。跟踪其调用栈可以发现，其具体实现为TopologyAwareNodeSelector.computeAssignments方法，其主要流程如下：</p>
+<ol>
+<li>将所有活跃的工作节点作为候选节点；</li>
+<li>如果分片的节点选择策略是HARD_AFFINITY，即分片只能在特定节点进行访问，则根据分片要求更新候选节点列表；</li>
+<li>如果分片的节点选择策略不是HARD_AFFINITY，则<em>根据节点的网络拓扑，从候选节点中选择和分片偏好节点网络路径最匹配的节点列表来更新候选节点列表；最重要目的是让source节点尽可能靠近数据源</em></li>
+<li>使用bestNodeSplitCount方法从更新后的候选节点列表中选择最合适的节点来分配分片；</li>
+</ol>
+<hr>
+<p>从候选节点列表中选择最优节点的算法TopologyAwareNodeSelector.bestNodeSplitCount的流程如下：</p>
+<ol>
+<li>从候选节点列表中随机选择一个（传入节点列表时已进行随机打散new ResettableRandomizedIterator&lt;&gt;(nodes)），如果该节点已分配的Split尚未达到阈值，则选择该节点；</li>
+<li>如果第1步选择的节点已分配Split达到上限，则选择剩余节点中在当前stage中排队Split最少的节点。</li>
+</ol>
+<h1><span id="signle-he-fixed-diao-du-guo-cheng">signle和fixed调度过程</span><a href="#signle-he-fixed-diao-du-guo-cheng" class="header-anchor">#</a></h1>
+<p>选择FixedCountScheduler策略<br>
+可以看到FixedCountScheduler只是在nodePartitionMap.getPartitionToNode返回的固定节点列表上调度任务，在选定的每个节点上相应创建一个任务。</p>
+<p>Single和Fixed Stage的节点选择比较简单，均为随机性选择，且调用方法为同一个：NodeSelector.selectRandomNodes。</p>
+<p>Single Stage只会随机地从所有存活节点列表中选择一个节点，Fixed Stage会随机选择参数hash_partition_count和max_tasks_per_stage两者的小值数量的节点。</p>
+<p>Presto的查询调度本质上就是Split分配到各个节点的过程，每个阶段依据本身所承担的职责，调度方式有所区别，从整体上来说，Split分配节点的方式基本为随机选择的策略，在此基础上尽量保证每个节点处理的Split相对平均。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/2022/10/09/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/presto/presto%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/" title="presto任务调度">http://breakdawncoder.com/2022/10/09/知识库/开源组件原理/presto/presto任务调度/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86-presto/" rel="tag"># 开源组件原理,presto</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/10/09/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/presto/presto%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="prev" title="presto核心数据结构">
+      <i class="fa fa-chevron-left"></i> presto核心数据结构
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/10/09/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/presto/presto%E6%80%A7%E8%83%BD%E4%BC%98%E7%A7%80%E5%8E%9F%E7%90%86%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="next" title="presto性能优秀原理和性能优化">
+      presto性能优秀原理和性能优化 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">presto内部4种计算类型的节点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">Source Stage调度过程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">signle和fixed调度过程</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">170</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共302.8k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

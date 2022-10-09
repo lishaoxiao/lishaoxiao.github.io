@@ -181,6 +181,884 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">unix高级编程思维导图笔记</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-15 21:47:49 / 修改时间：23:39:39" itemprop="dateCreated datePublished" datetime="2022-09-15T21:47:49+08:00">2022-09-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">linux-unix原理</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>83</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#biao-zhun-io-ku">标准IO库</a></li>
+<li><a href="#wen-jian-io">文件IO</a></li>
+<li><a href="#wen-jian-he-mu-lu">文件和目录</a></li>
+<li><a href="#xi-tong-shu-ju-wen-jian-he-xin-xi">系统数据文件和信息</a></li>
+<li><a href="#xin-hao">信号</a></li>
+<li><a href="#jin-cheng-huan-jing">进程环境</a></li>
+<li><a href="#jin-cheng-guan-xi">进程关系</a></li>
+<li><a href="#jin-cheng-kong-zhi">进程控制</a></li>
+<li><a href="#xian-cheng">线程</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="biao-zhun-io-ku">标准IO库</span><a href="#biao-zhun-io-ku" class="header-anchor">#</a></h1>
+<p><img src="/images/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/20180217174719501" alt="img"></p>
+<h1><span id="wen-jian-io">文件IO</span><a href="#wen-jian-io" class="header-anchor">#</a></h1>
+<p><img src="/images/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/20180217174838423" alt="img"></p>
+<h1><span id="wen-jian-he-mu-lu">文件和目录</span><a href="#wen-jian-he-mu-lu" class="header-anchor">#</a></h1>
+<p><img src="/images/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/2018021717500292" alt="img"></p>
+<h1><span id="xi-tong-shu-ju-wen-jian-he-xin-xi">系统数据文件和信息</span><a href="#xi-tong-shu-ju-wen-jian-he-xin-xi" class="header-anchor">#</a></h1>
+<p><img src="/images/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/20180217175013204" alt="img"></p>
+<h1><span id="xin-hao">信号</span><a href="#xin-hao" class="header-anchor">#</a></h1>
+<p><img src="/images/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/20180217175207636" alt="img"></p>
+<h1><span id="jin-cheng-huan-jing">进程环境</span><a href="#jin-cheng-huan-jing" class="header-anchor">#</a></h1>
+<p><img src="/images/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/2018021717522228" alt="img"></p>
+<h1><span id="jin-cheng-guan-xi">进程关系</span><a href="#jin-cheng-guan-xi" class="header-anchor">#</a></h1>
+<p><img src="/images/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/20180217175231672" alt="img"></p>
+<h1><span id="jin-cheng-kong-zhi">进程控制</span><a href="#jin-cheng-kong-zhi" class="header-anchor">#</a></h1>
+<p><img src="/images/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/20180217175244585" alt="img"></p>
+<h1><span id="xian-cheng">线程</span><a href="#xian-cheng" class="header-anchor">#</a></h1>
+<p><img src="/images/unix%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%AC%94%E8%AE%B0/20180217175257321" alt="img"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/linux%E5%91%BD%E4%BB%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/linux%E5%91%BD%E4%BB%A4/" class="post-title-link" itemprop="url">linux命令</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-15 20:47:49 / 修改时间：23:47:38" itemprop="dateCreated datePublished" datetime="2022-09-15T20:47:49+08:00">2022-09-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">linux-unix原理</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/linux%E5%91%BD%E4%BB%A4/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/15/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/linux%E5%91%BD%E4%BB%A4/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<p>man 命令输出该命令的使用手册<br>
+./ 当前目录…/ 父目录<br>
+ls常用参数-a 显示所有文件（包括隐藏的，all）-i  列出索引节点（inode）-l  输出长列表（即包含文件的各种信息，long）-s  输出每个文件的块大小（size）-F 区分各个文件，目录后加/，可执行文件后加*（区分file）<br>
+ls 参数 匹配串则可以只显示匹配字符串的文件，可以用*和？</p>
+<hr>
+<p>touch 文件名创建一个空文件<br>
+touch -t 200101011200 文件名 这样可以修改文件的时间</p>
+<hr>
+<p>cp 源文件 目标文件cp test1 test2  在当前目录中，将test1复制为新的test2cp test1 dir   将test1复制到目录dir中cp dir/test1  .   将dir/test1复制到当前目录中<br>
+cp -R dir1 dir2  将dir1中的所有内容进行复制，复制成dir2cp -f 强制覆盖，即如果有重复直接覆盖，不提示用户<br>
+cp -l test1 testlink  创建一个硬链接testlink，索引节点号与test1相同，类似“复制”。不可跨文件系统或挂载点cp -s test1 soft_test    创建一个软连接soft_test，节点号不同，可以跨文件系统或挂载点</p>
+<hr>
+<p>mv test1 test_new_name  将test1重命名为test_new_name当重命名时，test1的软连接会变成无效链接，硬链接则仍然有效<br>
+rm 删除文件删除test1后，硬连接仍然显示内容，软连接则已经无效。<br>
+mkdirmkdir -m=MODE 设定模式，rwx-umaskmkdir -p parents 若路径上的目录不存在，自己建1个父目录mkdir -v  建目录时要显示信息<br>
+rmdir dir1  默认情况下，rmdir只能删除空目录rm -f dir1 ，可删除dir1中的所有文件加目录，但是会有提示rm -rf dir1， 删除所有且无提示<br>
+stat test1  可查看test1的状态信息，但没有文件类型file test1  可查看文件的类型（文本文件，可执行文件，数据文件）</p>
+<hr>
+<p>当前目录中有a和bls&gt;c则先生成c，再执行ls，再执行传输进C<br>
+tar：压缩命令z 创建tar.gz格式文件x 解压  c压缩vf一般都跟在最后，f指把压缩文件输出到某个目录下tar 命令符  所得到的压缩文件名字  要被压缩的目录<br>
+cat 直接跳最后一页less 可以上下查看more 只能向下查看</p>
+<hr>
+<p>cat -n test1 给所有行加上“行号”cat -b test1 给“非空行”加上“行号”cat -s test1 压缩连续空白行为一行cat -T<br>
+tail 查看文件末尾10行，可用-n指定行数head 查看文件头，也可用-n指定行数</p>
+<hr>
+<p>ps 查看当前进程<br>
+ps-e 查看系统所有进程<br>
+参数含义UID:启动用户PID:进程的进程号PPID：父进程号C： CPU利用率STIME：进程启动的系统时间TTY：进程启动时的终端设备TIME：运行进程需要的CPU时间CMD:程序名称<br>
+top：实时显示进程<br>
+w命令显示当前登录的用户和其进行的操作<br>
+uptime查看当前系统的启动时间</p>
+<hr>
+<p>kill 进程号  相当于kill-TERM 尽可能地杀死进程，如果进程跑飞则可能无法杀死<br>
+kill -s HUP 进程号  先停止进程再结束进程<br>
+killall 进程名（可使用通配符）<br>
+mount 输出挂载设备</p>
+<hr>
+<p>df 查看磁盘空间情况<br>
+du 了解哪个磁盘没有空间了cat /proc/cpuinfo：查看一台linux机器的CPU信息<br>
+du：查看该目录占用文件系统数据块的情况 cat /proc/swaps：查看SWAP分区信息df -lh：查看硬盘信息<br>
+sort file 对文本中的字符串进行排序<br>
+sort -n file 对文本中的数字进行排序<br>
+grep 字符串  文件   查找字符串在文件中的位置<br>
+tar 压缩文件</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/11%E7%A7%8D%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/11%E7%A7%8D%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">11种行为型模式</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-13 23:47:49 / 修改时间：23:27:15" itemprop="dateCreated datePublished" datetime="2022-09-13T23:47:49+08:00">2022-09-13</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%A1%8C%E4%B8%BA%E5%9E%8B-%E5%92%8C%E5%81%9A%E5%85%B7%E4%BD%93%E4%BA%8B%E6%83%85%E6%9C%89%E5%85%B3/" itemprop="url" rel="index"><span itemprop="name">行为型(和做具体事情有关)</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/11%E7%A7%8D%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/11%E7%A7%8D%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>919</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#jie-shi-qi-mo-shi">解释器模式</a></li>
+<li><a href="#mo-ban-fang-fa-mo-shi">模板方法模式</a></li>
+<li><a href="#ze-ren-lian-mo-shi">责任链模式</a></li>
+<li><a href="#ming-ling-mo-shi">命令模式</a></li>
+<li><a href="#die-dai-qi-mo-shi">迭代器模式</a></li>
+<li><a href="#bei-wang-lu-mo-shi">备忘录模式</a></li>
+<li><a href="#guan-cha-zhe-mo-shi">观察者模式</a></li>
+<li><a href="#zhong-cai-zhe">仲裁者</a></li>
+<li><a href="#zhuang-tai-mo-shi">状态模式</a></li>
+<li><a href="#ce-lue-mo-shi">策略模式</a></li>
+<li><a href="#fang-wen-zhe-mo-shi">访问者模式</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="jie-shi-qi-mo-shi">解释器模式</span><a href="#jie-shi-qi-mo-shi" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://www.runoob.com/design-pattern/interpreter-pattern.html">https://www.runoob.com/design-pattern/interpreter-pattern.html</a></p>
+<p>这种模式实现了一个表达式接口，该接口解释一个特定的上下文。</p>
+<p>项目中的expresion里的evalute本质上就是解释器模式。</p>
+<h1><span id="mo-ban-fang-fa-mo-shi">模板方法模式</span><a href="#mo-ban-fang-fa-mo-shi" class="header-anchor">#</a></h1>
+<p>抽象类定义n个抽象方法，提供一个对外接口确定抽象方法的调用顺序， 子类负责实现这几个内部的抽象方法。</p>
+<h1><span id="ze-ren-lian-mo-shi">责任链模式</span><a href="#ze-ren-lian-mo-shi" class="header-anchor">#</a></h1>
+<p>if/else太多了判断起来很烦， 用setNext设置一个责任链，谁完不成就交给下一个，这样后续直接添加setNext就好，不用再加else。</p>
+<p>适用于需要“动态”添加判断条件情况。</p>
+<h1><span id="ming-ling-mo-shi">命令模式</span><a href="#ming-ling-mo-shi" class="header-anchor">#</a></h1>
+<p>把命令作为一个commond类看待，这样可以把命令放到队列或者栈里去处理。</p>
+<h1><span id="die-dai-qi-mo-shi">迭代器模式</span><a href="#die-dai-qi-mo-shi" class="header-anchor">#</a></h1>
+<p>提供给外界一个iterator()专门用于next遍历， 这样外界不用关心内部的存储逻辑。</p>
+<h1><span id="bei-wang-lu-mo-shi">备忘录模式</span><a href="#bei-wang-lu-mo-shi" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://www.runoob.com/design-pattern/memento-pattern.html">https://www.runoob.com/design-pattern/memento-pattern.html</a></p>
+<p>备忘录模式就是在不破坏封装的前提下，捕获一个对象的内部状态，并在该对象之外保存这个状态，这样可以在以后将对象恢复到原先保存的状态</p>
+<h1><span id="guan-cha-zhe-mo-shi">观察者模式</span><a href="#guan-cha-zhe-mo-shi" class="header-anchor">#</a></h1>
+<p>A做了一件事之后，把自己的状态通知 B\C\D这3个观察者（需要绑定观察者）</p>
+<p>注意和访问者不是同一个模式。</p>
+<h1><span id="zhong-cai-zhe">仲裁者</span><a href="#zhong-cai-zhe" class="header-anchor">#</a></h1>
+<p>A\B\C\D 这几个类对象每当做完一件事，就调用 E.update(xxx)， E会负责更新整体状态，或者作为中间人去调度其他几个类。</p>
+<h1><span id="zhuang-tai-mo-shi">状态模式</span><a href="#zhuang-tai-mo-shi" class="header-anchor">#</a></h1>
+<p>状态不同， doAction时发生的事情也不同，类似于项目中做互信时，不同状态有不同的doAction处理逻辑</p>
+<p><img src="/images/%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F%20-%20%E5%89%AF%E6%9C%AC/d146ad3e20bcc846133a5bb32f2bef82890f29d6-1663082735876.png" alt="d146ad3e20bcc846133a5bb32f2bef82890f29d6"></p>
+<blockquote>
+<p>和策略模式的区别： 状态模式在于状态之间是由关联的，是可以切换状态的，且状态A到状态B可能有限制。<br>
+但是策略模式的话，不同的策略之间可能是独立的，仅仅是有同一个基类，但不存在可以切换的状态图。</p>
+</blockquote>
+<h1><span id="ce-lue-mo-shi">策略模式</span><a href="#ce-lue-mo-shi" class="header-anchor">#</a></h1>
+<p>装备了不同的武器或者策略，就会有不同的战斗结果。 我只要不断切换自己装备的武器子类即可。</p>
+<h1><span id="fang-wen-zhe-mo-shi">访问者模式</span><a href="#fang-wen-zhe-mo-shi" class="header-anchor">#</a></h1>
+<p>同一份数据或者树型结构， 可以用不同的vistor去访问，得到不同的结果或者展示。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">享元模式</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-13 22:47:49 / 修改时间：23:24:42" itemprop="dateCreated datePublished" datetime="2022-09-13T22:47:49+08:00">2022-09-13</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%93%E6%9E%84%E5%9E%8B%EF%BC%88%E5%92%8C%E7%B1%BB%E7%9A%84%E7%BB%A7%E6%89%BF%E3%80%81%E6%8E%A5%E5%8F%A3%E5%AE%9E%E7%8E%B0%E3%80%81%E5%B0%81%E8%A3%85%E6%9C%89%E5%85%B3%EF%BC%89/" itemprop="url" rel="index"><span itemprop="name">结构型（和类的继承、接口实现、封装有关）</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>327</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#xiang-yuan-mo-shi">享元模式</a></li>
+<li><a href="#he-qi-ta-de-qu-bie">和其他的区别：</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="xiang-yuan-mo-shi">享元模式</span><a href="#xiang-yuan-mo-shi" class="header-anchor">#</a></h1>
+<p>当有几种对象， 可能会被经常创建，且属性变化不大，也许就几种（例如常量1-100经常用）</p>
+<p>一种方式是调用者经常自己手动创建这些对象</p>
+<p>还有一种是封装到一个factory中，  调用者取factory中拿。</p>
+<p>factory中会维护一个map， 缓存这些对象，这样就不用经常创建了。所以叫享元。<br>
+<img src="/images/%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/fbcb7c5c2bb6242e758efb7b42bfcf7bb57b731e.png" alt="fbcb7c5c2bb6242e758efb7b42bfcf7bb57b731e"></p>
+<hr>
+<h1><span id="he-qi-ta-de-qu-bie">和其他的区别：</span><a href="#he-qi-ta-de-qu-bie" class="header-anchor">#</a></h1>
+<ul>
+<li>和原型模式的区别： 原型模式的重点在于提供clone方法去创建对象。  而享元模式不存在创建，更多是一个缓存结构（所以是结构型设计模式）</li>
+<li>和工厂模式的区别： 享元模式其实类似于单例+工厂的结合。  工厂模式不一定是享元模式，因为工厂模式可能真的是创建新的。  而享元模式基本会提供类似工厂方法的get方法，给调用者使用，本质上不生成新的对象了。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F%E5%92%8C%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F%E5%92%8C%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">外观模式和代理模式</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-13 22:37:49 / 修改时间：23:23:07" itemprop="dateCreated datePublished" datetime="2022-09-13T22:37:49+08:00">2022-09-13</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%93%E6%9E%84%E5%9E%8B%EF%BC%88%E5%92%8C%E7%B1%BB%E7%9A%84%E7%BB%A7%E6%89%BF%E3%80%81%E6%8E%A5%E5%8F%A3%E5%AE%9E%E7%8E%B0%E3%80%81%E5%B0%81%E8%A3%85%E6%9C%89%E5%85%B3%EF%BC%89/" itemprop="url" rel="index"><span itemprop="name">结构型（和类的继承、接口实现、封装有关）</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F%E5%92%8C%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F%E5%92%8C%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>670</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#wai-guan-mo-shi">外观模式</a></li>
+<li><a href="#dai-li-mo-shi">代理模式</a></li>
+<li><a href="#dai-li-mo-shi-he-qi-ta-mo-shi-de-qu-bie">代理模式和其他模式的区别</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="wai-guan-mo-shi">外观模式</span><a href="#wai-guan-mo-shi" class="header-anchor">#</a></h1>
+<p>也叫门面模式。</p>
+<ul>
+<li>当我们有很多的类，各种类之间的方法互相关联，存在复杂的调用先后顺序时</li>
+</ul>
+<ol>
+<li>一种方法是告诉别人 这些类的用法， 让他们自己注意使用顺序。（比如你要先调A再调B才有用）</li>
+<li>另一种是提供一个统一对外的接口，  在接口里去组装这些顺序。</li>
+</ol>
+<p>这就是facade模式，看起来像一个窗口或者客户端，   外界不知道这些类的关系，但是只需要调门面的几个方法即可。<br>
+<img src="/images/%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F%E5%92%8C%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/a4624283bf8c71587ad996a7279f4891ab4f1cf3.png" alt="a4624283bf8c71587ad996a7279f4891ab4f1cf3"><br>
+也不一定是为了复杂的调用顺序，可能就是为了让调用者不用关心用哪个类，只关心调哪个方法，如下：<br>
+<img src="/images/%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F%E5%92%8C%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/2a2f769be48fb696ae6d25a31f79e378ae6d6cdd.png" alt="2a2f769be48fb696ae6d25a31f79e378ae6d6cdd"></p>
+<ul>
+<li>因为是将很多类作为成员封装进一个门面类里， 所以是结构型的设计模式。</li>
+</ul>
+<p>举例：  做饭（买菜、洗碗、烧菜，希望封装到一个仆人类里来做）</p>
+<hr>
+<h1><span id="dai-li-mo-shi">代理模式</span><a href="#dai-li-mo-shi" class="header-anchor">#</a></h1>
+<p>在代理模式（Proxy Pattern）中，一个类代表另一个类的功能。这种类型的设计模式属于结构型模式。<br>
+在代理模式中，我们创建具有现有对象的对象，以便向外界提供功能接口。</p>
+<p>代理模式中，  提供的行为和被代理对象是基本一致的，只是会额外做一些处理（例如打日志、监控），再调用被代理对象的方法。</p>
+<hr>
+<h1><span id="dai-li-mo-shi-he-qi-ta-mo-shi-de-qu-bie">代理模式和其他模式的区别</span><a href="#dai-li-mo-shi-he-qi-ta-mo-shi-de-qu-bie" class="header-anchor">#</a></h1>
+<ul>
+<li>和适配器模式的区别：适配器模式主要改变所考虑对象的接口，而代理模式不能改变所代理类的接口。</li>
+<li>和装饰器模式的区别：装饰器模式为了增强功能，而代理模式是为了加以控制。</li>
+<li>和外观模式的区别： 外观模式是可以封装好几个类，提供特定的单方法或者组合方法。  而代理模式大多是针对一个类做代理，且对外方法与被代理对象 基本一致。</li>
+<li>和仲裁者模式的区别： 仲裁者更多是三方 ABC交互，由B承担沟通工作，A不需要直接调用C。   代理模式则只涉及代理和被代理者。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F%E5%92%8C%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F%E5%92%8C%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">组合模式和装饰者模式</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-13 22:27:49 / 修改时间：23:21:24" itemprop="dateCreated datePublished" datetime="2022-09-13T22:27:49+08:00">2022-09-13</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%93%E6%9E%84%E5%9E%8B%EF%BC%88%E5%92%8C%E7%B1%BB%E7%9A%84%E7%BB%A7%E6%89%BF%E3%80%81%E6%8E%A5%E5%8F%A3%E5%AE%9E%E7%8E%B0%E3%80%81%E5%B0%81%E8%A3%85%E6%9C%89%E5%85%B3%EF%BC%89/" itemprop="url" rel="index"><span itemprop="name">结构型（和类的继承、接口实现、封装有关）</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F%E5%92%8C%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F%E5%92%8C%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>960</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#zu-he-mo-shi-he-zhuang-shi-zhe-mo-shi">组合模式和装饰者模式</a>
+<ul>
+<li><a href="#yi-zu-he-mo-shi">一、组合模式</a></li>
+<li><a href="#you-dian">优点</a></li>
+<li><a href="#que-dian">缺点</a></li>
+</ul>
+</li>
+<li><a href="#er-zhuang-shi-zhe-mo-shi">二、装饰者模式</a>
+<ul>
+<li><a href="#q-zhuang-shi-mo-shi-he-zu-he-mo-shi-du-shi-cheng-yuan-li-hui-bao-han-zi-ji-zhe-ge-lei-huo-zhe-zi-lei-qu-bie-shi">Q: 装饰模式和组合模式都是成员里会包含自己这个类或者子类，区别是？</a></li>
+<li><a href="#q-zhuang-shi-zhao-mo-shi-he-proxy-dai-li-mo-shi-you-you-shi-me-qu-bie-dai-li-mo-shi-ye-shi-yong-cheng-yuan-de-fang-fa-diao-yong-zhi-hou-zai-zuo-yi-xie-e-wai-chu-li">Q: 装饰着模式和proxy代理模式又有什么区别？ 代理模式也是用成员的方法调用之后，再做一些额外处理</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="zu-he-mo-shi-he-zhuang-shi-zhe-mo-shi">组合模式和装饰者模式</span><a href="#zu-he-mo-shi-he-zhuang-shi-zhe-mo-shi" class="header-anchor">#</a></h1>
+<h2><span id="yi-zu-he-mo-shi">一、组合模式</span><a href="#yi-zu-he-mo-shi" class="header-anchor">#</a></h2>
+<p>该模式的意义：<br>
+用于树类，  或者支持将多个A对象合成1个A对象的 情形下<br>
+<img src="/images/%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F%E5%92%8C%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/8953af0abe9db9e2badbc02eacbeb5a0325e0ab6.png" alt="8953af0abe9db9e2badbc02eacbeb5a0325e0ab6"><br>
+该模式的意义：<br>
+用于树类，  或者支持将多个A对象合成1个A对象的 情形下</p>
+<p>主要方法：</p>
+<ul>
+<li>基类（ 包含add或insert方法 ）</li>
+<li>子类 包括  叶子类   和  非叶类</li>
+<li>非叶类 即可以add  叶子， 叶可以 add非叶。</li>
+<li>其实就是 子类里可以包含父类容器，不断添加、延伸。</li>
+</ul>
+<p>计算引擎中的GNODE、logicalNode就是这种。</p>
+<p><img src="/images/%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F%E5%92%8C%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/32a2333013afb0eb27642c817eb4e8de9d0f1cc7.png" alt="32a2333013afb0eb27642c817eb4e8de9d0f1cc7"></p>
+<h2><span id="you-dian">优点</span><a href="#you-dian" class="header-anchor">#</a></h2>
+<ol>
+<li>
+<p>客户端调用简单，客户端可以一致的使用组合结构或其中单个对象。</p>
+</li>
+<li>
+<p>可以形成复杂的树形结构。</p>
+</li>
+<li>
+<p>更容易在组合体内加入对象构件，客户端不必因为加入了新的对象构件而更改原有代码。</p>
+</li>
+</ol>
+<h2><span id="que-dian">缺点</span><a href="#que-dian" class="header-anchor">#</a></h2>
+<p>使设计变得更加抽象，对象的业务规则如果很复杂，则实现组合模式具有很大挑战性<br>
+而且不是所有的方法都与叶子对象子类都有关联<br>
+要注意使用场景</p>
+<h1><span id="er-zhuang-shi-zhe-mo-shi">二、装饰者模式</span><a href="#er-zhuang-shi-zhe-mo-shi" class="header-anchor">#</a></h1>
+<p>如果我们 对某个 类， 以后可能会有很多小的修改加上去， 而且都是“装饰”性质的， 即加“功能”，而且这些功能可以一层层叠加<br>
+如果加功能频率很多，我们可以用装饰者模式。 经典应用就是java中的stream流<br>
+new XXXStream(new BufferStream(new FileOutputStream()))<br>
+<img src="/images/%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F%E5%92%8C%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/d96605fa973db16ce93300c7e89582aa219dec2f.png" alt="d96605fa973db16ce93300c7e89582aa219dec2f"></p>
+<h2><span id="q-zhuang-shi-mo-shi-he-zu-he-mo-shi-du-shi-cheng-yuan-li-hui-bao-han-zi-ji-zhe-ge-lei-huo-zhe-zi-lei-qu-bie-shi">Q: 装饰模式和组合模式都是成员里会包含自己这个类或者子类，区别是？</span><a href="#q-zhuang-shi-mo-shi-he-zu-he-mo-shi-du-shi-cheng-yuan-li-hui-bao-han-zi-ji-zhe-ge-lei-huo-zhe-zi-lei-qu-bie-shi" class="header-anchor">#</a></h2>
+<p>A:<br>
+组合模式， 重点体现在用成员类组成一个树形或者图型结构（重点不在于做事情）， 使用者会关心成员类的内容且可能会遍历。<br>
+装饰者模式，重点体现在用成员类的方法做相同的事情，自己再做一些补充， 且可以不断叠加。 叠加后只提供一个最终叠加后的对象给别人使用， 别人不用关心里面叠加的那些中间对象。</p>
+<hr>
+<h2><span id="q-zhuang-shi-zhao-mo-shi-he-proxy-dai-li-mo-shi-you-you-shi-me-qu-bie-dai-li-mo-shi-ye-shi-yong-cheng-yuan-de-fang-fa-diao-yong-zhi-hou-zai-zuo-yi-xie-e-wai-chu-li">Q: 装饰着模式和proxy代理模式又有什么区别？ 代理模式也是用成员的方法调用之后，再做一些额外处理</span><a href="#q-zhuang-shi-zhao-mo-shi-he-proxy-dai-li-mo-shi-you-you-shi-me-qu-bie-dai-li-mo-shi-ye-shi-yong-cheng-yuan-de-fang-fa-diao-yong-zhi-hou-zai-zuo-yi-xie-e-wai-chu-li" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>使用代理模式，代理和真实对象之间的的关系通常在编译时就已经确定了。 注意AOP里的所有代理对象其实都是编译时定好了用哪个代理</li>
+<li>而 装饰者能够在运行时递归地被构造，即运行期可以设置不同的装饰对象做装饰， 但是代理的话，代理是固定的，只不过可能会选用不同的代理罢了。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E6%A1%A5%E6%8E%A5%E8%80%85%E6%A8%A1%E5%BC%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -838,1114 +1716,6 @@ XXX xxx = XXX.builder().set().set().set().build();</p>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3/" class="post-title-link" itemprop="url">设计思想</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-09-13 21:27:49 / 修改时间：23:08:51" itemprop="dateCreated datePublished" datetime="2022-09-13T21:27:49+08:00">2022-09-13</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%AE%BE%E8%AE%A1%E7%90%86%E8%AE%BA/" itemprop="url" rel="index"><span itemprop="name">设计理论</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#ooa">OOA</a></li>
-<li><a href="#ood">OOD</a>
-<ul>
-<li><a href="#q-oo-mian-xiang-dui-xiang-object-oriented-he-po-mian-xiang-guo-cheng-process-oriented-de-qu-bie">Q: OO面向对象(Object-Oriented)和PO面向过程(process oriented)的区别？</a></li>
-</ul>
-</li>
-<li><a href="#oop">OOP</a></li>
-<li><a href="#ddd">DDD</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="ooa">OOA</span><a href="#ooa" class="header-anchor">#</a></h1>
-<p>Object-Oriented Analysis:面向对象分析法<br>
-指的是在一个系统的开发过程中进行了系统业务调查以后，按照面向对象的思想来分析问题。</p>
-<ul>
-<li>OOA方法的具体步骤<br>
-在用OOA具体分析一个事物时。大致上遵循如下5个基本步骤；</li>
-</ul>
-<ol>
-<li>确定对象和类。这里所说的对象是对数据及其处理方式的抽象，它反映了系统保存和处理现实世界总某些事物的信息能力。。类是多个对象的共同属性和方法集合的描述，它包括如何在一个类中建立一个新对象的描述。</li>
-<li>确定结构（structure）。结构是指问题域的复杂性和连接关系。类成员结构反映了泛华—特化关系，整体-部分结构反映整体和局部之间的关系</li>
-<li>确定主题（subject）。主题是指事物的总体概貌和总体分析模型</li>
-<li>确定属性（attribute）。属性就是数据元素，可用来描述对象或分类结构的实例，可在图中给出，并在对象的存储中指定。</li>
-<li>确定方法（method）。方法是在收到消息后必须进行的一些处理方法：方法要在图中定义，并在对象的存储中指定。对于每个对象和结构来说，那些用来增加、修改、删除和选择一个方法本身都是隐含的（虽然它们是要在对象的存储中定义的，但并不在图上给出），而有些则是显示的。</li>
-</ol>
-<hr>
-<h1><span id="ood">OOD</span><a href="#ood" class="header-anchor">#</a></h1>
-<p>面向对象设计（Object-oriented Design,OOD）方法是oo方法中一个中间过渡环节。其主要作用是对OOA分析的结构作进一步的规范化整理，以便能够被oop直接接受。</p>
-<p>OOD就是“根据需求决定所需的类、类的操作以及类之间关联的过程”。</p>
-<p>使用OOD这种设计范式，我们可以用对象（object）来表现问题领域（problem domain）的实体，每个对象都有相应的状态和行为</p>
-<hr>
-<h2><span id="q-oo-mian-xiang-dui-xiang-object-oriented-he-po-mian-xiang-guo-cheng-process-oriented-de-qu-bie">Q:  OO面向对象(Object-Oriented)和PO面向过程(process oriented)的区别？</span><a href="#q-oo-mian-xiang-dui-xiang-object-oriented-he-po-mian-xiang-guo-cheng-process-oriented-de-qu-bie" class="header-anchor">#</a></h2>
-<p>A:</p>
-<ul>
-<li>面向过程就是分析出解决问题所需要的步骤，然后用函数把这些步骤一步一步实现，使用的时候一个一个依次调用就可以了。</li>
-<li>面向对象是把构成问题事务分解成各个对象，建立对象的目的不是为了完成一个步骤，而是为了描叙某个事物在整个解决问题的步骤中的行为</li>
-</ul>
-<h1><span id="oop">OOP</span><a href="#oop" class="header-anchor">#</a></h1>
-<p>所谓的OOP就是指的面向对象编程<br>
-OOP的一条基本准则是计算机程序是由单个能够引起子程序作用的单元或对象组合而成.OOP达到了软件工程的三个主要目标:重用性,灵活性和扩展性.为了实现整体运算,每个对象都能够接收消息,处理数据和向其它对象发送消息.OOP主要有以下的概念和组件.</p>
-<h1><span id="ddd">DDD</span><a href="#ddd" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/h295928126/article/details/122951726">https://blog.csdn.net/h295928126/article/details/122951726</a></p>
-<p>DDD(domain driver designer，也就是领域驱动设计)，它有三个关键词：领域，驱动，设计。领域，是要探索业务的边界；驱动,表示前者是后者的决定性因素；设计，包括产品设计，UIUE设计，软件设计。它不仅仅是开发架构的方案，而是完整的解决方案实施思路。正是因为它是完整的方案，才能让领域专家，产品和研发真正在同一个角度去思考和沟通，避免推诿扯皮，含糊不清。<br>
-从上文就可以知道DDD是一种拆解业务、划分业务、确定业务边界的方法， 是一种高度复杂的领域设计思想，将我们的问题拆分成一个个的域， 试图分离技术实现的复杂性，主要解决的是软件难以理解难以演进的问题，DDD不是一种架构， 而是一种架构方法论， 目的就是将复杂问题领域简单化， 帮助我们设计出清晰的领域和边界， 可以很好的实现技术架构的演进。下面为常用的的设计架构图</p>
-<p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3/1bce8e4c93a14d4ba31c9ce4ecaa1a17.png" alt="在这里插入图片描述"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">单例模式</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-09-13 21:17:49 / 修改时间：23:13:15" itemprop="dateCreated datePublished" datetime="2022-09-13T21:17:49+08:00">2022-09-13</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%88%9B%E5%BB%BA%E5%9E%8B-%E9%83%BD%E6%98%AF%E5%88%9B%E5%BB%BA%E7%9B%B8%E5%85%B3%E7%9A%84/" itemprop="url" rel="index"><span itemprop="name">创建型(都是创建相关的)</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#q-jiang-yi-xia-dan-li-mo-shi-de-you-dian">Q: 讲一下单例模式的优点？</a></li>
-<li><a href="#q-jiang-yi-xia-dan-li-mo-shi-de-que-dian">Q: 讲一下单例模式的缺点？</a></li>
-<li><a href="#dan-li-de-ji-chong-java-shi-xian">单例的几种java实现</a>
-<ul>
-<li><a href="#q-xia-mian-de-e-han-dan-li-shi-xian-you-shi-me-wen-ti">Q: 下面的饿汉单例实现有什么问题？</a></li>
-<li><a href="#q-xia-mian-de-lan-han-shi-dan-li-sui-ran-neng-bi-mian-qi-dong-su-du-guo-man-dan-zhe-ge-dai-ma-you-shi-me-wen-ti">Q: 下面的懒汉式单例虽然能避免启动速度过慢，但这个代码有什么问题？</a></li>
-<li><a href="#q-jiang-yi-xia-lan-han-jia-zai-ru-he-bi-mian-shang-shu-de-wen-ti">Q: 讲一下懒汉加载如何避免上述的问题？</a></li>
-<li><a href="#q-ke-yi-bu-yong-suo-shi-xian-java-de-dan-li-yan-chi-jia-zai-ma">Q: 可以不用锁实现java的单例延迟加载吗？</a></li>
-</ul>
-</li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<p>单例模式，顾名思义， 就是一个系统内只提供一个单例，只有一个静态getInstance()方法。</p>
-<ul>
-<li>单例模式的类，其构造函数是private的，禁止外部去new</li>
-</ul>
-<p><img src="/images/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/deb5ab479e94e371f07f770c11c80a0b202a07c4.png" alt="deb5ab479e94e371f07f770c11c80a0b202a07c4"></p>
-<hr>
-<h1><span id="q-jiang-yi-xia-dan-li-mo-shi-de-you-dian">Q: 讲一下单例模式的优点？</span><a href="#q-jiang-yi-xia-dan-li-mo-shi-de-you-dian" class="header-anchor">#</a></h1>
-<p>A:</p>
-<ul>
-<li>
-<p>在内存中只有一个对象，节省内存空间；</p>
-</li>
-<li>
-<p>避免频繁的创建销毁对象，可以提高性能；</p>
-</li>
-<li>
-<p>避免对共享资源的多重占用，简化访问；</p>
-</li>
-<li>
-<p>为整个系统提供一个全局访问点。</p>
-</li>
-</ul>
-<hr>
-<h1><span id="q-jiang-yi-xia-dan-li-mo-shi-de-que-dian">Q: 讲一下单例模式的缺点？</span><a href="#q-jiang-yi-xia-dan-li-mo-shi-de-que-dian" class="header-anchor">#</a></h1>
-<p>A:</p>
-<ul>
-<li>不适用于变化频繁的对象；</li>
-<li>滥用单例将带来一些负面问题，如为了节省资源将数据库连接池对象设计为的单例类，可能会导致共享连接池对象的程序过多而出现连接池溢出；</li>
-</ul>
-<h1><span id="dan-li-de-ji-chong-java-shi-xian">单例的几种java实现</span><a href="#dan-li-de-ji-chong-java-shi-xian" class="header-anchor">#</a></h1>
-<h2><span id="q-xia-mian-de-e-han-dan-li-shi-xian-you-shi-me-wen-ti">Q: 下面的饿汉单例实现有什么问题？</span><a href="#q-xia-mian-de-e-han-dan-li-shi-xian-you-shi-me-wen-ti" class="header-anchor">#</a></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 饿汉式单例</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Singleton1</span> &#123;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 指向自己实例的私有静态引用，主动创建</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">Singleton1</span> <span class="variable">singleton1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Singleton1</span>();</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 私有的构造方法</span></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Singleton1</span><span class="params">()</span>&#123;&#125;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 以自己实例为返回值的静态的公有方法，静态工厂方法</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Singleton1 <span class="title function_">getSingleton1</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> singleton1;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>A:<br>
-会造成启动速度变慢。 如果这个单例对象比较大或者多的话。  例如springbean的单例，如果都设置成饿汉式，则启动会很慢。</p>
-<hr>
-<h2><span id="q-xia-mian-de-lan-han-shi-dan-li-sui-ran-neng-bi-mian-qi-dong-su-du-guo-man-dan-zhe-ge-dai-ma-you-shi-me-wen-ti">Q: 下面的懒汉式单例虽然能避免启动速度过慢，但这个代码有什么问题？</span><a href="#q-xia-mian-de-lan-han-shi-dan-li-sui-ran-neng-bi-mian-qi-dong-su-du-guo-man-dan-zhe-ge-dai-ma-you-shi-me-wen-ti" class="header-anchor">#</a></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 懒汉式单例</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Singleton2</span> &#123;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 指向自己实例的私有静态引用</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton2 singleton2;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 私有的构造方法</span></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Singleton2</span><span class="params">()</span>&#123;&#125;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 以自己实例为返回值的静态的公有方法，静态工厂方法</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Singleton2 <span class="title function_">getSingleton2</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="comment">// 被动创建，在真正需要使用时才去创建</span></span><br><span class="line">        <span class="keyword">if</span> (singleton2 == <span class="literal">null</span>) &#123;</span><br><span class="line">            singleton2 = <span class="keyword">new</span> <span class="title class_">Singleton2</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> singleton2;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>A:<br>
-一个线程进入了if (singleton == null)判断语句块，还未来得及往下执行，另一个线程也通过了这个判断语句，这时便会产生多个实例。所以在多线程环境下不可使用这种方式</p>
-<hr>
-<h2><span id="q-jiang-yi-xia-lan-han-jia-zai-ru-he-bi-mian-shang-shu-de-wen-ti">Q: 讲一下懒汉加载如何避免上述的问题？</span><a href="#q-jiang-yi-xia-lan-han-jia-zai-ru-he-bi-mian-shang-shu-de-wen-ti" class="header-anchor">#</a></h2>
-<p>A:<br>
-使用双重加锁，  先判空， 判空后再加锁判断，  拿到锁之后再进行new<br>
-<img src="/images/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/0b16110f2c2e97166c7998baf7ebdb228d00c4cb.png" alt="0b16110f2c2e97166c7998baf7ebdb228d00c4cb"></p>
-<hr>
-<h2><span id="q-ke-yi-bu-yong-suo-shi-xian-java-de-dan-li-yan-chi-jia-zai-ma">Q: 可以不用锁实现java的单例延迟加载吗？</span><a href="#q-ke-yi-bu-yong-suo-shi-xian-java-de-dan-li-yan-chi-jia-zai-ma" class="header-anchor">#</a></h2>
-<p>A:<br>
-可以， 使用内部类的静态初始化</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Singleton</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Singleton</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">//实例的初始化</span></span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">SingletonHolder</span> &#123;</span><br><span class="line">        <span class="keyword">static</span> <span class="type">Singleton</span> <span class="variable">instance</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Singleton</span>();</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> SingletonHolder.instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>原因是因为内部类的加载和初始化本身是有用到类锁的，而内部类只会用到的时候加载， 不会提前被扫描进来。因此不会出现重复new两次， 但能够保证用到的时候才生成。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">原型模式</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-09-13 21:17:49 / 修改时间：23:30:34" itemprop="dateCreated datePublished" datetime="2022-09-13T21:17:49+08:00">2022-09-13</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%88%9B%E5%BB%BA%E5%9E%8B-%E9%83%BD%E6%98%AF%E5%88%9B%E5%BB%BA%E7%9B%B8%E5%85%B3%E7%9A%84/" itemprop="url" rel="index"><span itemprop="name">创建型(都是创建相关的)</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>711</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#ying-yong-chang-jing">应用场景</a></li>
-<li><a href="#you-dian">优点</a></li>
-<li><a href="#que-dian">缺点</a></li>
-<li><a href="#java-zhong-de-yuan-xing-lei-ying-yong">java中的原型类应用：</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zhengzhb/article/details/7393528">23种设计模式（5）：原型模式 CSDN</a></p>
-<p>含义：   就一个clone的抽象接口， 告诉实现的子类们 你们必须实现这个方法， 因为外面（client）很可能经常要用到你的拷贝类</p>
-<p><img src="../../../../images/%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/48fdece0e11b0bb3039a1e8d5ff1467bad7e9e24.png" alt="48fdece0e11b0bb3039a1e8d5ff1467bad7e9e24"></p>
-<h1><span id="ying-yong-chang-jing">应用场景</span><a href="#ying-yong-chang-jing" class="header-anchor">#</a></h1>
-<p>而且用到clone，一般做的是复制对象或者直接取出一个不可变的引用， <strong>不需要重新new一个新对象</strong><br>
-clone可以带参数，例如clone(int type)<br>
-实现类里有一个内存map&lt;type, 原型对象&gt;   ， 从map里取出已经构造好的返回去。</p>
-<h1><span id="you-dian">优点</span><a href="#you-dian" class="header-anchor">#</a></h1>
-<ul>
-<li>
-<p>提升创建对象的性能<br>
-因为Object类的clone方法是一个本地方法，它直接操作内存中的二进制流，特别是复制大对象时，性能的差别非常明显。</p>
-</li>
-<li>
-<p>简化对象的创建<br>
-使得创建对象就像我们在编辑文档时的复制粘贴一样简。</p>
-</li>
-</ul>
-<h1><span id="que-dian">缺点</span><a href="#que-dian" class="header-anchor">#</a></h1>
-<p>如果返回的原型对象会被外部调用进行”修改“，而非检查读操作，  那么容易引发原型对象的变更，导致下一次clone时内容发生变化。<br>
-因此一般要注意返回的是不可变类。</p>
-<h1><span id="java-zhong-de-yuan-xing-lei-ying-yong">java中的原型类应用：</span><a href="#java-zhong-de-yuan-xing-lei-ying-yong" class="header-anchor">#</a></h1>
-<ul>
-<li>实现Cloneable接口。<br>
-在java语言有一个Cloneable接口，它的作用只有一个，就是在运行时通知虚拟机可以安全地在实现了此接口的类上使用clone方法。在java虚拟机中，只有实现了这个接口的类才可以被拷贝，否则在运行时会抛出CloneNotSupportedException异常。</li>
-<li>重写Object类中的clone方法。<br>
-Java中，所有类的父类都是Object类，Object类中有一个clone方法，作用是返回对象的一个拷贝，但是其作用域protected类型的，一般的类无法调用，因此，Prototype类需要将clone方法的作用域修改为public类型。</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B8%83%E5%A4%A7%E5%8E%9F%E5%88%99/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B8%83%E5%A4%A7%E5%8E%9F%E5%88%99/" class="post-title-link" itemprop="url">设计模式七大原则</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-09-13 21:14:49 / 修改时间：23:08:29" itemprop="dateCreated datePublished" datetime="2022-09-13T21:14:49+08:00">2022-09-13</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%AE%BE%E8%AE%A1%E7%90%86%E8%AE%BA/" itemprop="url" rel="index"><span itemprop="name">设计理论</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B8%83%E5%A4%A7%E5%8E%9F%E5%88%99/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/13/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B8%83%E5%A4%A7%E5%8E%9F%E5%88%99/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>971</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#dan-yi-zhi-ze-yuan-ze-single-responsibility-principle">单一职责原则 (Single Responsibility Principle)</a></li>
-<li><a href="#kai-fang-guan-bi-yuan-ze-open-closed-principle">开放-关闭原则 (Open-Closed Principle)</a></li>
-<li><a href="#li-shi-ti-huan-yuan-ze-liskov-substitution-principle">里氏替换原则 (Liskov Substitution Principle)</a></li>
-<li><a href="#yi-lai-dao-zhuan-yuan-ze-dependence-inversion-principle">依赖倒转原则 (Dependence Inversion Principle)</a></li>
-<li><a href="#jie-kou-ge-chi-yuan-ze-interface-segregation-principle">接口隔离原则 (Interface Segregation Principle)</a></li>
-<li><a href="#di-mi-te-fa-ze-law-of-demeter">迪米特法则（Law Of Demeter）</a></li>
-<li><a href="#zu-he-ju-he-fu-yong-yuan-ze-composite-aggregate-reuse-principle">组合/聚合复用原则 (Composite/Aggregate Reuse Principle)</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="dan-yi-zhi-ze-yuan-ze-single-responsibility-principle">单一职责原则 (Single Responsibility Principle)</span><a href="#dan-yi-zhi-ze-yuan-ze-single-responsibility-principle" class="header-anchor">#</a></h1>
-<p>就一个类而言，应该仅有一个让它变化的原因；通俗地说，即一个类只负责一项职责</p>
-<hr>
-<h1><span id="kai-fang-guan-bi-yuan-ze-open-closed-principle">开放-关闭原则 (Open-Closed Principle)</span><a href="#kai-fang-guan-bi-yuan-ze-open-closed-principle" class="header-anchor">#</a></h1>
-<p>软件实体 (类、模块、函数等等) 应该是可以被扩展的，但是不可被修改<br>
-即尽可能避免修改内部逻辑，而是扩展实现</p>
-<hr>
-<h1><span id="li-shi-ti-huan-yuan-ze-liskov-substitution-principle">里氏替换原则 (Liskov Substitution Principle)</span><a href="#li-shi-ti-huan-yuan-ze-liskov-substitution-principle" class="header-anchor">#</a></h1>
-<p>当使用继承时候，类 B 继承类 A 时，除添加新的方法完成新增功能 P2，尽量不要修改父类方法预期的行为<br>
-即你新增的P2，不能影响父类方法其他的功能逻辑， 必须其他方法中用到了override的P2，结果导致出错了。</p>
-<hr>
-<h1><span id="yi-lai-dao-zhuan-yuan-ze-dependence-inversion-principle">依赖倒转原则 (Dependence Inversion Principle)</span><a href="#yi-lai-dao-zhuan-yuan-ze-dependence-inversion-principle" class="header-anchor">#</a></h1>
-<p>高层模块不应该依赖低层模块，二者都应该于抽象。进一步说，抽象不应该依赖于细节，细节应该依赖于抽象<br>
-处理业务逻辑的程序员提供一个封装好数据库操作的抽象接口，交给低层模块的程序员去编写，这样双方可以单独编写而互不影响</p>
-<hr>
-<h1><span id="jie-kou-ge-chi-yuan-ze-interface-segregation-principle">接口隔离原则 (Interface Segregation Principle)</span><a href="#jie-kou-ge-chi-yuan-ze-interface-segregation-principle" class="header-anchor">#</a></h1>
-<p>客户端不应该依赖它不需要的接口；一个类对另一个类的依赖应该建立在最小的接口上</p>
-<hr>
-<h1><span id="di-mi-te-fa-ze-law-of-demeter">迪米特法则（Law Of Demeter）</span><a href="#di-mi-te-fa-ze-law-of-demeter" class="header-anchor">#</a></h1>
-<p>它表示一个对象应该对其它对象保持最少的了解。通俗来说就是，只与直接的朋友通信<br>
-对于被依赖的类来说，无论逻辑多么复杂，都尽量的将逻辑封装在类的内部，对外提供 public 方法，不对泄漏任何信息。</p>
-<hr>
-<h1><span id="zu-he-ju-he-fu-yong-yuan-ze-composite-aggregate-reuse-principle">组合/聚合复用原则 (Composite/Aggregate Reuse Principle)</span><a href="#zu-he-ju-he-fu-yong-yuan-ze-composite-aggregate-reuse-principle" class="header-anchor">#</a></h1>
-<p>对于被依赖的类来说，无论逻辑多么复杂，都尽量的将逻辑封装在类的内部，对外提供 public 方法，不对泄漏任何信息。</p>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/24614363">设计模式原则例子详解</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/12/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%80%BB%E7%BA%BF%E5%8E%9F%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/09/12/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%80%BB%E7%BA%BF%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">计算机总线原理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-09-12 23:30:49 / 修改时间：23:27:23" itemprop="dateCreated datePublished" datetime="2022-09-12T23:30:49+08:00">2022-09-12</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">计算机组成原理</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/09/12/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%80%BB%E7%BA%BF%E5%8E%9F%E7%90%86/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/12/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%80%BB%E7%BA%BF%E5%8E%9F%E7%90%86/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#zong-xian">总线</a>
-<ul>
-<li><a href="#1-gai-nian">1概念</a>
-<ul>
-<li><a href="#1-1-she-bei-gai-nian">1.1设备概念：</a></li>
-<li><a href="#1-2-te-dian">1.2特点：</a></li>
-</ul>
-</li>
-<li><a href="#2-zong-xian-fen-lei">2 总线分类</a>
-<ul>
-<li><a href="#2-1-an-jie-gou-fen-lei">2.1 按结构分类</a>
-<ul>
-<li><a href="#2-1-1-dan-zong-xian">2.1.1 单总线</a></li>
-<li><a href="#2-1-2-mian-xiang-cpu-shuang-zong-xian">2.1.2 面向CPU双总线</a></li>
-<li><a href="#2-1-3-san-zong-xian">2.1.3 三总线</a></li>
-</ul>
-</li>
-<li><a href="#2-2-an-lian-jie-bu-jian-fen-lei">2.2 按连接部件分类</a>
-<ul>
-<li><a href="#2-2-1-pian-nei-zong-xian">2.2.1 片内总线</a></li>
-<li><a href="#2-2-2-xi-tong-zong-xian">2.2.2 系统总线</a></li>
-<li><a href="#2-2-3-tong-xin-zong-xian-wai-zong-xian">2.2.3 通信总线（外总线）</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#3-xing-neng-zhi-biao">3. 性能指标</a></li>
-<li><a href="#4-zong-xian-biao-zhun">4. 总线标准</a></li>
-<li><a href="#5-zong-xian-zhong-cai">5. 总线仲裁</a>
-<ul>
-<li><a href="#5-1-pan-you-kong-zhi">5.1 判优控制</a></li>
-<li><a href="#5-2-lian-shi-cha-xun">5.2 链式查询</a></li>
-<li><a href="#5-3-ji-shu-qi-ding-shi-cha-xun-n-gen">5.3 计数器定时查询（n根）</a></li>
-<li><a href="#reng-shi-gong-you-yi-gen-zong-xian-qing-qiu-xian">仍是共有一根总线请求线。</a></li>
-<li><a href="#5-4-du-li-qing-qiu">5.4 独立请求</a></li>
-<li><a href="#5-5-fen-bu-shi-zhong-cai">5.5 分布式仲裁</a></li>
-</ul>
-</li>
-<li><a href="#tong-xin-fang-shi">通信方式</a>
-<ul>
-<li><a href="#tong-bu-tong-xin">同步通信</a></li>
-<li><a href="#yi-bu-tong-xin">异步通信</a></li>
-</ul>
-<ul>
-<li><a href="#ban-tong-bu-tong-xin">半同步通信</a></li>
-<li><a href="#fen-chi-shi-tong-xin">分离式通信</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#q-shi-me-shi-zong-xian-suo-you-shi-me-que-dian-ti-dai-fang-an-shi-shi-me">Q: 什么是总线锁？有什么缺点？替代方案是什么？</a></li>
-<li><a href="#q-shi-me-qing-kuang-xia-huan-cun-yi-zhi-xing-hui-shi-xiao">Q: 什么情况下缓存一致性会失效？</a></li>
-<li><a href="#q-huan-cun-yi-zhi-xing-ke-neng-hui-yin-fa-shi-me-wen-ti">Q: 缓存一致性可能会引发什么问题？</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="zong-xian">总线</span><a href="#zong-xian" class="header-anchor">#</a></h1>
-<h2><span id="1-gai-nian">1概念</span><a href="#1-gai-nian" class="header-anchor">#</a></h2>
-<p>总线是连接多个部件的信息传输线<br>
-各部件共享的传输介质（多个组件共用1条总线）</p>
-<h3><span id="1-1-she-bei-gai-nian">1.1设备概念：</span><a href="#1-1-she-bei-gai-nian" class="header-anchor">#</a></h3>
-<p>主设备——当前获得总线控制权的设备<br>
-从设备——被主设备访问的设备，只能响应</p>
-<h3><span id="1-2-te-dian">1.2特点：</span><a href="#1-2-te-dian" class="header-anchor">#</a></h3>
-<p>分时： 同一时刻只允许一个组件发送消息<br>
-共享： 可多个线同时接收信息</p>
-<h2><span id="2-zong-xian-fen-lei">2 总线分类</span><a href="#2-zong-xian-fen-lei" class="header-anchor">#</a></h2>
-<h3><span id="2-1-an-jie-gou-fen-lei">2.1 按结构分类</span><a href="#2-1-an-jie-gou-fen-lei" class="header-anchor">#</a></h3>
-<h4><span id="2-1-1-dan-zong-xian">2.1.1 单总线</span><a href="#2-1-1-dan-zong-xian" class="header-anchor">#</a></h4>
-<p>内存、CPU、I/O都连接同一根线<br>
-发生抢占时，需要让总线判断优先级<br>
-且不适用单周期指令，1个时钟周期内没法传输地址+数据</p>
-<h4><span id="2-1-2-mian-xiang-cpu-shuang-zong-xian">2.1.2 面向CPU双总线</span><a href="#2-1-2-mian-xiang-cpu-shuang-zong-xian" class="header-anchor">#</a></h4>
-<p>总共两根线，分别是</p>
-<ul>
-<li>M内存总线（CPU与内存之间的总线）</li>
-<li>I/O总线（I/O和CPU的总线）<br>
-缺点：<br>
-当希望从IO直接传给内存时，需要先经过CPU</li>
-</ul>
-<h4><span id="2-1-3-san-zong-xian">2.1.3 三总线</span><a href="#2-1-3-san-zong-xian" class="header-anchor">#</a></h4>
-<p>以内存为中心<br>
-CPU&lt;–&gt; Memory &lt;–&gt; I/O<br>
-CPU和Memory之间可能存在DMA进行高速交互。</p>
-<h3><span id="2-2-an-lian-jie-bu-jian-fen-lei">2.2 按连接部件分类</span><a href="#2-2-an-lian-jie-bu-jian-fen-lei" class="header-anchor">#</a></h3>
-<h4><span id="2-2-1-pian-nei-zong-xian">2.2.1 片内总线</span><a href="#2-2-1-pian-nei-zong-xian" class="header-anchor">#</a></h4>
-<p>指在芯片内部的总线<br>
-比如CPU内部、寄存器之间、ALU与寄存器</p>
-<h4><span id="2-2-2-xi-tong-zong-xian">2.2.2 系统总线</span><a href="#2-2-2-xi-tong-zong-xian" class="header-anchor">#</a></h4>
-<p>连接CPU\主存、IO的总线<br>
-数据线： 传送指令、数据、中断信号<br>
-地址线： 访问主存或者IO，由CPU单向通往内存。 位数决定地址空间<br>
-控制线： 监控和维护各部件状态， 传送应答信号</p>
-<h4><span id="2-2-3-tong-xin-zong-xian-wai-zong-xian">2.2.3 通信总线（外总线）</span><a href="#2-2-3-tong-xin-zong-xian-wai-zong-xian" class="header-anchor">#</a></h4>
-<p>计算机和其他系统之间的总线（计算机外部的）。</p>
-<blockquote>
-<blockquote>
-<p>猝发传输： 一次性传输存储地址下的多个字</p>
-</blockquote>
-</blockquote>
-<h2><span id="3-xing-neng-zhi-biao">3. 性能指标</span><a href="#3-xing-neng-zhi-biao" class="header-anchor">#</a></h2>
-<ul>
-<li>传输周期/总线周期 —— 一次总线操作所需的时间</li>
-<li>总线宽度——<strong>数据总线</strong>的根数（并非地址总线）</li>
-<li>时钟同/异步——和CPU时钟是否同步工作</li>
-<li>总线复用—— 能否在1根总线中复用地址和数据的功能</li>
-<li>信号线数——地址、数据、控制 三线总和</li>
-<li>控制方式——  突发控制/计数控制/配置控制</li>
-<li>其他指标—— 负载能力/电源电压/宽度扩展性</li>
-</ul>
-<h2><span id="4-zong-xian-biao-zhun">4. 总线标准</span><a href="#4-zong-xian-biao-zhun" class="header-anchor">#</a></h2>
-<p>总线标准， 指 系统和模块间的互连标准， 只要求自身与接口一致即可， 不一定要求所有线都一样。</p>
-<ul>
-<li>ISA—— 独立于CPU的总线时间</li>
-<li>EISA—— 和ISA兼容，  主线控制权不由CPU决定</li>
-<li>VESA—— 局部总线， 使用高速信息传输通道</li>
-<li>PCI——局部总线， 猝发传输</li>
-<li>AGP——显卡专用总线， 双激励，时钟上下沿都可以传输</li>
-<li>RS-232C——用于DTE终端设备和DCE数据通信设备。  解/调码器之间的那根线</li>
-<li>USB——设备总线， 连接设备与设备控制器</li>
-<li>PCI\AGP\PCI-E 负责连接 主存、网卡、视频卡之类内部局部总线</li>
-</ul>
-<h2><span id="5-zong-xian-zhong-cai">5. 总线仲裁</span><a href="#5-zong-xian-zhong-cai" class="header-anchor">#</a></h2>
-<p><img src="/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%80%BB%E7%BA%BF/f1b6d0148c0426779d3adb1f906a9e81cf2e4f1c.png" alt="f1b6d0148c0426779d3adb1f906a9e81cf2e4f1c"></p>
-<h4><span id="5-1-pan-you-kong-zhi">5.1 判优控制</span><a href="#5-1-pan-you-kong-zhi" class="header-anchor">#</a></h4>
-<p>主设备才有优先级之分<br>
-主线才能传输数据。</p>
-<ul>
-<li>集中式总线： 控制逻辑集中于CPU，利用一个特定的裁决算法进行裁决</li>
-<li>分布式总线： 优先逻辑分散到各部件</li>
-</ul>
-<p>集中式仲裁方式如下：</p>
-<h4><span id="5-2-lian-shi-cha-xun">5.2 链式查询</span><a href="#5-2-lian-shi-cha-xun" class="header-anchor">#</a></h4>
-<p><img src="/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%80%BB%E7%BA%BF/0873d9af0c25df689e116c960251d1dfd8204452.png" alt="0873d9af0c25df689e116c960251d1dfd8204452"></p>
-<ul>
-<li>总线上所有的部件共用一根总线请求线，当有部件请求使用总线时，需经此线发总线请求信号到总线控制器，总线控制器便查询总线是否忙碌，如不忙碌便立即发总线响应信号到 BG 线串行地从一个部件传送到下一个部件，依次查询，直到某个部件有总线请求便不再传下去。</li>
-<li>此方式下，部件离总线控制器越近优先级越高，离总线控制器越远则优先级越低。</li>
-<li>优点：优先级固定，只需较少的控制线就能按一定优先次序实现总线控制，结构简单，扩充容易。</li>
-<li>缺点：对硬件电路的故障敏感，且优先级不能改变，这要极易导致当优先级高的部件频繁请求总线时，优先级低的部件长期不能使用总线。</li>
-</ul>
-<h4><span id="5-3-ji-shu-qi-ding-shi-cha-xun-n-gen">5.3 计数器定时查询（n根）</span><a href="#5-3-ji-shu-qi-ding-shi-cha-xun-n-gen" class="header-anchor">#</a></h4>
-<p><img src="/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%80%BB%E7%BA%BF/5a8557fe7db45a7b9a15729a6a18cb8d67c545b5.png" alt="5a8557fe7db45a7b9a15729a6a18cb8d67c545b5"></p>
-<h4><span id="reng-shi-gong-you-yi-gen-zong-xian-qing-qiu-xian">仍是共有一根总线请求线。</span><a href="#reng-shi-gong-you-yi-gen-zong-xian-qing-qiu-xian" class="header-anchor">#</a></h4>
-<ul>
-<li>工作原理如下，当总线控制器收到总线请求信号并判断总线空闲时，计数器开始计数，计数值通过设备地址线发向各个部件，当地址线上的计数值与请求使用总线设备的地址一致时，该设备获得总线控制权，同时中止计数器的计数及查询。</li>
-<li>优点：计数器计数可从“0”开始，当设备优先次序固定，则设备优先级就按0，1……的顺序排列，固定不变；计数可以从上一次的终点开始，即采用一种循环方法，此时设备使用总线的优先级相等；计数器的初值还可由程序设置，因此优先次序可以改变，且这种方式对电路的故障不那么敏感。</li>
-<li>缺点：增加了控制线，若设备有 n 个，则大致需要 ?log_2?n ?+2条控制线，控制也比链式查询复杂。</li>
-</ul>
-<h4><span id="5-4-du-li-qing-qiu">5.4 独立请求</span><a href="#5-4-du-li-qing-qiu" class="header-anchor">#</a></h4>
-<p><img src="/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%80%BB%E7%BA%BF/d87d9c7042b349025ebc77b41891c34fba9fd50b.png" alt="d87d9c7042b349025ebc77b41891c34fba9fd50b"></p>
-<ul>
-<li>每个设备都有一对总线请求线和总线允许线，当部件需要使用总线时，经各自的总线请求线向总线控制器发送总线请求信号，在控制器中排队，总线控制器按一定的优先次序决定批准某个部件的请求，并经该部件的总线允许线向该部件发送总线响应信号，将总线控制器交给该部件。</li>
-<li>优点：响应速度快，对优先次序的控制相当灵活。</li>
-<li>缺点：控制线数量多，若有设备 n 个，则需要 2n+1 条控制线，其中的 1 是指反馈线，用于让设备向总线控制器反馈已经使用完总线；总线控制逻辑复杂。</li>
-</ul>
-<h4><span id="5-5-fen-bu-shi-zhong-cai">5.5 分布式仲裁</span><a href="#5-5-fen-bu-shi-zhong-cai" class="header-anchor">#</a></h4>
-<p>分布仲裁方式不需要中央仲裁器，每个潜在的主模块都有自己的仲裁号和仲裁器。<br>
-当它们有总线请求时，就会把它们各自唯一的仲裁号发送到共享的仲裁总线上，每个仲裁器从仲裁总线上得到的仲裁号与自己的仲裁号比较。<br>
-若仲裁总线上的仲裁号优先级高，则它的总线请求不予响应，并撤销它的仲裁号。最后，获胜者的仲裁号保留在仲裁总线上。</p>
-<h2><span id="tong-xin-fang-shi">通信方式</span><a href="#tong-xin-fang-shi" class="header-anchor">#</a></h2>
-<p>总线周期的4个阶段<br>
-申请分配——寻址——传数据——结束</p>
-<h4><span id="tong-bu-tong-xin">同步通信</span><a href="#tong-bu-tong-xin" class="header-anchor">#</a></h4>
-<p>按照4个周期上升沿才执行，主从设备完全按照周期执行<br>
-<img src="/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%80%BB%E7%BA%BF/1314b925470f419d06eb92e8fd83c23ca79e7bce.png" alt="1314b925470f419d06eb92e8fd83c23ca79e7bce"></p>
-<p>读： 发地址-&gt;发送读命令-&gt;读取数据-&gt;撤销占用<br>
-写：发地址-&gt;提取数据-&gt;发送写命令-&gt;撤销<br>
-用于存取时间比较一致且短的场合</p>
-<h4><span id="yi-bu-tong-xin">异步通信</span><a href="#yi-bu-tong-xin" class="header-anchor">#</a></h4>
-<p>不会一定要主从设备按照一样的周期执行<br>
-<img src="/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%80%BB%E7%BA%BF/dad51425b7a657c21e60027d737acbbf975a85df.png" alt="dad51425b7a657c21e60027d737acbbf975a85df"></p>
-<ul>
-<li>不互锁：  不用接收应答，按时间撤销</li>
-<li>半互锁： 主模块接收应答才撤销——共享存储器</li>
-<li>全互锁： 主从都要应答，类似TCP的应答方式</li>
-</ul>
-<h3><span id="ban-tong-bu-tong-xin">半同步通信</span><a href="#ban-tong-bu-tong-xin" class="header-anchor">#</a></h3>
-<p>和同步类似， 但是在命令和数据周期内增加了Tw等待周期。<br>
-发送方用系统时钟前沿法信号<br>
-接收方用后沿判断和等待<br>
-<img src="/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%80%BB%E7%BA%BF/f9664e2e26ce03170b7537e95fb020cf5816c758.png" alt="f9664e2e26ce03170b7537e95fb020cf5816c758"></p>
-<p>以上三种通信的共同点：<br>
-（1）主模块发地址、命令 占用总线<br>
-（2）从模块准备数据 不占用总线 总线空闲（3）从模块向主模块发数据 占用总线</p>
-<h3><span id="fen-chi-shi-tong-xin">分离式通信</span><a href="#fen-chi-shi-tong-xin" class="header-anchor">#</a></h3>
-<p>充分挖掘系统总线每个瞬间的潜力<br>
-一个总线传输周期<br>
-子周期1 ：主模块申请占用总线，使用完后即放弃总线的使用权。<br>
-子周期2：从模块申请占用总线，将各种信息送至总线上。</p>
-<p>分离式通信特点：<br>
-1、各模块有权申请占用总线<br>
-2、采用同步方式通信，不等对方回答<br>
-3、各模块准备数据时，不占用总线<br>
-4、总线被占用时，无空闲</p>
-<hr>
-<h1><span id="q-shi-me-shi-zong-xian-suo-you-shi-me-que-dian-ti-dai-fang-an-shi-shi-me">Q: 什么是总线锁？有什么缺点？替代方案是什么？</span><a href="#q-shi-me-shi-zong-xian-suo-you-shi-me-que-dian-ti-dai-fang-an-shi-shi-me" class="header-anchor">#</a></h1>
-<p>A:</p>
-<ul>
-<li>在早期处理器提供一个 LOCK# 信号，CPU1在操作共享变量的时候会预先对总线加锁，此时CPU2就不能通过总线来读取内存中的数据了</li>
-<li>缺点：但这无疑会大大降低CPU的执行效率。其他CPU都无法正常操作了。</li>
-<li>替代方案：缓存一致性协议<br>
-由于总线锁的效率太低所以就出现了缓存一致性协议，Intel 的MESI协议就是其中一个佼佼者。MESI协议保证了每个缓存变量中使用的共享变量的副本都是一致的<br>
-<img src="/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%80%BB%E7%BA%BF/2a4506c7e57b0e03c7d9a44613a843dce3ee207e.png" alt="2a4506c7e57b0e03c7d9a44613a843dce3ee207e"></li>
-<li>CPU1使用共享数据时会先数据拷贝到CPU1缓存中,然后置为独占状态(E)，这时CPU2也使用了共享数据，也会拷贝也到CPU2缓存中。</li>
-<li>通过总线嗅探机制，当该CPU1监听总线中其他CPU对内存进行操作，此时共享变量在CPU1和CPU2两个缓存中的状态会被标记为共享状态(S)；</li>
-<li>若CPU1将变量通过缓存回写到主存中，需要先锁住缓存行，此时状态切换为（M），向总线发消息告诉其他在嗅探的CPU该变量已经被CPU1改变并回写到主存中。</li>
-<li>接收到消息的其他CPU会将共享变量状态从（S）改成无效状态（I），缓存行失效。若其他CPU需要再次操作共享变量则需要重新从内存读取。</li>
-</ul>
-<hr>
-<h1><span id="q-shi-me-qing-kuang-xia-huan-cun-yi-zhi-xing-hui-shi-xiao">Q: 什么情况下缓存一致性会失效？</span><a href="#q-shi-me-qing-kuang-xia-huan-cun-yi-zhi-xing-hui-shi-xiao" class="header-anchor">#</a></h1>
-<p>A:</p>
-<ul>
-<li>共享变量大于缓存行大小，MESI无法进行缓存行加锁；</li>
-<li>CPU并不支持缓存一致性协议</li>
-</ul>
-<hr>
-<h1><span id="q-huan-cun-yi-zhi-xing-ke-neng-hui-yin-fa-shi-me-wen-ti">Q:  缓存一致性可能会引发什么问题？</span><a href="#q-huan-cun-yi-zhi-xing-ke-neng-hui-yin-fa-shi-me-wen-ti" class="header-anchor">#</a></h1>
-<p>A: 可能会引发总线风暴。原因如下：</p>
-<ul>
-<li>嗅探机制：每个处理器会通过嗅探器来监控总线上的数据来检查自己缓存内的数据是否过期，如果发现自己缓存行对应的地址被修改了，就会将此缓存行置为无效。当处理器对此数据进行操作时，就会重新从主内存中读取数据到缓存行。</li>
-<li>MESI会触发嗅探器进行数据传播。当有大量的volatile 和cas 进行数据修改的时候就会产大量嗅探消息。</li>
-<li>结合上面2点， 总线是固定的，所有相应可以接受的通信能力也就是固定的了</li>
-<li>如果缓存一致性流量突然激增，必然会使总线的处理能力受到影响。而恰好CAS和volatile 会导致缓存一致性流量增大。如果很多线程都共享一个变量，当共享变量进行CAS等数据变更时，就有可能产生总线风暴。<br>
-因此volatile和CAS不能用太多。</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/2022/09/12/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/CPU%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/09/12/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/CPU%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">CPU执行原理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-09-12 23:17:49 / 修改时间：23:38:47" itemprop="dateCreated datePublished" datetime="2022-09-12T23:17:49+08:00">2022-09-12</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">计算机组成原理</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/09/12/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/CPU%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/12/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/CPU%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>606</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#1-kong-zhi-qi">1. 控制器</a></li>
-<li><a href="#2-yun-suan-qi">2.运算器</a></li>
-<li><a href="#zhi-ling-zhou-qi">指令周期</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<p>cpu包含两类东西：</p>
-<ol>
-<li>控制器。</li>
-<li>运算器ALU</li>
-</ol>
-<p>详解：</p>
-<h1><span id="1-kong-zhi-qi">1. 控制器</span><a href="#1-kong-zhi-qi" class="header-anchor">#</a></h1>
-<p>控制器主要负责</p>
-<ul>
-<li>取指令</li>
-<li>分析指令（译码）</li>
-<li>执行指令</li>
-</ul>
-<p>包含的东西有</p>
-<ul>
-<li>程序计数器PC</li>
-<li>指令寄存器IR</li>
-<li>指令译码器</li>
-<li>地址寄存器MAR</li>
-<li>数据寄存器MDR</li>
-<li>时序系统，分频，时序信号</li>
-<li>微操作信号发生器CU</li>
-<li>中断标记寄存器</li>
-</ul>
-<h1><span id="2-yun-suan-qi">2.运算器</span><a href="#2-yun-suan-qi" class="header-anchor">#</a></h1>
-<p>包含</p>
-<ul>
-<li>ALU算术逻辑单元（底层是数电的那种门电路实现）</li>
-<li>暂存寄存器——只负责暂存读出来的数据，不存中间结果</li>
-<li>累加寄存器——暂存ALU的“运算”结果</li>
-<li>通用寄存器组—— 存放操作数和地址信息等。</li>
-<li>程序状态字寄存器PSW——存放当前指令执行结果的各种状态信息，如有无进位（CY位），有无溢出（OV位），结果正负（SF位），结果是否为零（ZF位），奇偶标志位（P位）</li>
-<li>移位器</li>
-<li>计数器——控制乘除时的操作步数</li>
-</ul>
-<h1><span id="zhi-ling-zhou-qi">指令周期</span><a href="#zhi-ling-zhou-qi" class="header-anchor">#</a></h1>
-<p>CPU指令周期分为 取指、间指、执行、中断四个周期。</p>
-<ul>
-<li>取指：<br>
-PC-&gt;MAR-&gt;主存-&gt;MDR-&gt;IR-&gt;CU控制PC+1</li>
-</ul>
-<p>简单来说<br>
-PC把指令地址存入MAR地址寄存器<br>
-主存取出指令数据，放到MDR<br>
-MDR把指令转到IR里存着<br>
-CU控制PC+1</p>
-<ul>
-<li>间指<br>
-IR-&gt;MDR-&gt;MAR-&gt;存储器-&gt;MDR</li>
-</ul>
-<p>要寻找指令执行数据的地址<br>
-IR解析地址数据，放到MDR中<br>
-MDR把地址放到MAR中，让他进行读操作<br>
-主存中读出的数据放入MDR中</p>
-<ul>
-<li>中断<br>
-PC-&gt;MDR-&gt;主存 原地址存入主存<br>
-CU-&gt;PC更新中断地址</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2017,18 +1787,18 @@ CU-&gt;PC更新中断地址</li>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">164</span>
+          <span class="site-state-item-count">170</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">51</span>
+        <span class="site-state-item-count">54</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -2088,7 +1858,7 @@ CU-&gt;PC更新中断地址</li>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共296.7k字</span>
+  <span class="post-count">博客全站共302.8k字</span>
 </div>
 
         
