@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="String字符串  Q: redis-string的key可以是中文吗？ Q: 那么redis string的value可以存中文吗？什么样子的？要不要指定编码？ Q: redis-string的用途随便说几个 Q: string的底层实现有了解吗？和C语言的字符串有什么区别？   List列表  Q: 用redis的list可以实现哪些数据结构？怎么实现？ Q: 消费者消息队列能设置超时">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis常见数据结构">
+<meta property="og:url" content="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="String字符串  Q: redis-string的key可以是中文吗？ Q: 那么redis string的value可以存中文吗？什么样子的？要不要指定编码？ Q: redis-string的用途随便说几个 Q: string的底层实现有了解吗？和C语言的字符串有什么区别？   List列表  Q: 用redis的list可以实现哪些数据结构？怎么实现？ Q: 消费者消息队列能设置超时">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/redis%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/23ec1c8f14dda8d7d967db125bf3b0d3b12c6182.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/redis%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/b148147baa7475ed77e0525aa6fb624c7f822861.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/redis%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/4c43aab1de89a220066b3d858353d798100969b3.png">
+<meta property="article:published_time" content="2022-09-22T13:46:12.000Z">
+<meta property="article:modified_time" content="2022-09-23T16:28:08.569Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="开源组件原理,redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/redis%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/23ec1c8f14dda8d7d967db125bf3b0d3b12c6182.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>redis常见数据结构 | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          redis常见数据结构
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-09-22 21:46:12" itemprop="dateCreated datePublished" datetime="2022-09-22T21:46:12+08:00">2022-09-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-09-24 00:28:08" itemprop="dateModified" datetime="2022-09-24T00:28:08+08:00">2022-09-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">微服务组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/redis/redis%E5%9F%BA%E7%A1%80%E5%BA%94%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">redis基础应用</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#string-zi-fu-chuan">String字符串</a>
+<ul>
+<li><a href="#q-redis-string-de-key-ke-yi-shi-zhong-wen-ma">Q: redis-string的key可以是中文吗？</a></li>
+<li><a href="#q-na-me-redis-string-de-value-ke-yi-cun-zhong-wen-ma-shi-me-yang-zi-de-yao-bu-yao-zhi-ding-bian-ma">Q: 那么redis string的value可以存中文吗？什么样子的？要不要指定编码？</a></li>
+<li><a href="#q-redis-string-de-yong-tu-sui-bian-shuo-ji-ge">Q: redis-string的用途随便说几个</a></li>
+<li><a href="#q-string-de-di-ceng-shi-xian-you-liao-jie-ma-he-c-yu-yan-de-zi-fu-chuan-you-shi-me-qu-bie">Q: string的底层实现有了解吗？和C语言的字符串有什么区别？</a></li>
+</ul>
+</li>
+<li><a href="#list-lie-biao">List列表</a>
+<ul>
+<li><a href="#q-yong-redis-de-list-ke-yi-shi-xian-na-xie-shu-ju-jie-gou-zen-me-shi-xian">Q: 用redis的list可以实现哪些数据结构？怎么实现？</a></li>
+<li><a href="#q-xiao-fei-zhe-xiao-xi-dui-lie-neng-she-zhi-chao-shi-ma">Q: 消费者消息队列能设置超时吗？</a></li>
+<li><a href="#q-list-li-de-cun-chu-jie-gou-shi-shi-me">Q: list里的存储结构是什么？</a></li>
+</ul>
+</li>
+<li><a href="#set-ji-he">Set集合</a>
+<ul>
+<li><a href="#q-wei-shi-me-biao-qian-ke-yi-yong-set-lai-zuo-er-bu-yong-list">Q: 为什么标签可以用set来做？而不用list</a></li>
+</ul>
+</li>
+<li><a href="#hash-san-lie">Hash散列</a>
+<ul>
+<li><a href="#q-hash-cun-chu-you-shi-me-xian-zhi">Q: hash存储有什么限制？</a></li>
+<li><a href="#q-redis-ru-he-jie-jue-ha-xi-chong-tu-de">Q: redis如何解决哈希冲突的？</a></li>
+<li><a href="#q-san-lie-biao-rong-liang-bu-zu-zen-me-ban">Q: 散列表容量不足怎么办？</a></li>
+</ul>
+</li>
+<li><a href="#zset-you-xu-ji-he">Zset有序集合</a>
+<ul>
+<li><a href="#q-zset-de-yuan-li-shi-shi-me">Q: zset的原理是什么？</a></li>
+<li><a href="#q-redis-3-0-li-zset-you-shi-me-gai-bian">Q: redis 3.0里zset有什么改变？</a></li>
+</ul>
+</li>
+<li><a href="#hyperloglogs-ji-shu-tong-ji">HyperLogLogs基数统计</a>
+<ul>
+<li><a href="#q-ji-shu-yong-lai-jie-jue-shi-me-wen-ti">Q: 基数用来解决什么问题？</a></li>
+</ul>
+</li>
+<li><a href="#bitmap-wei-cun-chu">BitMap 位存储</a></li>
+<li><a href="#geospatial-di-li-xin-xi">geospatial 地理信息</a></li>
+<li><a href="#stream">stream</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<hr>
+<h1><span id="string-zi-fu-chuan">String字符串</span><a href="#string-zi-fu-chuan" class="header-anchor">#</a></h1>
+<p>string 不是简单的字符串的意思<br>
+而是key -&gt;  value(string)<br>
+即value是一个string ，可以用一个key去对应到，key也可以理解成变量名。</p>
+<ul>
+<li>
+<p>这个string可以当成数字使用。<br>
+set count 1<br>
+incr count // count+1<br>
+incrby count 100 // count+100<br>
+但是当你get count的时候，得到的是string的count<br>
+<img src="/images/redis%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/23ec1c8f14dda8d7d967db125bf3b0d3b12c6182.png" alt="23ec1c8f14dda8d7d967db125bf3b0d3b12c6182"></p>
+</li>
+<li>
+<p>也可以是，jpg图片或者序列化的对象。<br>
+<strong>因此string本质上是二进制安全的，不会因为编码不同发生变化</strong></p>
+</li>
+</ul>
+<hr>
+<h2><span id="q-redis-string-de-key-ke-yi-shi-zhong-wen-ma">Q: redis-string的key可以是中文吗？</span><a href="#q-redis-string-de-key-ke-yi-shi-zhong-wen-ma" class="header-anchor">#</a></h2>
+<p>A:<br>
+key可以是中文，不过redis在存储的时候会将key进行序列化，在redis中存储的是字节码。</p>
+<p>不推荐使用中文Key，内耗更大并且出现乱码的可能性也是有的。编码字节存储等都是不一样的占用空间。</p>
+<hr>
+<h2><span id="q-na-me-redis-string-de-value-ke-yi-cun-zhong-wen-ma-shi-me-yang-zi-de-yao-bu-yao-zhi-ding-bian-ma">Q: 那么redis string的value可以存中文吗？什么样子的？要不要指定编码？</span><a href="#q-na-me-redis-string-de-value-ke-yi-cun-zhong-wen-ma-shi-me-yang-zi-de-yao-bu-yao-zhi-ding-bian-ma" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>在保存到redis中时以utf8的编码方式保存的，实际上时等价于正常的这种十六进制字符串</li>
+<li>默认看到的是乱码\xe4\xb8\xaa\xe4\xba\xba\xe8\xb5\x9b</li>
+<li>启动cli时多加一个参数就行了，redis-cli --raw这种方式，就可以查看中文了</li>
+</ul>
+<hr>
+<h2><span id="q-redis-string-de-yong-tu-sui-bian-shuo-ji-ge">Q: redis-string的用途随便说几个</span><a href="#q-redis-string-de-yong-tu-sui-bian-shuo-ji-ge" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>缓存。把常用信息，字符串，图片或者视频等信息放到redis中，redis作为缓存层，mysql做持久化层，降低mysql的读写压力</li>
+<li>计数器，单节点redis的计数是同步的，不用担心并发问题。调用incr等方法即可</li>
+<li>session缓存</li>
+</ul>
+<hr>
+<h2><span id="q-string-de-di-ceng-shi-xian-you-liao-jie-ma-he-c-yu-yan-de-zi-fu-chuan-you-shi-me-qu-bie">Q: string的底层实现有了解吗？和C语言的字符串有什么区别？</span><a href="#q-string-de-di-ceng-shi-xian-you-liao-jie-ma-he-c-yu-yan-de-zi-fu-chuan-you-shi-me-qu-bie" class="header-anchor">#</a></h2>
+<p>A:<br>
+redis的字符串类型是由一种叫做简单动态字符串(SDS)的数据类型来实现<br>
+其实就是多了当前长度和剩余容量</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sdshdr</span> &#123;</span></span><br><span class="line">  <span class="type">int</span> len;          <span class="comment">//buf中已占用空间的长度</span></span><br><span class="line">  <span class="type">int</span> <span class="built_in">free</span>;        <span class="comment">//buf中剩余空间的长度</span></span><br><span class="line">  <span class="type">char</span> buf[];    <span class="comment">//数据空间</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>SDC和C语言字符串的区别：</p>
+<ol>
+<li>SDS保存了字符串的长度，而C语言不保存，C语言只能遍历找到第一个\0的结束符才能确定字符串的长度</li>
+<li>修改SDS，会检查空间是否足够，不足会先扩展空间，防止缓冲区溢出，C字符串不会检查</li>
+<li>SDS的预分配空间机制，可以减少为字符串重新分配空间的次数</li>
+</ol>
+<blockquote>
+<p>备注：重新分配空间方式，小于1M的数据 翻倍+1，例如：13K+13K+1，如果大于1M，每次多分配1M，例如：10M+1M+1,如果字符串变短，并不会立即缩短，而是采用惰性空间释放，有专门的API可以释放多余空间</p>
+</blockquote>
+<h1><span id="list-lie-biao">List列表</span><a href="#list-lie-biao" class="header-anchor">#</a></h1>
+<ul>
+<li>list的本质就是一个双端链表！</li>
+<li>用于消息排队、最新消息更新、 消息消费队列</li>
+</ul>
+<h2><span id="q-yong-redis-de-list-ke-yi-shi-xian-na-xie-shu-ju-jie-gou-zen-me-shi-xian">Q: 用redis的list可以实现哪些数据结构？怎么实现？</span><a href="#q-yong-redis-de-list-ke-yi-shi-xian-na-xie-shu-ju-jie-gou-zen-me-shi-xian" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>栈：lpush + lpop (只在一个方向上做push和pop）</li>
+<li>队列：lpush + rpop（一个方向入， 一个方向出）</li>
+<li>有限集合：lpush + ltrim（trim是截断，这样可以限制长度）</li>
+<li>阻塞的消费者消息队列：lpush+brpop(b就是block的意思，没有就阻塞）</li>
+</ul>
+<hr>
+<h2><span id="q-xiao-fei-zhe-xiao-xi-dui-lie-neng-she-zhi-chao-shi-ma">Q: 消费者消息队列能设置超时吗？</span><a href="#q-xiao-fei-zhe-xiao-xi-dui-lie-neng-she-zhi-chao-shi-ma" class="header-anchor">#</a></h2>
+<p>A:<br>
+可以的<br>
+BLPOP key1 [key2 ] timeout</p>
+<hr>
+<h2><span id="q-list-li-de-cun-chu-jie-gou-shi-shi-me">Q: list里的存储结构是什么？</span><a href="#q-list-li-de-cun-chu-jie-gou-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A:<br>
+链表。 链表里存的是string。</p>
+<hr>
+<h1><span id="set-ji-he">Set集合</span><a href="#set-ji-he" class="header-anchor">#</a></h1>
+<ul>
+<li>set本质上就是实现了一个哈希表， 以至于不能在这个set成员中放入相同的key</li>
+<li>除了简单的sadd、smember外，还有很多求交集的关键方法。</li>
+</ul>
+<p>**</p>
+<h2><span id="q-wei-shi-me-biao-qian-ke-yi-yong-set-lai-zuo-er-bu-yong-list">Q: 为什么标签可以用set来做？而不用list</span><a href="#q-wei-shi-me-biao-qian-ke-yi-yong-set-lai-zuo-er-bu-yong-list" class="header-anchor">#</a></h2>
+<p>A:<br>
+因为set允许任意的增删， 而list只能对前后操作。 标签可能会被随时增加删除。<br>
+因此被某某某点赞/取消的系统也可以用redis的set做缓存</p>
+<hr>
+<h1><span id="hash-san-lie">Hash散列</span><a href="#hash-san-lie" class="header-anchor">#</a></h1>
+<ul>
+<li>和set的区别， 就是key-value， 而set里只有key</li>
+<li>命令都是hset、hget、hxxx等</li>
+</ul>
+<h2><span id="q-hash-cun-chu-you-shi-me-xian-zhi">Q: hash存储有什么限制？</span><a href="#q-hash-cun-chu-you-shi-me-xian-zhi" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>哈希对象保存的所有键值对的键和值的字符串长度都小于64字节</li>
+<li>哈希对象保存的键值对数量小于512个</li>
+</ul>
+<hr>
+<h2><span id="q-redis-ru-he-jie-jue-ha-xi-chong-tu-de">Q: redis如何解决哈希冲突的？</span><a href="#q-redis-ru-he-jie-jue-ha-xi-chong-tu-de" class="header-anchor">#</a></h2>
+<p>A:<br>
+链表法（挂链法），后入的放到最前面</p>
+<hr>
+<h2><span id="q-san-lie-biao-rong-liang-bu-zu-zen-me-ban">Q: 散列表容量不足怎么办？</span><a href="#q-san-lie-biao-rong-liang-bu-zu-zen-me-ban" class="header-anchor">#</a></h2>
+<p>A:<br>
+容量不足时的rehash：<br>
+键值数据量变动时，为了让哈希表的负载因子（load factor）维持在一个合理的范围之内， 当哈希表保存的键值对数量太多或者太少时， 程序需要对哈希表的大小进行相应的扩展或者收缩。</p>
+<ul>
+<li>如果是扩充，新数组的空间大小为 大于2*used的2的n次方，比如：used=5,则去大于10的<strong>第一个2的n次方</strong>，为16</li>
+<li>如果是缩小，新数组的空间大小为第一个不大于used的2的n次方，比如：used=5,则新大小为4<br>
+即永远2的n次方<br>
+Q:</li>
+</ul>
+<hr>
+<h1><span id="zset-you-xu-ji-he">Zset有序集合</span><a href="#zset-you-xu-ji-he" class="header-anchor">#</a></h1>
+<ul>
+<li>
+<p>zset不是java中的treeMap。<br>
+treeMap是根据key进行排序<br>
+而zset是根据scope排序， ke是唯一的， key对应的scope不是唯一的。</p>
+</li>
+<li>
+<p>关键命令： 可以用ZRANGE拿到前几个。</p>
+</li>
+</ul>
+<hr>
+<h2><span id="q-zset-de-yuan-li-shi-shi-me">Q: zset的原理是什么？</span><a href="#q-zset-de-yuan-li-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A:<br>
+底层分别使用ziplist（压缩链表）和skiplist（跳表）实现。</p>
+<p>当zset满足以下两个条件的时候，使用ziplist：</p>
+<ol>
+<li>保存的元素少于128个</li>
+<li>保存的所有元素大小都小于64字节<br>
+不满足这两个条件则使用skiplist。<br>
+（注意：这两个数值是可以通过redis.conf的zset-max-ziplist-entries 和 zset-max-ziplist-value选项 进行修改。）处。</li>
+</ol>
+<hr>
+<ol start="2">
+<li>跳表：<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/QGhurt/article/details/108447960">skiplist实现原理</a></li>
+</ol>
+<ul>
+<li>插入时，随机一个层数，然后找到那一层的对应位置插入，并更新前后节点</li>
+<li>get时，先从最高层找，比要找的大时，再去下一层。</li>
+<li>随机时不是完全随机，会根据当前分布情况，修改概率p，并设置某一层的最大限制，防止比别的层过多。<br>
+<img src="/images/redis%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/b148147baa7475ed77e0525aa6fb624c7f822861.png" alt="b148147baa7475ed77e0525aa6fb624c7f822861"></li>
+</ul>
+<hr>
+<h2><span id="q-redis-3-0-li-zset-you-shi-me-gai-bian">Q: redis 3.0里zset有什么改变？</span><a href="#q-redis-3-0-li-zset-you-shi-me-gai-bian" class="header-anchor">#</a></h2>
+<p>A:<br>
+zset的底层实现变成了quicklist。</p>
+<ul>
+<li>quicklist宏观上是一个双向链表，因此，它具有一个双向链表的有点，进行插入或删除操作时非常方便，虽然复杂度为O(n)，但是不需要内存的复制，提高了效率，而且访问两端元素复杂度为O(1)。</li>
+<li>quicklist微观上是一片片entry节点，每一片entry节点内存连续且顺序存储，可以通过二分查找以 log2(n)log2(n) 的复杂度进行定位。<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/men_wen/article/details/70229375">快速列表(quicklist)源码解读</a></li>
+</ul>
+<hr>
+<h1><span id="hyperloglogs-ji-shu-tong-ji">HyperLogLogs基数统计</span><a href="#hyperloglogs-ji-shu-tong-ji" class="header-anchor">#</a></h1>
+<h2><span id="q-ji-shu-yong-lai-jie-jue-shi-me-wen-ti">Q: 基数用来解决什么问题？</span><a href="#q-ji-shu-yong-lai-jie-jue-shi-me-wen-ti" class="header-anchor">#</a></h2>
+<p>A:<br>
+解决海量计数问题，  例如每天访问的ip数量， 如果真的存每个ip，会很大。<br>
+而基数利用位运算来统计， 限制死了每个键的内存大小， 虽然有一定误差（即位冲突的情况），但是在海量的情况下不影响粗略统计。<br>
+<img src="/images/redis%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/4c43aab1de89a220066b3d858353d798100969b3.png" alt="4c43aab1de89a220066b3d858353d798100969b3"></p>
+<hr>
+<p>基数每个键占用的内容都是 12K，理论存储近似接近 2^64 个值， 因为位冲突问题可能会偏少。</p>
+<hr>
+<h1><span id="bitmap-wei-cun-chu">BitMap 位存储</span><a href="#bitmap-wei-cun-chu" class="header-anchor">#</a></h1>
+<p>用于统计 ”是“或者”否“的 这种一堆人的状态<br>
+比如是否在线的缓存， 可以用bitmap。</p>
+<p>如果存储一年的打卡状态需要多少内存呢？<br>
+365 天 = 365 bit 1字节 = 8bit 46 个字节左右，非常节省内存</p>
+<hr>
+<h1><span id="geospatial-di-li-xin-xi">geospatial 地理信息</span><a href="#geospatial-di-li-xin-xi" class="header-anchor">#</a></h1>
+<p>求解一些经纬度信息的。略</p>
+<h1><span id="stream">stream</span><a href="#stream" class="header-anchor">#</a></h1>
+<p>是一种更可靠的消息队列实现，redis5.0后实现的。<br>
+具体见后面的stream详解</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" title="redis常见数据结构">http://breakdawncoder.com/知识库/开源组件原理/redis/redis常见数据结构/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86-redis/" rel="tag"># 开源组件原理,redis</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" rel="prev" title="redis基础概念">
+      <i class="fa fa-chevron-left"></i> redis基础概念
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis-stream%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E8%AF%A6%E8%A7%A3/" rel="next" title="redis-stream消息队列详解">
+      redis-stream消息队列详解 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">String字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">Q: redis-string的key可以是中文吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">Q: 那么redis string的value可以存中文吗？什么样子的？要不要指定编码？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">Q: redis-string的用途随便说几个</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.4.</span> <span class="nav-text">Q: string的底层实现有了解吗？和C语言的字符串有什么区别？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">List列表</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">Q: 用redis的list可以实现哪些数据结构？怎么实现？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">Q: 消费者消息队列能设置超时吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">Q: list里的存储结构是什么？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">Set集合</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">Q: 为什么标签可以用set来做？而不用list</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">Hash散列</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">Q: hash存储有什么限制？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.2.</span> <span class="nav-text">Q: redis如何解决哈希冲突的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.3.</span> <span class="nav-text">Q: 散列表容量不足怎么办？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">Zset有序集合</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.1.</span> <span class="nav-text">Q: zset的原理是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.2.</span> <span class="nav-text">Q: redis 3.0里zset有什么改变？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">HyperLogLogs基数统计</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.1.</span> <span class="nav-text">Q: 基数用来解决什么问题？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">BitMap 位存储</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">8.</span> <span class="nav-text">geospatial 地理信息</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">9.</span> <span class="nav-text">stream</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共305.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

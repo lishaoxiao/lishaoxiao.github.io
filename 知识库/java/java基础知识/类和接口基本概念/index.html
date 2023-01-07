@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="修饰符  Q： 各修饰符所代表的可见性？ Q： 外部类可以用private或者protect修饰吗？ 解释以下final的作用  Q： final 成员？ Q： final 参数？ Q： final方法 Q： final类   Q:final局部变量可以作为非final的参数传入吗？会编译报错吗？   类  Q： 重载和重写的区别？ Q: 如果子类重写了父类中的方法， 那么子类中还能调用父类">
+<meta property="og:type" content="article">
+<meta property="og:title" content="类和接口基本概念">
+<meta property="og:url" content="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="修饰符  Q： 各修饰符所代表的可见性？ Q： 外部类可以用private或者protect修饰吗？ 解释以下final的作用  Q： final 成员？ Q： final 参数？ Q： final方法 Q： final类   Q:final局部变量可以作为非final的参数传入吗？会编译报错吗？   类  Q： 重载和重写的区别？ Q: 如果子类重写了父类中的方法， 那么子类中还能调用父类">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/69e4b13dbfbb57476c7f29e7a5b00ee24db66776.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/6ae62ac7072c2bf308db83b832dafce68ed2d5cf.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/3f7ff65142341ef0771067edc7698616e0ce6154.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/ce8d672af3d63cb9a8b56a2325651bea772d8970.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/03f7962c02a331c88824602f1052a7f866ae687f.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/4b25d6e4706cecfa8651680fb19d2603db8113e0.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/ee1b41d71b7c0e897c34fa86deb79fb9a242cad8.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/1dc65dc0cda6cf91e650f456d2351518465e6ebb.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/95427daaed60924141c46d48a56efb4f66c97691.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/0cd5d2504cda48e554facaded21ffbf82b8af33a.png">
+<meta property="article:published_time" content="2022-08-11T16:09:30.000Z">
+<meta property="article:modified_time" content="2022-08-15T15:43:41.640Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="java,java基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/69e4b13dbfbb57476c7f29e7a5b00ee24db66776.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>类和接口基本概念 | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          类和接口基本概念
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-12 00:09:30" itemprop="dateCreated datePublished" datetime="2022-08-12T00:09:30+08:00">2022-08-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-15 23:43:41" itemprop="dateModified" datetime="2022-08-15T23:43:41+08:00">2022-08-15</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E5%88%9D%E7%BA%A7%E8%AF%AD%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">java初级语法</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#xiu-shi-fu">修饰符</a>
+<ul>
+<li><a href="#q-ge-xiu-shi-fu-suo-dai-biao-de-ke-jian-xing">Q： 各修饰符所代表的可见性？</a></li>
+<li><a href="#q-wai-bu-lei-ke-yi-yong-private-huo-zhe-protect-xiu-shi-ma">Q： 外部类可以用private或者protect修饰吗？</a></li>
+<li><a href="#jie-shi-yi-xia-final-de-zuo-yong">解释以下final的作用</a>
+<ul>
+<li><a href="#q-final-cheng-yuan">Q： final 成员？</a></li>
+<li><a href="#q-final-can-shu">Q： final 参数？</a></li>
+<li><a href="#q-final-fang-fa">Q： final方法</a></li>
+<li><a href="#q-final-lei">Q： final类</a></li>
+</ul>
+</li>
+<li><a href="#q-final-ju-bu-bian-liang-ke-yi-zuo-wei-fei-final-de-can-shu-chuan-ru-ma-hui-bian-yi-bao-cuo-ma">Q:final局部变量可以作为非final的参数传入吗？会编译报错吗？</a></li>
+</ul>
+</li>
+<li><a href="#lei">类</a>
+<ul>
+<li><a href="#q-chong-zai-he-chong-xie-de-qu-bie">Q： 重载和重写的区别？</a></li>
+<li><a href="#q-ru-guo-zi-lei-chong-xie-liao-fu-lei-zhong-de-fang-fa-na-me-zi-lei-zhong-huan-neng-diao-yong-fu-lei-zhong-de-tong-ming-fang-fa-ma">Q: 如果子类重写了父类中的方法， 那么子类中还能调用父类中的同名方法吗？</a></li>
+<li><a href="#q-zen-yang-neng-bi-mian-zi-lei-zai-chong-xie-fu-lei-de-fang-fa-bu-xiao-xin-nong-cheng-liao-chong-zai">Q: 怎样能避免子类在重写父类的方法，不小心弄成了重载？</a></li>
+<li><a href="#q-fu-lei-de-cheng-yuan-bian-liang-neng-bei-chong-xie-fu-gai-ma">Q：父类的成员变量能被重写/覆盖嘛？</a></li>
+<li><a href="#q-nei-bu-lei-shi-sha-nei-bu-lei-neng-fang-wen-wai-bu-lei-de-cheng-yuan-ma">Q：内部类是啥，内部类能访问外部类的成员吗？</a></li>
+<li><a href="#q-a-zhong-you-1-ge-nei-bu-lei-c-a-de-zi-lei-b-zhong-ye-you-1-ge-nei-bu-lei-c-b-zhong-de-c-hui-fu-gai-a-zhong-de-c-ma">Q： A中有1个内部类C， A的子类B中也有1个内部类C， B中的C会覆盖A中的C吗？</a></li>
+<li><a href="#q-ke-yi-zai-nei-bu-lei-zhong-ding-yi-jing-tai-cheng-yuan-ma">Q：可以在内部类中定义静态成员吗？</a></li>
+<li><a href="#q-ni-ming-lei-shi-sha-ni-ming-lei-neng-fang-wen-wai-mian-de-bian-liang-huo-zhe-dui-xiang-ma">Q： 匿名类是啥， 匿名类能访问外面的变量或者对象吗？</a></li>
+<li><a href="#q-qian-tao-lei-shi-sha-neng-fang-wen-wai-bu-lei-de-cheng-yuan-ma">Q: 嵌套类是啥，能访问外部类的成员吗？</a></li>
+</ul>
+</li>
+<li><a href="#jie-kou">接口</a>
+<ul>
+<li><a href="#q-jie-kou-zhong-ru-guo-yao-ding-yi-cheng-yuan-bian-liang-na-cheng-yuan-de-mo-ren-xiu-shi-fu-shi-shi-me">Q： 接口中如果要定义成员变量，那成员的默认修饰符是什么？</a></li>
+<li><a href="#q-jie-kou-zhong-ge-fang-fa-de-mo-ren-xiu-shi-fu-shi-shi-me">Q： 接口中各方法的默认修饰符是什么？</a></li>
+<li><a href="#q-jie-kou-zhong-ke-yi-ding-yi-shi-xian-ju-ti-fang-fa-ma">Q： 接口中可以定义实现具体方法嘛？</a></li>
+</ul>
+</li>
+<li><a href="#mei-ju">枚举</a>
+<ul>
+<li><a href="#q-enum-ke-yi-bei-ji-cheng-ma">Q： enum可以被继承吗？</a></li>
+<li><a href="#q-switch-enum-shi-xu-yao-jia-default-ma">Q： switch(enum)时需要加default吗？</a></li>
+<li><a href="#q-enum-ji-lei-li-shi-xian-liao-values-fang-fa-ma">Q： Enum基类里实现了values()方法吗？</a></li>
+</ul>
+</li>
+<li><a href="#jing-tai-fen-pai-he-dong-tai-fen-pai">静态分派和动态分派</a>
+<ul>
+<li><a href="#q-xia-mian-shu-chu-shi-me-shu-yu-shi-me-fen-pai">Q： 下面输出什么，属于什么分派？</a></li>
+<li><a href="#q-she-ji-ru-xia-ge-chong-bu-tong-shu-ju-lei-xing-de-jing-tai-fen-pai-ru-he-ying-dui">Q： 涉及如下各种不同数据类型的静态分派如何应对？</a></li>
+<li><a href="#q-xia-mian-shu-chu-shi-me-shu-yu-shi-me-fen-pai">Q： 下面输出什么，属于什么分派：</a></li>
+<li><a href="#q-jing-tai-fen-pai-shu-yu-dan-fen-pai-huan-shi-duo-fen-pai-dong-tai-fen-pai-shu-yu-dan-fen-pai-huan-shi-duo-fen-pai">Q：静态分派属于单分派还是多分派？动态分派属于单分派还是多分派？</a></li>
+<li><a href="#q-lei-fang-fa-zai-class-wen-jian-zhong-shi-shi-me-yang-de-shi-fu-hao-yin-yong-huan-shi-zhi-jie-yin-yong">Q：类方法在class文件中是什么样的? 是符号引用还是直接引用？</a></li>
+<li><a href="#q-shi-me-shi-hou-fang-fa-de-fu-hao-yin-yong-hui-zhuan-wei-shi-ji-fang-fa-qu-zhong-de-zhi-jie-yin-yong">Q：什么时候方法的符号引用会转为实际方法区中的直接引用？</a></li>
+<li><a href="#q-dong-tai-fen-pai-ji-duo-tai-xu-ni-ji-li-shi-zen-me-que-ding-diao-yong-na-ge-fang-fa-de">Q：动态分派(即多态）， 虚拟机里是怎么确定调用哪个方法的？</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="xiu-shi-fu">修饰符</span><a href="#xiu-shi-fu" class="header-anchor">#</a></h1>
+<h2><span id="q-ge-xiu-shi-fu-suo-dai-biao-de-ke-jian-xing">Q： 各修饰符所代表的可见性？</span><a href="#q-ge-xiu-shi-fu-suo-dai-biao-de-ke-jian-xing" class="header-anchor">#</a></h2>
+<p>public: 可被所有使用<br>
+protect： 只能被自己和子类使用，或者同一个包路径<br>
+private： 只能自己使用，儿子都不行<br>
+不加修饰符即default权限： 包访问权限，和他在同一包内的类都可以访问他，包外的则都不能访问</p>
+<hr>
+<h2><span id="q-wai-bu-lei-ke-yi-yong-private-huo-zhe-protect-xiu-shi-ma">Q： 外部类可以用private或者protect修饰吗？</span><a href="#q-wai-bu-lei-ke-yi-yong-private-huo-zhe-protect-xiu-shi-ma" class="header-anchor">#</a></h2>
+<p>A： 不能，只能用public或者包访问权限。 内部类可以。</p>
+<hr>
+<h2><span id="jie-shi-yi-xia-final-de-zuo-yong">解释以下final的作用</span><a href="#jie-shi-yi-xia-final-de-zuo-yong" class="header-anchor">#</a></h2>
+<h3><span id="q-final-cheng-yuan">Q： final 成员？</span><a href="#q-final-cheng-yuan" class="header-anchor">#</a></h3>
+<p>A： 如果是基本类型，则指值不能被改变。 如果是对象，指对象的引用不可改变，但是引用处的内容可改变。</p>
+<hr>
+<p>编译器会要求final成员必须初始化或者构造器里赋值，且后续不能再主动赋值。</p>
+<h3><span id="q-final-can-shu">Q： final 参数？</span><a href="#q-final-can-shu" class="header-anchor">#</a></h3>
+<p>A： 参数不可变，只能读不能修改，同上</p>
+<hr>
+<h3><span id="q-final-fang-fa">Q： final方法</span><a href="#q-final-fang-fa" class="header-anchor">#</a></h3>
+<p>A： 方法不能被子类重写。</p>
+<hr>
+<h3><span id="q-final-lei">Q： final类</span><a href="#q-final-lei" class="header-anchor">#</a></h3>
+<p>A： 该类不能被继承。</p>
+<hr>
+<h2><span id="q-final-ju-bu-bian-liang-ke-yi-zuo-wei-fei-final-de-can-shu-chuan-ru-ma-hui-bian-yi-bao-cuo-ma">Q:final局部变量可以作为非final的参数传入吗？会编译报错吗？</span><a href="#q-final-ju-bu-bian-liang-ke-yi-zuo-wei-fei-final-de-can-shu-chuan-ru-ma-hui-bian-yi-bao-cuo-ma" class="header-anchor">#</a></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>&#123;</span><br><span class="line">	<span class="keyword">final</span> <span class="type">A</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">A</span>();</span><br><span class="line">	changeA(a);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">changeA</span><span class="params">(A a)</span> &#123;</span><br><span class="line">	<span class="comment">// change A...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>A:<br>
+可以作为非final的参数传入，不会编译报错。</p>
+<hr>
+<h1><span id="lei">类</span><a href="#lei" class="header-anchor">#</a></h1>
+<h2><span id="q-chong-zai-he-chong-xie-de-qu-bie">Q： 重载和重写的区别？</span><a href="#q-chong-zai-he-chong-xie-de-qu-bie" class="header-anchor">#</a></h2>
+<p>A：<br>
+重载是方法名相同，参数不同。<br>
+重写是方法参数等都一致的情况下重写父类的方法。</p>
+<hr>
+<h2><span id="q-ru-guo-zi-lei-chong-xie-liao-fu-lei-zhong-de-fang-fa-na-me-zi-lei-zhong-huan-neng-diao-yong-fu-lei-zhong-de-tong-ming-fang-fa-ma">Q: 如果子类重写了父类中的方法， 那么子类中还能调用父类中的同名方法吗？</span><a href="#q-ru-guo-zi-lei-chong-xie-liao-fu-lei-zhong-de-fang-fa-na-me-zi-lei-zhong-huan-neng-diao-yong-fu-lei-zhong-de-tong-ming-fang-fa-ma" class="header-anchor">#</a></h2>
+<p>A: 可以，super.xxx即可（C++中不可以调用父类中的同名重载方法)。</p>
+<hr>
+<h2><span id="q-zen-yang-neng-bi-mian-zi-lei-zai-chong-xie-fu-lei-de-fang-fa-bu-xiao-xin-nong-cheng-liao-chong-zai">Q: 怎样能避免子类在重写父类的方法，不小心弄成了重载？</span><a href="#q-zen-yang-neng-bi-mian-zi-lei-zai-chong-xie-fu-lei-de-fang-fa-bu-xiao-xin-nong-cheng-liao-chong-zai" class="header-anchor">#</a></h2>
+<p>（即你想重写父类的f(int), 却不小心写成了f(int，int)，导致调用f(int)时还是调用了父类的f ，怎么能避免这种失误？）<br>
+A: 加个@Override关键字即可，原文解释：<br>
+<img src="/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/69e4b13dbfbb57476c7f29e7a5b00ee24db66776.png" alt="69e4b13dbfbb57476c7f29e7a5b00ee24db66776"></p>
+<hr>
+<h2><span id="q-fu-lei-de-cheng-yuan-bian-liang-neng-bei-chong-xie-fu-gai-ma">Q：父类的成员变量能被重写/覆盖嘛？</span><a href="#q-fu-lei-de-cheng-yuan-bian-liang-neng-bei-chong-xie-fu-gai-ma" class="header-anchor">#</a></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;A&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span> <span class="keyword">extends</span> <span class="title class_">A</span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;B&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main&#123;</span><br><span class="line">	<span class="type">A</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">B</span>();</span><br><span class="line">   System.out.println(a.name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>A:<br>
+输出A。<br>
+注意成员变量不具有多态性，因此你定义的是A，赋值的是B， 那么输出的依旧是A里的成员。<br>
+如果是被重写的方法的话，那会用B里的方法。</p>
+<hr>
+<h2><span id="q-nei-bu-lei-shi-sha-nei-bu-lei-neng-fang-wen-wai-bu-lei-de-cheng-yuan-ma">Q：内部类是啥，内部类能访问外部类的成员吗？</span><a href="#q-nei-bu-lei-shi-sha-nei-bu-lei-neng-fang-wen-wai-bu-lei-de-cheng-yuan-ma" class="header-anchor">#</a></h2>
+<p>A：<br>
+内部类概念：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">	<span class="keyword">class</span> <span class="title class_">B</span>&#123;</span><br><span class="line">   		...</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>B就是A的内部类,B能访问A的所有成员</p>
+<hr>
+<h2><span id="q-a-zhong-you-1-ge-nei-bu-lei-c-a-de-zi-lei-b-zhong-ye-you-1-ge-nei-bu-lei-c-b-zhong-de-c-hui-fu-gai-a-zhong-de-c-ma">Q： A中有1个内部类C， A的子类B中也有1个内部类C， B中的C会覆盖A中的C吗？</span><a href="#q-a-zhong-you-1-ge-nei-bu-lei-c-a-de-zi-lei-b-zhong-ye-you-1-ge-nei-bu-lei-c-b-zhong-de-c-hui-fu-gai-a-zhong-de-c-ma" class="header-anchor">#</a></h2>
+<p>A： 不会， 因为使用时是通过B.C或者A.C去调用的，存在命名空间的关系。</p>
+<hr>
+<h2><span id="q-ke-yi-zai-nei-bu-lei-zhong-ding-yi-jing-tai-cheng-yuan-ma">Q：可以在内部类中定义静态成员吗？</span><a href="#q-ke-yi-zai-nei-bu-lei-zhong-ding-yi-jing-tai-cheng-yuan-ma" class="header-anchor">#</a></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">	<span class="keyword">class</span> <span class="title class_">B</span>&#123;</span><br><span class="line">    	<span class="keyword">static</span> <span class="type">int</span> b;</span><br><span class="line">   		...</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>A:<br>
+不可以。 除非在class B前面加static变为静态类</p>
+<hr>
+<h2><span id="q-ni-ming-lei-shi-sha-ni-ming-lei-neng-fang-wen-wai-mian-de-bian-liang-huo-zhe-dui-xiang-ma">Q： 匿名类是啥， 匿名类能访问外面的变量或者对象吗？</span><a href="#q-ni-ming-lei-shi-sha-ni-ming-lei-neng-fang-wen-wai-mian-de-bian-liang-huo-zhe-dui-xiang-ma" class="header-anchor">#</a></h2>
+<p>A： 匿名类概念：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">A</span>(构造参数)&#123;</span><br><span class="line">   &#123;构造器内容&#125;</span><br><span class="line">   类定义 </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>匿名类如果要用外面的对象， 外面的对象必须要定义为final。</p>
+<hr>
+<h2><span id="q-qian-tao-lei-shi-sha-neng-fang-wen-wai-bu-lei-de-cheng-yuan-ma">Q: 嵌套类是啥，能访问外部类的成员吗？</span><a href="#q-qian-tao-lei-shi-sha-neng-fang-wen-wai-bu-lei-de-cheng-yuan-ma" class="header-anchor">#</a></h2>
+<p>A：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">   <span class="keyword">static</span> <span class="type">int</span> sa;</span><br><span class="line">   <span class="type">int</span> a;</span><br><span class="line">	<span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">B</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>B只能访问A中的静态成员sa, 而不能访问a。</p>
+<h1><span id="jie-kou">接口</span><a href="#jie-kou" class="header-anchor">#</a></h1>
+<p>类是单继承，接口可以多继承</p>
+<hr>
+<h2><span id="q-jie-kou-zhong-ru-guo-yao-ding-yi-cheng-yuan-bian-liang-na-cheng-yuan-de-mo-ren-xiu-shi-fu-shi-shi-me">Q： 接口中如果要定义成员变量，那成员的默认修饰符是什么？</span><a href="#q-jie-kou-zhong-ru-guo-yao-ding-yi-cheng-yuan-bian-liang-na-cheng-yuan-de-mo-ren-xiu-shi-fu-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A： public static final</p>
+<hr>
+<h2><span id="q-jie-kou-zhong-ge-fang-fa-de-mo-ren-xiu-shi-fu-shi-shi-me">Q： 接口中各方法的默认修饰符是什么？</span><a href="#q-jie-kou-zhong-ge-fang-fa-de-mo-ren-xiu-shi-fu-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A： public abstract</p>
+<hr>
+<h2><span id="q-jie-kou-zhong-ke-yi-ding-yi-shi-xian-ju-ti-fang-fa-ma">Q： 接口中可以定义实现具体方法嘛？</span><a href="#q-jie-kou-zhong-ke-yi-ding-yi-shi-xian-ju-ti-fang-fa-ma" class="header-anchor">#</a></h2>
+<p>A：<br>
+java8以上版本可以。<br>
+引入了default关键字，在接口中用default关键字修饰接口，就可以在接口中去实现这个接口了。</p>
+<hr>
+<h1><span id="mei-ju">枚举</span><a href="#mei-ju" class="header-anchor">#</a></h1>
+<h2><span id="q-enum-ke-yi-bei-ji-cheng-ma">Q： enum可以被继承吗？</span><a href="#q-enum-ke-yi-bei-ji-cheng-ma" class="header-anchor">#</a></h2>
+<p>像下面这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">A</span> extend B&#123;</span><br><span class="line">...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>A： 不可以。enum标识符本身被编译器处理过，自身就继承自Enum类，而java不支持多重继承。但支持实现接口<br>
+<img src="/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/6ae62ac7072c2bf308db83b832dafce68ed2d5cf.png" alt="6ae62ac7072c2bf308db83b832dafce68ed2d5cf"></p>
+<hr>
+<h2><span id="q-switch-enum-shi-xu-yao-jia-default-ma">Q： switch(enum)时需要加default吗？</span><a href="#q-switch-enum-shi-xu-yao-jia-default-ma" class="header-anchor">#</a></h2>
+<p>A： 可以不需要。</p>
+<hr>
+<h2><span id="q-enum-ji-lei-li-shi-xian-liao-values-fang-fa-ma">Q： Enum基类里实现了values()方法吗？</span><a href="#q-enum-ji-lei-li-shi-xian-liao-values-fang-fa-ma" class="header-anchor">#</a></h2>
+<p>A： 没有实现， values方法是编译器加的。因此从List<enum>里取出的对象，是不能调用values（）的。<br>
+<img src="/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/3f7ff65142341ef0771067edc7698616e0ce6154.png" alt="3f7ff65142341ef0771067edc7698616e0ce6154"></enum></p>
+<hr>
+<p>Q：enum里的枚举的默认修饰符默认是？<br>
+A：static final</p>
+<hr>
+<h1><span id="jing-tai-fen-pai-he-dong-tai-fen-pai">静态分派和动态分派</span><a href="#jing-tai-fen-pai-he-dong-tai-fen-pai" class="header-anchor">#</a></h1>
+<h2><span id="q-xia-mian-shu-chu-shi-me-shu-yu-shi-me-fen-pai">Q： 下面输出什么，属于什么分派？</span><a href="#q-xia-mian-shu-chu-shi-me-shu-yu-shi-me-fen-pai" class="header-anchor">#</a></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">test</span><span class="params">()</span> &#123;</span><br><span class="line">       <span class="type">Father</span> <span class="variable">father</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Son</span>();          <span class="comment">//静态分派</span></span><br><span class="line">       print(father);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">void</span> <span class="title function_">print</span><span class="params">(Father father)</span> &#123;</span><br><span class="line">       System.out.println(<span class="string">&quot;this is father&quot;</span>);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">void</span> <span class="title function_">print</span><span class="params">(Son son)</span> &#123;</span><br><span class="line">       System.out.println(<span class="string">&quot;this is son&quot;</span>);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>A:<br>
+输出this is father。 属于静态分派。<br>
+静态分派概念： 编译器就能确定调用哪个方法。<br>
+这里2个print属于重载方法，通过输入参数的定义类型即立刻确定调用哪个<br>
+静态分派取决于静态类型</p>
+<p>静态类型概念： 编译期写在java文件里能马上看到的类型<br>
+例如 A a = Factory.create(args);<br>
+那么左边的A就是静态类型， 而右边的类型取决于运行期，是不确定的。</p>
+<hr>
+<h2><span id="q-she-ji-ru-xia-ge-chong-bu-tong-shu-ju-lei-xing-de-jing-tai-fen-pai-ru-he-ying-dui">Q： 涉及如下各种不同数据类型的静态分派如何应对？</span><a href="#q-she-ji-ru-xia-ge-chong-bu-tong-shu-ju-lei-xing-de-jing-tai-fen-pai-ru-he-ying-dui" class="header-anchor">#</a></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Overload</span> &#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">sayHello</span><span class="params">(<span class="type">char</span> arg)</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;hello char&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">sayHello</span><span class="params">(Object arg)</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;hello Object&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">sayHello</span><span class="params">(<span class="type">int</span> arg)</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;hello int&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">sayHello</span><span class="params">(<span class="type">long</span> arg)</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;hello long&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 测试代码</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    sayHello(<span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出什么？<br>
+A：<br>
+输出 hello char<br>
+因为‘a’是一个char类型数据（即静态类型是char），所以会选择参数类型为char的重载方法。<br>
+若注释掉sayHello(char arg)方法，那么会输出 hello int<br>
+因为‘a’除了可代表字符串，还可代表数字97。因此当没有最合适的sayHello(char arg)方式进行重载时，会选择第二合适（第二优先级）的方法重载，即sayHello(int arg)</p>
+<p>总结：当没有最合适的方法进行重载时，会选优先级第二高的的方法进行重载，如此类推。<br>
+优先级顺序为：char&gt;int&gt;long&gt;float&gt;double&gt;Character（自动装箱）&gt;Serializable（接口，从下往上）&gt;Object（父类1，父类2，从下往上）&gt;…<br>
+其中…为变长参数，将其视为一个数组元素。变长参数的重载优先级最低。<br>
+因为 char 转型到 byte 或 short 的过程是不安全的，所以不会选择参数类型为byte 或 short的方法进行重载，故优先级列表里也没有。</p>
+<p><strong>上面可以看到，重载时选择方法的优先级顺序是基本类型-&gt;高精度类型-&gt;包装类-&gt;接口（从下往上）-&gt;父类（从下往上）-&gt;可变参数</strong></p>
+<hr>
+<h2><span id="q-xia-mian-shu-chu-shi-me-shu-yu-shi-me-fen-pai">Q： 下面输出什么，属于什么分派：</span><a href="#q-xia-mian-shu-chu-shi-me-shu-yu-shi-me-fen-pai" class="header-anchor">#</a></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">test</span><span class="params">()</span> &#123;</span><br><span class="line">     <span class="type">Father</span> <span class="variable">father</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Son</span>();       </span><br><span class="line">     father.name();    </span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">class</span> <span class="title class_">Son</span> <span class="keyword">extends</span> <span class="title class_">Father</span> &#123;</span><br><span class="line">     <span class="keyword">void</span> <span class="title function_">name</span><span class="params">()</span>&#123;</span><br><span class="line">         System.out.println(<span class="string">&quot;son&quot;</span>);</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">class</span> <span class="title class_">Father</span> &#123;</span><br><span class="line">     <span class="keyword">void</span> <span class="title function_">name</span><span class="params">()</span>&#123;</span><br><span class="line">         System.out.println(<span class="string">&quot;father&quot;</span>);</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>A：<br>
+输出son，属于动态分派。运行的时候根据所指向的具体对象才确定调用哪个方法</p>
+<hr>
+<h2><span id="q-jing-tai-fen-pai-shu-yu-dan-fen-pai-huan-shi-duo-fen-pai-dong-tai-fen-pai-shu-yu-dan-fen-pai-huan-shi-duo-fen-pai">Q：静态分派属于单分派还是多分派？动态分派属于单分派还是多分派？</span><a href="#q-jing-tai-fen-pai-shu-yu-dan-fen-pai-huan-shi-duo-fen-pai-dong-tai-fen-pai-shu-yu-dan-fen-pai-huan-shi-duo-fen-pai" class="header-anchor">#</a></h2>
+<p>A：<br>
+静态分派是多分派。<br>
+动态分派是单分派。<br>
+多分派概念: 分派时即要考虑调用者的类型，也要考虑参数类型。<br>
+而单分派只考虑调用者的类型。</p>
+<p>动态分派原理：</p>
+<hr>
+<h2><span id="q-lei-fang-fa-zai-class-wen-jian-zhong-shi-shi-me-yang-de-shi-fu-hao-yin-yong-huan-shi-zhi-jie-yin-yong">Q：类方法在class文件中是什么样的? 是符号引用还是直接引用？</span><a href="#q-lei-fang-fa-zai-class-wen-jian-zhong-shi-shi-me-yang-de-shi-fu-hao-yin-yong-huan-shi-zhi-jie-yin-yong" class="header-anchor">#</a></h2>
+<p>A：<br>
+class文件中， 所定义的方法 都只是符号引用，即只是个符号，知道方法名字， 但是不知道方法的实际指令运行地址<br>
+符号引用如下，不过我这展示的时class_info即类的符号引用， 实际上还会有method_info即方法的引用：<br>
+<img src="/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/ce8d672af3d63cb9a8b56a2325651bea772d8970.png" alt="ce8d672af3d63cb9a8b56a2325651bea772d8970"></p>
+<p>然后方法在class文件中时这样存放的， 先是一个method_count数量，接着再存储方法。<br>
+<img src="/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/03f7962c02a331c88824602f1052a7f866ae687f.png" alt="03f7962c02a331c88824602f1052a7f866ae687f"></p>
+<p>此时是不知道方法的指令地址的。 除非从符号引用转为直接引用。</p>
+<hr>
+<h2><span id="q-shi-me-shi-hou-fang-fa-de-fu-hao-yin-yong-hui-zhuan-wei-shi-ji-fang-fa-qu-zhong-de-zhi-jie-yin-yong">Q：什么时候方法的符号引用会转为实际方法区中的直接引用？</span><a href="#q-shi-me-shi-hou-fang-fa-de-fu-hao-yin-yong-hui-zhuan-wei-shi-ji-fang-fa-qu-zhong-de-zhi-jie-yin-yong" class="header-anchor">#</a></h2>
+<p>A：<br>
+类加载的解析阶段会把满足「编译期可知，运行期不可变」的方法的符号引用替换为指向方法区的直接引用，不会延迟到运行时再去完成。</p>
+<ul>
+<li>构造</li>
+<li>私有</li>
+<li>静态<br>
+final修饰<br>
+上面这4类方法在类加载时都会被识别出来，并转成 指向方法区的直接引用（即能知道了指令地址了，而不是字节码的符号）</li>
+</ul>
+<hr>
+<h2><span id="q-dong-tai-fen-pai-ji-duo-tai-xu-ni-ji-li-shi-zen-me-que-ding-diao-yong-na-ge-fang-fa-de">Q：动态分派(即多态）， 虚拟机里是怎么确定调用哪个方法的？</span><a href="#q-dong-tai-fen-pai-ji-duo-tai-xu-ni-ji-li-shi-zen-me-que-ding-diao-yong-na-ge-fang-fa-de" class="header-anchor">#</a></h2>
+<p>如下， 他怎么确定调用的是Son实现的do， 还是father实现的do？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"><span class="type">Father</span> <span class="variable">f</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Son</span>()</span><br><span class="line">f.<span class="keyword">do</span>(a);</span><br></pre></td></tr></table></figure>
+<p>A：<br>
+首先，通过静态分派， 他知道一定选用的是f(int a) 这个方法，但是他不知道选用哪个类的do(int a)方法。<br>
+<a target="_blank" rel="noopener" href="http://xn--f-376av22dj41a1vi.do">而你执行f.do</a>(a)时， 操作数栈上会存放一个对象引用</p>
+<p><img src="/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/4b25d6e4706cecfa8651680fb19d2603db8113e0.png" alt="4b25d6e4706cecfa8651680fb19d2603db8113e0"></p>
+<p>那么执行f方法的虚拟机指令就会通过这个对象引用，找到他的实际类型的class<br>
+<img src="/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/ee1b41d71b7c0e897c34fa86deb79fb9a242cad8.png" alt="ee1b41d71b7c0e897c34fa86deb79fb9a242cad8"></p>
+<p>他会在这个实际类中查找是否有实现这个方法，具体看class文件中有没有这个方法的定义<br>
+<img src="/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/1dc65dc0cda6cf91e650f456d2351518465e6ebb.png" alt="1dc65dc0cda6cf91e650f456d2351518465e6ebb"></p>
+<p>如果没有找到，他就去父类找，父类的关系class文件中就可以知道<br>
+<img src="/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/95427daaed60924141c46d48a56efb4f66c97691.png" alt="95427daaed60924141c46d48a56efb4f66c97691"></p>
+<p>如果父类没有，就接着往上找，直到找到实现了的。</p>
+<p><img src="/images/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/0cd5d2504cda48e554facaded21ffbf82b8af33a.png" alt="0cd5d2504cda48e554facaded21ffbf82b8af33a"></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" title="类和接口基本概念">http://breakdawncoder.com/知识库/java/java基础知识/类和接口基本概念/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java-java%E5%9F%BA%E7%A1%80/" rel="tag"># java,java基础</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/" rel="prev" title="java流程控制语句">
+      <i class="fa fa-chevron-left"></i> java流程控制语句
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/%E7%B1%BB%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" rel="next" title="类初始化顺序和类加载基础概念">
+      类初始化顺序和类加载基础概念 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">修饰符</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">Q： 各修饰符所代表的可见性？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">Q： 外部类可以用private或者protect修饰吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">解释以下final的作用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.1.</span> <span class="nav-text">Q： final 成员？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.2.</span> <span class="nav-text">Q： final 参数？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.3.</span> <span class="nav-text">Q： final方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.4.</span> <span class="nav-text">Q： final类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.4.</span> <span class="nav-text">Q:final局部变量可以作为非final的参数传入吗？会编译报错吗？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">Q： 重载和重写的区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">Q: 如果子类重写了父类中的方法， 那么子类中还能调用父类中的同名方法吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">Q: 怎样能避免子类在重写父类的方法，不小心弄成了重载？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.4.</span> <span class="nav-text">Q：父类的成员变量能被重写&#x2F;覆盖嘛？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.5.</span> <span class="nav-text">Q：内部类是啥，内部类能访问外部类的成员吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.6.</span> <span class="nav-text">Q： A中有1个内部类C， A的子类B中也有1个内部类C， B中的C会覆盖A中的C吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.7.</span> <span class="nav-text">Q：可以在内部类中定义静态成员吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.8.</span> <span class="nav-text">Q： 匿名类是啥， 匿名类能访问外面的变量或者对象吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.9.</span> <span class="nav-text">Q: 嵌套类是啥，能访问外部类的成员吗？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">接口</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">Q： 接口中如果要定义成员变量，那成员的默认修饰符是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">Q： 接口中各方法的默认修饰符是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">Q： 接口中可以定义实现具体方法嘛？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">枚举</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">Q： enum可以被继承吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.2.</span> <span class="nav-text">Q： switch(enum)时需要加default吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.3.</span> <span class="nav-text">Q： Enum基类里实现了values()方法吗？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">静态分派和动态分派</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.1.</span> <span class="nav-text">Q： 下面输出什么，属于什么分派？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.2.</span> <span class="nav-text">Q： 涉及如下各种不同数据类型的静态分派如何应对？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.3.</span> <span class="nav-text">Q： 下面输出什么，属于什么分派：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.4.</span> <span class="nav-text">Q：静态分派属于单分派还是多分派？动态分派属于单分派还是多分派？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.5.</span> <span class="nav-text">Q：类方法在class文件中是什么样的? 是符号引用还是直接引用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.6.</span> <span class="nav-text">Q：什么时候方法的符号引用会转为实际方法区中的直接引用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.7.</span> <span class="nav-text">Q：动态分派(即多态）， 虚拟机里是怎么确定调用哪个方法的？</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共305.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

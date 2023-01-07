@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Q: log4j里的”${}“符号是什么？有什么用？ Q: 上面这个打印本机信息的是漏洞的原因吗？看起来好象可以在机器里执行奇怪的命令？或者查看文件路径？ Q: 什么是JNDI？ Q: RMI是什么？ Q:RMI客户端不需要关心服务端的监听端口？ 那客户端从哪里拿到stub对象呢？总不可能凭空生成吧 Q: 那JNDI和RMI又是什么关系？怎么就联系到一起了 Q: 但是刚才提到，我们只会通过R">
+<meta property="og:type" content="article">
+<meta property="og:title" content="log4j远程调用漏洞详解">
+<meta property="og:url" content="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/log4j%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="Q: log4j里的”${}“符号是什么？有什么用？ Q: 上面这个打印本机信息的是漏洞的原因吗？看起来好象可以在机器里执行奇怪的命令？或者查看文件路径？ Q: 什么是JNDI？ Q: RMI是什么？ Q:RMI客户端不需要关心服务端的监听端口？ 那客户端从哪里拿到stub对象呢？总不可能凭空生成吧 Q: 那JNDI和RMI又是什么关系？怎么就联系到一起了 Q: 但是刚才提到，我们只会通过R">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%20-%20%E5%89%AF%E6%9C%AC/1639878609478078932.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%20-%20%E5%89%AF%E6%9C%AC/1639843409683014096.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%20-%20%E5%89%AF%E6%9C%AC/1639843428034040405.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%20-%20%E5%89%AF%E6%9C%AC/1639843506047036052.png">
+<meta property="article:published_time" content="2022-08-19T16:30:12.000Z">
+<meta property="article:modified_time" content="2022-08-19T16:55:37.235Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="后台开发知识,网络安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%20-%20%E5%89%AF%E6%9C%AC/1639878609478078932.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/log4j%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>log4j远程调用漏洞详解 | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/log4j%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          log4j远程调用漏洞详解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-20 00:30:12 / 修改时间：00:55:37" itemprop="dateCreated datePublished" datetime="2022-08-20T00:30:12+08:00">2022-08-20</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">网络安全</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/log4j%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/log4j%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#q-log4j-li-de-fu-hao-shi-shi-me-you-shi-me-yong">Q: log4j里的”${}“符号是什么？有什么用？</a></li>
+<li><a href="#q-shang-mian-zhe-ge-da-yin-ben-ji-xin-xi-de-shi-lou-dong-de-yuan-yin-ma-kan-qi-lai-hao-xiang-ke-yi-zai-ji-qi-li-zhi-xing-qi-guai-de-ming-ling-huo-zhe-cha-kan-wen-jian-lu-jing">Q: 上面这个打印本机信息的是漏洞的原因吗？看起来好象可以在机器里执行奇怪的命令？或者查看文件路径？</a></li>
+<li><a href="#q-shi-me-shi-jndi">Q: 什么是JNDI？</a></li>
+<li><a href="#q-rmi-shi-shi-me">Q: RMI是什么？</a></li>
+<li><a href="#q-rmi-ke-hu-duan-bu-xu-yao-guan-xin-fu-wu-duan-de-jian-ting-duan-kou-na-ke-hu-duan-cong-na-li-na-dao-stub-dui-xiang-ni-zong-bu-ke-neng-ping-kong-sheng-cheng-ba">Q:RMI客户端不需要关心服务端的监听端口？ 那客户端从哪里拿到stub对象呢？总不可能凭空生成吧</a></li>
+<li><a href="#q-na-jndi-he-rmi-you-shi-shi-me-guan-xi-zen-me-jiu-lian-xi-dao-yi-qi-liao">Q: 那JNDI和RMI又是什么关系？怎么就联系到一起了</a></li>
+<li><a href="#q-dan-shi-gang-cai-ti-dao-wo-men-zhi-hui-tong-guo-rmi-qu-na-dao-yi-ge-stub-stub-li-de-nei-rong-jin-jin-shi-tong-guo-te-ding-de-ip-port-qu-zuo-fa-song-dai-ma-shi-gu-ding-de-zai-zen-me-e-yi-de-ming-ling-ye-zhi-hui-zai-rmi-zhu-ce-zhong-xin-ji-hei-ke-de-fu-wu-qi-shang-zhi-xing-zen-me-jiu-zai-wo-zhe-bian-hong-fa-liao-gong-ji">Q: 但是刚才提到，我们只会通过RMI去拿到一个stub，stub里的内容仅仅是通过特定的ip+port去做发送， 代码是固定的，再怎么恶意的命令， 也只会在<strong>RMI注册中心即黑客的服务器</strong>上执行， 怎么就在我这边触发了攻击？</a></li>
+<li><a href="#q-na-me-log4j-core-2-15-ban-ben-you-shi-zen-me-gai-de-ni">Q: 那么log4j-core 2.15版本又是怎么改的呢？</a></li>
+<li><a href="#si-kao">思考</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]<br>
+log4j 远程代码漏洞问题被大范围曝光后已经有一段时间了。</p>
+<p>很多人只能看到一个“弹出一个计算器”的演示， 于是内心想着“哦，就是执行任意代码，启动个计算器” ， 却对这个漏洞的原理不甚了解。<br>
+<img src="/images/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%20-%20%E5%89%AF%E6%9C%AC/1639878609478078932.png" alt="image.png"></p>
+<p>而对于java开发应用不是非常深的同学来讲， jndi、rmi更是很陌生的名词。<br>
+这里会以不断提问的方式，逐步推进这个问题的解答， 一步步揭开这个漏洞的本质，并给出对这个漏洞的思考。</p>
+<hr>
+<h2><span id="q-log4j-li-de-fu-hao-shi-shi-me-you-shi-me-yong">Q: log4j里的”${}“符号是什么？有什么用？</span><a href="#q-log4j-li-de-fu-hao-shi-shi-me-you-shi-me-yong" class="header-anchor">#</a></h2>
+<p>A:<br>
+可以通过$ { }的方式， 打印一些特殊的值到日志中。<br>
+例如$ {hostName} 就可以打印主机名<br>
+$ {java:vm} 打印jvm信息<br>
+$ {thread:threadName}就可以打印线程名</p>
+<p>当你把这个值作为日志的参数， 就会打印出来这些值而非原参数名字。</p>
+<p>可以理解为log4j的功能更强大了，不需要自己写java代码来打印这些信息，直接用一个字符串就能搞定这些打印。</p>
+<p>上面这些都是要实现对应的Lookup类才能做的，即要么log4j内置，要么我们自己新增。</p>
+<hr>
+<h2><span id="q-shang-mian-zhe-ge-da-yin-ben-ji-xin-xi-de-shi-lou-dong-de-yuan-yin-ma-kan-qi-lai-hao-xiang-ke-yi-zai-ji-qi-li-zhi-xing-qi-guai-de-ming-ling-huo-zhe-cha-kan-wen-jian-lu-jing">Q:  上面这个打印本机信息的是漏洞的原因吗？看起来好象可以在机器里执行奇怪的命令？或者查看文件路径？</span><a href="#q-shang-mian-zhe-ge-da-yin-ben-ji-xin-xi-de-shi-lou-dong-de-yuan-yin-ma-kan-qi-lai-hao-xiang-ke-yi-zai-ji-qi-li-zhi-xing-qi-guai-de-ming-ling-huo-zhe-cha-kan-wen-jian-lu-jing" class="header-anchor">#</a></h2>
+<p>A:<br>
+不是的。<br>
+上面这些lookup，都是事先定义好的一些loopup字符， 并不能做任意的事情！<br>
+而且就算你发了这些${java.vm}啥的， 也只能在服务端打印和收集，你作为攻击者，是收集不到这些信息的</p>
+<p>真正的原因，是因为log4j 支持的  ${jndi:xxxx}， 即支持jndi进行lookup来寻找对象并打印。</p>
+<hr>
+<h2><span id="q-shi-me-shi-jndi">Q: 什么是JNDI？</span><a href="#q-shi-me-shi-jndi" class="header-anchor">#</a></h2>
+<p>A:<br>
+Java Naming and Directory Interface（JAVA命名和目录接口）</p>
+<p>简单说就是可以通过JNDI， 在java环境中用一个名字， 去lookup寻找一个东西使用。</p>
+<p>例如可以直接在自己的Java环境中配置一个数据库连接，名字叫“java:MySqlDS”<br>
+然后别的java进程通过jndi 去查找”java:MysqlDs“, 接着就会得到一个数据库连接。<br>
+这样如果1个机器有多个进程，都要用同一个连接，  完全可以修改整个java环境的jndi数据库对象，然后其他进程就能同时生效了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Connection conn=<span class="literal">null</span>; </span><br><span class="line"></span><br><span class="line"><span class="comment">// Context就是jdni的类</span></span><br><span class="line"><span class="type">Context</span> <span class="variable">ctx</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>(); </span><br><span class="line"><span class="comment">// jndi关键方法，通过loopup找一个对象</span></span><br><span class="line"><span class="type">Object</span> <span class="variable">datasourceRef</span> <span class="operator">=</span> ctx.lookup(<span class="string">&quot;java:MySqlDS&quot;</span>); </span><br><span class="line"><span class="comment">//引用数据源 </span></span><br><span class="line"><span class="type">DataSource</span> <span class="variable">ds</span> <span class="operator">=</span> (Datasource) datasourceRef; </span><br><span class="line">conn = ds.getConnection(); </span><br><span class="line">	...... </span><br><span class="line">c.close(); </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>除了数据库连接， 他还支持loopup找dns， 可以弄一个dnsContext然后寻找”<a target="_blank" rel="noopener" href="http://sun.com">sun.com</a>“对应的dns对象<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/kyle_blog/article/details/800433">使用JNDI进行高级DNS查询</a></p>
+<p>这样log4j里就可以通过  ${jndi:dns:huaweicloud.com}来获取当前机器中huaweicloud.com对应的域名对象进行打印，来确认网络请求失败时，是否是dns获取有问题。</p>
+<p><strong>这也就是log4j为啥要引入jndi的原因,可以更方便地获取一些可打印的对象进行日志统计。</strong></p>
+<p>然而， jndi还支持通过RMI/LDAP+url字符串， 来寻找并获取一个<strong>远程对象</strong>。<br>
+这个寻找远程对象的操作，就是此次漏洞的核心问题所在。</p>
+<hr>
+<p>这里只讲RMI。LDAP类似，就不再论述。</p>
+<h2><span id="q-rmi-shi-shi-me">Q: RMI是什么？</span><a href="#q-rmi-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A:<br>
+RMI， Remote Method Invocation。<br>
+具体含义：</p>
+<ul>
+<li>远程服务器实现具体的Java方法并提供接口</li>
+<li>客户端本地仅需根据接口类的定义，提供相应的参数即可调用远程方法</li>
+</ul>
+<p>在RMI中，实际上就是返回了一个stub（桩）调用对象给客户端， 然后客户都用这个stub对象去做远程调用。</p>
+<p>这样客户端就不用关心背后网络怎么写的<br>
+<strong>甚至不用知道对方服务是什么端口或者ip</strong><br>
+因此也不需要写sokect的一堆方法搞半天了，也避免了总是修改访问的url啥的。<br>
+具体过程如下：<br>
+<img src="/images/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%20-%20%E5%89%AF%E6%9C%AC/1639843409683014096.png" alt="image.png"></p>
+<ol>
+<li>Server端监听一个端口，这个端口是JVM随机选择的；</li>
+<li>Client端并不知道Server远程对象的通信地址和端口，但是Stub中包含了这些信息，并封装了底层网络操作；</li>
+<li>Client端可以调用Stub上的方法；</li>
+<li>Stub连接到Server端监听的通信端口并提交参数；</li>
+<li>远程Server端上执行具体的方法，并返回结果给Stub；</li>
+<li>Stub返回执行结果给Client端，从Client看来就好像是Stub在本地执行了这个方法一样；</li>
+</ol>
+<hr>
+<h2><span id="q-rmi-ke-hu-duan-bu-xu-yao-guan-xin-fu-wu-duan-de-jian-ting-duan-kou-na-ke-hu-duan-cong-na-li-na-dao-stub-dui-xiang-ni-zong-bu-ke-neng-ping-kong-sheng-cheng-ba">Q:RMI客户端不需要关心服务端的监听端口？ 那客户端从哪里拿到stub对象呢？总不可能凭空生成吧</span><a href="#q-rmi-ke-hu-duan-bu-xu-yao-guan-xin-fu-wu-duan-de-jian-ting-duan-kou-na-ke-hu-duan-cong-na-li-na-dao-stub-dui-xiang-ni-zong-bu-ke-neng-ping-kong-sheng-cheng-ba" class="header-anchor">#</a></h2>
+<p>A:<br>
+服务端那边可以启动一个 RMI注册中心服务RMIRegistry， 端口设置为统一的1099， ip也是固定的。</p>
+<p>然后当客户端希望拿到某个服务例如订单服务order的stub对象时， 就用”order“这个名字到RMI注册中心上去请求这个stub<br>
+这样的话，  客户端只需要知道RMI注册中心即可， 不需要知道其他服务的ip、端口，非常节省管理成本。</p>
+<p>服务端代码长这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 建立一个订单服务通信桩</span></span><br><span class="line"><span class="type">OrderServerStub</span> <span class="variable">stub</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">OrderServerStub</span>();</span><br><span class="line"><span class="comment">// 启动一个RMI注册中心, 端口为1099</span></span><br><span class="line">LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line"><span class="comment">// 把OrderServer这个桩，注册到rmi://0.0.0.0:1099/order这个url上</span></span><br><span class="line">Naming.bind(<span class="string">&quot;rmi://0.0.0.0:1099/order&quot;</span>, stub);</span><br></pre></td></tr></table></figure>
+<p>客户端的代码长这样，可以看到一个loopup就把这个桩找过来了。<br>
+然后就能直接调用stub里的queryOrder方法查询订单了！</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Registry</span> <span class="variable">registry</span> <span class="operator">=</span> LocateRegistry.getRegistry(<span class="string">&quot;kingx_kali_host&quot;</span>,<span class="number">1099</span>);</span><br><span class="line"><span class="type">OrderServerStub</span> <span class="variable">stub</span> <span class="operator">=</span> (OrderServerStub) registry.lookup(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line">stub.queryOrder(<span class="string">&quot;aaa&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p><img src="/images/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%20-%20%E5%89%AF%E6%9C%AC/1639843428034040405.png" alt="image.png"></p>
+<hr>
+<h2><span id="q-na-jndi-he-rmi-you-shi-shi-me-guan-xi-zen-me-jiu-lian-xi-dao-yi-qi-liao">Q: 那JNDI和RMI又是什么关系？怎么就联系到一起了</span><a href="#q-na-jndi-he-rmi-you-shi-shi-me-guan-xi-zen-me-jiu-lian-xi-dao-yi-qi-liao" class="header-anchor">#</a></h2>
+<p>A:<br>
+上面的代码里， 可以看到RMI需要自己写一段Java代码执行。<br>
+如果以后你不用RMI来存这个通信对象了，而是用LDAP之类的，咋办？难道代码都要重新写然后部署一份吗？</p>
+<p>而如果能用JNDI的方式，通过一个小小的字符串，就能拿到，那就简单了。<br>
+那么当我需要切换通信对象的获取方式时， 切换JDNI里的设置即可。</p>
+<p>而RMI正好实现了JNDI的spi接口，以至于能支持用JNDI+ 字符串去获取对象<br>
+<img src="/images/HTTPS%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%20-%20%E5%89%AF%E6%9C%AC/1639843506047036052.png" alt="image.png"></p>
+<p>这里贴一下SPI的概念：</p>
+<blockquote>
+<blockquote>
+<p>SPI ，全称为 Service Provider Interface，是一种服务发现机制。它通过在ClassPath路径下的META-INF/services文件夹查找文件，自动加载文件里所定义的类。<br>
+这一机制为很多框架扩展提供了可能，比如在Dubbo、JDBC中都使用到了SPI机制</p>
+</blockquote>
+</blockquote>
+<ul>
+<li>说人话，spi就是框架方提供一个interface接口，然后只要有人在服务的class发现路径下写一个实现类，就能在代码里直接用上。</li>
+</ul>
+<p>而log4j里，正好就支持用${jndi:rmi:x.x.x.x:1099/path}的方式进行RMI对象的获取。</p>
+<p>log4j开发者可能本意只是方便用jndi获取各种java容器内置对象，没想到忽略了rmi的获取方式。</p>
+<p><strong>这就导致了 我们的服务可能会访问 黑客部署的RMI服务， 获取到一个不可信的远程调用对象。</strong></p>
+<hr>
+<h2><span id="q-dan-shi-gang-cai-ti-dao-wo-men-zhi-hui-tong-guo-rmi-qu-na-dao-yi-ge-stub-stub-li-de-nei-rong-jin-jin-shi-tong-guo-te-ding-de-ip-port-qu-zuo-fa-song-dai-ma-shi-gu-ding-de-zai-zen-me-e-yi-de-ming-ling-ye-zhi-hui-zai-rmi-zhu-ce-zhong-xin-ji-hei-ke-de-fu-wu-qi-shang-zhi-xing-zen-me-jiu-zai-wo-zhe-bian-hong-fa-liao-gong-ji">Q: 但是刚才提到，我们只会通过RMI去拿到一个stub，stub里的内容仅仅是通过特定的ip+port去做发送， 代码是固定的，再怎么恶意的命令， 也只会在<strong>RMI注册中心即黑客的服务器</strong>上执行， 怎么就在我这边触发了攻击？</span><a href="#q-dan-shi-gang-cai-ti-dao-wo-men-zhi-hui-tong-guo-rmi-qu-na-dao-yi-ge-stub-stub-li-de-nei-rong-jin-jin-shi-tong-guo-te-ding-de-ip-port-qu-zuo-fa-song-dai-ma-shi-gu-ding-de-zai-zen-me-e-yi-de-ming-ling-ye-zhi-hui-zai-rmi-zhu-ce-zhong-xin-ji-hei-ke-de-fu-wu-qi-shang-zhi-xing-zen-me-jiu-zai-wo-zhe-bian-hong-fa-liao-gong-ji" class="header-anchor">#</a></h2>
+<p>而且这个stub对象的class文件在我们服务器本地并没有， 难道不会报classNotFind异常吗？</p>
+<p>A:<br>
+某个讲RMI注入的文章里这样说道：</p>
+<blockquote>
+<blockquote>
+<p>RMI服务端除了直接绑定远程对象之外，还可以通过References引用类来绑定一个外部的远程对象（当前名称目录系统之外的对象）。<br>
+绑定了Reference之后，服务端会先通过Referenceable.getReference()获取绑定对象的引用，并且在目录中保存。当客户端在lookup()查找这个远程对象时，客户端会获取相应的object factory，最终通过factory类将reference转换为具体的对象实例。</p>
+</blockquote>
+</blockquote>
+<p>​</p>
+<ul>
+<li>说人话，就是RMI允许客户端的java环境中没有这个stub对象</li>
+<li>RMI服务端（那个1099端口的服务）他会返回给你一个factory（序列化传过来）， 让你调用这个factory做转换。而这个可被序列化生成的factory就是问题的根本原因。</li>
+</ul>
+<p>整个利用流程如下：</p>
+<ol>
+<li>目标代码中调用了InitialContext.lookup(URI)，且URI为用户可控；</li>
+<li>攻击者控制URI参数为恶意的RMI服务地址，如：rmi://hacker_rmi_server//name；</li>
+<li>攻击者RMI服务器向目标返回一个Reference对象，Reference对象中指定某个精心构造的Factory类；</li>
+<li>目标在进行lookup()操作时，会动态加载并实例化Factory类，接着调用factory.getObjectInstance()获取外部远程对象实例；</li>
+<li>攻击者可以在Factory类文件的构造方法、静态代码块、getObjectInstance()方法等处写入恶意代码，达到RCE的效果；</li>
+</ol>
+<hr>
+<h2><span id="q-na-me-log4j-core-2-15-ban-ben-you-shi-zen-me-gai-de-ni">Q: 那么log4j-core 2.15版本又是怎么改的呢？</span><a href="#q-na-me-log4j-core-2-15-ban-ben-you-shi-zen-me-gai-de-ni" class="header-anchor">#</a></h2>
+<p>A:<br>
+限定jndi使用的协议，  禁止在jndi中用ldap、rmi去调用一些远端的服务。</p>
+<hr>
+<h2><span id="si-kao">思考</span><a href="#si-kao" class="header-anchor">#</a></h2>
+<p>说实话，这个漏洞影响之所以这么大， 就是因为原理太过简单， 随便发一段rmi注册中心的demo和客户端调用demo给别人，他就能复现，甚至用这个方式去攻击。</p>
+<p>为什么log4j的设计者当时没有考虑到呢？<br>
+很大概率可能是因为jndi的spi机制扩展性太强。<br>
+也许最初，jndi只支持dns、数据库driver等对象的命名获取</p>
+<p>但是后来随着版本更新， JNDP通过SPI机制， 支持了RMI、LDAP等实现， 而这个是log4j开发者当时没考虑到的。</p>
+<p>换句话说， 这是<strong>java高可扩展性和安全性的一次冲突</strong>， 因此JNDI的调用方式， 未来应该会被更加谨慎地使用了。</p>
+<hr>
+<p>参考文章：<br>
+<a target="_blank" rel="noopener" href="https://y4er.com/post/attack-java-jndi-rmi-ldap-1/">https://y4er.com/post/attack-java-jndi-rmi-ldap-1/</a></p>
+<p><a target="_blank" rel="noopener" href="https://kingx.me/Exploit-Java-Deserialization-with-RMI.html">https://kingx.me/Exploit-Java-Deserialization-with-RMI.html</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/log4j%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/" title="log4j远程调用漏洞详解">http://breakdawncoder.com/知识库/后台开发应用/网络安全/log4j远程调用漏洞详解/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86-%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" rel="tag"># 后台开发知识,网络安全</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-19/" rel="prev" title="2022-0819">
+      <i class="fa fa-chevron-left"></i> 2022-0819
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/Web%E5%AE%89%E5%85%A8%E9%98%B2%E6%8A%A4%E5%92%8C%E8%AE%A4%E8%AF%81%E6%8E%AA%E6%96%BD/" rel="next" title="Web安全防护和认证措施">
+      Web安全防护和认证措施 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">Q: log4j里的”${}“符号是什么？有什么用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">Q:  上面这个打印本机信息的是漏洞的原因吗？看起来好象可以在机器里执行奇怪的命令？或者查看文件路径？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">Q: 什么是JNDI？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">Q: RMI是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">Q:RMI客户端不需要关心服务端的监听端口？ 那客户端从哪里拿到stub对象呢？总不可能凭空生成吧</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">Q: 那JNDI和RMI又是什么关系？怎么就联系到一起了</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">Q: 但是刚才提到，我们只会通过RMI去拿到一个stub，stub里的内容仅仅是通过特定的ip+port去做发送， 代码是固定的，再怎么恶意的命令， 也只会在RMI注册中心即黑客的服务器上执行， 怎么就在我这边触发了攻击？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">8.</span> <span class="nav-text">Q: 那么log4j-core 2.15版本又是怎么改的呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">9.</span> <span class="nav-text">思考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共305.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

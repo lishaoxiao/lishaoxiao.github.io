@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="[toc]     ArrayList原理 CopyOnWriteArrayList 原理  为什么需要写时复制？ 如何避免多线程修改的冲突？ 如何保证更新后，数组引用的变动能及时对外呈现？   HashMap核心原理  hashMap完整的put过程 hashMap的扩容过程，java7和8扩容的区别 为什么java8要改成尾插法？ 虽然解决了死循环问题， 但java8的hashMap仍然是线">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java常见容器使用原理（Map\List等)">
+<meta property="og:url" content="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="[toc]     ArrayList原理 CopyOnWriteArrayList 原理  为什么需要写时复制？ 如何避免多线程修改的冲突？ 如何保证更新后，数组引用的变动能及时对外呈现？   HashMap核心原理  hashMap完整的put过程 hashMap的扩容过程，java7和8扩容的区别 为什么java8要改成尾插法？ 虽然解决了死循环问题， 但java8的hashMap仍然是线">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/c0f46fd3dbc58ac475051f1102dd4c43f80fc8e0.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/395ae953519c9a0a9cba440644a6d8dd4999db66.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/11f8400ec134b045dae9118f28877a284924b1c3.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/61d85897f346fb06cb884b84.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/1659369632360.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/1659795490061.png">
+<meta property="article:published_time" content="2022-07-07T15:29:15.000Z">
+<meta property="article:modified_time" content="2022-08-09T16:51:46.422Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="java,java常见应用原理m">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/c0f46fd3dbc58ac475051f1102dd4c43f80fc8e0.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java常见容器使用原理（Map\List等) | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java常见容器使用原理（Map\List等)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-07-07 23:29:15" itemprop="dateCreated datePublished" datetime="2022-07-07T23:29:15+08:00">2022-07-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-10 00:51:46" itemprop="dateModified" datetime="2022-08-10T00:51:46+08:00">2022-08-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">java高级原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/java%E5%B8%B8%E8%A7%81%E5%BA%94%E7%94%A8%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">java常见应用原理</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <hr>
+<p>[toc]</p>
+ <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#arraylist-yuan-li">ArrayList原理</a></li>
+<li><a href="#copyonwritearraylist-yuan-li">CopyOnWriteArrayList 原理</a>
+<ul>
+<li><a href="#wei-shi-me-xu-yao-xie-shi-fu-zhi">为什么需要写时复制？</a></li>
+<li><a href="#ru-he-bi-mian-duo-xian-cheng-xiu-gai-de-chong-tu">如何避免多线程修改的冲突？</a></li>
+<li><a href="#ru-he-bao-zheng-geng-xin-hou-shu-zu-yin-yong-de-bian-dong-neng-ji-shi-dui-wai-cheng-xian">如何保证更新后，数组引用的变动能及时对外呈现？</a></li>
+</ul>
+</li>
+<li><a href="#hashmap-he-xin-yuan-li">HashMap核心原理</a>
+<ul>
+<li><a href="#hashmap-wan-zheng-de-put-guo-cheng">hashMap完整的put过程</a></li>
+<li><a href="#hashmap-de-kuo-rong-guo-cheng-java7-he-8-kuo-rong-de-qu-bie">hashMap的扩容过程，java7和8扩容的区别</a></li>
+<li><a href="#wei-shi-me-java8-yao-gai-cheng-wei-cha-fa">为什么java8要改成尾插法？</a></li>
+<li><a href="#sui-ran-jie-jue-liao-si-xun-huan-wen-ti-dan-java8-de-hashmap-reng-ran-shi-xian-cheng-bu-an-quan-de-wei-shi-me">虽然解决了死循环问题， 但java8的hashMap仍然是线程不安全的，为什么？</a></li>
+<li><a href="#ju-ti-dao-di-man-zu-shi-me-qing-kuang-cai-hui-resize-kuo-rong-ni">具体到底满足什么情况，才会resize扩容呢？</a></li>
+<li><a href="#kuo-rong-hou-capacity-kuo-rong-duo-shao-bei-ni">扩容后，capacity扩容多少倍呢？</a></li>
+</ul>
+</li>
+<li><a href="#concurrenthashmap-he-xin-yuan-li">ConcurrentHashMap 核心原理</a>
+<ul>
+<li><a href="#jdk6-7-zhong-de-shi-xian-yuan-li">JDK6-7中的实现原理</a>
+<ul>
+<li><a href="#chu-shi-hua-map">初始化map</a>
+<ul>
+<li><a href="#chu-shi-hua-segment-shu-zu-tong-guo-concurrencylevel-he-ssize">初始化segment数组（通过concurrencyLevel和ssize）</a></li>
+<li><a href="#chu-shi-hua-segmentshift-duan-pian-yi-liang-he-segmentmask-duan-yan-ma">初始化segmentShift段偏移量和segmentMask段掩码</a></li>
+<li><a href="#chu-shi-hua-mei-ge-segment">初始化每个segment</a></li>
+</ul>
+</li>
+<li><a href="#ding-wei-segment">定位Segment</a></li>
+<li><a href="#get-cao-zuo">get操作</a></li>
+<li><a href="#put-cao-zuo">put操作</a></li>
+<li><a href="#size-cao-zuo">size操作</a></li>
+</ul>
+</li>
+<li><a href="#jdk8-de-gai-zao-sheng-ji-chong-yao">JDK8的改造升级（重要）</a></li>
+</ul>
+</li>
+<li><a href="#concurrentlinkedqueue-he-xin-yuan-li">ConcurrentLinkedQueue核心原理</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<h1><span id="arraylist-yuan-li">ArrayList原理</span><a href="#arraylist-yuan-li" class="header-anchor">#</a></h1>
+<p>Q: 讲一下啊arrayList的扩容原理？<br>
+A:<br>
+比较简单，算出新容量后，直接Arrays.copy拷贝到新数组，搞定<br>
+<img src="/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/c0f46fd3dbc58ac475051f1102dd4c43f80fc8e0.png" alt="c0f46fd3dbc58ac475051f1102dd4c43f80fc8e0"></p>
+<p>扩容容量= 原容量 + (原容量右移1位，即0.5倍)= 1.5倍<br>
+<img src="/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/395ae953519c9a0a9cba440644a6d8dd4999db66.png" alt="395ae953519c9a0a9cba440644a6d8dd4999db66"></p>
+<hr>
+<p>Q: arrayList的初始最大容量是多少？可以更改吗？<br>
+A:<br>
+初始容量为10。不可修改<br>
+<img src="/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/11f8400ec134b045dae9118f28877a284924b1c3.png" alt="11f8400ec134b045dae9118f28877a284924b1c3"></p>
+<h1><span id="copyonwritearraylist-yuan-li">CopyOnWriteArrayList 原理</span><a href="#copyonwritearraylist-yuan-li" class="header-anchor">#</a></h1>
+<p>就是一个写时复制列表</p>
+<p>当发生“删除/修改/新增”时，会先新建一个数组，更新后的数据拷贝到数组中</p>
+<p>最后再更新到CopyOnWriteArrayList的数组成员引用上。</p>
+<h2><span id="wei-shi-me-xu-yao-xie-shi-fu-zhi">为什么需要写时复制？</span><a href="#wei-shi-me-xu-yao-xie-shi-fu-zhi" class="header-anchor">#</a></h2>
+<p>针对多线程环境下，读多写少的情况，如果每个读都加线程同步，太浪费了</p>
+<p>因此可以读的时候不加锁</p>
+<p>只有写的时候加锁，写完更新</p>
+<p>读的时候可能会有点延迟的数据，但不影响。</p>
+<h2><span id="ru-he-bi-mian-duo-xian-cheng-xiu-gai-de-chong-tu">如何避免多线程修改的冲突？</span><a href="#ru-he-bi-mian-duo-xian-cheng-xiu-gai-de-chong-tu" class="header-anchor">#</a></h2>
+<p>加了一个sync锁，修改动作是线程安全的。</p>
+<h2><span id="ru-he-bao-zheng-geng-xin-hou-shu-zu-yin-yong-de-bian-dong-neng-ji-shi-dui-wai-cheng-xian">如何保证更新后，数组引用的变动能及时对外呈现？</span><a href="#ru-he-bao-zheng-geng-xin-hou-shu-zu-yin-yong-de-bian-dong-neng-ji-shi-dui-wai-cheng-xian" class="header-anchor">#</a></h2>
+<p>数组成员设置成volatile</p>
+<h1><span id="hashmap-he-xin-yuan-li">HashMap核心原理</span><a href="#hashmap-he-xin-yuan-li" class="header-anchor">#</a></h1>
+<h2><span id="hashmap-wan-zheng-de-put-guo-cheng">hashMap完整的put过程</span><a href="#hashmap-wan-zheng-de-put-guo-cheng" class="header-anchor">#</a></h2>
+<ol>
+<li>首先，要获取key的哈希值。<br>
+如果为空，就统一是0<br>
+否则，调用对象的.hashCode()方法，接着再与自己的右移16位进行异或，以便充分利用高位信息。</li>
+<li>接着判断内部node数组是否为空，如果是，先进行初始化扩容。默认为16。</li>
+<li>根据(n-1)&amp;hash值，获取哈希表索引位置。 （&amp;的性能比取余要高,具体讨论见<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/21070971">CPU取余原理</a>）</li>
+<li>哈希表的node数组中，存放的是每组链表的头节点。<br>
+先检查头节点是否和自己要存放的key完全匹配 （hash值相同，key值相同，先hash再key，是因为hash的判断简单，key的equals判断可能会复杂）<br>
+如果匹配，得到需要替换的节点。</li>
+<li>头节点和自己要放的key不匹配，则判断一下这个头节点是否是红黑树节点，如果是，说明已经升级成红黑树了，调用putTree插入到红黑树中。</li>
+<li>如果不是红黑树， 那就是遍历链表，完全匹配就得到需要替换的节点。如果到尾部了，也没匹配的，则插入新节点。</li>
+<li>如果前面找到了要替换的节点，则判断一下是否可以替换（是否没要求putIfAbsent，或者value为null），是就替换，不是就结束</li>
+<li>如果前面是插入了新节点，非替换， 则要modCount++（方便迭代器确认map是否更新），  同时++size， 然后和扩容阈值做判断， 如果太大，就resize进行扩容<br>
+<img src="/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/61d85897f346fb06cb884b84.png" alt="hashMap-put详解"></li>
+</ol>
+<hr>
+<h2><span id="hashmap-de-kuo-rong-guo-cheng-java7-he-8-kuo-rong-de-qu-bie">hashMap的扩容过程，java7和8扩容的区别</span><a href="#hashmap-de-kuo-rong-guo-cheng-java7-he-8-kuo-rong-de-qu-bie" class="header-anchor">#</a></h2>
+<ol>
+<li>java7：</li>
+</ol>
+<ul>
+<li>当resize时，新建一个数组newTable</li>
+<li>遍历原table中的每个链表和节点，重新hash，找到新的位置放入</li>
+<li>放入的方式是头插法，即始终插在链表的头节点。</li>
+</ul>
+<ol start="2">
+<li>java8:</li>
+</ol>
+<ul>
+<li>不再每个点rehash放置，而是最高位是0则坐标不变，最高位是1则坐标变为“10000+原坐标”，即“原长度+原坐标. 避免了频繁的哈希计算和搬移过程。</li>
+<li>使用尾插法在链表上插入节点</li>
+<li>桶内元素超过8个，链表转成红黑树</li>
+</ul>
+<hr>
+<h2><span id="wei-shi-me-java8-yao-gai-cheng-wei-cha-fa">为什么java8要改成尾插法？</span><a href="#wei-shi-me-java8-yao-gai-cheng-wei-cha-fa" class="header-anchor">#</a></h2>
+<p>A:<br>
+多线程时，java7的map-put可能造成死循环。<br>
+A线程扩容到那一半， 还处在遍历链表做头插法搬移的过程时，存了2个局部变量，当前链点now指向a， next指向b，正准备搬移（a-&gt;b-&gt;c这样的链表，a是头节点）</p>
+<p>B线程则同时完成线程扩容，但是map里都是引用，浅拷贝，** 因为是头插法， 会导致顺序变化**， 原本a-&gt;b-&gt;c 变成了c-&gt;b-&gt;a。<br>
+因此A恢复时， 链点还是a，next还是b， 于是往下走到了b， 取bbs的next时，已经变成了a， 于是发生了a-&gt;b-&gt;a的循环<br>
+导致后续操作的next都是错误操作，引发环形指针。</p>
+<p>java8里改成尾插法，这样做resize时，a-&gt;b-&gt;c 如果仍然哈希到同一个节点， 顺序是不会发生变化的。</p>
+<hr>
+<h2><span id="sui-ran-jie-jue-liao-si-xun-huan-wen-ti-dan-java8-de-hashmap-reng-ran-shi-xian-cheng-bu-an-quan-de-wei-shi-me">虽然解决了死循环问题， 但java8的hashMap仍然是线程不安全的，为什么？</span><a href="#sui-ran-jie-jue-liao-si-xun-huan-wen-ti-dan-java8-de-hashmap-reng-ran-shi-xian-cheng-bu-an-quan-de-wei-shi-me" class="header-anchor">#</a></h2>
+<p>A:<br>
+因为缺乏同步，导致同节点发生哈希碰撞时，if条件的判断都可能是有问题的，导致本该插在链表头节点后面的，结果直接作为链表头覆盖到数组上了。</p>
+<hr>
+<h2><span id="ju-ti-dao-di-man-zu-shi-me-qing-kuang-cai-hui-resize-kuo-rong-ni">具体到底满足什么情况，才会resize扩容呢？</span><a href="#ju-ti-dao-di-man-zu-shi-me-qing-kuang-cai-hui-resize-kuo-rong-ni" class="header-anchor">#</a></h2>
+<p>A:<br>
+　HashMap负载因子 LoadFactor，默认值为0.75f。<br>
+　衡量HashMap是否进行Resize的条件如下：<br>
+　HashMap.Size &gt;= Capacity * LoadFactor</p>
+<p>另一种情况。JDK1.8源码中，执行树形化之前，会先检查数组长度，如果长度小于64，则对数组进行扩容，而不是进行树形化</p>
+<hr>
+<h2><span id="kuo-rong-hou-capacity-kuo-rong-duo-shao-bei-ni">扩容后，capacity扩容多少倍呢？</span><a href="#kuo-rong-hou-capacity-kuo-rong-duo-shao-bei-ni" class="header-anchor">#</a></h2>
+<p>A:<br>
+哈希表每次扩容是两倍</p>
+<h1><span id="concurrenthashmap-he-xin-yuan-li">ConcurrentHashMap 核心原理</span><a href="#concurrenthashmap-he-xin-yuan-li" class="header-anchor">#</a></h1>
+<p>CHM结构</p>
+<p>每个concurrentHashMap里有一个segment数组</p>
+<p>每个segment里有HashEntry数组</p>
+<p>每个hashEntry可以演变为链表或者红黑树</p>
+<p><img src="/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/1659369632360.png" alt="1659369632360"></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_18300037/article/details/123795776">https://blog.csdn.net/qq_18300037/article/details/123795776</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/every__day/article/details/114293107">https://blog.csdn.net/every__day/article/details/114293107</a></p>
+<h2><span id="jdk6-7-zhong-de-shi-xian-yuan-li">JDK6-7中的实现原理</span><a href="#jdk6-7-zhong-de-shi-xian-yuan-li" class="header-anchor">#</a></h2>
+<h3><span id="chu-shi-hua-map">初始化map</span><a href="#chu-shi-hua-map" class="header-anchor">#</a></h3>
+<h4><span id="chu-shi-hua-segment-shu-zu-tong-guo-concurrencylevel-he-ssize">初始化segment数组（通过concurrencyLevel和ssize）</span><a href="#chu-shi-hua-segment-shu-zu-tong-guo-concurrencylevel-he-ssize" class="header-anchor">#</a></h4>
+<p>sszie即segment size，是seg数组的大小</p>
+<p>ssize一定是2的N次方，且一定是 大于等于concurrencyLevel的最小值</p>
+<p>sszie的最大值为65535</p>
+<p>ssize的默认值是16</p>
+<h4><span id="chu-shi-hua-segmentshift-duan-pian-yi-liang-he-segmentmask-duan-yan-ma">初始化segmentShift段偏移量和segmentMask段掩码</span><a href="#chu-shi-hua-segmentshift-duan-pian-yi-liang-he-segmentmask-duan-yan-ma" class="header-anchor">#</a></h4>
+<p>这2个变量用于后面定位segment的散列算法使用</p>
+<p>sshift  是 ssize的2的次方数</p>
+<p>segmentShift  = 32 - sshift   默认等于32-4=28</p>
+<p>segmentMask =  ssize -1  默认等于15</p>
+<h4><span id="chu-shi-hua-mei-ge-segment">初始化每个segment</span><a href="#chu-shi-hua-mei-ge-segment" class="header-anchor">#</a></h4>
+<p>每个segment里有一个entry数组</p>
+<p>这个数组的大小cap也是2的N次方，  且大于等于 initialCapacity(就是你传的初始容量值) / ssize 即<strong>平均每段数量</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">this.segments[i] = new Segment&lt;K,V&gt;(cap, loadFactor);</span><br></pre></td></tr></table></figure>
+<p>loadFactor默认0.75</p>
+<p>initialCapatity默认值为16</p>
+<h3><span id="ding-wei-segment">定位Segment</span><a href="#ding-wei-segment" class="header-anchor">#</a></h3>
+<p>对于一个key ，先是获取hashcode， 然后对hashcode进行变种算法再散列</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">hash</span><span class="params">(<span class="type">int</span> h)</span> &#123;</span><br><span class="line">        h += (h &lt;&lt; <span class="number">15</span>) ^ <span class="number">0xffffcd7d</span>;</span><br><span class="line">        h ^= (h &gt;&gt;&gt; <span class="number">10</span>);</span><br><span class="line">        h += (h &lt;&lt; <span class="number">3</span>);</span><br><span class="line">        h ^= (h &gt;&gt;&gt; <span class="number">6</span>);</span><br><span class="line">        h += (h &lt;&lt; <span class="number">2</span>) + (h &lt;&lt; <span class="number">14</span>);</span><br><span class="line">        <span class="keyword">return</span> h ^ (h &gt;&gt;&gt; <span class="number">16</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这个算法能保证各位都能利用上，尽可能均匀， 相比hashmap里单纯和高16位做异或不同。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> segments[(hash &gt;&gt;&gt; segmentShift) &amp; segmentMask];</span><br></pre></td></tr></table></figure>
+<p>可以看出</p>
+<p>segmentShift的作用是让hash通过右移动，只保留符合ssize的2进制位数长度</p>
+<p>顺便通过和segmentMask进行&amp;操作，剔除其他的位</p>
+<p>总目的就是为了让32位的hash偏移后保持在ssize的范围内</p>
+<p>按默认值而言，即   (hash&gt;&gt;&gt;28) &amp; 15</p>
+<h3><span id="get-cao-zuo">get操作</span><a href="#get-cao-zuo" class="header-anchor">#</a></h3>
+<p>先按照上文进行哈希， 获取segment后再进行get操作</p>
+<p>整个过程都不需要加锁！</p>
+<p>除非读到的值时空的，才会加锁重读确认（可能是被修改过了）</p>
+<p>获取segment这个操作中，涉及的数组count、存储HashEntry的value，都涉及成了volatile，保持可见性。</p>
+<h3><span id="put-cao-zuo">put操作</span><a href="#put-cao-zuo" class="header-anchor">#</a></h3>
+<p>put操作处理共享变量（例如count等）是一定会加锁的。</p>
+<p>区别在于扩容时，只对某一个segment扩容，不会影响其他的segment</p>
+<p>扩容时会先创建容量两倍的数组，重新放入后在修改引用。</p>
+<p>CHM是插入前先判断，再选择是否扩容</p>
+<p>而hashMap是插入后判断，再选择是否扩容</p>
+<h3><span id="size-cao-zuo">size操作</span><a href="#size-cao-zuo" class="header-anchor">#</a></h3>
+<p>size自然是要把所有segment里的size进行相加</p>
+<p>但是for循环相加可能会有前面的segment被修改，导致size变化，但如果加锁又太耗时间</p>
+<p>因此引入了modCount，如果统计完成过程中发现modCount变化，则会加锁的方式重新统计。</p>
+<h2><span id="jdk8-de-gai-zao-sheng-ji-chong-yao">JDK8的改造升级（重要）</span><a href="#jdk8-de-gai-zao-sheng-ji-chong-yao" class="header-anchor">#</a></h2>
+<p>在`JDK8中，它进行了以下重要改进：</p>
+<ol>
+<li>
+<p>取消分段锁机制<code>（Segment）</code>，进一步降低冲突概率; 使用桶的概念。</p>
+<p>其内部虽然仍然有 <code>Segment</code> 定义，但仅仅是为了保证序列化时的兼容性而已，不再有任何结构 上的用处。</p>
+<p>因为不再使用 <code>Segment</code>，初始化操作大大简化，修改为 <code>lazy-load</code> 形式，这样可以有效避免 初始开销</p>
+</li>
+<li>
+<p>size()方法做了优化，表达范围变大。原来<code>map</code>原有的<code>size</code>方法最大只能表达2的31次方减一，现在额外提供<code>mappingCount</code>方法，最大表示为2的63次方减一</p>
+</li>
+<li>
+<p>使用 <code>Unsafe</code>、<code>LongAdder</code> 之类底层手段，进行极端情况的优化。使用 <code>CAS</code> 等操作，在特定场景进行无锁并发操作。 即get使用volatile读， 而put则使用cas进行并发put。</p>
+</li>
+<li>
+<p>类似hashMap引入红黑树解构，同一个哈希槽元素个数超过一定的阙值后，单链表转化成红黑树;</p>
+</li>
+<li>
+<p>支持多线程并发扩容，大大提升扩容速度。</p>
+</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zguoshuaiiii/article/details/78495332">(4条消息) java8中concurrentHashmap的改进_庄国帅哥的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_40277163/article/details/122957808">(1条消息) JDK 8 ConcurrentHashMap_黄泥川水猴子的博客-CSDN博客_concurrenthashmap jdk8</a></p>
+<h1><span id="concurrentlinkedqueue-he-xin-yuan-li">ConcurrentLinkedQueue核心原理</span><a href="#concurrentlinkedqueue-he-xin-yuan-li" class="header-anchor">#</a></h1>
+<p>核心是使用CAS而不是锁来处理链式队列。</p>
+<p>比较容易想到的是每次用cas来处理next指针的跟新以及tail指针的指向</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">offer</span><span class="params">(E e)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (e == <span class="literal">null</span>)</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NullPointerException</span>();</span><br><span class="line">                Node&lt;E&gt; n = <span class="keyword">new</span> <span class="title class_">Node</span>&lt;E&gt;(e);</span><br><span class="line">                <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">                        Node&lt;E&gt; t = tail;</span><br><span class="line">                        <span class="keyword">if</span> (t.casNext(<span class="literal">null</span>, n) &amp;&amp; casTail(t, n)) &#123;</span><br><span class="line">                                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>但是缺点在于及时没有并发，也要频繁cas更新tail节点。</p>
+<p>实际上只需要用到tail节点的时候再去定位即可。</p>
+<p>所以设置了一个HOPS值</p>
+<p>当tail节点和实际尾节点的距离大于等于HOPS值，才去定位并cas更新tail节点，否则只更新next指针。</p>
+<p><img src="/images/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/1659795490061.png" alt="1659795490061"></p>
+<p>完整代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">offer</span><span class="params">(E e)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (e == <span class="literal">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NullPointerException</span>();</span><br><span class="line">        <span class="comment">// 入队前，创建一个入队节点</span></span><br><span class="line">        Node&lt;E&gt; n = <span class="keyword">new</span> <span class="title class_">Node</span>&lt;E&gt;(e);</span><br><span class="line">        retry:</span><br><span class="line">        <span class="comment">// 死循环，入队不成功反复入队。</span></span><br><span class="line">        <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">            <span class="comment">// 创建一个指向tail节点的引用</span></span><br><span class="line">            Node&lt;E&gt; t = tail;</span><br><span class="line">            <span class="comment">// p用来表示队列的尾节点，默认情况下等于tail节点。</span></span><br><span class="line">            Node&lt;E&gt; p = t;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">hops</span> <span class="operator">=</span> <span class="number">0</span>; ; hops++) &#123;</span><br><span class="line">            <span class="comment">// 获得p节点的下一个节点。</span></span><br><span class="line">                Node&lt;E&gt; next = succ(p);</span><br><span class="line">    		<span class="comment">// next节点不为空，说明p不是尾节点，需要更新p后在将它指向next节点</span></span><br><span class="line">                <span class="keyword">if</span> (next != <span class="literal">null</span>) &#123;</span><br><span class="line">                    <span class="comment">// 循环了两次及其以上，并且当前节点还是不等于尾节点</span></span><br><span class="line">                    <span class="comment">// 需要退出2层for循环，重新定位tail节点了</span></span><br><span class="line">                    <span class="keyword">if</span> (hops &gt; HOPS &amp;&amp; t != tail)</span><br><span class="line">                        <span class="keyword">continue</span> retry; </span><br><span class="line">                    p = next;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 如果p是尾节点，则设置p节点的next节点为入队节点。</span></span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (p.casNext(<span class="literal">null</span>, n)) &#123;</span><br><span class="line">                    <span class="comment">/*如果tail节点有大于等于1个next节点，则将入队节点设置成tail节点，</span></span><br><span class="line"><span class="comment">                      更新失败了也没关系，因为失败了表示有其他线程成功更新了tail节点*/</span></span><br><span class="line"><span class="keyword">if</span> (hops &gt;= HOPS)</span><br><span class="line">                        casTail(t, n); <span class="comment">// 更新tail节点，允许失败</span></span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// p有next节点,表示p的next节点是尾节点，则重新设置p节点</span></span><br><span class="line">                <span class="keyword">else</span> &#123;</span><br><span class="line">                    p = succ(p);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>代价是距离越长，入队时定位队尾的时间越长。</p>
+<p>但是效率总体上提升了， 因为通过增加对volatile变量的读操作来减少对volatile变量的写操作。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/" title="java常见容器使用原理（Map\List等)">http://breakdawncoder.com/知识库/java/java高级原理/java常见容器使用原理（Map-List等）/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java-java%E5%B8%B8%E8%A7%81%E5%BA%94%E7%94%A8%E5%8E%9F%E7%90%86m/" rel="tag"># java,java常见应用原理m</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E9%9A%8F%E7%AC%94/%E5%85%B6%E4%BB%96/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/" rel="prev" title="hexo-next主题使用笔记">
+      <i class="fa fa-chevron-left"></i> hexo-next主题使用笔记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/%E8%A2%AB%E8%AE%A8%E5%8E%8C%E7%9A%84%E5%8B%87%E6%B0%94/" rel="next" title="被讨厌的勇气">
+      被讨厌的勇气 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">ArrayList原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">CopyOnWriteArrayList 原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">为什么需要写时复制？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">如何避免多线程修改的冲突？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">如何保证更新后，数组引用的变动能及时对外呈现？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">HashMap核心原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">hashMap完整的put过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">hashMap的扩容过程，java7和8扩容的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">为什么java8要改成尾插法？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.4.</span> <span class="nav-text">虽然解决了死循环问题， 但java8的hashMap仍然是线程不安全的，为什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.5.</span> <span class="nav-text">具体到底满足什么情况，才会resize扩容呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.6.</span> <span class="nav-text">扩容后，capacity扩容多少倍呢？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">ConcurrentHashMap 核心原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">JDK6-7中的实现原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.1.1.</span> <span class="nav-text">初始化map</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">4.1.1.1.</span> <span class="nav-text">初始化segment数组（通过concurrencyLevel和ssize）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">4.1.1.2.</span> <span class="nav-text">初始化segmentShift段偏移量和segmentMask段掩码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">4.1.1.3.</span> <span class="nav-text">初始化每个segment</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.1.2.</span> <span class="nav-text">定位Segment</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.1.3.</span> <span class="nav-text">get操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.1.4.</span> <span class="nav-text">put操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.1.5.</span> <span class="nav-text">size操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.2.</span> <span class="nav-text">JDK8的改造升级（重要）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">ConcurrentLinkedQueue核心原理</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共305.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="[toc]     相关整体搭建链接 常用新文章头部内容： 一些常见命令  开启本地服务 新建文章 新建草稿 发布草稿成为文章 发布关于 生成静态文章 部署文章   背景音乐： 菜单图片问题： 修改page页默认前缀： typora+hexo插入图片 支持toc目录 图片支持放大 添加访问量 valine评论（国内版） 社交链接 版权 升级markdown渲染器，支持插件 超链接颜色改变 修改左侧">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hexo-next主题使用笔记">
+<meta property="og:url" content="http://breakdawncoder.com/%E9%9A%8F%E7%AC%94/%E5%85%B6%E4%BB%96/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="[toc]     相关整体搭建链接 常用新文章头部内容： 一些常见命令  开启本地服务 新建文章 新建草稿 发布草稿成为文章 发布关于 生成静态文章 部署文章   背景音乐： 菜单图片问题： 修改page页默认前缀： typora+hexo插入图片 支持toc目录 图片支持放大 添加访问量 valine评论（国内版） 社交链接 版权 升级markdown渲染器，支持插件 超链接颜色改变 修改左侧">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/1660668978986.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/1660669009040.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/1661444579928.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/1673073248716.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/1673086806046.png">
+<meta property="article:published_time" content="2022-07-06T15:27:35.000Z">
+<meta property="article:modified_time" content="2023-01-07T13:30:33.106Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="博客搭建">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/1660668978986.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/%E9%9A%8F%E7%AC%94/%E5%85%B6%E4%BB%96/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>hexo-next主题使用笔记 | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E9%9A%8F%E7%AC%94/%E5%85%B6%E4%BB%96/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          hexo-next主题使用笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-07-06 23:27:35" itemprop="dateCreated datePublished" datetime="2022-07-06T23:27:35+08:00">2022-07-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-01-07 21:30:33" itemprop="dateModified" datetime="2023-01-07T21:30:33+08:00">2023-01-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9A%8F%E7%AC%94/" itemprop="url" rel="index"><span itemprop="name">随笔</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9A%8F%E7%AC%94/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/" itemprop="url" rel="index"><span itemprop="name">博客搭建</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E9%9A%8F%E7%AC%94/%E5%85%B6%E4%BB%96/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E9%9A%8F%E7%AC%94/%E5%85%B6%E4%BB%96/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>[toc]</p>
+ <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#xiang-guan-zheng-ti-da-jian-lian-jie">相关整体搭建链接</a></li>
+<li><a href="#chang-yong-xin-wen-zhang-tou-bu-nei-rong">常用新文章头部内容：</a></li>
+<li><a href="#yi-xie-chang-jian-ming-ling">一些常见命令</a>
+<ul>
+<li><a href="#kai-qi-ben-di-fu-wu">开启本地服务</a></li>
+<li><a href="#xin-jian-wen-zhang">新建文章</a></li>
+<li><a href="#xin-jian-cao-gao">新建草稿</a></li>
+<li><a href="#fa-bu-cao-gao-cheng-wei-wen-zhang">发布草稿成为文章</a></li>
+<li><a href="#fa-bu-guan-yu">发布关于</a></li>
+<li><a href="#sheng-cheng-jing-tai-wen-zhang">生成静态文章</a></li>
+<li><a href="#bu-shu-wen-zhang">部署文章</a></li>
+</ul>
+</li>
+<li><a href="#bei-jing-yin-le">背景音乐：</a></li>
+<li><a href="#cai-dan-tu-pian-wen-ti">菜单图片问题：</a></li>
+<li><a href="#xiu-gai-page-ye-mo-ren-qian-zhui">修改page页默认前缀：</a></li>
+<li><a href="#typora-hexo-cha-ru-tu-pian">typora+hexo插入图片</a></li>
+<li><a href="#zhi-chi-toc-mu-lu">支持toc目录</a></li>
+<li><a href="#tu-pian-zhi-chi-fang-da">图片支持放大</a></li>
+<li><a href="#tian-jia-fang-wen-liang">添加访问量</a></li>
+<li><a href="#valine-ping-lun-guo-nei-ban">valine评论（国内版）</a></li>
+<li><a href="#she-jiao-lian-jie">社交链接</a></li>
+<li><a href="#ban-quan">版权</a></li>
+<li><a href="#sheng-ji-markdown-xuan-ran-qi-zhi-chi-cha-jian">升级markdown渲染器，支持插件</a></li>
+<li><a href="#chao-lian-jie-yan-se-gai-bian">超链接颜色改变</a></li>
+<li><a href="#xiu-gai-zuo-ce-cai-dan-lan">修改左侧菜单栏</a></li>
+<li><a href="#zeng-jia-she-jiao-lian-jie">增加社交链接</a></li>
+<li><a href="#xian-shi-zhan-dian-wen-zhang-zong-zi-shu-ling-yi-chong-tong-ji-zhan-dian-zong-zi-shu-de-fang-fa">显示站点文章总字数（另一种统计站点总字数的方法）</a></li>
+<li><a href="#tian-jia-bo-ke-bei-jing-tu-pian">添加博客背景图片</a></li>
+<li><a href="#she-zhi-next-zi-dai-de-dong-tai-bei-jing">设置next自带的动态背景</a></li>
+<li><a href="#tian-jia-sou-suo-kuang">添加搜索框</a></li>
+<li><a href="#wen-zhang-shou-ye-zhi-ding">文章首页置顶</a></li>
+<li><a href="#ti-huan-mu-lu-xia-de-wen-zhang-hou-zang-de-suo-you-fen-lei-ming-zi">替换目录下的文章厚葬的所有分类名字</a></li>
+<li><a href="#bo-wen-jia-mi">博文加密</a></li>
+<li><a href="#url-ge-shi-she-zhi">url格式设置</a></li>
+<li><a href="#toc-biao-ti-chao-lian-jie">toc+标题+超链接</a></li>
+<li><a href="#zhan-nei-wen-zhang-lian-jie">站内文章链接</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<h1><span id="xiang-guan-zheng-ti-da-jian-lian-jie">相关整体搭建链接</span><a href="#xiang-guan-zheng-ti-da-jian-lian-jie" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/102592286">从零开始搭建个人博客（超详细） - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="http://theme-next.iissnan.com/">http://theme-next.iissnan.com/</a></p>
+<h1><span id="chang-yong-xin-wen-zhang-tou-bu-nei-rong">常用新文章头部内容：</span><a href="#chang-yong-xin-wen-zhang-tou-bu-nei-rong" class="header-anchor">#</a></h1>
+<p>title: java类文件原理<br>
+date: 2022-05-04 22:25:40<br>
+tags: java<br>
+categories:</p>
+<pre><code>- [java,java高级原理]
+</code></pre>
+<p>typora-root-url: …</p>
+<p>title: 第296场周赛-209名<br>
+categories:</p>
+<ul>
+<li>
+<ul>
+<li>编程</li>
+<li>力扣周赛记录<br>
+tags: ‘算法’<br>
+typora-root-url: …/…/…/<br>
+date: 2022-06-05 22:12:42</li>
+</ul>
+</li>
+</ul>
+<h1><span id="yi-xie-chang-jian-ming-ling">一些常见命令</span><a href="#yi-xie-chang-jian-ming-ling" class="header-anchor">#</a></h1>
+<h2><span id="kai-qi-ben-di-fu-wu">开启本地服务</span><a href="#kai-qi-ben-di-fu-wu" class="header-anchor">#</a></h2>
+<p>hexo server<br>
+hexo s</p>
+<h2><span id="xin-jian-wen-zhang">新建文章</span><a href="#xin-jian-wen-zhang" class="header-anchor">#</a></h2>
+<p>hexo new a</p>
+<h2><span id="xin-jian-cao-gao">新建草稿</span><a href="#xin-jian-cao-gao" class="header-anchor">#</a></h2>
+<p>hexo new draft b</p>
+<h2><span id="fa-bu-cao-gao-cheng-wei-wen-zhang">发布草稿成为文章</span><a href="#fa-bu-cao-gao-cheng-wei-wen-zhang" class="header-anchor">#</a></h2>
+<p>hexo publish b</p>
+<h2><span id="fa-bu-guan-yu">发布关于</span><a href="#fa-bu-guan-yu" class="header-anchor">#</a></h2>
+<p>hexo new page c</p>
+<h2><span id="sheng-cheng-jing-tai-wen-zhang">生成静态文章</span><a href="#sheng-cheng-jing-tai-wen-zhang" class="header-anchor">#</a></h2>
+<p>hexo generate<br>
+hexo g</p>
+<h2><span id="bu-shu-wen-zhang">部署文章</span><a href="#bu-shu-wen-zhang" class="header-anchor">#</a></h2>
+<p>hexo deploy<br>
+hexo d</p>
+<h1><span id="bei-jing-yin-le">背景音乐：</span><a href="#bei-jing-yin-le" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_39800978/article/details/109407258">https://blog.csdn.net/qq_39800978/article/details/109407258</a></p>
+<h1><span id="cai-dan-tu-pian-wen-ti">菜单图片问题：</span><a href="#cai-dan-tu-pian-wen-ti" class="header-anchor">#</a></h1>
+<p>需要看css里支持了哪些<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_43340547/article/details/120581558">https://blog.csdn.net/qq_43340547/article/details/120581558</a></p>
+<h1><span id="xiu-gai-page-ye-mo-ren-qian-zhui">修改page页默认前缀：</span><a href="#xiu-gai-page-ye-mo-ren-qian-zhui" class="header-anchor">#</a></h1>
+<p>F:\Code\Blog\scaffolds\post</p>
+<h1><span id="typora-hexo-cha-ru-tu-pian">typora+hexo插入图片</span><a href="#typora-hexo-cha-ru-tu-pian" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/yinyoupoet/p/13287385.html">https://www.cnblogs.com/yinyoupoet/p/13287385.html</a><br>
+hexo的图片只能是根目录下source/images目录<br>
+因此typora必须放到那个地方<br>
+且markdown里图片路径必须基于source/images<br>
+F:/Code/Blog/source/images/${filename}</p>
+<h1><span id="zhi-chi-toc-mu-lu">支持toc目录</span><a href="#zhi-chi-toc-mu-lu" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://www.pianshen.com/article/9489125286/">https://www.pianshen.com/article/9489125286/</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- toc --&gt; </span><br></pre></td></tr></table></figure>
+<p>[toc]用于编辑时目录跳转</p>
+<h1><span id="tu-pian-zhi-chi-fang-da">图片支持放大</span><a href="#tu-pian-zhi-chi-fang-da" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/wugenqiang/article/details/89057323">https://blog.csdn.net/wugenqiang/article/details/89057323</a><br>
+fancybox本地无法使用，会导致加载失败<br>
+主要是因为默认配置的cdn我们无法访问<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/Aelous_dp/article/details/107643344">https://blog.csdn.net/Aelous_dp/article/details/107643344</a><br>
+需要改为如下：<br>
+vendor:<br>
+jquery: <a target="_blank" rel="noopener" href="//code.jquery.com/jquery-2.0.3.min.js">//code.jquery.com/jquery-2.0.3.min.js</a><br>
+fancybox: <a target="_blank" rel="noopener" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js">//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js</a><br>
+fancybox_css: <a target="_blank" rel="noopener" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css</a><br>
+主要是本地无法连接他默认配置的那个CDN</p>
+<h1><span id="tian-jia-fang-wen-liang">添加访问量</span><a href="#tian-jia-fang-wen-liang" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/baidu_34310405/article/details/102665373">https://blog.csdn.net/baidu_34310405/article/details/102665373</a></p>
+<h1><span id="valine-ping-lun-guo-nei-ban">valine评论（国内版）</span><a href="#valine-ping-lun-guo-nei-ban" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_48927364/article/details/123321038">https://blog.csdn.net/weixin_48927364/article/details/123321038</a><br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/blue_zy/article/details/79071414">https://blog.csdn.net/blue_zy/article/details/79071414</a><br>
+Valine交流群: 480972291<br>
+配置再next的config里的valine:</p>
+<p>waline国外版</p>
+<h1><span id="she-jiao-lian-jie">社交链接</span><a href="#she-jiao-lian-jie" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_44634406/article/details/122777058">https://blog.csdn.net/weixin_44634406/article/details/122777058</a></p>
+<p>themes/next下的_config.yml，搜索social</p>
+<p>图标库</p>
+<p><a target="_blank" rel="noopener" href="http://www.fontawesome.com.cn/faicons/#web-application">http://www.fontawesome.com.cn/faicons/#web-application</a></p>
+<p>想要其他的国内软件图标：</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_44634406/article/details/122777058">https://blog.csdn.net/weixin_44634406/article/details/122777058</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.iconfont.cn/?spm=a313x.7781069.1998910419.d4d0a486a">https://www.iconfont.cn/?spm=a313x.7781069.1998910419.d4d0a486a</a></p>
+<h1><span id="ban-quan">版权</span><a href="#ban-quan" class="header-anchor">#</a></h1>
+<p>hexo next config 中找到creative_commons， 各种设置为true</p>
+<p>主config中设置url: ‘<a href="http://breakdawncoder.com/">http://breakdawncoder.com/</a>’</p>
+<p>复制黏贴时带版权信息：<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_33430083/article/details/105626840">(1条消息) 新手如何给Hexo博客在复制时添加版权声明_只是学习学习的博客-CSDN博客</a></p>
+<h1><span id="sheng-ji-markdown-xuan-ran-qi-zhi-chi-cha-jian">升级markdown渲染器，支持插件</span><a href="#sheng-ji-markdown-xuan-ran-qi-zhi-chi-cha-jian" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/0bfc3029c980">https://www.jianshu.com/p/0bfc3029c980</a></p>
+<h1><span id="chao-lian-jie-yan-se-gai-bian">超链接颜色改变</span><a href="#chao-lian-jie-yan-se-gai-bian" class="header-anchor">#</a></h1>
+<p>打开 <code>Blog\themes\next\source\css\_common\components\post</code> 路径下的<code>post.styl</code> , 并在底部添加如下代码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">a</span>:<span class="title function_">not</span>(<span class="params">.btn</span>)&#123;</span><br><span class="line">  <span class="attr">color</span>: #6495ED; <span class="comment">//超链接显示颜色</span></span><br><span class="line">  border-<span class="attr">bottom</span>: none;</span><br><span class="line">  &amp;:hover &#123;</span><br><span class="line">	<span class="attr">color</span>: #0000FF;  <span class="comment">//鼠标移动上去后超链接颜色</span></span><br><span class="line">	font-<span class="attr">weight</span>: bold;</span><br><span class="line">	text-<span class="attr">decoration</span>: underline;</span><br><span class="line">	&#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>颜色码链接:</strong> <a target="_blank" rel="noopener" href="https://www.sioe.cn/yingyong/yanse-rgb-16/">RGB颜色值与十六进制颜色码转换工具 (sioe.cn)</a></li>
+</ul>
+<h1><span id="xiu-gai-zuo-ce-cai-dan-lan">修改左侧菜单栏</span><a href="#xiu-gai-zuo-ce-cai-dan-lan" class="header-anchor">#</a></h1>
+<p>themes/next下的_config.yml，查找menu</p>
+<p>图标库：<a target="_blank" rel="noopener" href="http://www.fontawesome.com.cn/faicons/#web-application">http://www.fontawesome.com.cn/faicons/#web-application</a></p>
+<p>新添加的菜单需要翻译对应的中文，打开theme/next/languages/zh-CN.yml，在menu下设置</p>
+<h1><span id="zeng-jia-she-jiao-lian-jie">增加社交链接</span><a href="#zeng-jia-she-jiao-lian-jie" class="header-anchor">#</a></h1>
+<p>打开<strong>主题配置文件</strong>即themes/next下的_config.yml，搜索social：</p>
+<h1><span id="xian-shi-zhan-dian-wen-zhang-zong-zi-shu-ling-yi-chong-tong-ji-zhan-dian-zong-zi-shu-de-fang-fa">显示站点文章总字数（另一种统计站点总字数的方法）</span><a href="#xian-shi-zhan-dian-wen-zhang-zong-zi-shu-ling-yi-chong-tong-ji-zhan-dian-zong-zi-shu-de-fang-fa" class="header-anchor">#</a></h1>
+<p>从根目录Blog打开Git Bash，执行下面的命令，安装插件：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-wordcount --save</span><br></pre></td></tr></table></figure>
+<p>然后在/themes/next/layout/_partials/footer.swig文件尾部加上：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;div class=&quot;theme-info&quot;&gt;</span><br><span class="line">  &lt;div class=&quot;powered-by&quot;&gt;&lt;/div&gt;</span><br><span class="line">  &lt;span class=&quot;post-count&quot;&gt;博客全站共&#123;&#123; totalcount(site) &#125;&#125;字&lt;/span&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+<p>再加上这里面的文章字数统计和阅读时常统计，关闭站点统计，站点统计用上面的这个</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_44082148/article/details/105701427">https://blog.csdn.net/qq_44082148/article/details/105701427</a></p>
+<p>如果出现NAN，尝试hexo clean即可</p>
+<p><img src="/images/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/1660668978986.png" alt="1660668978986"></p>
+<p><img src="/images/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/1660669009040.png" alt="1660669009040"></p>
+<h1><span id="tian-jia-bo-ke-bei-jing-tu-pian">添加博客背景图片</span><a href="#tian-jia-bo-ke-bei-jing-tu-pian" class="header-anchor">#</a></h1>
+<p>打开主题配置文件即themes/next下的_config.yml，将 style: source/_data/styles.styl 取消注释：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">custom_file_path:</span><br><span class="line">  style: source/_data/styles.styl</span><br></pre></td></tr></table></figure>
+<p>打开根目录Blog/source创建文件_data/styles.styl，添加以下内容：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// 添加背景图片</span><br><span class="line">body &#123;</span><br><span class="line">      background: url(/images/background.png);//自己喜欢的图片地址</span><br><span class="line">      background-size: cover;</span><br><span class="line">      background-repeat: no-repeat;</span><br><span class="line">      background-attachment: fixed;</span><br><span class="line">      background-position: 50% 50%;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>images目录处于source\images下</p>
+<p>注意图片名字不能带中文</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/cscshi/p/15196114.html">Hexo-NexT 设置博客背景图片 - 锦瑟，无端 - 博客园 (cnblogs.com)</a></p>
+<p>里面backgroud的属性是css的常见属性</p>
+<h1><span id="she-zhi-next-zi-dai-de-dong-tai-bei-jing">设置next自带的动态背景</span><a href="#she-zhi-next-zi-dai-de-dong-tai-bei-jing" class="header-anchor">#</a></h1>
+<p>在themes/next目录下打开Git Bash，输入：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/theme-next/theme-next-three source/lib/three</span><br></pre></td></tr></table></figure>
+<p>打开主题配置文件即themes/next下的_config.yml，找到three，这里有三种风格，可以试一下看看喜欢哪种风格，直接将false改为true就行了</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># JavaScript 3D library.</span><br><span class="line"># Dependencies: https://github.com/theme-next/theme-next-three</span><br><span class="line">three:</span><br><span class="line">  enable: true</span><br><span class="line">  three_waves: false</span><br><span class="line">  canvas_lines: false</span><br><span class="line">  canvas_sphere: false</span><br></pre></td></tr></table></figure>
+<h1><span id="tian-jia-sou-suo-kuang">添加搜索框</span><a href="#tian-jia-sou-suo-kuang" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/fly_wugui/article/details/108638358">(5条消息) hexo+next 增加搜索功能_moguPeople的博客-CSDN博客_next 搜索</a></p>
+<p><img src="/images/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/1661444579928.png" alt="1661444579928"></p>
+<p>注意里面关于跳过的部分，不设置根目录的配置反而可以用</p>
+<p>1、安装本地搜索插件 <a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=hexo&amp;spm=1001.2101.3001.7020">hexo</a>-generator-search</p>
+<p>在博客<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E6%A0%B9%E7%9B%AE%E5%BD%95&amp;spm=1001.2101.3001.7020">根目录</a>安装搜索插件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">  # 安装插件，用于生成博客索引数据（在博客根目录下执行下列命令）：</span><br><span class="line">  npm install hexo-generator-search --save</span><br><span class="line">12</span><br></pre></td></tr></table></figure>
+<p>安装之后，会在站点目录的 <code>public</code> 文件夹下创建一个 <code>search.xml</code> 文件。（如果没有 <code>search.xml</code> 文件，请继续往下看）</p>
+<p>2、修改站点配置文件(如果上一步没有找到 <code>search.xml</code>文件 则可以跳过 )</p>
+<p>在主题配置文件中的 <code>_config.yml</code> 中添加如下内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">  # Search</span><br><span class="line">  search:</span><br><span class="line">    path: ./public/search.xml</span><br><span class="line">    field: post</span><br><span class="line">    format: html</span><br><span class="line">    limit: 10000</span><br><span class="line">123456</span><br></pre></td></tr></table></figure>
+<ul>
+<li>path：索引文件的路径，相对于站点根目录</li>
+<li>field：搜索范围，默认是 post，还可以选择 page、all，设置成 all 表示搜索所有页面</li>
+<li>limit：限制搜索的条目数</li>
+</ul>
+<p>3、主题配置文件</p>
+<p>在主题配置文件 <code>_config.yml</code> 中找到如下内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">  local_search:</span><br><span class="line">    enable: true</span><br><span class="line">    trigger: auto</span><br><span class="line">    top_n_per_article: 1</span><br><span class="line">1234</span><br></pre></td></tr></table></figure>
+<p>确保 <code>enable</code> 设成 <code>true</code>。</p>
+<p><code>top_n_per_article</code> 字段表示在每篇文章中显示的搜索结果数量，设成 <code>-1</code> 会显示每篇文章的所有搜索结果数量。</p>
+<p>然后，重新部署网站即可愉快的使用本地搜索功能了。</p>
+<h1><span id="wen-zhang-shou-ye-zhi-ding">文章首页置顶</span><a href="#wen-zhang-shou-ye-zhi-ding" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/a9922c3ebb61/?u_atoken=48398f9d-56fa-47ae-b352-d6f98a585d91&amp;u_asession=01D0epQEbPKNe5im73eJHf1zhLFNNNaZ2r3_hyeDf7G7N0h-c7I99XrTtE218yIj9nX0KNBwm7Lovlpxjd_P_q4JsKWYrT3W_NKPr8w6oU7K9ZZBQrBAZ937Lye44MvEAWh4gB_rorF7cG9vr14abfLGBkFo3NEHBv0PZUm6pbxQU&amp;u_asig=05I1UluhUtlBU6IPgFB9X73nBobkqeOiroamAnWq6SY9Y4Y91yc9AHoLFiWyJab4vyKxb8PD0jcXasm_sJliwRoiz3iPrGlohYW1IirblvY-_25BkSJc8gQV17fCryvphordTqTfCboHCn5HNG95_qL6XfiryECFWBeNwOJX4Gupv9JS7q8ZD7Xtz2Ly-b0kmuyAKRFSVJkkdwVUnyHAIJzSEodxxfYtIZIZ15WTKOyAGdT8FnClDtcccr9WuAAHTZU-X92pnuaZyu-ch7KXFYKu3h9VXwMyh6PgyDIVSG1W_DtwjsIQBBBNwqqPYWHp9EUHGNTZVYh5kLqUgoKImAp0-CG4QEz8LXnuJ0LGm0hazZSoSqH6dvG0i5QtUX8zIhmWspDxyAEEo4kbsryBKb9Q&amp;u_aref=UzxWAS6uUNlVSvL07sozZ%2BTDAiQ%3D">Hexo nexT主题之文章置顶 - 简书 (jianshu.com)</a></p>
+<p>但是好像只能首页指定，不能分类置顶。。</p>
+<h1><span id="ti-huan-mu-lu-xia-de-wen-zhang-hou-zang-de-suo-you-fen-lei-ming-zi">替换目录下的文章厚葬的所有分类名字</span><a href="#ti-huan-mu-lu-xia-de-wen-zhang-hou-zang-de-suo-you-fen-lei-ming-zi" class="header-anchor">#</a></h1>
+<p>例如要把“后台开发知识”改成“开源组件原理”</p>
+<p>sed -i “s/后台开发知识/开源组件原理/g” <code>grep 后台开发知识 -rl .</code></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_35864328/article/details/116653159">https://blog.csdn.net/weixin_35864328/article/details/116653159</a></p>
+<h1><span id="bo-wen-jia-mi">博文加密</span><a href="#bo-wen-jia-mi" class="header-anchor">#</a></h1>
+<p>npm install hexo-blog-encrypt</p>
+<p><img src="/images/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/1673073248716.png" alt="1673073248716"></p>
+<p>encrypt:</p>
+<p>enable: true</p>
+<p>然后文章头部加入相应的字段</p>
+<p>password:abcde<br>
+message: 这是私密博文哦，写看看其他的文章吧谢谢~。<br>
+wrong_pass_message: 抱歉, 秘密错误，不要尝试啦看看别的谢谢</p>
+<h1><span id="url-ge-shi-she-zhi">url格式设置</span><a href="#url-ge-shi-she-zhi" class="header-anchor">#</a></h1>
+<p>博客根目录的_config.yml中进行配置<br>
+permalink: :year/:month/:day/:title/ #年/月/日/文章路径</p>
+<p><img src="/../images/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/1673086806046.png" alt="1673086806046"></p>
+<h1><span id="toc-biao-ti-chao-lian-jie">toc+标题+超链接</span><a href="#toc-biao-ti-chao-lian-jie" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/474967971?utm_id=0">解决Hexo建站使用toc目录跳转 undefined的问题 - 知乎 (zhihu.com)</a></p>
+<h1><span id="zhan-nei-wen-zhang-lian-jie">站内文章链接</span><a href="#zhan-nei-wen-zhang-lian-jie" class="header-anchor">#</a></h1>
+ <a href="#">Post not found: hexo blog</a>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/%E9%9A%8F%E7%AC%94/%E5%85%B6%E4%BB%96/hexo-next%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/" title="hexo-next主题使用笔记">http://breakdawncoder.com/随笔/其他/hexo-next主题使用笔记/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/" rel="tag"># 博客搭建</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/java%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%92%8C%E8%AF%AD%E6%B3%95%E7%B3%96/" rel="prev" title="java编译优化和语法糖">
+      <i class="fa fa-chevron-left"></i> java编译优化和语法糖
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/" rel="next" title="java常见容器使用原理（Map\List等)">
+      java常见容器使用原理（Map\List等) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">相关整体搭建链接</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">常用新文章头部内容：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">一些常见命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">开启本地服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">新建文章</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">新建草稿</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.4.</span> <span class="nav-text">发布草稿成为文章</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.5.</span> <span class="nav-text">发布关于</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.6.</span> <span class="nav-text">生成静态文章</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.7.</span> <span class="nav-text">部署文章</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">背景音乐：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">菜单图片问题：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">修改page页默认前缀：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">typora+hexo插入图片</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">8.</span> <span class="nav-text">支持toc目录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">9.</span> <span class="nav-text">图片支持放大</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">10.</span> <span class="nav-text">添加访问量</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">11.</span> <span class="nav-text">valine评论（国内版）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">12.</span> <span class="nav-text">社交链接</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">13.</span> <span class="nav-text">版权</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">14.</span> <span class="nav-text">升级markdown渲染器，支持插件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">15.</span> <span class="nav-text">超链接颜色改变</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">16.</span> <span class="nav-text">修改左侧菜单栏</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">17.</span> <span class="nav-text">增加社交链接</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">18.</span> <span class="nav-text">显示站点文章总字数（另一种统计站点总字数的方法）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">19.</span> <span class="nav-text">添加博客背景图片</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">20.</span> <span class="nav-text">设置next自带的动态背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">21.</span> <span class="nav-text">添加搜索框</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">22.</span> <span class="nav-text">文章首页置顶</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">23.</span> <span class="nav-text">替换目录下的文章厚葬的所有分类名字</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">24.</span> <span class="nav-text">博文加密</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">25.</span> <span class="nav-text">url格式设置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">26.</span> <span class="nav-text">toc+标题+超链接</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">27.</span> <span class="nav-text">站内文章链接</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共305.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1 传输层和网络层的区别：  1.1 负责对象的不同 1.2 校验上的不同   2 端口号  2.1 端口号的意义 2.2 端口号范围   3 TCP  3.1 TCP首部  Q: 讲一下TCP报文都有啥，可以不按顺序讲   3.2 滑动窗口  3.2.1发送端窗口 3.2.2 接收端窗口 3.2.3 坚持定时器 3.2.4 糊涂窗口   3.3 TCP连接流程  3.3.1 握手和挥手流程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计网之传输层（TCP&#x2F;IP）详解">
+<meta property="og:url" content="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="1 传输层和网络层的区别：  1.1 负责对象的不同 1.2 校验上的不同   2 端口号  2.1 端口号的意义 2.2 端口号范围   3 TCP  3.1 TCP首部  Q: 讲一下TCP报文都有啥，可以不按顺序讲   3.2 滑动窗口  3.2.1发送端窗口 3.2.2 接收端窗口 3.2.3 坚持定时器 3.2.4 糊涂窗口   3.3 TCP连接流程  3.3.1 握手和挥手流程">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/20210218011330509.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/20210218011340404.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/20210218011409757.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/20210218011424408.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/1638808791348065758.png">
+<meta property="article:published_time" content="2022-08-23T17:47:49.000Z">
+<meta property="article:modified_time" content="2022-08-24T16:12:52.392Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="计算机基础,计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/20210218011330509.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>计网之传输层（TCP/IP）详解 | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          计网之传输层（TCP/IP）详解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-24 01:47:49" itemprop="dateCreated datePublished" datetime="2022-08-24T01:47:49+08:00">2022-08-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-25 00:12:52" itemprop="dateModified" datetime="2022-08-25T00:12:52+08:00">2022-08-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#1-chuan-shu-ceng-he-wang-luo-ceng-de-qu-bie">1 传输层和网络层的区别：</a>
+<ul>
+<li><a href="#1-1-fu-ze-dui-xiang-de-bu-tong">1.1 负责对象的不同</a></li>
+<li><a href="#1-2-xiao-yan-shang-de-bu-tong">1.2 校验上的不同</a></li>
+</ul>
+</li>
+<li><a href="#2-duan-kou-hao">2 端口号</a>
+<ul>
+<li><a href="#2-1-duan-kou-hao-de-yi-yi">2.1 端口号的意义</a></li>
+<li><a href="#2-2-duan-kou-hao-fan-wei">2.2 端口号范围</a></li>
+</ul>
+</li>
+<li><a href="#3-tcp">3 TCP</a>
+<ul>
+<li><a href="#3-1-tcp-shou-bu">3.1 TCP首部</a>
+<ul>
+<li><a href="#q-jiang-yi-xia-tcp-bao-wen-du-you-sha-ke-yi-bu-an-shun-xu-jiang">Q: 讲一下TCP报文都有啥，可以不按顺序讲</a></li>
+</ul>
+</li>
+<li><a href="#3-2-hua-dong-chuang-kou">3.2 滑动窗口</a>
+<ul>
+<li><a href="#3-2-1-fa-song-duan-chuang-kou">3.2.1发送端窗口</a></li>
+<li><a href="#3-2-2-jie-shou-duan-chuang-kou">3.2.2 接收端窗口</a></li>
+<li><a href="#3-2-3-jian-chi-ding-shi-qi">3.2.3 坚持定时器</a></li>
+<li><a href="#3-2-4-hu-tu-chuang-kou">3.2.4 糊涂窗口</a></li>
+</ul>
+</li>
+<li><a href="#3-3-tcp-lian-jie-liu-cheng">3.3 TCP连接流程</a>
+<ul>
+<li><a href="#3-3-1-wo-shou-he-hui-shou-liu-cheng">3.3.1 握手和挥手流程</a>
+<ul>
+<li><a href="#wei-shi-me-jian-li-yao-3-ci-wo-shou">为什么建立要3次握手？</a></li>
+<li><a href="#wei-shi-me-jie-shu-lian-jie-yao-4-ci-hui-shou">为什么结束连接要4次挥手？</a></li>
+<li><a href="#neng-fou-hui-shou-3-ci">能否挥手3次</a></li>
+<li><a href="#si-ci-hui-shou-zhong-de-time-wait-zhuang-tai-zuo-yong">四次挥手中的TIME_WAIT状态作用？</a></li>
+<li><a href="#liang-bian-tong-shi-xiang-hu-jian-li-lian-jie-hui-fa-sheng-shi-me">两边同时相互建立连接会发生什么？</a></li>
+<li><a href="#liang-bian-tong-shi-guan-bi-lian-jie-hui-fa-sheng-shi-me">两边同时关闭连接会发生什么</a></li>
+</ul>
+</li>
+<li><a href="#3-3-4-jiao-hu-shu-ju">3.3.4 交互数据</a>
+<ul>
+<li><a href="#nagle-suan-fa">nagle算法</a></li>
+<li><a href="#q-shi-me-shi-tcp-nian-bao">Q: 什么是TCP粘包？</a></li>
+<li><a href="#q-zao-cheng-nian-bao-de-yuan-yin-shi-shi-me">Q: 造成粘包的原因是什么？</a></li>
+<li><a href="#q-shi-me-shi-hou-xu-yao-chu-li-nian-bao-xian-xiang">Q:什么时候需要处理粘包现象？</a></li>
+<li><a href="#q-ru-he-chu-li-nian-bao-xian-xiang">Q: 如何处理粘包现象？</a></li>
+<li><a href="#q-udp-hui-bu-hui-chan-sheng-nian-bao-wen-ti-ni">Q：UDP会不会产生粘包问题呢？</a></li>
+</ul>
+</li>
+<li><a href="#3-3-5-yi-chang-qing-kuang">3.3.5 异常情况</a></li>
+</ul>
+</li>
+<li><a href="#3-4-yong-sai-bi-mian-ji-zhi">3.4 拥塞避免机制</a>
+<ul>
+<li><a href="#q-jian-li-lian-jie-hou-mei-ci-fa-song-de-bao-wen-shu-liang-shi-gu-ding-de-ma-ji-mei-ci-du-fa-1-tiao-huo-zhe-10-tiao">Q: 建立连接后，每次发送的报文数量是固定的吗？即每次都发1条或者10条？</a></li>
+<li><a href="#q-man-qi-dong-guo-cheng-zhong-na-me-fa-song-shu-liang-yong-sai-chuang-kou-shi-me-shi-hou-bu-zai-bei-zeng-shi-wu-xian-bei-zeng-ma">Q: 慢启动过程中，那么发送数量（拥塞窗口）什么时候不再倍增？是无限倍增吗？</a></li>
+<li><a href="#q-na-me-dang-jin-ru-yong-sai-bi-mian-mei-ci-1-shi-shi-me-shi-hou-cai-hui-bu-zai-ji-xu-jia">Q:那么，当进入拥塞避免，每次+1时，什么时候才会不再继续加？</a></li>
+<li><a href="#q-shang-mian-ti-dao-liao-chao-shi-na-me-tcp-ke-hu-duan-shi-zen-me-pan-duan-bao-wen-fa-song-chao-shi-de-ni">Q: 上面提到了超时， 那么TCP客户端是怎么判断报文发送超时的呢？</a></li>
+<li><a href="#q-shang-mian-ti-dao-de-chao-shi-shi-jian-rto-shi-zen-me-lai-de-wan-yi-she-de-tai-da-ke-neng-dao-zhi-hen-chi-cai-neng-fan-ying-guo-lai-she-de-tai-xiao-ze-ke-neng-dao-zhi-mei-tiao-du-chao-shi">Q:上面提到的超时时间RTO是怎么来的？万一设得太大可能导致很迟才能反应过来， 设得太小则可能导致每条都超时</a></li>
+<li><a href="#q-ru-guo-fa-sheng-chong-chuan-que-huan-shi-mei-you-shou-dao-ack-na-me-zui-xin-de-rtt-yang-ben-ying-gai-zen-me-suan-ji-ni-du-shou-bu-dao-zui-xin-de-ack-liao-rtt-nan-dao-qu-chao-shi-shi-jian-ma">Q: 如果发生重传，却还是没有收到ack，那么最新的RTT样本应该怎么算？即你都收不到最新的ack了， RTT难道取超时时间吗？</a></li>
+<li><a href="#q-shang-mian-ti-dao-de-ack-chao-shi-pan-duan-hui-bu-hui-tai-jiu-liao-jia-ru-zhi-shi-fa-de-shi-hou-diu-liao-zhong-jian-bu-fen-bao-wen-er-yi-dan-da-bu-fen-bao-wen-ack-huan-neng-zheng-chang-fan-hui-ye-yao-yi-zhi-deng-chao-shi-ma">Q: 上面提到的ACK超时判断会不会太久了？ 假如只是发的时候丢了中间部分报文而已， 但大部分报文ACK还能正常返回，也要一直等超时吗？</a></li>
+<li><a href="#q-qian-mian-chao-shi-chong-chuan-de-shi-hou-shi-bian-cheng-cong-1-kai-shi-man-qi-dong-wei-shi-me-zhe-ge-kuai-chong-chuan-que-shi-cong-ssthreshold-2-kai-shi-bing-qie-zou-yong-sai-bi-mian-wei-shi-me-hui-you-zhe-ge-qu-bie">Q: 前面“超时重传”的时候，是变成从1开始慢启动， 为什么这个“快重传”却是从ssthreshold/2开始，并且走拥塞避免？ 为什么会有这个区别？</a></li>
+<li><a href="#q-wei-sha-fa-song-di-duo-liao-shu-ju-jiu-hui-bu-fen-diu-shi-zhe-ge-shi-zen-me-ge-yuan-li">Q: 为啥发送地多了，数据就会部分丢失？这个是怎么个原理？</a></li>
+<li><a href="#q-tcp-chu-liao-shang-mian-de-chong-chuan-ding-shi-qi-hao-xiang-huan-you-ge-jian-chi-ding-shi-qi-qu-bie-shi-sha">Q: TCP除了上面的重传定时器， 好象还有个坚持定时器？区别是啥？</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#4-udp">4 UDP</a>
+<ul>
+<li><a href="#4-1-tcp-he-udp-de-qu-bie">4.1 TCP和UDP的区别：</a></li>
+<li><a href="#4-2-udp-de-yi-xie-te-dian">4.2 UDP的一些特点</a></li>
+<li><a href="#4-3-udp-de-ying-yong">4.3 UDP的应用</a></li>
+<li><a href="#q-udp-ke-yi-shi-xian-ke-kao-chuan-shu-ma">Q: UDP可以实现可靠传输吗？</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="1-chuan-shu-ceng-he-wang-luo-ceng-de-qu-bie">1 传输层和网络层的区别：</span><a href="#1-chuan-shu-ceng-he-wang-luo-ceng-de-qu-bie" class="header-anchor">#</a></h1>
+<h2><span id="1-1-fu-ze-dui-xiang-de-bu-tong">1.1 负责对象的不同</span><a href="#1-1-fu-ze-dui-xiang-de-bu-tong" class="header-anchor">#</a></h2>
+<ul>
+<li>传输层负责建立进程间的通信（即只关心进程A和进程B的消息传递，不考虑底下的东西）</li>
+<li>网络层负责建立主机间的通信（即只关心主机A怎么发给主机B）</li>
+</ul>
+<blockquote>
+<blockquote>
+<p>同理链路层就是物理上相邻的2个机器如何通信，物理层是电路上的通信</p>
+</blockquote>
+</blockquote>
+<h2><span id="1-2-xiao-yan-shang-de-bu-tong">1.2 校验上的不同</span><a href="#1-2-xiao-yan-shang-de-bu-tong" class="header-anchor">#</a></h2>
+<ul>
+<li>传输层会对数据和首部一起做校验</li>
+<li>网络层只对首部做校验，数据报部分不会关心。</li>
+</ul>
+<h1><span id="2-duan-kou-hao">2 端口号</span><a href="#2-duan-kou-hao" class="header-anchor">#</a></h1>
+<p>端口号是传输层重要的概念。</p>
+<h2><span id="2-1-duan-kou-hao-de-yi-yi">2.1 端口号的意义</span><a href="#2-1-duan-kou-hao-de-yi-yi" class="header-anchor">#</a></h2>
+<p>① 为进程适应不同操作系统提供一个复用和分用的软件</p>
+<blockquote>
+<blockquote>
+<p>复用：发送方不同进程都用同一种协议传输，目的端口号承担了这个工作<br>
+分用：接收方把IP报文组装交付时，通过端口号确认交付给谁</p>
+<p>② 端口是进程的重要交互地址。<br>
+即由端口确定交给主机上的哪个进程。<br>
+③ 只具有本地意义，只对本机有效</p>
+</blockquote>
+</blockquote>
+<h2><span id="2-2-duan-kou-hao-fan-wei">2.2 端口号范围</span><a href="#2-2-duan-kou-hao-fan-wei" class="header-anchor">#</a></h2>
+<p>端口号共16位，因此最大为65535</p>
+<ul>
+<li>
+<p>服务器端口号（做listen用的端口号）有2类：</p>
+<ol>
+<li>熟知端口号：0~1023</li>
+</ol>
+<blockquote>
+<blockquote>
+<p>熟知端口号有以下：<br>
+HTTP:80<br>
+HTTPS:443<br>
+DNS:53<br>
+FTP:21<br>
+TFTP:69<br>
+SNMP:161<br>
+TELNET:23<br>
+SMTP:25</p>
+</blockquote>
+</blockquote>
+<ol start="2">
+<li>注册端口号: 1024~49151，也叫系统端口号。有许多服务绑定于这些端口。</li>
+<li>动态和/或私有端口：49152~65535，理论上，不应为监听服务分配这些端口，一般是用于客户端的短暂端口号。</li>
+</ol>
+</li>
+<li>
+<p>UDP和TCP有各自的专属端口号，因此不会重复和干扰。</p>
+</li>
+</ul>
+<h1><span id="3-tcp">3 TCP</span><a href="#3-tcp" class="header-anchor">#</a></h1>
+<p>TCP全称<br>
+Transmission Control Protocol， 即传输控制协议。</p>
+<p>基于套接字传输<br>
+套接字：IP+端口号</p>
+<p>tcp的可靠性如下：</p>
+<ol>
+<li>数据被分隔成很多份合适的块来发送</li>
+<li>有超时重传机制</li>
+<li>会校验首部和数据内容。</li>
+<li>会对收到的数据报文做排序，按顺序组装上交<br>
+5.会丢弃重复的数据<br>
+6.提供流量控制，发送主机不会一下子发送太快<br>
+7.每次传输都有序号和ack应答，全双工。</li>
+</ol>
+<h2><span id="3-1-tcp-shou-bu">3.1 TCP首部</span><a href="#3-1-tcp-shou-bu" class="header-anchor">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>位数</th>
+<th>含义</th>
+<th>详情</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>16</td>
+<td>源端口</td>
+<td>因此端口号最多16位</td>
+</tr>
+<tr>
+<td>16</td>
+<td>目的端口</td>
+<td></td>
+</tr>
+<tr>
+<td>32</td>
+<td>报文序号</td>
+<td>该报文的序号</td>
+</tr>
+<tr>
+<td>32</td>
+<td>确认号</td>
+<td>期望收到的下一个报文序号。如果确认号位N，说明N-1都已经收到</td>
+</tr>
+<tr>
+<td>4</td>
+<td>数据偏移</td>
+<td>数据部分的起始位置，可以理解为首部长度。单位是4字节。</td>
+</tr>
+<tr>
+<td>6</td>
+<td>保留位</td>
+<td>没用，全部置成0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>URG紧急指针标志</td>
+<td>是否存在紧急数据</td>
+</tr>
+<tr>
+<td>1</td>
+<td>ACK标志</td>
+<td>是否是确认报文</td>
+</tr>
+<tr>
+<td>1</td>
+<td>PSH推送标志</td>
+<td>是否需要尽快上交进程</td>
+</tr>
+<tr>
+<td>1</td>
+<td>RST复位标志</td>
+<td>是否需要重建连接</td>
+</tr>
+<tr>
+<td>1</td>
+<td>SYN同步建立连接标志</td>
+<td>是不是连接建立期间的报文</td>
+</tr>
+<tr>
+<td>1</td>
+<td>FIN终止标志</td>
+<td>是否是终止连接期间的报文</td>
+</tr>
+<tr>
+<td>16</td>
+<td>窗口</td>
+<td>收到ack前对方可发送回来的数据量</td>
+</tr>
+<tr>
+<td>16</td>
+<td>校验和</td>
+<td>校验首部+数据+伪首部（伪首部指携带了ip的首部）</td>
+</tr>
+<tr>
+<td>16</td>
+<td>紧急指针位置</td>
+<td>紧急数据放在末尾，需要给出紧急数据的长度，便可推断位置</td>
+</tr>
+<tr>
+<td>0-320</td>
+<td>可变选项</td>
+<td>一些TCP选项，例如 最大报文长度、时间戳等。最长40字节</td>
+</tr>
+<tr>
+<td>?</td>
+<td>填充位</td>
+<td>保证首部长度为4字节整数倍</td>
+</tr>
+</tbody>
+</table>
+<p>从上面可以看到：</p>
+<ol>
+<li>TCP报文中不包含ip信息，只包含端口信息。</li>
+<li>校验和中使用到了伪首部来做校验，即实际上是有ip信息被处理后包含在校验和中了。</li>
+<li>TCP首部最小长度为20字节，最大长度为60字节，取决于可变选项。</li>
+<li>首部长度必定是4字节整数倍，不足会填充，因为数据偏移里的单位设置是4字节。</li>
+</ol>
+<hr>
+<h3><span id="q-jiang-yi-xia-tcp-bao-wen-du-you-sha-ke-yi-bu-an-shun-xu-jiang">Q:  讲一下TCP报文都有啥，可以不按顺序讲</span><a href="#q-jiang-yi-xia-tcp-bao-wen-du-you-sha-ke-yi-bu-an-shun-xu-jiang" class="header-anchor">#</a></h3>
+<p>A:</p>
+<ol>
+<li>首先是首部长度（数据偏移），确定读到哪</li>
+<li>重要的源端口 目的端口</li>
+<li>TCP 可靠性机制关键的一些数字：<br>
+报文号、ACK号、窗口、 校验和</li>
+<li>建连接、关连接用的标记<br>
+一堆标记（SYNC、FIN、RST之类的）</li>
+<li>其他无关紧要的紧急指针位置、可变选项，填充位</li>
+</ol>
+<h2><span id="3-2-hua-dong-chuang-kou">3.2 滑动窗口</span><a href="#3-2-hua-dong-chuang-kou" class="header-anchor">#</a></h2>
+<p>在TCP的发送端和接收端，有一个窗口的概念，直接用图片的方式简单明了回忆一下：</p>
+<h3><span id="3-2-1-fa-song-duan-chuang-kou">3.2.1发送端窗口</span><a href="#3-2-1-fa-song-duan-chuang-kou" class="header-anchor">#</a></h3>
+<p><img src="/images/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/20210218011330509.png" alt="在这里插入图片描述"></p>
+<hr>
+<h3><span id="3-2-2-jie-shou-duan-chuang-kou">3.2.2 接收端窗口</span><a href="#3-2-2-jie-shou-duan-chuang-kou" class="header-anchor">#</a></h3>
+<p><img src="/images/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/20210218011340404.png" alt="在这里插入图片描述"></p>
+<p>这里可以看到接收端一次性接收的缓存是有限的，所以进程出现问题迟迟没有接收数据，那么会在ack里告知还能发多少份。<br>
+这个叫通告窗口，即告知接收端还能收几份数据（TCP报文里的窗口位就是这个）</p>
+<h3><span id="3-2-3-jian-chi-ding-shi-qi">3.2.3 坚持定时器</span><a href="#3-2-3-jian-chi-ding-shi-qi" class="header-anchor">#</a></h3>
+<p>如果接收端的接收缓存用完，导致返回的ack报文里提示窗口为0，则发送端无法发送数据，此时会启动坚持定时器：<br>
+每隔5s发送1个字节的小报文，来查看对方窗口响应。当窗口不再为0，则结束坚持定时器</p>
+<h3><span id="3-2-4-hu-tu-chuang-kou">3.2.4 糊涂窗口</span><a href="#3-2-4-hu-tu-chuang-kou" class="header-anchor">#</a></h3>
+<p>上面提到的坚持定时器机制里，导致了每次只发一小点数据。<br>
+避免措施：<br>
+1. 接收方设定一个最小窗口阈值，不通告小窗口<br>
+2. 发送方设定一个最小窗口阈值，每次发送满一定长度的报文<br>
+3. 发送手头所有数据切不接收ack</p>
+<h2><span id="3-3-tcp-lian-jie-liu-cheng">3.3 TCP连接流程</span><a href="#3-3-tcp-lian-jie-liu-cheng" class="header-anchor">#</a></h2>
+<p>TCP通过三次握手建立连接，四次挥手结束连接</p>
+<h3><span id="3-3-1-wo-shou-he-hui-shou-liu-cheng">3.3.1 握手和挥手流程</span><a href="#3-3-1-wo-shou-he-hui-shou-liu-cheng" class="header-anchor">#</a></h3>
+<p>把这个图牢记于心就不会有问题：<br>
+<img src="/images/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/20210218011409757.png" alt="在这里插入图片描述"></p>
+<p>CLOSED状态：建立连接前的初始状态即关闭状态在建立连接前，先从CLOSED状态变成LISTEN状态（监听状态，表示可以传信号了）</p>
+<ol>
+<li>当客户首先发送SYN后，客户变成SYN_SENT状态。</li>
+<li>当服务器接收到SYN后，服务器变成了SYN_REVD状态。</li>
+<li>当服务器传给客户一个SYN和ACK后，变成了ESTABLISHED状态（表述开始进行数据传输）</li>
+<li>当服务器接受到客户传来的ACK后，也变成ESTABLISHED状态。</li>
+<li>当客户发送FIN（主动关闭）后，客户变成了FIN_WAIT1状态。服务器收到FIN后，执行被动关6. 闭，服务器变成了CLOSEWAIT状态。</li>
+<li>服务器先发送ACK，客户收到ACK后变成FIN_WAIT2状态。</li>
+<li>过了一段时间，服务器才发送FIN，这时候服务器变成LAST_ACK状态客户收到FIN后，变成了TIME_WAIT状态，同时发送ACK，进行2MSL等待。之后2者一起变为CLOSED状态</li>
+</ol>
+<hr>
+<h4><span id="wei-shi-me-jian-li-yao-3-ci-wo-shou">为什么建立要3次握手？</span><a href="#wei-shi-me-jian-li-yao-3-ci-wo-shou" class="header-anchor">#</a></h4>
+<p>建立握手3次原因：一方接收到syn报文后，需向对方回应一个ack。三次握手中，第一个是sync报文，第二个是ack、sync报文合在一起，第三个ack报文。这样就都回应了ack，需要3次。<br>
+关键在于最后一次需要一个对 接收端sync的ack响应。</p>
+<hr>
+<h4><span id="wei-shi-me-jie-shu-lian-jie-yao-4-ci-hui-shou">为什么结束连接要4次挥手？</span><a href="#wei-shi-me-jie-shu-lian-jie-yao-4-ci-hui-shou" class="header-anchor">#</a></h4>
+<p>TCP中发送端发送fin后，就会将自己关闭。<br>
+但是接收端一方接收到fin报文后，数据可能还没发送完成。<br>
+所以需要先发完ack，再发fin，所以这里会多一次挥手。 最后ack是对fin的确认</p>
+<hr>
+<h4><span id="neng-fou-hui-shou-3-ci">能否挥手3次</span><a href="#neng-fou-hui-shou-3-ci" class="header-anchor">#</a></h4>
+<p><strong>能</strong>。收到第一个fin报文后，它可能刚好没有数据要传输了，fin和ack报文一起回应，对方再回应ack，总共三次，挥手完毕。实际中抓报文，有很多这样的情况。</p>
+<hr>
+<h4><span id="si-ci-hui-shou-zhong-de-time-wait-zhuang-tai-zuo-yong">四次挥手中的TIME_WAIT状态作用？</span><a href="#si-ci-hui-shou-zhong-de-time-wait-zhuang-tai-zuo-yong" class="header-anchor">#</a></h4>
+<p>A:</p>
+<p>1.若最后一步客户发出的ACK丢失了，那么服务器将重发FIN，所以必须维持TIME_WAIT状态到可能的第二次重发FIN的时间。</p>
+<p>2.为了避免在终止连接后再次重新建立新连接时，收到之前那次连接“迷路”的分组，要维持一个TIME_WAIT状态以便吸收掉迷路的分组。</p>
+<hr>
+<h4><span id="liang-bian-tong-shi-xiang-hu-jian-li-lian-jie-hui-fa-sheng-shi-me">两边同时相互建立连接会发生什么？</span><a href="#liang-bian-tong-shi-xiang-hu-jian-li-lian-jie-hui-fa-sheng-shi-me" class="header-anchor">#</a></h4>
+<p>2边同时发送SYNC<br>
+2边同时收到后， 就会发现自己在还没收到SYNC-ACK的情况下收到了新的SYNC，说明发生了&quot;同时打开&quot;的情况。<br>
+此时他会直接发送ack，并且不再等待sync-ack响应了，直接进入ESTABLISHED状态。所以此时仅需2次握手（当然整体上看是4次，一边各2次）</p>
+<h4><span id="liang-bian-tong-shi-guan-bi-lian-jie-hui-fa-sheng-shi-me">两边同时关闭连接会发生什么</span><a href="#liang-bian-tong-shi-guan-bi-lian-jie-hui-fa-sheng-shi-me" class="header-anchor">#</a></h4>
+<p>当2者发生同时关闭，即同时发出FIN时，会进入CLOSING状态，收到相互的ACK后进入TIME_WAIT状态. 即此时需2次挥手（整体上看是4次）</p>
+<h3><span id="3-3-4-jiao-hu-shu-ju">3.3.4 交互数据</span><a href="#3-3-4-jiao-hu-shu-ju" class="header-anchor">#</a></h3>
+<p><img src="/images/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/20210218011424408.png" alt="在这里插入图片描述"></p>
+<p>每一个交互按键都会产生一个数据分组，每次从客户传到服务器的是一个字节的按键。而Rlogin需要远程系统回显客户键入的字符，这样就会产生4个报文段：<br>
+（1）来自客户的交互按键<br>
+（2）来自服务器的按键确认<br>
+（3）来自服务器的按键回显<br>
+（4）来自客户的按键回显确认</p>
+<ul>
+<li>
+<h4><span id="nagle-suan-fa">nagle算法</span><a href="#nagle-suan-fa" class="header-anchor">#</a></h4>
+<p>当数据交互很快时， 可能会有很多小分组。<br>
+开启nagle后，会把小分组做合并一起发送。</p>
+</li>
+</ul>
+<hr>
+<h4><span id="q-shi-me-shi-tcp-nian-bao">Q: 什么是TCP粘包？</span><a href="#q-shi-me-shi-tcp-nian-bao" class="header-anchor">#</a></h4>
+<p>A:<br>
+TCP粘包就是指发送方发送的若干包数据到达接收方时粘成了一包<br>
+从接收缓冲区来看，后一包数据的头紧接着前一包数据的尾<br>
+出现粘包的原因是多方面的，可能是来自发送方，也可能是来自接收方。</p>
+<hr>
+<h4><span id="q-zao-cheng-nian-bao-de-yuan-yin-shi-shi-me">Q: 造成粘包的原因是什么？</span><a href="#q-zao-cheng-nian-bao-de-yuan-yin-shi-shi-me" class="header-anchor">#</a></h4>
+<p>A:<br>
+发送方原因： 开启了nagle算法<br>
+接收方原因：如果TCP接收数据包到缓存的速度大于应用程序从缓存中读取数据包的速度，多个包就会被缓存，应用程序就有可能读取到多个首尾相接粘到一起的包</p>
+<hr>
+<h4><span id="q-shi-me-shi-hou-xu-yao-chu-li-nian-bao-xian-xiang">Q:什么时候需要处理粘包现象？</span><a href="#q-shi-me-shi-hou-xu-yao-chu-li-nian-bao-xian-xiang" class="header-anchor">#</a></h4>
+<p>A:<br>
+如果发送方发送的多组数据本来就是同一块数据的不同部分，比如说一个文件被分成多个部分发送，这时当然不需要处理粘包现象<br>
+如果多个分组毫不相干，甚至是并列关系，导致应用层取出时无法识别各份数据，那么这个时候就一定要处理粘包现象了</p>
+<hr>
+<h4><span id="q-ru-he-chu-li-nian-bao-xian-xiang">Q: 如何处理粘包现象？</span><a href="#q-ru-he-chu-li-nian-bao-xian-xiang" class="header-anchor">#</a></h4>
+<p>A:</p>
+<ol>
+<li>发送方<br>
+对于发送方造成的粘包问题，可以通过关闭Nagle算法来解决，使用TCP_NODELAY选项来关闭算法。</li>
+<li>接收方<br>
+接收方没有办法来处理粘包现象，只能将问题交给应用层来处理。</li>
+<li>应用层<br>
+解决办法：循环处理，应用程序从接收缓存中读取分组时，读完一条数据，就应该循环读取下一条数据，直到所有数据都被处理完成，但是如何判断每条数据的长度呢？</li>
+</ol>
+<ul>
+<li>格式化数据：每条数据有固定的格式（开始符，结束符），这种方法简单易行，但是选择开始符和结束符时一定要确保每条数据的内部不包含开始符和结束</li>
+<li>发送长度：发送每条数据时，将数据的长度一并发送，例如规定数据的前4位是数据的长度，应用层在处理时可以根据长度来判断每个分组的开始和结束位置</li>
+</ul>
+<hr>
+<h4><span id="q-udp-hui-bu-hui-chan-sheng-nian-bao-wen-ti-ni">Q：UDP会不会产生粘包问题呢？</span><a href="#q-udp-hui-bu-hui-chan-sheng-nian-bao-wen-ti-ni" class="header-anchor">#</a></h4>
+<p>A:<br>
+UDP则是面向消息传输的，是有保护消息边界的，接收方一次只接受一条独立的信息，所以不存在粘包问题。<br>
+举个例子：有三个数据包，大小分别为2k、4k、6k，如果采用UDP发送的话，不管接受方的接收缓存有多大，我们必须要进行至少三次以上的发送才能把数据包发送完，但是使用TCP协议发送的话，我们只需要接受方的接收缓存有12k的大小，就可以一次把这3个数据包全部发送完毕。</p>
+<h3><span id="3-3-5-yi-chang-qing-kuang">3.3.5 异常情况</span><a href="#3-3-5-yi-chang-qing-kuang" class="header-anchor">#</a></h3>
+<ul>
+<li>
+<p>异常情况时，会把报文里的复位表示RST置为1。有3种情况会发送复位报文<br>
+①端口不存在<br>
+②进程异常终止<br>
+③客户端异常退出， 服务器没有收到任何fin，此时称为TCP<strong>半打开</strong>状态。如果TCP配置了心跳，则可以检测</p>
+</li>
+<li>
+<p>半关闭<br>
+TCP的半关连接是指：TCP连接只有一方发送了FIN，另一方没有发出FIN包，仍然可以在一个方向上正常发送数据。</p>
+</li>
+<li>
+<p>半连接<br>
+三次握手中，主动发起握手的一方不发最后一次ACK，使得服务器端阻塞在SYN_RECV状态半连接攻击（SYN攻击）：会耗尽服务器资源，使得真正的请求无法建立连接。</p>
+</li>
+</ul>
+<h2><span id="3-4-yong-sai-bi-mian-ji-zhi">3.4 拥塞避免机制</span><a href="#3-4-yong-sai-bi-mian-ji-zhi" class="header-anchor">#</a></h2>
+<p>这块概念很多很乱，我按问题整理了一下，一步步来<br>
+TCP的拥塞避免等机制对于初学者来说还是比较复杂的，工作中如果开发时偏应用层，那么大部分时候就会摸不到这个机制，感受也就没那么深了。<br>
+但如果你的开发过程涉及数据传输，一直在重传、超时之类的方案里有困惑的话，不妨重新学一学可靠性最精致的TCP协议。</p>
+<p>所以这里我抛去死记硬背的那堆概念，用10个连续的问题来学习这个机制，注意看的时候先自己思考一下如果是自己，会怎么设计，再去看实际的TCP设计，来理解它的精妙之处。</p>
+<hr>
+<h3><span id="q-jian-li-lian-jie-hou-mei-ci-fa-song-de-bao-wen-shu-liang-shi-gu-ding-de-ma-ji-mei-ci-du-fa-1-tiao-huo-zhe-10-tiao">Q: 建立连接后，每次发送的报文数量是固定的吗？即每次都发1条或者10条？</span><a href="#q-jian-li-lian-jie-hou-mei-ci-fa-song-de-bao-wen-shu-liang-shi-gu-ding-de-ma-ji-mei-ci-du-fa-1-tiao-huo-zhe-10-tiao" class="header-anchor">#</a></h3>
+<p>A:<br>
+不是。<br>
+建立连接后，会先只发1条， 然后发2条，接着再发4条，逐步增加。<br>
+这个过程叫 <strong>“慢启动”</strong>。<br>
+这个1、2、4递增的数量被称之为 <strong>拥塞窗口</strong> cwnd</p>
+<p>可以理解为TCP希望刚开始，可以大胆点，不断加数量。但为了保险期间还是从1条还是倍增。</p>
+<hr>
+<h3><span id="q-man-qi-dong-guo-cheng-zhong-na-me-fa-song-shu-liang-yong-sai-chuang-kou-shi-me-shi-hou-bu-zai-bei-zeng-shi-wu-xian-bei-zeng-ma">Q: 慢启动过程中，那么发送数量（拥塞窗口）什么时候不再倍增？是无限倍增吗？</span><a href="#q-man-qi-dong-guo-cheng-zhong-na-me-fa-song-shu-liang-yong-sai-chuang-kou-shi-me-shi-hou-bu-zai-bei-zeng-shi-wu-xian-bei-zeng-ma" class="header-anchor">#</a></h3>
+<p>A:<br>
+不会无限倍增。<br>
+当到达<strong>慢启动门限ssthreshold</strong>时，会变成每次都增加1条。<br>
+这个过程叫<strong>拥塞避免过程</strong>， 也有叫他拥塞避免算法的</p>
+<p>可以理解为tcp感觉到有风险了，于是开始慢慢地、小心翼翼地1条1条地添加发送条数。</p>
+<hr>
+<h3><span id="q-na-me-dang-jin-ru-yong-sai-bi-mian-mei-ci-1-shi-shi-me-shi-hou-cai-hui-bu-zai-ji-xu-jia">Q:那么，当进入拥塞避免，每次+1时，什么时候才会不再继续加？</span><a href="#q-na-me-dang-jin-ru-yong-sai-bi-mian-mei-ci-1-shi-shi-me-shi-hou-cai-hui-bu-zai-ji-xu-jia" class="header-anchor">#</a></h3>
+<p>A:<br>
+随着每次发送的数量越发越多， 最终会超出带宽限制，于是就会有某条报文发生超时。<br>
+有可能是发的中途丢了， 亦或者是返回的数据全阻塞住了，一条都回不来。</p>
+<p>当发送端检测到发生超时时，就会让 <strong>慢启动门限ssthreshold = 当前拥塞窗口cwnd/2</strong><br>
+接着<strong>cwnd 重新置为1</strong>，从新开始 慢启动算法。</p>
+<p>这样的好处在于可以检测到每次发送的上限，动态调整发送窗口。<br>
+上面的过程叫做 <strong>超时重传</strong>。<br>
+注意发生超时重传时， cwnd会重置成1。</p>
+<hr>
+<h3><span id="q-shang-mian-ti-dao-liao-chao-shi-na-me-tcp-ke-hu-duan-shi-zen-me-pan-duan-bao-wen-fa-song-chao-shi-de-ni">Q: 上面提到了超时， 那么TCP客户端是怎么判断报文发送超时的呢？</span><a href="#q-shang-mian-ti-dao-liao-chao-shi-na-me-tcp-ke-hu-duan-shi-zen-me-pan-duan-bao-wen-fa-song-chao-shi-de-ni" class="header-anchor">#</a></h3>
+<p>A:<br>
+每次发送数据包的时候， 都会有一个相应的计时器，一旦超过 RTO(超时时间） 而没有收到 ACK， TCP就会重发该数据包。<br>
+没收到 ACK 的数据包都会存在重传缓冲区里，等到 ACK 后，就从缓冲区里删除。</p>
+<hr>
+<h3><span id="q-shang-mian-ti-dao-de-chao-shi-shi-jian-rto-shi-zen-me-lai-de-wan-yi-she-de-tai-da-ke-neng-dao-zhi-hen-chi-cai-neng-fan-ying-guo-lai-she-de-tai-xiao-ze-ke-neng-dao-zhi-mei-tiao-du-chao-shi">Q:上面提到的超时时间RTO是怎么来的？万一设得太大可能导致很迟才能反应过来， 设得太小则可能导致每条都超时</span><a href="#q-shang-mian-ti-dao-de-chao-shi-shi-jian-rto-shi-zen-me-lai-de-wan-yi-she-de-tai-da-ke-neng-dao-zhi-hen-chi-cai-neng-fan-ying-guo-lai-she-de-tai-xiao-ze-ke-neng-dao-zhi-mei-tiao-du-chao-shi" class="header-anchor">#</a></h3>
+<p>A:<br>
+通过“每次报文的往返时间样本”和“之前样本的偏差值”<strong>动态计算</strong>出来的。</p>
+<ul>
+<li>RTT ： 报文往返时间（指从发送到收到ack的时间）。每个报文发出后都有个定时器，收到后都会计算出一个RTT样本</li>
+</ul>
+<hr>
+<ul>
+<li>RTTs： 加权平均往返时间，类似于一个估算的往返时间，实时在变。<br>
+RTTs = （1-a) * RTTs + a * RTT最新样本<br>
+即每次得到RTT样本后， ?都会使用a这个占比去更新RTTs。</li>
+</ul>
+<hr>
+<ul>
+<li>RTTd: ?RTT偏差加权平均值（就是用来计算超时时间应该比RTT多多少）<br>
+RTTd = (1 - b) * RTTd + b*RTTs - RTT最新样本<br>
+即每次会用新的RTTs以b的占比去更新一下RTTd，并减去RTT样本</li>
+</ul>
+<hr>
+<ul>
+<li>RTO ： 超时重传时间<br>
+等于平均往返时间 加上 4倍偏差值<br>
+RTO = RTTs + 4*RTTd?</li>
+</ul>
+<hr>
+<h3><span id="q-ru-guo-fa-sheng-chong-chuan-que-huan-shi-mei-you-shou-dao-ack-na-me-zui-xin-de-rtt-yang-ben-ying-gai-zen-me-suan-ji-ni-du-shou-bu-dao-zui-xin-de-ack-liao-rtt-nan-dao-qu-chao-shi-shi-jian-ma">Q: 如果发生重传，却还是没有收到ack，那么最新的RTT样本应该怎么算？即你都收不到最新的ack了， RTT难道取超时时间吗？</span><a href="#q-ru-guo-fa-sheng-chong-chuan-que-huan-shi-mei-you-shou-dao-ack-na-me-zui-xin-de-rtt-yang-ben-ying-gai-zen-me-suan-ji-ni-du-shou-bu-dao-zui-xin-de-ack-liao-rtt-nan-dao-qu-chao-shi-shi-jian-ma" class="header-anchor">#</a></h3>
+<p>A:<br>
+会使用karn算法： 发生重传时，不更新这次的RTT样。选用后面收到的ack<br>
+修正karn： 为了避免发生重传后，实际RTT都变慢了，导致一下子所有请求都超时， 会在发生重传时，把RTO假大1倍。</p>
+<hr>
+<h3><span id="q-shang-mian-ti-dao-de-ack-chao-shi-pan-duan-hui-bu-hui-tai-jiu-liao-jia-ru-zhi-shi-fa-de-shi-hou-diu-liao-zhong-jian-bu-fen-bao-wen-er-yi-dan-da-bu-fen-bao-wen-ack-huan-neng-zheng-chang-fan-hui-ye-yao-yi-zhi-deng-chao-shi-ma">Q: 上面提到的ACK超时判断会不会太久了？ 假如只是发的时候丢了中间部分报文而已， 但大部分报文ACK还能正常返回，也要一直等超时吗？</span><a href="#q-shang-mian-ti-dao-de-ack-chao-shi-pan-duan-hui-bu-hui-tai-jiu-liao-jia-ru-zhi-shi-fa-de-shi-hou-diu-liao-zhong-jian-bu-fen-bao-wen-er-yi-dan-da-bu-fen-bao-wen-ack-huan-neng-zheng-chang-fan-hui-ye-yao-yi-zhi-deng-chao-shi-ma" class="header-anchor">#</a></h3>
+<p>A:<br>
+如果能正常接收其他报文的ACK， 只是中间的部分报文丢了， 则有另一个办法。</p>
+<p>接收端有一个冗余确认机制：</p>
+<ol>
+<li>发送端A 发送 1、2、3、4、5四条</li>
+<li>但是B接收端只收到1、2、4、5，而3因为网络拥塞丢了。</li>
+<li>于是B会发送ack=3而不是ack=5 给A。 <strong>这就是冗余确认机制，只发送缺失那部分的ack，后面的4和5都不管。</strong></li>
+<li>A收到ack=3后， 继续发送3、4、5、6、7， 结果3还是丢了。</li>
+<li>于是B又发送ack=3。</li>
+</ol>
+<p>当A发现连续3次收到了ack=3时，就会觉察到不对劲，我都发3次了你还是说没收到，可你又能正常返回其他ACK给我，是不是我发的太多了？</p>
+<p>上面这个判断3次的重传算法叫“快重传”。</p>
+<p>于是A会马上进入 “快速恢复”。<br>
+和之前类似，慢启动门限ssthreshold = 当前拥塞窗口cwnd/2<br>
+但是！！  新的拥塞窗口cwnd会设置成ssthreshold/2，  而不是1。<br>
+而且不会走慢启动倍增的那种，而是走拥塞避免， 逐步+1的那种。<br>
+<img src="/images/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/1638808791348065758.png" alt="image.png"></p>
+<hr>
+<h3><span id="q-qian-mian-chao-shi-chong-chuan-de-shi-hou-shi-bian-cheng-cong-1-kai-shi-man-qi-dong-wei-shi-me-zhe-ge-kuai-chong-chuan-que-shi-cong-ssthreshold-2-kai-shi-bing-qie-zou-yong-sai-bi-mian-wei-shi-me-hui-you-zhe-ge-qu-bie">Q: 前面“超时重传”的时候，是变成从1开始慢启动， 为什么这个“快重传”却是从ssthreshold/2开始，并且走拥塞避免？ 为什么会有这个区别？</span><a href="#q-qian-mian-chao-shi-chong-chuan-de-shi-hou-shi-bian-cheng-cong-1-kai-shi-man-qi-dong-wei-shi-me-zhe-ge-kuai-chong-chuan-que-shi-cong-ssthreshold-2-kai-shi-bing-qie-zou-yong-sai-bi-mian-wei-shi-me-hui-you-zhe-ge-qu-bie" class="header-anchor">#</a></h3>
+<p>A:<br>
+因为前面发生超时重传时，  是比较严重的情况， 超时时间内一个ACK都没收到。就好像来回数据都凭空消失了。</p>
+<p>而快速重传发生时， 还是能收到部分ack的， 只是丢失了部分数据， 说明拥塞没那么严重，于是可以大胆一点将cwnd削减到1/4， 而不是直接从1开始。</p>
+<p>到了这里，基本就能理清楚超时重传和快重传的区别了，重点是理解这2个区别是怎么来的。后面再补几个问题，避免你和其他概念搞混，但不会说得太深，具体需要你自己去扩展学习了。</p>
+<h3><span id="q-wei-sha-fa-song-di-duo-liao-shu-ju-jiu-hui-bu-fen-diu-shi-zhe-ge-shi-zen-me-ge-yuan-li">Q: 为啥发送地多了，数据就会部分丢失？这个是怎么个原理？</span><a href="#q-wei-sha-fa-song-di-duo-liao-shu-ju-jiu-hui-bu-fen-diu-shi-zhe-ge-shi-zen-me-ge-yuan-li" class="header-anchor">#</a></h3>
+<p>A:<br>
+路由器有缓存，IP分组接收过多时就会耗尽空间，丢弃数据。详细可以看路由器的数据转发原理。</p>
+<hr>
+<h3><span id="q-tcp-chu-liao-shang-mian-de-chong-chuan-ding-shi-qi-hao-xiang-huan-you-ge-jian-chi-ding-shi-qi-qu-bie-shi-sha">Q: TCP除了上面的重传定时器， 好象还有个坚持定时器？区别是啥？</span><a href="#q-tcp-chu-liao-shang-mian-de-chong-chuan-ding-shi-qi-hao-xiang-huan-you-ge-jian-chi-ding-shi-qi-qu-bie-shi-sha" class="header-anchor">#</a></h3>
+<p>A:<br>
+坚持定时器和超时、网络拥塞没有关系， 和通告窗口即对端的接收能力有关。<br>
+简单来说， 就是对方的传输层缓冲区（接收端窗口）满了，告诉你别发了，我吃不下了，于是返回通告窗口为0。<br>
+但你想知道啥时候可以发，于是就启动一个坚持定时器，每隔5s发送1个字节的小报文，小小地试探下。当通告窗口不为0了，就重新开始发。</p>
+<h1><span id="4-udp">4 UDP</span><a href="#4-udp" class="header-anchor">#</a></h1>
+<p>网络层的多播和广播机制，需要依赖传输层的UDP。</p>
+<h2><span id="4-1-tcp-he-udp-de-qu-bie">4.1 TCP和UDP的区别：</span><a href="#4-1-tcp-he-udp-de-qu-bie" class="header-anchor">#</a></h2>
+<ul>
+<li>TCP有连接， UDP无连接</li>
+<li>TCP可靠， UDP不可靠，发出去不管了。也没有拥塞控制等机制。 不过UDP会做数据正确性校验。</li>
+<li>UDP会一次性交付一个完整报文，不会做拆分，TCP可能会有小的分组。</li>
+<li>UDP首部比较简单， 只有源端口、目的端口、报文长度、校验和、填充位。</li>
+</ul>
+<h2><span id="4-2-udp-de-yi-xie-te-dian">4.2 UDP的一些特点</span><a href="#4-2-udp-de-yi-xie-te-dian" class="header-anchor">#</a></h2>
+<ul>
+<li>
+<p>每次调用程序里多播的接口时，都会产生1个UDP消息，没有那种可以复用的UDP连接。</p>
+</li>
+<li>
+<p>UDP数据报的最大长度，和应用程序可读写的数据报最大长度有关，和TCP/IP内核有关。<br>
+当数据报长度大于程序可读写长度，会引发 数据截断。所以udp数据的长度必须要控制好，毕竟他无法根据MTU做分片。</p>
+</li>
+<li>
+<p>怎么确认MTU多大？<br>
+可以用taceroute命令检测MTU， 本质上是把TCP报文设置成不分片，然后逐步增大，直到发生了ICMP不可达的报错。</p>
+</li>
+<li>
+<p>如果一次性发送了6个UDP数据报， 并且在链路层有6次ARP请求， 接收端收到6个UDP后，只会发送一个ARP响应。</p>
+</li>
+<li>
+<p>UDP一般用于本地小范围通信， 所以差错其实相比TCP还小一点。</p>
+</li>
+</ul>
+<h2><span id="4-3-udp-de-ying-yong">4.3 UDP的应用</span><a href="#4-3-udp-de-ying-yong" class="header-anchor">#</a></h2>
+<p>TFTP（小文件传输）<br>
+DNS（域名解析）<br>
+SNMP(简单网络管理协议）<br>
+IGMP<br>
+BOOTP（无盘系统引导）<br>
+RTP(实时传输协议)<br>
+多媒体应用</p>
+<hr>
+<h2><span id="q-udp-ke-yi-shi-xian-ke-kao-chuan-shu-ma">Q: UDP可以实现可靠传输吗？</span><a href="#q-udp-ke-yi-shi-xian-ke-kao-chuan-shu-ma" class="header-anchor">#</a></h2>
+<p>A:<br>
+可以实现，但必须在应用层做改造。</p>
+<ol>
+<li>添加seq/ack机制，确保数据发送到对端</li>
+<li>添加发送和接收缓冲区，主要是用户超时重传。</li>
+<li>添加超时重传机制。</li>
+</ol>
+<ul>
+<li>
+<p>详细说明：送端发送数据时，生成一个随机seq=x，然后每一片按照数据大小分配seq。数据到达接收端后接收端放入缓存，并发送一个ack=x的包，表示对方已经收到了数据。发送端收到了ack包后，删除缓冲区对应的数据。时间到后，定时任务检查是否需要重传数据。</p>
+</li>
+<li>
+<p>目前有多种开源程序利用udp实现了可靠的数据传输。分别为RUDP、RTP、UDT</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E4%BC%A0%E8%BE%93%E5%B1%82%E8%AF%A6%E8%A7%A3/" title="计网之传输层（TCP&#x2F;IP）详解">http://breakdawncoder.com/知识库/计算机基础/计算机网络/计网之传输层详解/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag"># 计算机基础,计算机网络</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%B1%82%E8%AF%A6%E8%A7%A3/" rel="prev" title="计网之网络层（IP协议）详解">
+      <i class="fa fa-chevron-left"></i> 计网之网络层（IP协议）详解
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E6%9C%AC%E5%90%8D%E8%AF%8D%E5%92%8C%E6%A6%82%E5%BF%B5/" rel="next" title="数据库基本名词和概念">
+      数据库基本名词和概念 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">1 传输层和网络层的区别：</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 负责对象的不同</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 校验上的不同</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">2 端口号</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 端口号的意义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 端口号范围</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">3 TCP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 TCP首部</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.1.1.</span> <span class="nav-text">Q:  讲一下TCP报文都有啥，可以不按顺序讲</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 滑动窗口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.2.1.</span> <span class="nav-text">3.2.1发送端窗口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.2.2.</span> <span class="nav-text">3.2.2 接收端窗口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.2.3.</span> <span class="nav-text">3.2.3 坚持定时器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.2.4.</span> <span class="nav-text">3.2.4 糊涂窗口</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 TCP连接流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.3.1.</span> <span class="nav-text">3.3.1 握手和挥手流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.3.1.1.</span> <span class="nav-text">为什么建立要3次握手？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.3.1.2.</span> <span class="nav-text">为什么结束连接要4次挥手？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.3.1.3.</span> <span class="nav-text">能否挥手3次</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.3.1.4.</span> <span class="nav-text">四次挥手中的TIME_WAIT状态作用？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.3.1.5.</span> <span class="nav-text">两边同时相互建立连接会发生什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.3.1.6.</span> <span class="nav-text">两边同时关闭连接会发生什么</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.3.2.</span> <span class="nav-text">3.3.4 交互数据</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.3.2.1.</span> <span class="nav-text">nagle算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.3.2.2.</span> <span class="nav-text">Q: 什么是TCP粘包？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.3.2.3.</span> <span class="nav-text">Q: 造成粘包的原因是什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.3.2.4.</span> <span class="nav-text">Q:什么时候需要处理粘包现象？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.3.2.5.</span> <span class="nav-text">Q: 如何处理粘包现象？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.3.2.6.</span> <span class="nav-text">Q：UDP会不会产生粘包问题呢？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.3.3.</span> <span class="nav-text">3.3.5 异常情况</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.4.</span> <span class="nav-text">3.4 拥塞避免机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.4.1.</span> <span class="nav-text">Q: 建立连接后，每次发送的报文数量是固定的吗？即每次都发1条或者10条？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.4.2.</span> <span class="nav-text">Q: 慢启动过程中，那么发送数量（拥塞窗口）什么时候不再倍增？是无限倍增吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.4.3.</span> <span class="nav-text">Q:那么，当进入拥塞避免，每次+1时，什么时候才会不再继续加？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.4.4.</span> <span class="nav-text">Q: 上面提到了超时， 那么TCP客户端是怎么判断报文发送超时的呢？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.4.5.</span> <span class="nav-text">Q:上面提到的超时时间RTO是怎么来的？万一设得太大可能导致很迟才能反应过来， 设得太小则可能导致每条都超时</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.4.6.</span> <span class="nav-text">Q: 如果发生重传，却还是没有收到ack，那么最新的RTT样本应该怎么算？即你都收不到最新的ack了， RTT难道取超时时间吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.4.7.</span> <span class="nav-text">Q: 上面提到的ACK超时判断会不会太久了？ 假如只是发的时候丢了中间部分报文而已， 但大部分报文ACK还能正常返回，也要一直等超时吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.4.8.</span> <span class="nav-text">Q: 前面“超时重传”的时候，是变成从1开始慢启动， 为什么这个“快重传”却是从ssthreshold&#x2F;2开始，并且走拥塞避免？ 为什么会有这个区别？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.4.9.</span> <span class="nav-text">Q: 为啥发送地多了，数据就会部分丢失？这个是怎么个原理？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.4.10.</span> <span class="nav-text">Q: TCP除了上面的重传定时器， 好象还有个坚持定时器？区别是啥？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">4 UDP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 TCP和UDP的区别：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 UDP的一些特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 UDP的应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.4.</span> <span class="nav-text">Q: UDP可以实现可靠传输吗？</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共305.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="关于类初始化的时机和误区 有误导的“加载三部曲” 加载：不仅仅是读取字节流  类加载器  双亲委派  双亲委派的详细执行过程和中间方法 双亲委派的好处 父加载器中要加载某个类A时，A需要使用子加载器来加载，但是父加载器没有子加载器的代码，怎么办？   OSGI网状类加载器  为什么OSGI可以实现热部署，但是双亲委派不可以？     数组类是如何加载的？   连接  验证  文件格式校验（c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java类加载全过程详解">
+<meta property="og:url" content="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="关于类初始化的时机和误区 有误导的“加载三部曲” 加载：不仅仅是读取字节流  类加载器  双亲委派  双亲委派的详细执行过程和中间方法 双亲委派的好处 父加载器中要加载某个类A时，A需要使用子加载器来加载，但是父加载器没有子加载器的代码，怎么办？   OSGI网状类加载器  为什么OSGI可以实现热部署，但是双亲委派不可以？     数组类是如何加载的？   连接  验证  文件格式校验（c">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652581844567633533.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652582629860693478.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652583662013743457.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652594910504257328.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652595413217848779.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652595269171806676.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652595359889871663.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/a4c77999a2f8a0d5bc6401d05efeca9cdcecef43.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/62408d2e1e08530789333ccd-1651765505820.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652596406384448149.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652596978343390083.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652598263182568128.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652598525735605413.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652598909384718936.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652599879633278954.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652601092434475198.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652601973522659730.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652602585506110322.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652603187639739722.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652604139278590043.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652604259330823080.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652605263696340667.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652606173785989291.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652606407501364079.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652606577911480954.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/5e7eed6ce4b08b6157409373.png">
+<meta property="article:published_time" content="2022-06-05T06:16:01.000Z">
+<meta property="article:modified_time" content="2022-08-09T16:50:38.886Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="java,深入理解jvm">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652581844567633533.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java类加载全过程详解 | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java类加载全过程详解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-06-05 14:16:01" itemprop="dateCreated datePublished" datetime="2022-06-05T14:16:01+08:00">2022-06-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-10 00:50:38" itemprop="dateModified" datetime="2022-08-10T00:50:38+08:00">2022-08-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">java高级原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/jvm%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">jvm原理</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>10k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#guan-yu-lei-chu-shi-hua-de-shi-ji-he-wu-qu">关于类初始化的时机和误区</a></li>
+<li><a href="#you-wu-dao-de-jia-zai-san-bu-qu">有误导的“加载三部曲”</a></li>
+<li><a href="#jia-zai-bu-jin-jin-shi-du-qu-zi-jie-liu">加载：不仅仅是读取字节流</a>
+<ul>
+<li><a href="#lei-jia-zai-qi">类加载器</a>
+<ul>
+<li><a href="#shuang-qin-wei-pai">双亲委派</a>
+<ul>
+<li><a href="#shuang-qin-wei-pai-de-xiang-xi-zhi-xing-guo-cheng-he-zhong-jian-fang-fa">双亲委派的详细执行过程和中间方法</a></li>
+<li><a href="#shuang-qin-wei-pai-de-hao-chu">双亲委派的好处</a></li>
+<li><a href="#fu-jia-zai-qi-zhong-yao-jia-zai-mou-ge-lei-a-shi-a-xu-yao-shi-yong-zi-jia-zai-qi-lai-jia-zai-dan-shi-fu-jia-zai-qi-mei-you-zi-jia-zai-qi-de-dai-ma-zen-me-ban">父加载器中要加载某个类A时，A需要使用子加载器来加载，但是父加载器没有子加载器的代码，怎么办？</a></li>
+</ul>
+</li>
+<li><a href="#osgi-wang-zhuang-lei-jia-zai-qi">OSGI网状类加载器</a>
+<ul>
+<li><a href="#wei-shi-me-osgi-ke-yi-shi-xian-re-bu-shu-dan-shi-shuang-qin-wei-pai-bu-ke-yi">为什么OSGI可以实现热部署，但是双亲委派不可以？</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#shu-zu-lei-shi-ru-he-jia-zai-de">数组类是如何加载的？</a></li>
+</ul>
+</li>
+<li><a href="#lian-jie">连接</a>
+<ul>
+<li><a href="#yan-zheng">验证</a>
+<ul>
+<li><a href="#wen-jian-ge-shi-xiao-yan-class-wen-jian-dui-bu-dui">文件格式校验（class文件对不对）</a></li>
+<li><a href="#yuan-shu-ju-yan-zheng-wo-de-fu-qin-dui-bu-dui">元数据验证（我的父亲对不对）</a>
+<ul>
+<li><a href="#yuan-shu-ju-yan-zheng-zhong-de-lei-jie-xi">元数据验证中的类解析</a></li>
+</ul>
+</li>
+<li><a href="#zi-jie-ma-yan-zheng-wo-de-zhi-ling-dui-bu-dui">字节码验证（我的指令对不对）</a></li>
+<li><a href="#fu-hao-yin-yong-yan-zheng-wo-de-zhi-ling-diao-yong-de-mu-biao-dui-bu-dui">符号引用验证（我的指令调用的目标对不对）</a>
+<ul>
+<li><a href="#fu-hao-yin-yong-yan-zheng-zhong-de-zi-duan-jie-xi">符号引用验证中的字段解析</a></li>
+<li><a href="#fu-hao-yin-yong-yan-zheng-zhong-de-lei-fang-fa-jie-xi">符号引用验证中的类方法解析</a></li>
+<li><a href="#fu-hao-yin-yong-yan-zheng-zhong-de-jie-kou-fang-fa-jie-xi">符号引用验证中的接口方法解析</a>
+<ul>
+<li><a href="#yi-wen-1-wei-shi-me-jie-kou-fang-fa-huan-yao-jie-xi-jie-kou-li-bu-shi-mei-you-dai-ma-ma">疑问1：为什么接口方法还要解析？接口里不是没有代码吗？</a></li>
+<li><a href="#yi-wen-2-wei-shi-me-yao-qu-fen-lei-de-fang-fa-he-jie-kou-fang-fa-bu-neng-yong-tong-yi-chong-si-lu-qu-jie-xi-me">疑问2：为什么要区分类的方法和接口方法？不能用同一种思路去解析么？</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#zhun-bei">准备</a>
+<ul>
+<li><a href="#lei-jing-tai-cheng-yuan-mo-ren-zhi-de-zhun-bei">类静态成员默认值的准备</a></li>
+<li><a href="#fang-fa-biao-de-zhun-bei">方法表的准备</a>
+<ul>
+<li><a href="#chong-yao-wen-ti-interface-de-jie-kou-fang-fa-hui-you-fang-fa-biao-ma">重要问题：interface的接口方法，会有方法表吗？</a></li>
+<li><a href="#wei-shi-me-jie-kou-bu-neng-you-fang-fa-biao">为什么接口不能有方法表？</a></li>
+<li><a href="#java-de-xu-biao-he-c-de-xu-biao-you-shi-me-qu-bie">java的虚表和C++的虚表有什么区别？</a></li>
+<li><a href="#java-xu-biao-de-sheng-cheng-guo-cheng">java虚表的生成过程</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#jie-xi">解析</a>
+<ul>
+<li><a href="#jie-xi-de-wu-qu-bing-bu-shi-yi-ge-dan-chun-de-jie-duan">解析的误区：并不是一个单纯的阶段</a></li>
+<li><a href="#jing-tai-jie-xi">静态解析</a></li>
+<li><a href="#jie-xi-he-fen-pai-de-qu-bie">解析和分派的区别</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#chu-shi-hua">初始化</a>
+<ul>
+<li><a href="#cinit-fang-fa-xi-jie-jie-xi">cinit方法细节解析</a>
+<ul>
+<li><a href="#yi-wen-1-cinit-fang-fa-zhong-de-dai-ma-shi-ru-he-sheng-cheng-de">疑问1：cinit方法中的代码是如何生成的？</a></li>
+<li><a href="#yi-wen-2-cinit-lei-chu-shi-hua-shi-xian-cheng-an-quan-de-ma">疑问2：cinit类初始化是线程安全的吗？</a></li>
+</ul>
+</li>
+<li><a href="#chu-shi-hua-zhong-de-dong-tai-jie-xi">初始化中的动态解析</a></li>
+<li><a href="#kuo-zhan-invoke-dynamic-shi-shi-me">扩展:invoke_dynamic是什么</a>
+<ul>
+<li><a href="#dong-tai-yu-yan-he-jing-tai-yu-yan-de-qu-bie">动态语言和静态语言的区别</a></li>
+<li><a href="#java-de-methodhandle-yong-fa">java的MethodHandle用法</a></li>
+<li><a href="#methodhandle-dian-xing-ying-yong-chang-jing-ru-he-diao-yong-ye-ye-lei-de-xu-fang-fa">methodHandle典型应用场景：如何调用爷爷类的虚方法</a></li>
+<li><a href="#java-de-methodhandle-ji-zhi-he-reflection-de-fan-she-you-shi-me-qu-bie-ma">java的methodHandle机制和reflection的反射有什么区别吗？</a></li>
+<li><a href="#invoke-dynamic-zhi-ling-yuan-li-shi-fou-she-ji-dong-tai-fen-pai-lei-jia-zai-he-jie-xi">invoke_dynamic指令原理。是否涉及动态分派、类加载和解析？</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#zui-hou-de-wan-zheng-da-tu">最后的完整大图</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<hr>
+<h1><span id="guan-yu-lei-chu-shi-hua-de-shi-ji-he-wu-qu">关于类初始化的时机和误区</span><a href="#guan-yu-lei-chu-shi-hua-de-shi-ji-he-wu-qu" class="header-anchor">#</a></h1>
+<p>书籍的第一步部分上来就先讲了类初始化的时机，整理成图片如下：<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652581844567633533.png" alt="image.png"><br>
+看起来非常多，很难记住，很折磨。</p>
+<p>个人认为，书籍把这一部分放到章节的最前面不太合理，曾经一度让我把上面的这些事件，理解成了类加载的时机，也不懂这些规则的缘由（根本原因还是此时读者对类加载的理解不够深。）</p>
+<p>先贴一下类加载和类初始化的区别：</p>
+<ul>
+<li>类加载概念：将class文件加载到jvm中并生成class对象，并根据情况做初始化。</li>
+<li>类初始化概念：调用类class文件中默认存在的&lt;cinit&gt;类初始化方法。</li>
+</ul>
+<p>而我们容易产生误解的原因，是因为书中没有这句话：：<strong>所谓的类初始化时机，只是针对cinit类初始化方法的调用，并不是指的类加载时机！</strong></p>
+<p>以上图中红色的部分为例：<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652582629860693478.png" alt="image.png"><br>
+这里书籍中没有解释这3个规则的原因，在没理解原理前，强行记忆这3条是没有任何意义的。我认为是作者的失误。</p>
+<p>在这里我挑其中一个做补充：<br>
+<strong>“使用类里的static final 常量，不会触发初始化”</strong><br>
+想要理解这个规则，需要先理解class文件原理。<br>
+对于类的static final常量字段，它的常量值是存放在字段的constanValue属性中。<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652583662013743457.png" alt="image.png"><br>
+正因为如此，static final常量并不需要通过cinit方法中的指令来完成赋值。<br>
+所以也就没有必要在这时候调用&lt;cinit&gt;方法了。</p>
+<p>因此对于“儿子类调用父类的静态成员，不用对儿子类做类初始化”也是一个道理，儿子类的类静态成员没有被使用到，没必要做cinit。</p>
+<p>对于上面的分析，可以浓缩为一句话：<br>
+<strong>“如果我们急需使用static成员，且这个成员的值是要通过cinit方法赋值的，那么我们才做cinit初始化”</strong></p>
+<p><strong>新的疑问</strong>：那为什么仅仅是new一个对象时，也一定要做cinit类初始化呢？<br>
+假设此时我还没用到static成员，那么new一个对象时，是否可以省去cinit，等用到静态成员的时候，再去触发cinit？</p>
+<p>这涉及到了类初始化的另一个容易被忽视的点：<strong>“cinit类初始化方法，并不仅仅是做类成员的赋值，其实还可能包含一些初始化行为调用”</strong>，这可以是资源的启动或者加载等类对象必须要用到的内容。</p>
+<p>因此在一切可能触发类对象实际行为前，必须触发cinit避免出错。</p>
+<p>所以刚才的长篇大论，可以再次进行优化，浓缩为：<br>
+<strong>“当需要用到static成员的初始赋值，或者对类对象进行正式使用时，才会触发cinit类初始化，目的是为了保证类对象或者类成员的正确使用”</strong><br>
+拿着这一句话，去回看前面的类初始化时机的触发时机和不触发的时机时，相信你就会有更深的理解了，甚至也不需要强行去记忆每一条规则了。</p>
+<hr>
+<h1><span id="you-wu-dao-de-jia-zai-san-bu-qu">有误导的“加载三部曲”</span><a href="#you-wu-dao-de-jia-zai-san-bu-qu" class="header-anchor">#</a></h1>
+<p>有一个很经典的回答，叫做<strong>类加载三部曲：加载、连接、初始化</strong><br>
+好像类加载过程就是这三步按照顺序串行拼装起来的。</p>
+<p>实际上这3个过程是存在交叉的！<br>
+只能说，“最早发生”的时机，是按照这个顺序发生，但是中间加载过程是有很多的，具体后面会结合我画的图以及原理解释进行呈现。</p>
+<h1><span id="jia-zai-bu-jin-jin-shi-du-qu-zi-jie-liu">加载：不仅仅是读取字节流</span><a href="#jia-zai-bu-jin-jin-shi-du-qu-zi-jie-liu" class="header-anchor">#</a></h1>
+<p><img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652594910504257328.png" alt="image.png"><br>
+对于加载，很容易只理解成只是“从文件里加载二进制字节到内存”。<br>
+这个过程显然是必须最先执行的，否则连类的基本信息都获取不到。<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652595413217848779.png" alt="image.png"><br>
+可以看到这个过程很灵活，只要你从你能想到的地方拿到字节流即可，任意形式都行。</p>
+<p>然而，对于“加载”，除了获取字节流，实际上还包含了“把字节流转成方法区里的数据结构，进行存储defineClass”、“生成一个class对象，存储在堆中”这两步。</p>
+<p>这2步是穿插在连接过程中的。<br>
+比如字节流转数据结构的过程，必须在确认字节流的正确性之后完成。<br>
+而生成class对象同理，符合一个class对象的条件时，才能将其在堆中生成。<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652595269171806676.png" alt="image.png"><br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652595359889871663.png" alt="image.png"></p>
+<p>加载过程是由类加载器classloader完成的，在这里对classLoader也顺便做一个详细的分析。</p>
+<h2><span id="lei-jia-zai-qi">类加载器</span><a href="#lei-jia-zai-qi" class="header-anchor">#</a></h2>
+<h3><span id="shuang-qin-wei-pai">双亲委派</span><a href="#shuang-qin-wei-pai" class="header-anchor">#</a></h3>
+<p>类加载时的双亲委派模型，反正就记得优先去父类加载器中看类是否能加载。</p>
+<p>这个过程和多态方法调用是相反的，多态方法是子类覆写了的话则优先子类调用，类加载则是父加载器能加载则加载。</p>
+<p><strong>注意：Bootsrap不是ClassLoader的子类，他是C++编写的。</strong><br>
+而ExtClassLoader和AppClassLoader都是继承自ClassLoader的</p>
+<p><img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/a4c77999a2f8a0d5bc6401d05efeca9cdcecef43.png" alt="a4c77999a2f8a0d5bc6401d05efeca9cdcecef43"></p>
+<h4><span id="shuang-qin-wei-pai-de-xiang-xi-zhi-xing-guo-cheng-he-zhong-jian-fang-fa">双亲委派的详细执行过程和中间方法</span><a href="#shuang-qin-wei-pai-de-xiang-xi-zhi-xing-guo-cheng-he-zhong-jian-fang-fa" class="header-anchor">#</a></h4>
+<p>loaderClass（className）  双亲加载实现（这里会体现先去父亲找，再自己）<strong>注意，jdk1.2之后不提倡覆盖loadClass方法，这个方法可以理解为一个模板方法</strong>。</p>
+<p><strong>但如果确实有需要破坏双亲委派的需求，则可以重写loaderClass方法，解除双亲委派机制</strong></p>
+<p>findClass()  如何根据名字，寻找并生成1个class（内部需要借助defineClass）<br>
+defineClass()  通过这个方法将字节码生成1个class类，基本不用改动。</p>
+<p>例如需要根据类目，从某个远端网络加载获取这个类， 而且获取过来的时候还是加密的，需要在findClass里对byte数组做解密，解密完成，再调用defineClass生成class类。</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zzti_erlie/article/details/82757435">https://blog.csdn.net/zzti_erlie/article/details/82757435</a></p>
+<h4><span id="shuang-qin-wei-pai-de-hao-chu">双亲委派的好处</span><a href="#shuang-qin-wei-pai-de-hao-chu" class="header-anchor">#</a></h4>
+<p>书中提到的原因就一个： java类随着类加载器，具备了带有优先级的层次关系。<br>
+保证了例如object类在每个环境里都是同一种，不会出现混乱。</p>
+<h4><span id="fu-jia-zai-qi-zhong-yao-jia-zai-mou-ge-lei-a-shi-a-xu-yao-shi-yong-zi-jia-zai-qi-lai-jia-zai-dan-shi-fu-jia-zai-qi-mei-you-zi-jia-zai-qi-de-dai-ma-zen-me-ban">父加载器中要加载某个类A时，A需要使用子加载器来加载，但是父加载器没有子加载器的代码，怎么办？</span><a href="#fu-jia-zai-qi-zhong-yao-jia-zai-mou-ge-lei-a-shi-a-xu-yao-shi-yong-zi-jia-zai-qi-lai-jia-zai-dan-shi-fu-jia-zai-qi-mei-you-zi-jia-zai-qi-de-dai-ma-zen-me-ban" class="header-anchor">#</a></h4>
+<p>可以使用线程上下文TCCL机制， 例如java的JNDI服务，JNDI是在启动类加载器里入加载的（JDK1.3的rt.jar)， 但是JNDI会加载很多扩展性很强的新资源类。</p>
+<p>因此可以在JNDI加载类的过程中，从TCCL这个context对象中，拿到set进去的用户加载器，然后进行加载即可。（JDBC、JBI等SPI机制都是如此）</p>
+<h3><span id="osgi-wang-zhuang-lei-jia-zai-qi">OSGI网状类加载器</span><a href="#osgi-wang-zhuang-lei-jia-zai-qi" class="header-anchor">#</a></h3>
+<p>OSGI中， 每一个程序模块（bundle）都有一个自己的类加载器，当需要更换一个bundle时，就把bundle连同类加载器一起换掉，实现代码的热替换</p>
+<p>它是一个网状的类加载结构，只有java.*以及委派名单的，才会用双亲委派机制，否则都是各种网状的加载。加载过程如下所示：</p>
+<p><img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/62408d2e1e08530789333ccd-1651765505820.png" alt="OSGI加载"></p>
+<h4><span id="wei-shi-me-osgi-ke-yi-shi-xian-re-bu-shu-dan-shi-shuang-qin-wei-pai-bu-ke-yi">为什么OSGI可以实现热部署，但是双亲委派不可以？</span><a href="#wei-shi-me-osgi-ke-yi-shi-xian-re-bu-shu-dan-shi-shuang-qin-wei-pai-bu-ke-yi" class="header-anchor">#</a></h4>
+<p>首先，理解双亲委派模型下，不能热部署的原因：<br>
+<strong>如果有新升级的同名类要加入，它只能在新给出的一个加载器去加载， 但是双亲模型限定了必须是先交给父加载器加载，这导致了升级困难，无法让新的加载器去做抢先加载。</strong></p>
+<p>OSGi类加载模型则是网络图状的，可以在bundle间互相委托<br>
+例如bundleA、B都依赖于bundleC，当他们访问bundleC中的类时，就会委托给bundleC的类加载器，由它来查找类；如果它发现还要依赖bundleE中的类，就会再委托给bundleE的类加载器。</p>
+<blockquote>
+<blockquote>
+<p>另一篇文章的解释：</p>
+</blockquote>
+<ul>
+<li>由于类加载机制的原因，导致一个类一旦加载进去就再也无法释放，因此，OSGi引入了基于插件的类加载机制</li>
+<li>举例说明：plugin1里有examples.Test1类，而pulgin2里也有examples.Test1类，在载入这两个插件时，两个类是可以同时载入进入到类缓存中，这归功于OSGi实现的插件类加载器(ClassLoader)</li>
+<li>我们把“examples.Test”服务的 Service Ranking 属性更改成了 100，那么其他bundle使用这个bundle对应的example类时，就会用优先级最高的类。</li>
+<li>在不需要停止服务和其他插件都不用更新的情况下，我们只需要再安装一个更新版本的插件，其所注册的服务就可以自动更新并应用到所有调用该插件的插件中，达到了热部署的目的。<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/yipsilon/article/details/83369177">OSGi的热部署特性及实现</a></li>
+</ul>
+</blockquote>
+<h2><span id="shu-zu-lei-shi-ru-he-jia-zai-de">数组类是如何加载的？</span><a href="#shu-zu-lei-shi-ru-he-jia-zai-de" class="header-anchor">#</a></h2>
+<p>数组类是由AppClassLoader加载的。<br>
+数组类打印className时，前面会有个[Lxx类<br>
+二维数组就是[[Lxxx类<br>
+<strong>数组类的父类型是Object</strong></p>
+<p>注意此时加载的是数组类，而数组类里面的对象是不会做自动加载的<br>
+因此xx类的静态代码并不会被直接调用</p>
+<h1><span id="lian-jie">连接</span><a href="#lian-jie" class="header-anchor">#</a></h1>
+<p>连接过程可以说是最难记住的一个过程， 里面包含了各种校验啊之类的，让人摸不清头脑。这里会通过更细致的解释和图解，让你明白连接过程究竟做了什么。<br>
+首先连接过程分为 验证、准备和解析，<strong>“解析”并不是连接的最后一步，而是在验证过程中实时发生的！</strong>。 下文会为你详细解释为什么。</p>
+<h2><span id="yan-zheng">验证</span><a href="#yan-zheng" class="header-anchor">#</a></h2>
+<h3><span id="wen-jian-ge-shi-xiao-yan-class-wen-jian-dui-bu-dui">文件格式校验（class文件对不对）</span><a href="#wen-jian-ge-shi-xiao-yan-class-wen-jian-dui-bu-dui" class="header-anchor">#</a></h3>
+<p><img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652596406384448149.png" alt="image.png"><br>
+注意这里的校验，都是一些最简单的校验，相当于无需做太多的语法分析操作等操作， 都是基于class文件格式定义进行的基础校验。</p>
+<p>然而如果对加载的文件有充分的自信，来源可靠，那么确实可以省去这个步骤，提升连接效率，因此会有一个-Xverify:none的选项供使用。</p>
+<h3><span id="yuan-shu-ju-yan-zheng-wo-de-fu-qin-dui-bu-dui">元数据验证（我的父亲对不对）</span><a href="#yuan-shu-ju-yan-zheng-wo-de-fu-qin-dui-bu-dui" class="header-anchor">#</a></h3>
+<p>这里验证了class文件里面继承特性相关的重要信息，例如继承关系是否合理、是否实现了抽象类或接口的方法<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652596978343390083.png" alt="image.png"></p>
+<p>注意，这个元数据验证的过程，<strong>会触发父类或者接口的解析（加载）操作！</strong><br>
+书上提到了4个解析情况以及流程：</p>
+<ul>
+<li>类解析</li>
+<li>字段解析</li>
+<li>类方法解析</li>
+<li>接口方法解析<br>
+却没有解释这4个解析过程是在哪里发生的。后面我会逐一提到，来真正理解这4个解析过程。</li>
+</ul>
+<h4><span id="yuan-shu-ju-yan-zheng-zhong-de-lei-jie-xi">元数据验证中的类解析</span><a href="#yuan-shu-ju-yan-zheng-zhong-de-lei-jie-xi" class="header-anchor">#</a></h4>
+<p>还记得class文件中，父类是指向一个constant_class_info吗？这个东西当时看就是一个utf字符串，没什么意义。你没法知道父类究竟有什么方法，是不是抽象类。<br>
+因此必须拿到父类的类信息，要么是已经在方法区中，要么需要重新加载。<br>
+而类解析的过程如下：<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652598263182568128.png" alt="image.png"><br>
+可以看到这个过程中也会发生加载，甚至好多次加载。</p>
+<hr>
+<h3><span id="zi-jie-ma-yan-zheng-wo-de-zhi-ling-dui-bu-dui">字节码验证（我的指令对不对）</span><a href="#zi-jie-ma-yan-zheng-wo-de-zhi-ling-dui-bu-dui" class="header-anchor">#</a></h3>
+<p><img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652598525735605413.png" alt="image.png"><br>
+这个验证不要和前面的“文件格式验证”搞混了。<br>
+前面的“元数据验证”都只是针对类、方法、字段等和父类进行确认、校验。<br>
+但是还没有涉及到每个方法里的code属性。</p>
+<p>code属性虽然在编译出来时是正确的，但是无法保证传输过程中被人篡改。<br>
+如果发生操作操作数栈时，栈里没东西，或者试图在局部变量表边界外写入局部变量，就可能导致不可估量的后果。</p>
+<p>因此此刻会进行最基本的指令分析，确认对操作数栈、局部变量表的操作是安全、正确的。</p>
+<p>但是，逐个指令分析，会不会太慢了？如果代码很长的话。</p>
+<p>还记得class文件的code属性中，还包含了一个stackMapTable属性么，估计很多人都跳过了这个属性。<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652598909384718936.png" alt="image.png"><br>
+这个属性就是用在字节码验证这个过程，可以立即让编译器编译出class时，提前把各位置的情况写入stackMap中，jvm加载时只对这个stackMap做校验确认是对的即可。<br>
+但代价就是可能不安全了，因为这个stackMap是可以被篡改的。</p>
+<h3><span id="fu-hao-yin-yong-yan-zheng-wo-de-zhi-ling-diao-yong-de-mu-biao-dui-bu-dui">符号引用验证（我的指令调用的目标对不对）</span><a href="#fu-hao-yin-yong-yan-zheng-wo-de-zhi-ling-diao-yong-de-mu-biao-dui-bu-dui" class="header-anchor">#</a></h3>
+<p>注意前面的“字节码验证”是简单的确认，但不会持有过多的其他类的信息。<br>
+但是方法肯定会涉及对其他类的调用。</p>
+<p><img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652599879633278954.png" alt="image.png"></p>
+<p>此时就会涉及到符号引用验证，确认自己是否拥有对方方法的访问权限。<br>
+那么你就需要找到目标类的类信息存放地址，确认方法权限，或者字段权限。<br>
+于是会在这里触发字段解析、类方法解析或者接口解析！<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652601092434475198.png" alt="image.png"><br>
+书上只提到了这3个解析过程的流程，却没有详细解释其中的一些缘由，我会做更详细的补充。</p>
+<h4><span id="fu-hao-yin-yong-yan-zheng-zhong-de-zi-duan-jie-xi">符号引用验证中的字段解析</span><a href="#fu-hao-yin-yong-yan-zheng-zhong-de-zi-duan-jie-xi" class="header-anchor">#</a></h4>
+<p>class中的constant_filed_info终于露出了它的真面目，原来是用在这个地方，即和字段相关的指令会用到它，并通过字段符号引用， 解析到这个字段真正的定义位置。<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652601973522659730.png" alt="image.png"><br>
+像经常遇到的NoSuchFieldError报错，就是在这个过程中爆出来的。<br>
+而且接口字段的优先级是大于父类的字段的。</p>
+<h4><span id="fu-hao-yin-yong-yan-zheng-zhong-de-lei-fang-fa-jie-xi">符号引用验证中的类方法解析</span><a href="#fu-hao-yin-yong-yan-zheng-zhong-de-lei-fang-fa-jie-xi" class="header-anchor">#</a></h4>
+<p>当调用方法前，需要先确认对象方法是否有权限访问。那么就必须这个类的信息进行确认。<br>
+<strong>注意：这个过程并不是动态分派的那个过程，此刻并没有触发任何的方法调用！仅仅是确认代码中静态类型的访问权限是否正确之类的！</strong><br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652602585506110322.png" alt="image.png"></p>
+<ul>
+<li>对类方法做解析的时候，会判断此时是类还是接口。如果是接口，竟然会报“IncompatibleClassChangeError”。</li>
+<li>还有如果是抽象类，也会报“AbstractMethodError”，因为正常情况下，你的jvm指令调用的方法，必须是实例化的对象所对应的方法，不可能直接调用抽象类方法的。</li>
+</ul>
+<h4><span id="fu-hao-yin-yong-yan-zheng-zhong-de-jie-kou-fang-fa-jie-xi">符号引用验证中的接口方法解析</span><a href="#fu-hao-yin-yong-yan-zheng-zhong-de-jie-kou-fang-fa-jie-xi" class="header-anchor">#</a></h4>
+<p>看起来像是将类方法解析中的接口和方法互换了位置。<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652603187639739722.png" alt="image.png"></p>
+<h5><span id="yi-wen-1-wei-shi-me-jie-kou-fang-fa-huan-yao-jie-xi-jie-kou-li-bu-shi-mei-you-dai-ma-ma">疑问1：为什么接口方法还要解析？接口里不是没有代码吗？</span><a href="#yi-wen-1-wei-shi-me-jie-kou-fang-fa-huan-yao-jie-xi-jie-kou-li-bu-shi-mei-you-dai-ma-ma" class="header-anchor">#</a></h5>
+<p>因为接口类里每个interface方法，本身也是一个方法，只不过没有详细的code属性。但方法的访问修饰符之类的都存在，因此验证阶段还是需要进行校验。</p>
+<h5><span id="yi-wen-2-wei-shi-me-yao-qu-fen-lei-de-fang-fa-he-jie-kou-fang-fa-bu-neng-yong-tong-yi-chong-si-lu-qu-jie-xi-me">疑问2：为什么要区分类的方法和接口方法？不能用同一种思路去解析么？</span><a href="#yi-wen-2-wei-shi-me-yao-qu-fen-lei-de-fang-fa-he-jie-kou-fang-fa-bu-neng-yong-tong-yi-chong-si-lu-qu-jie-xi-me" class="header-anchor">#</a></h5>
+<p>我理解的几个原因：</p>
+<ol>
+<li>向上搜索时的逻辑不同，对于类方法，直接找父类即可， 而接口则需要遍历所有父接口。而且类方法还要考虑抽象类的问题，接口不需要。</li>
+<li>类方法和接口方法本身就是两个不同的符号引用， 一个是constant_method_ref，另一个是constant_interface_ref，用2套逻辑没什么毛病</li>
+<li>如果硬要问为什么要区分这2个符号引用，明明内容都是类索引+描述符索引？<br>
+这是因为后面在实际调用方法时，二者有显著区别，具体见下文的“方法表的准备”。</li>
+</ol>
+<h2><span id="zhun-bei">准备</span><a href="#zhun-bei" class="header-anchor">#</a></h2>
+<p><img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652604139278590043.png" alt="image.png"></p>
+<h3><span id="lei-jing-tai-cheng-yuan-mo-ren-zhi-de-zhun-bei">类静态成员默认值的准备</span><a href="#lei-jing-tai-cheng-yuan-mo-ren-zhi-de-zhun-bei" class="header-anchor">#</a></h3>
+<p>对于准备阶段，大家一般只记得需要对一些非final的类静态成员做默认初始值操作。</p>
+<h3><span id="fang-fa-biao-de-zhun-bei">方法表的准备</span><a href="#fang-fa-biao-de-zhun-bei" class="header-anchor">#</a></h3>
+<p>除了这个默认值赋值，还有一个动作，是准备方法表。<br>
+方法表就是为了多态而生，简化动态分派时频繁的迭代循环带来的不必要消耗：<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652604259330823080.png" alt="image.png"><br>
+通过前面的验证过程，我们已经获知了父类信息。<br>
+因此可以准备一个方法表，把父类方法堆到最前面，自己的方法堆到后面，后面直接根据索引获取方法调用地址即可！</p>
+<h4><span id="chong-yao-wen-ti-interface-de-jie-kou-fang-fa-hui-you-fang-fa-biao-ma">重要问题：interface的接口方法，会有方法表吗？</span><a href="#chong-yao-wen-ti-interface-de-jie-kou-fang-fa-hui-you-fang-fa-biao-ma" class="header-anchor">#</a></h4>
+<p>intefacer接口是不具有方法表的！<br>
+因此这可能也是jvm特地区分了class_inteface_info和class_method_info这2个常量，以及特地用invoke_inteface和invoke_virtual指令来区分2类方法的调用。因为他们的调用逻辑可能大相径庭。</p>
+<h4><span id="wei-shi-me-jie-kou-bu-neng-you-fang-fa-biao">为什么接口不能有方法表？</span><a href="#wei-shi-me-jie-kou-bu-neng-you-fang-fa-biao" class="header-anchor">#</a></h4>
+<p>这是由于Java可以实现多个接口，不同的类可能会实现了多个或者不同的接口，在虚表里该接口所实现方法的索引会不一致。</p>
+<p>假设有A、B、C三个接口类</p>
+<ul>
+<li>类X实现了A、B两个接口，假设A和B接口放在虚表里，那么调用A接口方法我们假设它是在t位置。</li>
+<li>类T实现了B、C、A接口，按照实现顺序，先放B的方法，再放A的方法，最后放C的方法。这样调用接口A时，就不一定是t位置了，我们无法直接确定A里面方法的位置，因为一个类可以实现多个接口，而且顺序可以随意更改！</li>
+</ul>
+<p>这样每次解析的虚表索引都可能会不同，因此不能进行缓存，需要每次都进行重新的解析。<br>
+<strong>因此，接口的方法调用会比普通的子类继承的虚函数调用要慢。</strong></p>
+<h4><span id="java-de-xu-biao-he-c-de-xu-biao-you-shi-me-qu-bie">java的虚表和C++的虚表有什么区别？</span><a href="#java-de-xu-biao-he-c-de-xu-biao-you-shi-me-qu-bie" class="header-anchor">#</a></h4>
+<p>C++：<br>
+当编译器遇到调用虚方法的代码时，是通过vtable指针以及对应方法在虚表里的offset，然后获取对应的函数指针实现的，由于offset在编译过程就已经固定了，这样在执行过程中几乎没有产生任何额外的计算就实现了多态调用，效率相当高。<br>
+<strong>缺点就是当你修改了一个dll链接文件，另一个dll链接文件可能还是用的老的偏移，这导致你即使重启程序了，仍然还是错误的调用。 你必须将两个链接文件都重新编译才可以。</strong></p>
+<p>但对于java而言，只需要替换一个jar包即可， 类之间的方法调用关系，方法偏移，都是可以类加载过程中去生成的。</p>
+<p>换言之，最大的区别就是修改部分方法带来的影响，java是最小的</p>
+<h4><span id="java-xu-biao-de-sheng-cheng-guo-cheng">java虚表的生成过程</span><a href="#java-xu-biao-de-sheng-cheng-guo-cheng" class="header-anchor">#</a></h4>
+<ol>
+<li>在加载该类的时候，常量池的所有<strong>虚函数的签名</strong>（包括调用的以及自身定义的）都会<strong>添加到全局的符号表</strong>（事实上是一个HashTable）。</li>
+<li><strong>首先对字符值进行Hash值计算，然后在全局HashTable进行查找</strong>，如果发现已经存在对应的Hash值，则返回对应的符号指针Symbol *，否则创建新的Symbol并添加到HashTable中，然后返回新创建的Symbol *。这样常量池就把字符串的引用转换成符号的引用。另外这个过程可以确保所有字符串在jvm只存有一个引用。、</li>
+<li>当在某个类对象调用虚方法的时候，通过调用函数的符号和自身定义的符号进行比较（由于这里都是引用全局符号表的唯一符号，因此可以通过内存地址进行快速比较），就会解析出调用虚函数的信息，<strong>通过信息就可以获取虚表的索引，然后调用对应的虚函数字节码</strong></li>
+<li>为了提高调用时的性能，Java采用的是Lazy解析，<strong>第一次解析出虚表的索引后，则会保留到cache里面</strong>，这样下次调用就可以从缓存直接获取索引</li>
+</ol>
+<h2><span id="jie-xi">解析</span><a href="#jie-xi" class="header-anchor">#</a></h2>
+<h3><span id="jie-xi-de-wu-qu-bing-bu-shi-yi-ge-dan-chun-de-jie-duan">解析的误区：并不是一个单纯的阶段</span><a href="#jie-xi-de-wu-qu-bing-bu-shi-yi-ge-dan-chun-de-jie-duan" class="header-anchor">#</a></h3>
+<p>解析其实分为“静态解析”和“动态解析”。<br>
+因此将解析说成是“连接”中的一部分是不严谨的， 只有静态解析，才是“连接”的一部分。</p>
+<p>静态解析在初始化前发生，但动态解析则可能在初始化或者初始化之后才去使用。</p>
+<h3><span id="jing-tai-jie-xi">静态解析</span><a href="#jing-tai-jie-xi" class="header-anchor">#</a></h3>
+<p>静态解析用于解析私有方法、父类构造器、final方法等不存在多态可能的方法。<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652605263696340667.png" alt="image.png"></p>
+<h3><span id="jie-xi-he-fen-pai-de-qu-bie">解析和分派的区别</span><a href="#jie-xi-he-fen-pai-de-qu-bie" class="header-anchor">#</a></h3>
+<p>静态分派、动态分派， 指的是2个方法的不同阶段，他们不存在冲突的关系，即方法会先触发静态分派，再触发动态分派。</p>
+<p>静态分派可以理解为编译器在编写class文件时，通过方法名+描述符+优先级，确定了这个位置调用的是哪个方法。</p>
+<p>但是由于多态的特性，具体执行者可能不同，因此后面还会触发动态分派。</p>
+<p>而静态解析和动态解析是2个不同的解析，前者是默认定死了方法引用位置，后者则必须依赖动态分派，对一个方法而言不可能同时存在动态和静态解析的情况。</p>
+<h1><span id="chu-shi-hua">初始化</span><a href="#chu-shi-hua" class="header-anchor">#</a></h1>
+<h2><span id="cinit-fang-fa-xi-jie-jie-xi">cinit方法细节解析</span><a href="#cinit-fang-fa-xi-jie-jie-xi" class="header-anchor">#</a></h2>
+<p><img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652606173785989291.png" alt="image.png"><br>
+关于初始化时机的解释，在开头就已经阐述过了，这里不再重复解释。</p>
+<h3><span id="yi-wen-1-cinit-fang-fa-zhong-de-dai-ma-shi-ru-he-sheng-cheng-de">疑问1：cinit方法中的代码是如何生成的？</span><a href="#yi-wen-1-cinit-fang-fa-zhong-de-dai-ma-shi-ru-he-sheng-cheng-de" class="header-anchor">#</a></h3>
+<p>cinit方法 是编译器收集所有类静态变量的赋值动作和静态语句块static{}中的语句合并产生，按照顺序收集。<br>
+因此类加载赋值的顺序和类定义顺序有关，原理就取决于cinit生成的原理。</p>
+<h3><span id="yi-wen-2-cinit-lei-chu-shi-hua-shi-xian-cheng-an-quan-de-ma">疑问2：cinit类初始化是线程安全的吗？</span><a href="#yi-wen-2-cinit-lei-chu-shi-hua-shi-xian-cheng-an-quan-de-ma" class="header-anchor">#</a></h3>
+<p>是线程安全的，虚拟机会保证一个类的加载和cinit方法会被正确的加锁、同步。<br>
+因此多线程场景下，同时使用一个之前没初始化过的类，且类初始化过程耗时非常久的话， 且可能会造成线程阻塞。<br>
+而这也是可以利用类初始化+内部类的方式，来做单例模式的实现的原理：</p>
+<h2><span id="chu-shi-hua-zhong-de-dong-tai-jie-xi">初始化中的动态解析</span><a href="#chu-shi-hua-zhong-de-dong-tai-jie-xi" class="header-anchor">#</a></h2>
+<p>而初始化过程中，可能会涉及其他对象实例方法的调用，因此是可能发生动态解析过程的！<br>
+类方法和接口方法的解析过程如下<br>
+类方法的解析可以借助虚方法表简化解析过程。<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652606407501364079.png" alt="image.png"></p>
+<h2><span id="kuo-zhan-invoke-dynamic-shi-shi-me">扩展:invoke_dynamic是什么</span><a href="#kuo-zhan-invoke-dynamic-shi-shi-me" class="header-anchor">#</a></h2>
+<h3><span id="dong-tai-yu-yan-he-jing-tai-yu-yan-de-qu-bie">动态语言和静态语言的区别</span><a href="#dong-tai-yu-yan-he-jing-tai-yu-yan-de-qu-bie" class="header-anchor">#</a></h3>
+<p>动态类型语言： 类型检查的主体是运行期而不是编译器。 例如PHP、Lua\python<br>
+而静态类型语言就是编译器将类型都检查完，比如C++、java</p>
+<p>静态语言的好处：在编译器就能确定类型，可以进行严谨的类型检查， 代价就是代码会很臃肿。<br>
+动态语言编写时更为随意，可以快速开发和运行。</p>
+<h3><span id="java-de-methodhandle-yong-fa">java的MethodHandle用法</span><a href="#java-de-methodhandle-yong-fa" class="header-anchor">#</a></h3>
+<p>jdk1.7之后提供的 MethodHandle， 类似于C/C++里的函数指针， 或者C#里的delegate。<br>
+C里面可以<br>
+sort(list, size,  int (* compare)(int, int))<br>
+即传入一个函数指针，这个函数是哪个类调用的？不知道</p>
+<p>java提供了methodHandle用法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">ClassA</span> &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">println</span><span class="params">(String s)</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;this is a print:&quot;</span> + s);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> MethodHandle <span class="title function_">getPrintlnMethodHandle</span><span class="params">(Object object)</span> <span class="keyword">throws</span> NoSuchMethodException, IllegalAccessException &#123;</span><br><span class="line">        <span class="comment">// 返回值，入参</span></span><br><span class="line">        <span class="type">MethodType</span> <span class="variable">methodType</span> <span class="operator">=</span> MethodType.methodType(<span class="keyword">void</span>.class, String.class);</span><br><span class="line">        <span class="keyword">return</span> MethodHandles.lookup()</span><br><span class="line">                <span class="comment">// 找到对象所对应的类，确认是否存在方法</span></span><br><span class="line">                .findVirtual(object.getClass(), <span class="string">&quot;println&quot;</span>, methodType)</span><br><span class="line">                <span class="comment">// 这个对对象绑定上去调用. java的反射不是也能做到吗》？</span></span><br><span class="line">                .bindTo(object);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">        <span class="type">Solution</span> <span class="variable">solution</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Solution</span>();</span><br><span class="line">        <span class="type">ClassA</span> <span class="variable">classA</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ClassA</span>();</span><br><span class="line">        <span class="comment">// invokeExact：执行并传入参数，classA和System.out不是同一个父类或者接口，但是可以执行相同的方法</span></span><br><span class="line">        getPrintlnMethodHandle(classA).invokeExact(<span class="string">&quot;afdsafds&quot;</span>);</span><br><span class="line">        getPrintlnMethodHandle(System.out).invokeExact(<span class="string">&quot;afdsafds&quot;</span>);</span><br><span class="line">        <span class="comment">// 以后排序就可以这样做了：  sort(list, MethodHandle mt)</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中methodHandle背后就是由invoke_dynamic指令触发的。</p>
+<h3><span id="methodhandle-dian-xing-ying-yong-chang-jing-ru-he-diao-yong-ye-ye-lei-de-xu-fang-fa">methodHandle典型应用场景：如何调用爷爷类的虚方法</span><a href="#methodhandle-dian-xing-ying-yong-chang-jing-ru-he-diao-yong-ye-ye-lei-de-xu-fang-fa" class="header-anchor">#</a></h3>
+<p>如何在儿子类中，分派调用祖父类的虚方法？ 且儿子类和父类都已经实现了这个虚方法。父类不能提供新的方法</p>
+<p>通过loopup().findSpecial(祖父类， “方法名”， MethodHandle.methodType(返回值，入参),  当前类)<br>
+拿到一个方法句柄mh<br>
+然后方法句柄mh.invoke(this)，即可调用祖父类的方法。</p>
+<h3><span id="java-de-methodhandle-ji-zhi-he-reflection-de-fan-she-you-shi-me-qu-bie-ma">java的methodHandle机制和reflection的反射有什么区别吗？</span><a href="#java-de-methodhandle-ji-zhi-he-reflection-de-fan-she-you-shi-me-qu-bie-ma" class="header-anchor">#</a></h3>
+<ol>
+<li>调用指令层面：</li>
+</ol>
+<ul>
+<li>reflection是模拟java代码调用，不关心底层指令</li>
+<li>而methodHandle是模拟了字节码的执行，上面的Loopup().findVirtual，等同于invokevirtual指令（同理还有invokestatic\invokeinteface\invokespecial)</li>
+</ul>
+<ol start="2">
+<li>method对象大小问题</li>
+</ol>
+<ul>
+<li>reflection返回的method对象，包含的信息更多，例如签名、描述、属性等，返回的method比较重量级</li>
+<li>而methodHandle仅包含执行方法相关的信息，是轻量级、</li>
+</ul>
+<ol start="3">
+<li>可以基于methodHandle手动做虚拟机的相关调用优化（例如内联），而反射无法实现。</li>
+<li>从最终设计目的而言，反射只针对java， 而methodHandle的核心目的在于可以将其他无类型的语言运行在java迅即之上！</li>
+</ol>
+<h3><span id="invoke-dynamic-zhi-ling-yuan-li-shi-fou-she-ji-dong-tai-fen-pai-lei-jia-zai-he-jie-xi">invoke_dynamic指令原理。是否涉及动态分派、类加载和解析？</span><a href="#invoke-dynamic-zhi-ling-yuan-li-shi-fou-she-ji-dong-tai-fen-pai-lei-jia-zai-he-jie-xi" class="header-anchor">#</a></h3>
+<p>我们首先看下invoke_dynamic指令调用的dynamic_info常量长什么样的：<br>
+<img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/1652606577911480954.png" alt="image.png"><br>
+可以看到它只包含了一个方法索引和描述，但似乎没包含方法属于哪个类。</p>
+<p>它的作用是用java实现一些类似于脚本语言的逻辑，脚本语言不关心静态类型，不做编译检查，只关心运行期的内容。所以invoke_dynamic以及constant_dynamic_info应运而生。但书本和工作中对这块的接触都不是太深，因此我的理解也只能局限于此了。</p>
+<p>书上还有句话可以记一下：<strong>除了invokeddynamic动态调用指令， 其他的invokevirual之类的，都会缓存解析结果。</strong></p>
+<hr>
+<h1><span id="zui-hou-de-wan-zheng-da-tu">最后的完整大图</span><a href="#zui-hou-de-wan-zheng-da-tu" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://www.processon.com/view/link/5e7eed6ce4b0ffc4ad43fda8">在线地址</a><br>
+<a target="_blank" rel="noopener" href="https://www.processon.com/view/link/5e7eed6ce4b0ffc4ad43fda8">https://www.processon.com/view/link/5e7eed6ce4b0ffc4ad43fda8</a></p>
+<p><img src="/images/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/5e7eed6ce4b08b6157409373.png" alt="完整大图"></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%85%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3/" title="java类加载全过程详解">http://breakdawncoder.com/知识库/java/java高级原理/java类加载全过程详解/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java-%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3jvm/" rel="tag"># java,深入理解jvm</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/jvm%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E6%BC%94%E8%BF%9B%E5%92%8C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/" rel="prev" title="jvm垃圾收集器演进和原理详解">
+      <i class="fa fa-chevron-left"></i> jvm垃圾收集器演进和原理详解
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/jdk%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" rel="next" title="jdk动态代理原理解析">
+      jdk动态代理原理解析 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">关于类初始化的时机和误区</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">有误导的“加载三部曲”</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">加载：不仅仅是读取字节流</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">类加载器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.1.1.</span> <span class="nav-text">双亲委派</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.1.1.1.</span> <span class="nav-text">双亲委派的详细执行过程和中间方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.1.1.2.</span> <span class="nav-text">双亲委派的好处</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.1.1.3.</span> <span class="nav-text">父加载器中要加载某个类A时，A需要使用子加载器来加载，但是父加载器没有子加载器的代码，怎么办？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.1.2.</span> <span class="nav-text">OSGI网状类加载器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.1.2.1.</span> <span class="nav-text">为什么OSGI可以实现热部署，但是双亲委派不可以？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">数组类是如何加载的？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">连接</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">验证</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.1.1.</span> <span class="nav-text">文件格式校验（class文件对不对）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.1.2.</span> <span class="nav-text">元数据验证（我的父亲对不对）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">4.1.2.1.</span> <span class="nav-text">元数据验证中的类解析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.1.3.</span> <span class="nav-text">字节码验证（我的指令对不对）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.1.4.</span> <span class="nav-text">符号引用验证（我的指令调用的目标对不对）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">4.1.4.1.</span> <span class="nav-text">符号引用验证中的字段解析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">4.1.4.2.</span> <span class="nav-text">符号引用验证中的类方法解析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">4.1.4.3.</span> <span class="nav-text">符号引用验证中的接口方法解析</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">4.1.4.3.1.</span> <span class="nav-text">疑问1：为什么接口方法还要解析？接口里不是没有代码吗？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">4.1.4.3.2.</span> <span class="nav-text">疑问2：为什么要区分类的方法和接口方法？不能用同一种思路去解析么？</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.2.</span> <span class="nav-text">准备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.2.1.</span> <span class="nav-text">类静态成员默认值的准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.2.2.</span> <span class="nav-text">方法表的准备</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">4.2.2.1.</span> <span class="nav-text">重要问题：interface的接口方法，会有方法表吗？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">4.2.2.2.</span> <span class="nav-text">为什么接口不能有方法表？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">4.2.2.3.</span> <span class="nav-text">java的虚表和C++的虚表有什么区别？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">4.2.2.4.</span> <span class="nav-text">java虚表的生成过程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.3.</span> <span class="nav-text">解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.3.1.</span> <span class="nav-text">解析的误区：并不是一个单纯的阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.3.2.</span> <span class="nav-text">静态解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.3.3.</span> <span class="nav-text">解析和分派的区别</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.1.</span> <span class="nav-text">cinit方法细节解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">5.1.1.</span> <span class="nav-text">疑问1：cinit方法中的代码是如何生成的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">5.1.2.</span> <span class="nav-text">疑问2：cinit类初始化是线程安全的吗？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.2.</span> <span class="nav-text">初始化中的动态解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.3.</span> <span class="nav-text">扩展:invoke_dynamic是什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">5.3.1.</span> <span class="nav-text">动态语言和静态语言的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">5.3.2.</span> <span class="nav-text">java的MethodHandle用法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">5.3.3.</span> <span class="nav-text">methodHandle典型应用场景：如何调用爷爷类的虚方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">5.3.4.</span> <span class="nav-text">java的methodHandle机制和reflection的反射有什么区别吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">5.3.5.</span> <span class="nav-text">invoke_dynamic指令原理。是否涉及动态分派、类加载和解析？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">最后的完整大图</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共305.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

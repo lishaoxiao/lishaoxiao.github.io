@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="6.1 内存管理的概念 6.2 内存防溢出机制 6.3 内存分配机制  6.3.1 连续分配内存 6.3.1.1 单一连续： 6.3.1.2 固定分区分配 6.3.1.3 动态分区分配 6.3.2 非连续内存分配  6.3.2.1 分页 6.3.2.2 分段 6.3.2.3 段页结合     6.4 虚拟内存  6.4.1 概念 6.4.2 请求分页机制 6.4.3 工作集概念 6.4.4">
+<meta property="og:type" content="article">
+<meta property="og:title" content="系统内存原理">
+<meta property="og:url" content="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="6.1 内存管理的概念 6.2 内存防溢出机制 6.3 内存分配机制  6.3.1 连续分配内存 6.3.1.1 单一连续： 6.3.1.2 固定分区分配 6.3.1.3 动态分区分配 6.3.2 非连续内存分配  6.3.2.1 分页 6.3.2.2 分段 6.3.2.3 段页结合     6.4 虚拟内存  6.4.1 概念 6.4.2 请求分页机制 6.4.3 工作集概念 6.4.4">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E5%8E%9F%E7%90%86/20210314234723510.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E5%8E%9F%E7%90%86/20210314234804903.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E5%8E%9F%E7%90%86/20210314234756201.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E5%8E%9F%E7%90%86/2021031423500574.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E5%8E%9F%E7%90%86/20210314235043680.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E5%8E%9F%E7%90%86/20210314235146459.png">
+<meta property="article:published_time" content="2022-09-08T15:58:49.000Z">
+<meta property="article:modified_time" content="2022-09-08T16:08:05.351Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="计算机基础,操作系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E5%8E%9F%E7%90%86/20210314234723510.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E5%8E%9F%E7%90%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>系统内存原理 | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          系统内存原理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-09-08 23:58:49" itemprop="dateCreated datePublished" datetime="2022-09-08T23:58:49+08:00">2022-09-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-09-09 00:08:05" itemprop="dateModified" datetime="2022-09-09T00:08:05+08:00">2022-09-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E5%8E%9F%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E5%8E%9F%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#6-1-nei-cun-guan-li-de-gai-nian">6.1 内存管理的概念</a></li>
+<li><a href="#6-2-nei-cun-fang-yi-chu-ji-zhi">6.2 内存防溢出机制</a></li>
+<li><a href="#6-3-nei-cun-fen-pei-ji-zhi">6.3 内存分配机制</a>
+<ul>
+<li><a href="#6-3-1-lian-xu-fen-pei-nei-cun">6.3.1 连续分配内存</a></li>
+<li><a href="#6-3-1-1-dan-yi-lian-xu">6.3.1.1 单一连续：</a></li>
+<li><a href="#6-3-1-2-gu-ding-fen-qu-fen-pei">6.3.1.2 固定分区分配</a></li>
+<li><a href="#6-3-1-3-dong-tai-fen-qu-fen-pei">6.3.1.3 动态分区分配</a></li>
+<li><a href="#6-3-2-fei-lian-xu-nei-cun-fen-pei">6.3.2 非连续内存分配</a>
+<ul>
+<li><a href="#6-3-2-1-fen-ye">6.3.2.1 分页</a></li>
+<li><a href="#6-3-2-2-fen-duan">6.3.2.2 分段</a></li>
+<li><a href="#6-3-2-3-duan-ye-jie-he">6.3.2.3 段页结合</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#6-4-xu-ni-nei-cun">6.4 虚拟内存</a>
+<ul>
+<li><a href="#6-4-1-gai-nian">6.4.1 概念</a></li>
+<li><a href="#6-4-2-qing-qiu-fen-ye-ji-zhi">6.4.2 请求分页机制</a></li>
+<li><a href="#6-4-3-gong-zuo-ji-gai-nian">6.4.3 工作集概念</a></li>
+<li><a href="#6-4-4-ye-mian-zhi-huan-suan-fa">6.4.4 页面置换算法</a></li>
+<li><a href="#6-4-5-ye-mian-fen-pei-liang-ce-lue">6.4.5 页面分配量策略</a></li>
+</ul>
+</li>
+<li><a href="#6-5-linux-zhong-de-nei-cun-ji-zhi">6.5 linux中的内存机制</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="6-1-nei-cun-guan-li-de-gai-nian">6.1 内存管理的概念</span><a href="#6-1-nei-cun-guan-li-de-gai-nian" class="header-anchor">#</a></h1>
+<ul>
+<li>
+<p>内存管理指操作系统对内存的划分和动态分配</p>
+</li>
+<li>
+<p>地址空间：<br>
+逻辑地址空间： 相对地址， 从0开始编址<br>
+物理地址空间：  地址转换的最终地址</p>
+</li>
+</ul>
+<p>程序运行时和<br>
+编译： 吧源代码编译成目标模块<br>
+链接： 吧目标模块、库函数链接成1个装入模块<br>
+链接属于形成进程逻辑地址的过程</p>
+<p>装入：<br>
+绝对装入： 编译时就确定了装入地址<br>
+可重定位装入：  根据内存情况， 把程序装到适当位置<br>
+运行时动态装入：运行前才真正把程序装起来（前面2个都是先分配，再装，再运行）</p>
+<h1><span id="6-2-nei-cun-fang-yi-chu-ji-zhi">6.2 内存防溢出机制</span><a href="#6-2-nei-cun-fang-yi-chu-ji-zhi" class="header-anchor">#</a></h1>
+<p>即怎么防止内存越界</p>
+<ul>
+<li>设置上下限寄存器：<br>
+存放内存中该进程的 上下限地址<br>
+每次访问时，判断是否越界</li>
+</ul>
+<p>重定位+界地址：<br>
+重定位寄存器——存放物理地址的最小地址<br>
+界地址寄存器——存放逻辑地址的最大值</p>
+<p>先把访问地址（相对地址） 与界地址比较是否越界<br>
+再加到重定位寄存器上，作为物理地址</p>
+<p>min + x，  且x &lt;max， 这样保证地址在min到min+max之内</p>
+<h1><span id="6-3-nei-cun-fen-pei-ji-zhi">6.3 内存分配机制</span><a href="#6-3-nei-cun-fen-pei-ji-zhi" class="header-anchor">#</a></h1>
+<h2><span id="6-3-1-lian-xu-fen-pei-nei-cun">6.3.1 连续分配内存</span><a href="#6-3-1-lian-xu-fen-pei-nei-cun" class="header-anchor">#</a></h2>
+<p>连续分配指 为用户程序分配的内存空间一定是连续的</p>
+<h2><span id="6-3-1-1-dan-yi-lian-xu">6.3.1.1 单一连续：</span><a href="#6-3-1-1-dan-yi-lian-xu" class="header-anchor">#</a></h2>
+<p>内存分为系统区和用户区2个区<br>
+每次用户区只能放1个程序， 这样可确保不会越界</p>
+<h2><span id="6-3-1-2-gu-ding-fen-qu-fen-pei">6.3.1.2 固定分区分配</span><a href="#6-3-1-2-gu-ding-fen-qu-fen-pei" class="header-anchor">#</a></h2>
+<p>用户区分成若干个大小的分区， 每个分区只能装一个作业。<br>
+程序如果大了会装不下<br>
+程序小了则有内存碎片</p>
+<h2><span id="6-3-1-3-dong-tai-fen-qu-fen-pei">6.3.1.3 动态分区分配</span><a href="#6-3-1-3-dong-tai-fen-qu-fen-pei" class="header-anchor">#</a></h2>
+<p>程序装入内存时，按照所需大小动态生成1个分区。 有多少碎片空间就给多少</p>
+<p>可能会存在碎片， 比如中间的进程结束了， 于是中间就空出来一个内存碎片，而可能因为太小，其他进程帆布进来。</p>
+<p>动态分配策略：</p>
+<ul>
+<li>首次适应： 从上往下找第一个满足的分区——最简单也最好</li>
+<li>最佳适应： 找一个大小差距最小的分区——最烂，碎片最多</li>
+<li>最坏适应： 直接找最大的分区转入</li>
+<li>邻近适应： 从上次查找位置开始找，而不是从第一个碎片位置开始找。——末尾碎片会很多</li>
+</ul>
+<h2><span id="6-3-2-fei-lian-xu-nei-cun-fen-pei">6.3.2 非连续内存分配</span><a href="#6-3-2-fei-lian-xu-nei-cun-fen-pei" class="header-anchor">#</a></h2>
+<p>非连续指进程内存可以 分成不同地址存放，不一定全部集中在一起。</p>
+<h3><span id="6-3-2-1-fen-ye">6.3.2.1 分页</span><a href="#6-3-2-1-fen-ye" class="header-anchor">#</a></h3>
+<p>把内存划分成固定大小的块， 进程以块为单位申请多个不同位置的块作为空间。</p>
+<ul>
+<li>页表：<br>
+每个进程PCB中会有一个页面寄存器PRT， 告知页表的起始位置和起始长度<br>
+找到页表后， 页面中会告知你所持有的页号和偏移。<br>
+通过   页号 * 块大小 + 偏移， 可知道这段内存的起始位置。</li>
+</ul>
+<p>进程每次想通过虚拟地址去定位物理地址时，都需要先去页表中找到虚拟地址对应的页，然后再得到物理地址。</p>
+<ul>
+<li>
+<p>快表TBL（Translation Lookaside Buffer )）：<br>
+为了避免每次斗取页表换算地址， 快表会缓存  虚拟地址-&gt;物理地址的直接映射，加快速度<br>
+<img src="/images/%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E5%8E%9F%E7%90%86/20210314234723510.png" alt="在这里插入图片描述"></p>
+</li>
+<li>
+<p>多级页表<br>
+地址空间超级大， 1页装不下怎么办？<br>
+用多级<br>
+一级页表指明二级页表的地址<br>
+二级页表再去实际地址<br>
+这样就可以有多页了。<br>
+<img src="/images/%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E5%8E%9F%E7%90%86/20210314234804903.png" alt="在这里插入图片描述"></p>
+</li>
+</ul>
+<p><img src="/images/%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E5%8E%9F%E7%90%86/20210314234756201.png" alt="在这里插入图片描述"></p>
+<h3><span id="6-3-2-2-fen-duan">6.3.2.2 分段</span><a href="#6-3-2-2-fen-duan" class="header-anchor">#</a></h3>
+<p>分页的话， 页的长度时固定的，  所以偏移量的最大值是固定的</p>
+<p>分段的话不限制偏移量最大值，即可以很长一段。</p>
+<p>分段属于二维地址空间， 因为他除了给出逻辑地址，还得给出段长</p>
+<p>有利于做动态链接： 程序动态修改<br>
+<img src="/images/%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E5%8E%9F%E7%90%86/2021031423500574.png" alt="在这里插入图片描述"></p>
+<h3><span id="6-3-2-3-duan-ye-jie-he">6.3.2.3 段页结合</span><a href="#6-3-2-3-duan-ye-jie-he" class="header-anchor">#</a></h3>
+<p>作业先分成若干段， 再把段分页， 每个段可以找到一个也变</p>
+<p>段号S 页号P  页内偏移<br>
+<img src="/images/%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E5%8E%9F%E7%90%86/20210314235043680.png" alt="在这里插入图片描述"></p>
+<hr>
+<p>Q: 遍历二维数组的时候, 行遍历优先和列遍历优先的效率差别, 为什么会这样</p>
+<p>A: 按行遍历比按列遍历的效率高体现在这些方面：</p>
+<ol>
+<li>CPU高速缓存</li>
+<li>CPU缓存从内存中抓取一般都是整个数据块，所以它的物理内存是连续的，几乎都是同行不同列的，而如果内循环以列的方式进行遍历的话，将会使整个缓存块无法被利用，而不得不从内存中读取数据，而从内存读取速度是远远小于从缓存中读取数据的。随着数组元素越来越多，按列读取速度也会越来越慢。</li>
+</ol>
+<h1><span id="6-4-xu-ni-nei-cun">6.4 虚拟内存</span><a href="#6-4-xu-ni-nei-cun" class="header-anchor">#</a></h1>
+<h2><span id="6-4-1-gai-nian">6.4.1 概念</span><a href="#6-4-1-gai-nian" class="header-anchor">#</a></h2>
+<p>虚拟地址可以让进程获得比实际内存要大的内存<br>
+特征：</p>
+<ul>
+<li>多次性——作业可分多次装入内存</li>
+<li>对换性——可在运行时对内存做兑换处理</li>
+<li>虚拟性——逻辑上可充分扩充容量</li>
+</ul>
+<p>要求：<br>
+必须使用非连续分配方式——分页、分段、段页<br>
+硬件需要支持  页表、中断、地址变换机构</p>
+<p>理论依据：<br>
+时间局部性—— 指令和数据总是会在一段时间内被连续访问<br>
+空间局部性——某单元被访问，那么他附件的单元也很大概率会被访问</p>
+<p><img src="/images/%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E5%8E%9F%E7%90%86/20210314235146459.png" alt="在这里插入图片描述"></p>
+<h2><span id="6-4-2-qing-qiu-fen-ye-ji-zhi">6.4.2 请求分页机制</span><a href="#6-4-2-qing-qiu-fen-ye-ji-zhi" class="header-anchor">#</a></h2>
+<p>再分页的基础上， 增加了2个功能：<br>
+请求调页——当页面不在内存中时，从外村申请调入<br>
+页面置换——把暂时不用的内存换出去，给其他需要进来的页腾出空间</p>
+<p>页表项：<br>
+页号、物理块号<br>
+状态位P：是否已经调入内存<br>
+访问字段A： 记录访问次数或者访问标记，用于置换策略判断<br>
+修改维 M： 记录是否被修改过<br>
+外村地址——当页被换出去时，指明这个页在外存的何处</p>
+<p>缺页中断机构： 当页面不存在时， 负责产生缺页中断，进行页面置换操作。</p>
+<p>缺页只能高端和系统中断不同， 属于指令中的操作，在执行期产生多次</p>
+<p>地址变换机构：<br>
+1.先检索快表，如果能找到，则直接修改页表项的访问位。<br>
+2.快表中没有，则去 再检索内存中的页表，通过状态为P确认是否在内存中<br>
+如果不在，则产生缺页中断。</p>
+<h2><span id="6-4-3-gong-zuo-ji-gai-nian">6.4.3 工作集概念</span><a href="#6-4-3-gong-zuo-ji-gai-nian" class="header-anchor">#</a></h2>
+<p>驻留集：指系统给每个进程分配的内存中实际页面集合<br>
+但是可能分配了10个， 却只有5个经常在用</p>
+<p>工作集： 某时间段内，这个进程访问和使用的页面集合</p>
+<p>通过工作集， 系统可以评估这个驻留集是否需要做删减，以及哪些页应该持续保留。<br>
+这样可以减少抖动，即减少内外村之间频繁的交换页</p>
+<h2><span id="6-4-4-ye-mian-zhi-huan-suan-fa">6.4.4 页面置换算法</span><a href="#6-4-4-ye-mian-zhi-huan-suan-fa" class="header-anchor">#</a></h2>
+<ul>
+<li>最佳置换算法：<br>
+选未来最长时间不会被用到的页<br>
+这个要基于预测，比较难</li>
+<li>先进先出FIFO<br>
+可能引发bleady异常：</li>
+</ul>
+<blockquote>
+<blockquote>
+<p>较早调入的页往往是经常被访问的页，这些页在FIFO算法下被反复调入和调出，并且有Belady现象。所谓Belady现象是指：采用FIFO算法时，如果对一个进程未分配它所要求的全部页面，有时就会出现分配的页面数增多但缺页率反而提高的异常现象。</p>
+</blockquote>
+</blockquote>
+<ul>
+<li>最近最久未使用（LRU）<br>
+选之前最长时间没访问的，  引入优先队列（最大堆）<br>
+需要设置访问时间字段</li>
+<li>简单时钟clock（最近未使用NRU）<br>
+每个页有个标记。<br>
+刚换入内存或者被访问时，都会置1</li>
+</ul>
+<p>如果需要换页时，步骤如下：</p>
+<ol>
+<li>扫描围成换的页链表</li>
+<li>如果标记为1，则改成0，继续往下扫</li>
+<li>如果位0， 则替换，并让指针指向下一页。</li>
+</ol>
+<ul>
+<li>改进的clock<br>
+把标记为改成   访问位u和修改维m</li>
+<li>1类(A =0, M = 0)：表示该页面最近既未被访问，又未被修改，是最佳淘汰页。</li>
+<li>2类(A =0, M = 1)：表示该页面最近未被访问，但已被修改，并不是很好的淘汰页。</li>
+<li>3类(A =1, M = 0)：表示该页面最近已被访问，但未被修改，该页有可能再被访问。</li>
+<li>4类(A =1, M = 1)：表示该页最近已被访问且被修改，该页可能再被访问。</li>
+</ul>
+<ol>
+<li>先优先找u=0和m=0的页，有就直接替换</li>
+<li>没有，则找 u = 0 且m=1的页（ 没访问的最优先替换）， 做替换</li>
+<li>如果中间遇到U=1的， 则都会置0，  如果m=1的也会置0</li>
+<li>如果一圈都没有，则下一圈肯定有01或者00的。</li>
+</ol>
+<h2><span id="6-4-5-ye-mian-fen-pei-liang-ce-lue">6.4.5 页面分配量策略</span><a href="#6-4-5-ye-mian-fen-pei-liang-ce-lue" class="header-anchor">#</a></h2>
+<ul>
+<li>固定分配，局部替换<br>
+每个进程分配固定的物理块，  且只能自己的块之间做替换</li>
+<li>可变分配，全局替换<br>
+缺页时，可以从全局队列的页替换</li>
+<li>可变分配，局部置换<br>
+自己替换自己，但是不够的时候可以加块</li>
+</ul>
+<p>分配来源：<br>
+对换区：频繁切换的区<br>
+文件区：补怎么会变动和修改的</p>
+<h1><span id="6-5-linux-zhong-de-nei-cun-ji-zhi">6.5 linux中的内存机制</span><a href="#6-5-linux-zhong-de-nei-cun-ji-zhi" class="header-anchor">#</a></h1>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E5%8E%9F%E7%90%86/" title="系统内存原理">http://breakdawncoder.com/知识库/计算机基础/操作系统/系统内存原理/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag"># 计算机基础,操作系统</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6/" rel="prev" title="进程调度">
+      <i class="fa fa-chevron-left"></i> 进程调度
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E7%B3%BB%E7%BB%9F%E7%A3%81%E7%9B%98%E5%92%8CIO%E5%8E%9F%E7%90%86/" rel="next" title="系统磁盘和IO原理">
+      系统磁盘和IO原理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">6.1 内存管理的概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">6.2 内存防溢出机制</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">6.3 内存分配机制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">6.3.1 连续分配内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">6.3.1.1 单一连续：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">6.3.1.2 固定分区分配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.4.</span> <span class="nav-text">6.3.1.3 动态分区分配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.5.</span> <span class="nav-text">6.3.2 非连续内存分配</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.5.1.</span> <span class="nav-text">6.3.2.1 分页</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.5.2.</span> <span class="nav-text">6.3.2.2 分段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.5.3.</span> <span class="nav-text">6.3.2.3 段页结合</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">6.4 虚拟内存</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">6.4.1 概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.2.</span> <span class="nav-text">6.4.2 请求分页机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.3.</span> <span class="nav-text">6.4.3 工作集概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.4.</span> <span class="nav-text">6.4.4 页面置换算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.5.</span> <span class="nav-text">6.4.5 页面分配量策略</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">6.5 linux中的内存机制</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共305.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

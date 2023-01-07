@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="HTTP常见问题和概念  Q: Http为什么是无连接 和无状态的？ Q: 1.1.2 那么HTTP的持久连接又是怎么回事？ Q: 浏览器从发送到接收，发生了什么？   HTTP状态码和重定向  Q: HTTP状态码有哪些？ Q: HTTP的重定向是什么？ Q: HTTP的Forward和Redirect 有什么区别？   HTTPS安全  Q: 讲一下HTTPS双向认证的过程？ Q: MD">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计网之HTTP协议深度详解">
+<meta property="og:url" content="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8BHTTP%E5%8D%8F%E8%AE%AE%E6%B7%B1%E5%BA%A6%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="HTTP常见问题和概念  Q: Http为什么是无连接 和无状态的？ Q: 1.1.2 那么HTTP的持久连接又是怎么回事？ Q: 浏览器从发送到接收，发生了什么？   HTTP状态码和重定向  Q: HTTP状态码有哪些？ Q: HTTP的重定向是什么？ Q: HTTP的Forward和Redirect 有什么区别？   HTTPS安全  Q: 讲一下HTTPS双向认证的过程？ Q: MD">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E8%AE%A1%E7%BD%91%E4%B9%8BHTTP%E5%8D%8F%E8%AE%AE%E6%B7%B1%E5%BA%A6%E8%AF%A6%E8%A7%A3/24d799de5436b49c1f29cf4c3b40aa7ef3baf1ac.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E8%AE%A1%E7%BD%91%E4%B9%8BHTTP%E5%8D%8F%E8%AE%AE%E6%B7%B1%E5%BA%A6%E8%AF%A6%E8%A7%A3/90f8198400ce1f1b8f031e861471dbf36fd154c0.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E8%AE%A1%E7%BD%91%E4%B9%8BHTTP%E5%8D%8F%E8%AE%AE%E6%B7%B1%E5%BA%A6%E8%AF%A6%E8%A7%A3/3f834d8022663b7ee0ce1602133f09dcf0f8c5cf.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E8%AE%A1%E7%BD%91%E4%B9%8BHTTP%E5%8D%8F%E8%AE%AE%E6%B7%B1%E5%BA%A6%E8%AF%A6%E8%A7%A3/1f9ba53e2ef279db7a874a0a4ab4b0fcf312ddd8.png">
+<meta property="article:published_time" content="2022-08-24T14:47:49.000Z">
+<meta property="article:modified_time" content="2022-08-24T16:19:42.990Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="计算机基础,计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/%E8%AE%A1%E7%BD%91%E4%B9%8BHTTP%E5%8D%8F%E8%AE%AE%E6%B7%B1%E5%BA%A6%E8%AF%A6%E8%A7%A3/24d799de5436b49c1f29cf4c3b40aa7ef3baf1ac.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8BHTTP%E5%8D%8F%E8%AE%AE%E6%B7%B1%E5%BA%A6%E8%AF%A6%E8%A7%A3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>计网之HTTP协议深度详解 | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8BHTTP%E5%8D%8F%E8%AE%AE%E6%B7%B1%E5%BA%A6%E8%AF%A6%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          计网之HTTP协议深度详解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-24 22:47:49" itemprop="dateCreated datePublished" datetime="2022-08-24T22:47:49+08:00">2022-08-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-25 00:19:42" itemprop="dateModified" datetime="2022-08-25T00:19:42+08:00">2022-08-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8BHTTP%E5%8D%8F%E8%AE%AE%E6%B7%B1%E5%BA%A6%E8%AF%A6%E8%A7%A3/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8BHTTP%E5%8D%8F%E8%AE%AE%E6%B7%B1%E5%BA%A6%E8%AF%A6%E8%A7%A3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#http-chang-jian-wen-ti-he-gai-nian">HTTP常见问题和概念</a>
+<ul>
+<li><a href="#q-http-wei-shi-me-shi-wu-lian-jie-he-wu-zhuang-tai-de">Q: Http为什么是无连接 和无状态的？</a></li>
+<li><a href="#q-1-1-2-na-me-http-de-chi-jiu-lian-jie-you-shi-zen-me-hui-shi">Q: 1.1.2 那么HTTP的持久连接又是怎么回事？</a></li>
+<li><a href="#q-liu-lan-qi-cong-fa-song-dao-jie-shou-fa-sheng-liao-shi-me">Q: 浏览器从发送到接收，发生了什么？</a></li>
+</ul>
+</li>
+<li><a href="#http-zhuang-tai-ma-he-chong-ding-xiang">HTTP状态码和重定向</a>
+<ul>
+<li><a href="#q-http-zhuang-tai-ma-you-na-xie">Q: HTTP状态码有哪些？</a></li>
+<li><a href="#q-http-de-chong-ding-xiang-shi-shi-me">Q: HTTP的重定向是什么？</a></li>
+<li><a href="#q-http-de-forward-he-redirect-you-shi-me-qu-bie">Q: HTTP的Forward和Redirect 有什么区别？</a></li>
+</ul>
+</li>
+<li><a href="#https-an-quan">HTTPS安全</a>
+<ul>
+<li><a href="#q-jiang-yi-xia-https-shuang-xiang-ren-zheng-de-guo-cheng">Q: 讲一下HTTPS双向认证的过程？</a></li>
+<li><a href="#q-md5-zai-shuang-xiang-ren-zheng-guo-cheng-zhong-you-shi-me-yong">Q: MD5 在双向认证过程中有什么用？</a></li>
+<li><a href="#q-shi-me-shi-zheng-shu-lian">Q: 什么是证书链?</a></li>
+</ul>
+</li>
+<li><a href="#http-yu-yi-post-he-get">HTTP语义——POST和GET</a>
+<ul>
+<li><a href="#q-post-he-get-de-qu-bie-shi-shi-me">Q: post和get的区别是什么？</a></li>
+<li><a href="#q-shang-mian-ti-dao-liao-get-huan-cun-liu-lan-qi-zen-me-que-ding-huan-cun-shi-fou-yao-geng-xin">Q: 上面提到了get缓存， 浏览器怎么确定缓存是否要更新？</a></li>
+<li><a href="#q-ru-guo-huan-cun-chao-qi-liao-dan-fu-wu-duan-zi-yuan-que-shi-mei-you-bian-hua-ru-he-bi-mian-ke-hu-duan-chong-fa-qing-qiu">Q: 如果缓存超期了，  但服务端资源确实没有变化，如何避免客户端重发请求？</a></li>
+<li><a href="#q-shang-mian-ti-dao-de-liu-lan-qi-get-huan-cun-you-shi-me-ban-fa-bi-mian-huan-cun">Q: 上面提到的， 浏览器get缓存，有什么办法避免缓存？</a></li>
+<li><a href="#q-chu-liao-post-he-get-qing-qiu-huan-you-na-xie-http-fang-fa">Q: 除了POST和GET请求， 还有哪些HTTP方法？</a></li>
+<li><a href="#q-wo-ke-yi-zai-get-li-jia-body-me">Q: 我可以在get里加body么？</a></li>
+<li><a href="#q-post-yi-ding-jiu-bi-get-an-quan-me">Q: post一定就比get安全么？</a></li>
+</ul>
+</li>
+<li><a href="#http-e-wai-te-xing">HTTP额外特性</a>
+<ul>
+<li><a href="#q-http-de-keep-alive-he-tcp-de-keep-alive-you-shi-me-qu-bie">Q: HTTP的keep-alive和 TCP的keep-alive有什么区别？</a></li>
+<li><a href="#q-shi-me-shi-http-liu-shui-xian-ji-zhu">Q: 什么是HTTP 流水线技术？</a></li>
+<li><a href="#q-http-qing-qiu-tou-li-you-shi-me-dong-xi">Q: HTTP请求头里有什么东西？</a></li>
+<li><a href="#q-cookie-you-shi-me-yong">Q: cookie有什么用？</a></li>
+<li><a href="#q-cookie-zhong-hui-bao-han-na-xie-nei-rong">Q: cookie中会包含哪些内容？</a></li>
+<li><a href="#q-cookie-he-session-de-qu-bie">Q: cookie和session的区别？</a></li>
+<li><a href="#q-ke-hu-duan-liu-lan-qi-jiang-cookie-gong-neng-jin-yong-na-session-ke-yi-zen-me-ban">Q: 客户端浏览器将Cookie功能禁用, 那session可以怎么办？</a></li>
+<li><a href="#q-fu-wu-duan-ru-he-she-ji-gao-ke-yong-de-session-te-xing">Q: 服务端如何涉及高可用的session特性？</a></li>
+<li><a href="#q-token-you-shi-shi-me">Q: token又是什么？</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<p>因为http是非常重要的东西，restful经常问道， 所以单独抽出一章节讲解。</p>
+<p>这个最好看图解HTTP笔记里的内容。</p>
+<hr>
+<h1><span id="http-chang-jian-wen-ti-he-gai-nian">HTTP常见问题和概念</span><a href="#http-chang-jian-wen-ti-he-gai-nian" class="header-anchor">#</a></h1>
+<h2><span id="q-http-wei-shi-me-shi-wu-lian-jie-he-wu-zhuang-tai-de">Q:  Http为什么是无连接 和无状态的？</span><a href="#q-http-wei-shi-me-shi-wu-lian-jie-he-wu-zhuang-tai-de" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>一.无连接：每一个访问都是无连接，服务器挨个处理访问队列里的访问，处理完一个就关闭连接，这事儿就完了，然后处理下一个新的无连接的含义是限制每次连接只处理一个请求。服务器处理完客户的请求，并收到客户的应答后，即断开连接</li>
+<li>二.无状态：</li>
+</ul>
+<ol>
+<li>协议对于事务处理没有记忆能力</li>
+<li>对同一个url请求没有上下文关系</li>
+<li>每次的请求都是独立的，它的执行情况和结果与前面的请求和之后的请求是无直接关系的，它不会受前面的请求应答情况直接影响，也不会直接影响后面的请求应答情况</li>
+<li>服务器中没有保存客户端的状态，客户端必须每次带上自己的状态去请求服务器</li>
+</ol>
+<hr>
+<h2><span id="q-1-1-2-na-me-http-de-chi-jiu-lian-jie-you-shi-zen-me-hui-shi">Q: 1.1.2 那么HTTP的持久连接又是怎么回事？</span><a href="#q-1-1-2-na-me-http-de-chi-jiu-lian-jie-you-shi-zen-me-hui-shi" class="header-anchor">#</a></h2>
+<p>A:<br>
+在使用长连接的情况下，当一个网页打开完成后，客户端和服务器之间用于传输HTTP数据的TCP连接不会关闭，客户端再次访问这个服务器时，会继续使用这一条已经建立的连接。<br>
+Keep-Alive不会永久保持连接，它有一个保持时间，可以在不同的服务器软件（如Apache）中设定这个时间。<br>
+实现长连接需要客户端和服务端都支持长连接。<br>
+<strong>HTTP协议的长连接和短连接，实质上是TCP协议的长连接和短连接。</strong><br>
+TCP短连接长连接都由客户端发起，而TCP长连接的保活功能主要为服务器应用提供。<br>
+如果客户端已经消失而连接未断开，则会使得服务器上保留一个半开放的连接，而服务器又在等待来自客户端的数据，此时服务器将永远等待客户端的数据。保活功能就是试图在服务端器端检测到这种半开放的连接。也因为短连接、长连接的实现在HTTP之外，与HTTP无关，从HTTP自身来看，HTTP依然是无连接的</p>
+<hr>
+<h2><span id="q-liu-lan-qi-cong-fa-song-dao-jie-shou-fa-sheng-liao-shi-me">Q: 浏览器从发送到接收，发生了什么？</span><a href="#q-liu-lan-qi-cong-fa-song-dao-jie-shou-fa-sheng-liao-shi-me" class="header-anchor">#</a></h2>
+<p>A:<br>
+<img src="/images/%E8%AE%A1%E7%BD%91%E4%B9%8BHTTP%E5%8D%8F%E8%AE%AE%E6%B7%B1%E5%BA%A6%E8%AF%A6%E8%A7%A3/24d799de5436b49c1f29cf4c3b40aa7ef3baf1ac.png" alt="24d799de5436b49c1f29cf4c3b40aa7ef3baf1ac"></p>
+<h1><span id="http-zhuang-tai-ma-he-chong-ding-xiang">HTTP状态码和重定向</span><a href="#http-zhuang-tai-ma-he-chong-ding-xiang" class="header-anchor">#</a></h1>
+<hr>
+<h2><span id="q-http-zhuang-tai-ma-you-na-xie">Q: HTTP状态码有哪些？</span><a href="#q-http-zhuang-tai-ma-you-na-xie" class="header-anchor">#</a></h2>
+<p>A:<br>
+状态码分类表<br>
+<img src="/images/%E8%AE%A1%E7%BD%91%E4%B9%8BHTTP%E5%8D%8F%E8%AE%AE%E6%B7%B1%E5%BA%A6%E8%AF%A6%E8%A7%A3/90f8198400ce1f1b8f031e861471dbf36fd154c0.png" alt="90f8198400ce1f1b8f031e861471dbf36fd154c0"></p>
+<p>各类别常见状态码：</p>
+<ul>
+<li>2xx （3种）</li>
+</ul>
+<p>200 OK：表示从客户端发送给服务器的请求被正常处理并返回；</p>
+<p>204 No Content：表示客户端发送给客户端的请求得到了成功处理，但在返回的响应报文中不含实体的主体部分（没有资源可以返回）；</p>
+<p>206 Patial Content：表示客户端进行了范围请求，并且服务器成功执行了这部分的GET请求，响应报文中包含由Content-Range指定范围的实体内容。</p>
+<ul>
+<li>3xx （5种）</li>
+</ul>
+<p>301 Moved Permanently：永久性重定向，表示请求的资源被分配了新的URL，之后应使用更改的URL；</p>
+<p>302 Found：临时性重定向，表示请求的资源被分配了新的URL，希望本次访问使用新的URL；</p>
+<p>301与302的区别：前者是永久移动，后者是临时移动（之后可能还会更改URL）</p>
+<p>303 See Other：表示请求的资源被分配了新的URL，应使用GET方法定向获取请求的资源；<br>
+302与303的区别：后者明确表示客户端应当采用GET方式获取资源</p>
+<p>304 Not Modified：表示客户端发送附带条件（是指采用GET方法的请求报文中包含if-Match、If-Modified-Since、If-None-Match、If-Range、If-Unmodified-Since中任一首部）的请求时，服务器端允许访问资源，但是请求为满足条件的情况下返回改状态码；</p>
+<p>307 Temporary Redirect：临时重定向，与303有着相同的含义，307会遵照浏览器标准不会从POST变成GET；（不同浏览器可能会出现不同的情况）；</p>
+<ul>
+<li>4xx （4种）</li>
+</ul>
+<p>400 Bad Request：表示请求报文中存在语法错误；</p>
+<p>401 Unauthorized：未经许可，需要通过HTTP认证；</p>
+<p>403 Forbidden：服务器拒绝该次访问（访问权限出现问题）</p>
+<p>404 Not Found：表示服务器上无法找到请求的资源，除此之外，也可以在服务器拒绝请求但不想给拒绝原因时使用；</p>
+<ul>
+<li>5xx （2种）</li>
+</ul>
+<p>500 Inter Server Error：表示服务器在执行请求时发生了错误，也有可能是web应用存在的bug或某些临时的错误时；</p>
+<p>503 Server Unavailable：表示服务器暂时处于超负载或正在进行停机维护，无法处理请求；</p>
+<hr>
+<h2><span id="q-http-de-chong-ding-xiang-shi-shi-me">Q: HTTP的重定向是什么？</span><a href="#q-http-de-chong-ding-xiang-shi-shi-me" class="header-anchor">#</a></h2>
+<p>在 HTTP 协议中，重定向操作由服务器通过发送特殊的响应（即 redirects）而触发。HTTP 协议的重定向响应的状态码为 3xx 。</p>
+<p>浏览器在接收到重定向响应的时候，会采用该响应提供的新的 URL ，并立即进行加载；大多数情况下，除了会有一小部分性能损失之外，重定向操作对于用户来说是不可见的。<br>
+<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Redirections">HTTP 的重定向</a></p>
+<hr>
+<h2><span id="q-http-de-forward-he-redirect-you-shi-me-qu-bie">Q: HTTP的Forward和Redirect 有什么区别？</span><a href="#q-http-de-forward-he-redirect-you-shi-me-qu-bie" class="header-anchor">#</a></h2>
+<p>A:<br>
+直接转发方式（Forward），客户端和浏览器只发出一次请求，Servlet、HTML、JSP或其它信息资源，由第二个信息资源响应该请求，在请求对象request中，保存的对象对于一个每个信息资源是共享的。</p>
+<p>间接转发方式（Redirect）实际是两次HTTP请求，服务器端在响应第一次请求的时候，让浏览器再向另外一个URL发出请求，从而达到转发的目的。</p>
+<p>直接转发就相当于：“A找B借钱，B说没有，B去找C借，借到借不到都会把消息传递给A”；</p>
+<p>间接转发就相当于：“A找B借钱，B说没有，让A去找C借”。</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zhanglifang_happy/article/details/52056504">代码实际应用</a></p>
+<h1><span id="https-an-quan">HTTPS安全</span><a href="#https-an-quan" class="header-anchor">#</a></h1>
+<hr>
+<h2><span id="q-jiang-yi-xia-https-shuang-xiang-ren-zheng-de-guo-cheng">Q: 讲一下HTTPS双向认证的过程？</span><a href="#q-jiang-yi-xia-https-shuang-xiang-ren-zheng-de-guo-cheng" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ol>
+<li>服务端发送证书， 证书中包含网站信息、CA签名、网站公钥</li>
+<li>客户端校验CA签名，确认是CA所签且来源方正是该网站。</li>
+<li>客户端生成会话密钥</li>
+<li>客户端用网站公钥对会话密钥进行加密，生成非对称的会话密钥密文</li>
+<li>客户端发送会话密钥密文给服务端</li>
+<li>服务端用私钥解密， 得到明文会话密钥。</li>
+<li>二者使用会话密钥进行加密传输</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://bbs.huaweicloud.com/blogs/312712">故事+图文，一次性解决你对HTTPS认证过程的所有疑惑</a></p>
+<hr>
+<h2><span id="q-md5-zai-shuang-xiang-ren-zheng-guo-cheng-zhong-you-shi-me-yong">Q: MD5 在双向认证过程中有什么用？</span><a href="#q-md5-zai-shuang-xiang-ren-zheng-guo-cheng-zhong-you-shi-me-yong" class="header-anchor">#</a></h2>
+<p>A:<br>
+对网址申请信息进行摘要， 避免签名内容过长。同时也避免了逆向推导原网址信息的过程。</p>
+<hr>
+<h2><span id="q-shi-me-shi-zheng-shu-lian">Q: 什么是证书链?</span><a href="#q-shi-me-shi-zheng-shu-lian" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>
+<p>一个证书或证书链的拆封操作，是为了<br>
+从中获得一个公钥。可示为X1p?X1&lt;<x2>&gt;,这为一个中缀操作，其左操作数为一个认证机构的公钥，<br>
+右操作数则为该认证机构所颁发的一个证书。如果能正确解开，输出结果为用户的公钥</x2></p>
+</li>
+<li>
+<p>证书链验证的要求是，路径中每个证书从最终实体到根证书<br>
+都是有效的，并且每个证书都要正确地对应发行该证书的权威可信任性CA。操作表达式为 Ap?A&lt;<b>&gt;B&lt;<c>&gt;,<br>
+指出该操作使用A的公钥，从B的证书中获得B的公钥Bp，然后再通过 Bp来解封C的证书。操作的最终结果</c></b></p>
+</li>
+</ul>
+<p>说人话就是下游证书解出来是上游父证书的密文公钥，然后继续解</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/junwua/article/details/80506399">理解证书和证书链</a></p>
+<h1><span id="http-yu-yi-post-he-get">HTTP语义——POST和GET</span><a href="#http-yu-yi-post-he-get" class="header-anchor">#</a></h1>
+<hr>
+<h2><span id="q-post-he-get-de-qu-bie-shi-shi-me">Q: post和get的区别是什么？</span><a href="#q-post-he-get-de-qu-bie-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>GET参数包含在url中， post参数还包含在requestBody中。 所以不建议用get参数传递敏感信息。</li>
+<li>get最大提交url为2k，即放在url里的参数有限制。 post的requestBody则比get大很多。</li>
+<li>get一次只生成1个数据包（header和data一起发，返回200），  post会生成2个（先发header，响应100，再发data，返回200）。</li>
+<li>get请求可以被浏览器主动缓存， post则不会，除非浏览器中主动设置缓存post</li>
+<li>浏览器回退的时候，get没影响，但是post会再次提交数据，可能导致重复提交。<br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/logsharing/p/8448446.html">GET和POST两种基本请求方法的详细区别</a></li>
+<li>get只接收ASCII码，post则可以在body中传输多种编码内容。</li>
+<li>post比get更安全， 因为参数没有直接暴露在url里。</li>
+</ul>
+<hr>
+<h2><span id="q-shang-mian-ti-dao-liao-get-huan-cun-liu-lan-qi-zen-me-que-ding-huan-cun-shi-fou-yao-geng-xin">Q: 上面提到了get缓存， 浏览器怎么确定缓存是否要更新？</span><a href="#q-shang-mian-ti-dao-liao-get-huan-cun-liu-lan-qi-zen-me-que-ding-huan-cun-shi-fou-yao-geng-xin" class="header-anchor">#</a></h2>
+<p>A:<br>
+首先， 请求有个Cache-Control， 里面可以指定最大缓存时间。</p>
+<hr>
+<h2><span id="q-ru-guo-huan-cun-chao-qi-liao-dan-fu-wu-duan-zi-yuan-que-shi-mei-you-bian-hua-ru-he-bi-mian-ke-hu-duan-chong-fa-qing-qiu">Q: 如果缓存超期了，  但服务端资源确实没有变化，如何避免客户端重发请求？</span><a href="#q-ru-guo-huan-cun-chao-qi-liao-dan-fu-wu-duan-zi-yuan-que-shi-mei-you-bian-hua-ru-he-bi-mian-ke-hu-duan-chong-fa-qing-qiu" class="header-anchor">#</a></h2>
+<p>A:<br>
+服务端的响应中，携带last-modified时间给客户端。<br>
+客户端缓存超期时，把last_modified这个时间传递过去， 服务端校验如果发现时间一致，则不做业务处理，直接返回304， 让客户端直接继续用本地缓存即可。</p>
+<hr>
+<h2><span id="q-shang-mian-ti-dao-de-liu-lan-qi-get-huan-cun-you-shi-me-ban-fa-bi-mian-huan-cun">Q: 上面提到的， 浏览器get缓存，有什么办法避免缓存？</span><a href="#q-shang-mian-ti-dao-de-liu-lan-qi-get-huan-cun-you-shi-me-ban-fa-bi-mian-huan-cun" class="header-anchor">#</a></h2>
+<p>A: 给get请求的url中加个时间戳。或者设置no-cache指令<br>
+<a target="_blank" rel="noopener" href="http://www.manongjc.com/detail/12-ogbkxjractyospg.html">关于浏览器缓存的其他解答</a></p>
+<hr>
+<h2><span id="q-chu-liao-post-he-get-qing-qiu-huan-you-na-xie-http-fang-fa">Q: 除了POST和GET请求， 还有哪些HTTP方法？</span><a href="#q-chu-liao-post-he-get-qing-qiu-huan-you-na-xie-http-fang-fa" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>HEAD：类似get请求， 返回的响应里不包含body，只给响应报头</li>
+<li>PUT：发送的数据专门用于覆盖某数据</li>
+<li>DELETE：请求服务器删除指定资源或者页面</li>
+<li>TRACE： 回显服务起收到的请求， 用于测试或者诊断</li>
+<li>CONNECT： HTTP/1.1协议中预留给能够将连接改为管道方式的代理服务器。</li>
+<li>OPTIONS: 返回服务器针对特定资源所支持的HTTP请求方法，也可以利用向web服务器发送‘*’的请求来测试服务器的功能性</li>
+</ul>
+<hr>
+<h2><span id="q-wo-ke-yi-zai-get-li-jia-body-me">Q: 我可以在get里加body么？</span><a href="#q-wo-ke-yi-zai-get-li-jia-body-me" class="header-anchor">#</a></h2>
+<p>A:<br>
+完全可以加，没有问题， GET和POST本质上就是TCP链接，并无差别。但是由于HTTP的规定和浏览器/服务器的限制，导致他们在应用过程中体现出一些不同。 例如某些框架可能针对get和post做过封装来限制一些语义。</p>
+<hr>
+<h2><span id="q-post-yi-ding-jiu-bi-get-an-quan-me">Q: post一定就比get安全么？</span><a href="#q-post-yi-ding-jiu-bi-get-an-quan-me" class="header-anchor">#</a></h2>
+<p>A:<br>
+如果用了HTTPS， 则post比get安全， 否则是一样的的，因为传输时都是明文传输。</p>
+<hr>
+<h1><span id="http-e-wai-te-xing">HTTP额外特性</span><a href="#http-e-wai-te-xing" class="header-anchor">#</a></h1>
+<h2><span id="q-http-de-keep-alive-he-tcp-de-keep-alive-you-shi-me-qu-bie">Q: HTTP的keep-alive和 TCP的keep-alive有什么区别？</span><a href="#q-http-de-keep-alive-he-tcp-de-keep-alive-you-shi-me-qu-bie" class="header-anchor">#</a></h2>
+<p>A:<br>
+区别一：</p>
+<ul>
+<li>HTTP 的 Keep-Alive，是由应用层（用户态） 实现的，称为 HTTP 长连接；</li>
+<li>TCP 的 Keepalive，是由 TCP 层（内核态） 实现的，称为 TCP 保活机制；</li>
+</ul>
+<p>区别二：</p>
+<ul>
+<li>HTTP 的 Keep-Alive 就是实现了这个功能，可以使用同一个 TCP 连接来发送和接收多个 HTTP 请求/应答，避免了连接建立和释放的开销，这个方法称为 HTTP 长连接</li>
+<li>TCP 的 Keepalive 这东西其实就是 TCP 的保活机制<br>
+如果两端的 TCP 连接一直没有数据交互，达到了触发 TCP 保活机制的条件，那么内核里的 TCP 协议栈就会发送探测报文</li>
+</ul>
+<p>区别三：</p>
+<ul>
+<li>HTTP添加方式——请求头添加Connection: Keep-Alive</li>
+<li>TCP添加方式——通过 socket 接口设置SO_KEEPALIVE<br>
+<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/431303367?utm_source=qq&amp;utm_medium=social&amp;utm_oi=682142273152749568">阿里一面：TCP 的 Keepalive 和 HTTP 的 Keep-Alive 是一个东西吗？</a></li>
+</ul>
+<hr>
+<h2><span id="q-shi-me-shi-http-liu-shui-xian-ji-zhu">Q: 什么是HTTP 流水线技术？</span><a href="#q-shi-me-shi-http-liu-shui-xian-ji-zhu" class="header-anchor">#</a></h2>
+<p>A:<br>
+所谓的 HTTP 流水线，是客户端可以先一次性发送多个请求，而在发送过程中不需先等待服务器的回应，可以减少整体的响应时间。</p>
+<p>举例来说，客户端需要请求两个资源。以前的做法是，在同一个 TCP 连接里面，先发送 A 请求，然后等待服务器做出回应，收到后再发出 B 请求。HTTP 流水线机制则允许客户端同时发出 A 请求和 B 请求。<br>
+<img src="/images/%E8%AE%A1%E7%BD%91%E4%B9%8BHTTP%E5%8D%8F%E8%AE%AE%E6%B7%B1%E5%BA%A6%E8%AF%A6%E8%A7%A3/3f834d8022663b7ee0ce1602133f09dcf0f8c5cf.png" alt="3f834d8022663b7ee0ce1602133f09dcf0f8c5cf"></p>
+<hr>
+<h2><span id="q-http-qing-qiu-tou-li-you-shi-me-dong-xi">Q: HTTP请求头里有什么东西？</span><a href="#q-http-qing-qiu-tou-li-you-shi-me-dong-xi" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>Host: <a target="_blank" rel="noopener" href="http://www.study.com">www.study.com</a>                // 请求的地址域名和端口，不包括协议</li>
+<li>Connection: keep-alive　　　   // 连接类型，持续连接</li>
+<li>Upgrade-Insecure-Requests：1  // http 自动升级到https，防止跨域问题但是域名端口都不同的不会提升</li>
+<li>User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.96 Safari/537.36  //浏览器的用户代理信息</li>
+<li>Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,<code>*/*</code>;q=0.8     //浏览器支持的请求类型</li>
+<li>Accept-Encoding: gzip, deflate, sdch   //浏览器能处理的压缩代码</li>
+<li>Accept-Language: zh-CN,zh;q=0.8,en;q=0.6  //浏览器当前设置语言<br>
+post新加的请求头：</li>
+<li>Content-Length: 29                  //请求参数长度</li>
+<li>Cache-Control: max-age=0      //强制要求服务器返回最新的文件内容,也就是不走缓存，返回的200</li>
+<li>Origin: <a target="_blank" rel="noopener" href="http://www.study.com">http://www.study.com</a>    //请求来源地址，包括协议</li>
+<li>Referer: <a target="_blank" rel="noopener" href="http://www.study.com/day02/01-login.html">http://www.study.com/day02/01-login.html</a>     //原始的url,不带锚点，比方说在谷歌打开百度，feferer显示的是谷歌的url</li>
+</ul>
+<hr>
+<h2><span id="q-cookie-you-shi-me-yong">Q: cookie有什么用？</span><a href="#q-cookie-you-shi-me-yong" class="header-anchor">#</a></h2>
+<p>A:<br>
+HTTP协议作为无状态协议，对于HTTP协议而言，无状态同样指每次request请求之前是相互独立的，当前请求并不会记录它的上一次请求信息。那么问题来了，既然无状态，那完成一套完整的业务逻辑，发送多次请求的情况数不胜数，使用http如何将上下文请求进行关联呢？机智的人类通过优化，找到了一种简单的方式记录http协议的请求信息.</p>
+<ol>
+<li>浏览器发送request请求到服务器，服务器除了返回请求的response之外，还给请求分配一个唯一标识ID，协同response一并返回给浏览器。</li>
+<li>同时服务器在本地创建一个MAP结构，专门以key-value（请求ID-会话内容）形式将每个request进行存储</li>
+<li>此时浏览器的request已经被赋予了一个ID，第二次访问时，服务器先从request中查找该ID，根据ID查找维护会话的content内容，该内容中记录了上一次request的信息状态。</li>
+<li>根据查找出的request信息生成基于这些信息的response内容，再次返回给浏览器。如果有需要会再次更新会话内容，为下一次请求提供准备。</li>
+</ol>
+<p><strong>根据这个会话ID，以建立多次请求-响应模式的关联数据传递</strong>, 这就是cookie和session对无状态的http协议的强大作用。<br>
+服务端生成这个全局的唯一标识，传递给客户端用于唯一标记这次请求，也就是cookie；而服务器创建的那个map结构就是session。</p>
+<hr>
+<h2><span id="q-cookie-zhong-hui-bao-han-na-xie-nei-rong">Q: cookie中会包含哪些内容？</span><a href="#q-cookie-zhong-hui-bao-han-na-xie-nei-rong" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>Domain：域，表示当前cookie所属于哪个域或子域下面。<br>
+对于服务器返回的Set-Cookie中，如果没有指定Domain的值，那么其Domain的值是默认为当前所提交的http的请求所对应的主域名的。比如访问 <a target="_blank" rel="noopener" href="http://www.example.com">http://www.example.com</a>，返回一个cookie，没有指名domain值，<a target="_blank" rel="noopener" href="http://xn--www-c88da6fy7pz3cm18kef0b2qler5b.example.com">那么其为值为默认的www.example.com</a>。</li>
+<li>Path：表示cookie的所属路径。</li>
+<li>Expire time/Max-age：表示了cookie的有效期。expire的值，是一个时间，过了这个时间，该cookie就失效了。或者是用max-age指定当前cookie是在多长时间之后而失效。如果服务器返回的一个cookie，没有指定其expire time，那么表明此cookie有效期只是当前的session，即是session cookie，当前session会话结束后，就过期了。对应的，当关闭（浏览器中）该页面的时候，此cookie就应该被浏览器所删除了。</li>
+<li>secure：表示该cookie只能用https传输。一般用于包含认证信息的cookie，要求传输此cookie的时候，必须用https传输。</li>
+<li>httponly：表示此cookie必须用于http或https传输。这意味着，浏览器脚本，比如javascript中，是不允许访问操作此cookie的。<br>
+<img src="/images/%E8%AE%A1%E7%BD%91%E4%B9%8BHTTP%E5%8D%8F%E8%AE%AE%E6%B7%B1%E5%BA%A6%E8%AF%A6%E8%A7%A3/1f9ba53e2ef279db7a874a0a4ab4b0fcf312ddd8.png" alt="1f9ba53e2ef279db7a874a0a4ab4b0fcf312ddd8"><br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/bq-med/p/8603664.html">Http协议中Cookie详细介绍</a></li>
+</ul>
+<hr>
+<h2><span id="q-cookie-he-session-de-qu-bie">Q: cookie和session的区别？</span><a href="#q-cookie-he-session-de-qu-bie" class="header-anchor">#</a></h2>
+<p>A:<br>
+会话（Session）跟踪是Web程序中常用的技术，用来跟踪用户的整个会话。<br>
+常用的会话跟踪技术是Cookie与Session。</p>
+<ol>
+<li>
+<p>Cookie通过在<strong>客户端</strong>记录信息确定用户身份，Cookie具有不可跨域名性<br>
+Session通过在<strong>服务器端</strong>记录信息确定用户身份。</p>
+</li>
+<li>
+<p>Session需要使用Cookie作为识别标志</p>
+</li>
+<li>
+<p>cookie不是很安全，别人可以分析存放在本地的COOKIE并进行COOKIE欺骗考虑到安全应当使用session。</p>
+</li>
+<li>
+<p>session会在一定时间内保存在服务器上。当访问增多，会比较占用你服务器的性能考虑到减轻服务器性能方面，应当使用cookie</p>
+</li>
+</ol>
+<blockquote>
+<blockquote>
+<p>Cookie机制是通过检查客户身上的“通行证”来确定客户身份的话，那么Session机制就是通过检查服务器上的“客户明细表”来确认客户身份。Session相当于程序在服务器上建立的一份客户档案，客户来访的时候只需要查询客户档案表就可以了。</p>
+</blockquote>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/l199616j/p/11195667.html">cookie和session的详解与区别</a></p>
+<hr>
+<h2><span id="q-ke-hu-duan-liu-lan-qi-jiang-cookie-gong-neng-jin-yong-na-session-ke-yi-zen-me-ban">Q: 客户端浏览器将Cookie功能禁用, 那session可以怎么办？</span><a href="#q-ke-hu-duan-liu-lan-qi-jiang-cookie-gong-neng-jin-yong-na-session-ke-yi-zen-me-ban" class="header-anchor">#</a></h2>
+<p>A:<br>
+URL地址重写是对客户端不支持Cookie的解决方案。URL地址重写的原理是将该用户Session的id信息重写到URL地址中。服务器能够解析重写后的URL获取Session的id。这样即使客户端不支持Cookie，也可以使用Session来记录用户状态</p>
+<hr>
+<h2><span id="q-fu-wu-duan-ru-he-she-ji-gao-ke-yong-de-session-te-xing">Q: 服务端如何涉及高可用的session特性？</span><a href="#q-fu-wu-duan-ru-he-she-ji-gao-ke-yong-de-session-te-xing" class="header-anchor">#</a></h2>
+<p>A:<br>
+保证session一致性的架构设计常见方法：</p>
+<ul>
+<li>session同步法：多台web-server相互同步数据(代价高，无法水平扩容）</li>
+<li>客户端存储法：session存到用户本地cookie中（带宽变大，不安全）</li>
+<li>反向代理hash一致性：四层hash和七层hash都可以做，保证一个用户的请求落在一台web-server上</li>
+<li>后端统一存储：存到redis集群或者数据库，web-server重启和扩容，session也不会丢失</li>
+</ul>
+<p>建议：<br>
+<strong>web层、service层无状态</strong>是大规模分布式系统设计原则之一，session属于状态，不宜放在web层<br>
+让专业的软件做专业的事情，web-server存session？还是让cache去做这样的事情吧</p>
+<p><a target="_blank" rel="noopener" href="https://www.w3cschool.cn/architectroad/architectroad-session-consistency.html">session一致性架构设计实践</a></p>
+<hr>
+<h2><span id="q-token-you-shi-shi-me">Q: token又是什么？</span><a href="#q-token-you-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A:<br>
+Token的引入：Token是在客户端频繁向服务端请求数据，服务端频繁的去数据库查询用户名和密码并进行对比，判断用户名和密码正确与否，并作出相应提示，在这样的背景下，Token便应运而生。</p>
+<p>Token的定义：Token是服务端生成的一串字符串，以作客户端进行请求的一个令牌，当第一次登录后，服务器生成一个Token便将此Token返回给客户端，以后客户端只需带上这个Token前来请求数据即可，无需再次带上用户名和密码。最简单的token组成:uid(用户唯一的身份标识)、time(当前时间的时间戳)、sign(签名，由token的前几位+盐以哈希算法压缩成一定长的十六进制字符串，可以防止恶意第三方拼接token请求服务器)。</p>
+<p>使用Token的目的：Token的目的是为了减轻服务器的压力，减少频繁的查询数据库，使服务器更加健壮。<br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/ella-li/p/12008069.html">Token 、Cookie和Session的区别</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8BHTTP%E5%8D%8F%E8%AE%AE%E6%B7%B1%E5%BA%A6%E8%AF%A6%E8%A7%A3/" title="计网之HTTP协议深度详解">http://breakdawncoder.com/知识库/计算机基础/计算机网络/计网之HTTP协议深度详解/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag"># 计算机基础,计算机网络</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E5%BA%94%E7%94%A8%E5%B1%82%E8%AF%A6%E8%A7%A3/" rel="prev" title="计网之应用层详解">
+      <i class="fa fa-chevron-left"></i> 计网之应用层详解
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" rel="next" title="计算机网络基础概念">
+      计算机网络基础概念 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">HTTP常见问题和概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">Q:  Http为什么是无连接 和无状态的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">Q: 1.1.2 那么HTTP的持久连接又是怎么回事？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">Q: 浏览器从发送到接收，发生了什么？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">HTTP状态码和重定向</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">Q: HTTP状态码有哪些？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">Q: HTTP的重定向是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">Q: HTTP的Forward和Redirect 有什么区别？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">HTTPS安全</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">Q: 讲一下HTTPS双向认证的过程？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">Q: MD5 在双向认证过程中有什么用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">Q: 什么是证书链?</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">HTTP语义——POST和GET</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">Q: post和get的区别是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.2.</span> <span class="nav-text">Q: 上面提到了get缓存， 浏览器怎么确定缓存是否要更新？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.3.</span> <span class="nav-text">Q: 如果缓存超期了，  但服务端资源确实没有变化，如何避免客户端重发请求？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.4.</span> <span class="nav-text">Q: 上面提到的， 浏览器get缓存，有什么办法避免缓存？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.5.</span> <span class="nav-text">Q: 除了POST和GET请求， 还有哪些HTTP方法？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.6.</span> <span class="nav-text">Q: 我可以在get里加body么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.7.</span> <span class="nav-text">Q: post一定就比get安全么？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">HTTP额外特性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.1.</span> <span class="nav-text">Q: HTTP的keep-alive和 TCP的keep-alive有什么区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.2.</span> <span class="nav-text">Q: 什么是HTTP 流水线技术？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.3.</span> <span class="nav-text">Q: HTTP请求头里有什么东西？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.4.</span> <span class="nav-text">Q: cookie有什么用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.5.</span> <span class="nav-text">Q: cookie中会包含哪些内容？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.6.</span> <span class="nav-text">Q: cookie和session的区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.7.</span> <span class="nav-text">Q: 客户端浏览器将Cookie功能禁用, 那session可以怎么办？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.8.</span> <span class="nav-text">Q: 服务端如何涉及高可用的session特性？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.9.</span> <span class="nav-text">Q: token又是什么？</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共305.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

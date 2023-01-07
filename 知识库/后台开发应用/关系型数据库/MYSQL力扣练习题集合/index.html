@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="[toc]  limit 1 offset 1 不存在却要求返回null时， 可以用子查询，或者IFNULL(临时表结果或字段， NULL) 子查询是select结果作为字段，例如 select (select xx) 而不是 select xxx from (select xxx)。  当select中的字段结果不存在，会自动返回NULL  如果排名问题要去重，记得加 distinct">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MYSQL力扣练习题集合">
+<meta property="og:url" content="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%8A%9B%E6%89%A3%E7%BB%83%E4%B9%A0%E9%A2%98%E9%9B%86%E5%90%88/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="[toc]  limit 1 offset 1 不存在却要求返回null时， 可以用子查询，或者IFNULL(临时表结果或字段， NULL) 子查询是select结果作为字段，例如 select (select xx) 而不是 select xxx from (select xxx)。  当select中的字段结果不存在，会自动返回NULL  如果排名问题要去重，记得加 distinct">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-08-23T16:10:49.000Z">
+<meta property="article:modified_time" content="2022-08-23T16:18:28.928Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="后台开发,SQL数据库">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%8A%9B%E6%89%A3%E7%BB%83%E4%B9%A0%E9%A2%98%E9%9B%86%E5%90%88/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MYSQL力扣练习题集合 | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%8A%9B%E6%89%A3%E7%BB%83%E4%B9%A0%E9%A2%98%E9%9B%86%E5%90%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MYSQL力扣练习题集合
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-24 00:10:49 / 修改时间：00:18:28" itemprop="dateCreated datePublished" datetime="2022-08-24T00:10:49+08:00">2022-08-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/SQL%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">SQL数据库</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%8A%9B%E6%89%A3%E7%BB%83%E4%B9%A0%E9%A2%98%E9%9B%86%E5%90%88/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%8A%9B%E6%89%A3%E7%BB%83%E4%B9%A0%E9%A2%98%E9%9B%86%E5%90%88/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<hr>
+<p>limit 1 offset 1 不存在却要求返回null时， 可以用子查询，或者IFNULL(临时表结果或字段， NULL)<br>
+子查询是select结果作为字段，例如 select (select xx) 而不是 select xxx from (select xxx)。  当select中的字段结果不存在，会自动返回NULL</p>
+<hr>
+<p>如果排名问题要去重，记得加 distinct</p>
+<hr>
+<p>CREATE FUNCTION中<br>
+可以set N:=N-1: 进行变量更新。 不能在return中进行更新</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> getNthHighestSalary(N <span class="type">INT</span>) <span class="keyword">RETURNS</span> <span class="type">INT</span></span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">  <span class="keyword">set</span> N :<span class="operator">=</span> N<span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">RETURN</span> (</span><br><span class="line">      # Write your MySQL query statement below.</span><br><span class="line">      <span class="keyword">select</span> (<span class="keyword">select</span> <span class="keyword">distinct</span> salary <span class="keyword">from</span> Employee </span><br><span class="line">      <span class="keyword">order</span> <span class="keyword">by</span> salary <span class="keyword">desc</span>  </span><br><span class="line">      limit <span class="number">1</span> <span class="keyword">offset</span> N) </span><br><span class="line">  );</span><br><span class="line"><span class="keyword">END</span></span><br></pre></td></tr></table></figure>
+<hr>
+<p>要做排名时给出序号时，有两种方式<br>
+简单方式：<br>
+利用子查询字段，注意子查询字段的特点等同于摘出一个字段，再做一次额外查询，得到唯一的一个结果。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># Write your MySQL query statement below</span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span>  a.score, (</span><br><span class="line">    # 拿a.score重新重新去检索一次表，得到<span class="built_in">count</span>(<span class="keyword">distinct</span> b.score)<span class="operator">+</span><span class="number">1</span>，得到自己的排名</span><br><span class="line">    <span class="keyword">select</span> <span class="built_in">count</span>(<span class="keyword">distinct</span> b.score)<span class="operator">+</span><span class="number">1</span> <span class="keyword">from</span> Scores b <span class="keyword">where</span>  a.score<span class="operator">&lt;</span>b.score</span><br><span class="line">    ) <span class="keyword">as</span> `rank` </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">from</span> Scores a <span class="keyword">order</span> <span class="keyword">by</span> a.score <span class="keyword">desc</span></span><br></pre></td></tr></table></figure>
+<p>但效率太慢。<br>
+高速的序号方法：<br>
+使用dense_rank() over(order by xxx) 可以得到序号，1 1 2 3 3 4，不会跳序号<br>
+其他序号方式：<br>
+row_number()  over(order by xxx)     就是简单的12345这种，不考虑重复<br>
+rank()  over(order by xxx)   如果重复了，1 1 3 4 4 6</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span>  score, </span><br><span class="line">(<span class="built_in">dense_rank</span>() <span class="keyword">over</span>(<span class="keyword">order</span> <span class="keyword">by</span> score <span class="keyword">desc</span>) ) <span class="keyword">as</span> `rank` </span><br><span class="line"><span class="keyword">from</span> Scores </span><br></pre></td></tr></table></figure>
+<hr>
+<p>寻找3个连续出现的数字，如果id是连续的，则可以自联结，即自己和自己join， 构造where <a target="_blank" rel="noopener" href="http://a.id">a.id</a> = b.id-1 and <a target="_blank" rel="noopener" href="http://b.id">b.id</a> = c.id-1 这样的情况。非常好理解</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">distinct</span> a.num <span class="keyword">as</span> ConsecutiveNums <span class="keyword">from</span> </span><br><span class="line">logs a,logs b, logs c</span><br><span class="line"><span class="keyword">where</span> </span><br><span class="line">a.id <span class="operator">=</span> b.id<span class="number">-1</span></span><br><span class="line"><span class="keyword">and</span> b.id <span class="operator">=</span> c.id<span class="number">-1</span></span><br><span class="line"><span class="keyword">and</span> a.num <span class="operator">=</span> b.num <span class="keyword">and</span> b.num <span class="operator">=</span> c.num</span><br></pre></td></tr></table></figure>
+<hr>
+<p>善用自join联结解决一些表内成员互相比较的复杂问题。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 查询收入超过他经理的员工名字。</span><br><span class="line"><span class="keyword">select</span> </span><br><span class="line"> a.name <span class="keyword">as</span> Employee </span><br><span class="line"><span class="keyword">from</span> </span><br><span class="line">Employee  a , Employee  b</span><br><span class="line"><span class="keyword">where</span> b.id <span class="operator">=</span> a.managerId <span class="keyword">and</span> a.salary <span class="operator">&gt;</span> b.salary</span><br></pre></td></tr></table></figure>
+<hr>
+<p>group分组后， 可以用having进行组内聚合情况的过滤， 剔除不想要的组</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 查找 Person 表中所有重复的电子邮箱。</span><br><span class="line"><span class="keyword">select</span> email <span class="keyword">from</span> person </span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> email </span><br><span class="line"><span class="keyword">having</span> </span><br><span class="line"><span class="built_in">count</span>(email) <span class="operator">&gt;</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<hr>
+<p>表a在 表b中不存在记录， 用left join + where xxx is null 来处理</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> c.name <span class="keyword">as</span> Customers </span><br><span class="line"><span class="keyword">from</span> Customers c  <span class="keyword">left</span> <span class="keyword">join</span>  Orders  o</span><br><span class="line"><span class="keyword">on</span> c.id <span class="operator">=</span> o.CustomerId <span class="keyword">where</span> o.id <span class="keyword">is</span> <span class="keyword">null</span></span><br></pre></td></tr></table></figure>
+<hr>
+<p>in 的用法  where a in(1,2,3,4)<br>
+或者 where a in (select aaa from xxx)</p>
+<p>in也支持二元组形式<br>
+where (a,b) in (select aaa,bbb from xxx)</p>
+<p>每组最大值的人选的情况，可以用join + in（分组结果）的方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 查找每个部门中薪资最高的员工，先join，再用in获取符合组+最大值的行</span><br><span class="line">select </span><br><span class="line">b.name as Department , a.name   as Employee ,  a.salary as Salary</span><br><span class="line">from Employee  a </span><br><span class="line">join</span><br><span class="line">Department  b</span><br><span class="line">on a.departmentId  = b.id  </span><br><span class="line"><span class="title function_">and</span> <span class="params">(a.departmentId, a.salary)</span> in (</span><br><span class="line">    select departmentId, max(salary)</span><br><span class="line">    from Employee</span><br><span class="line">    group by departmentId </span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<hr>
+<p>找某薪水是组内前几位的情况， 擅用自查询， 即join后， 拿某条记录在where中遍历一遍,  然后根据count(distinct xxx)来确认自己的排名</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># 找出每个部门获得前三高工资的所有员工</span><br><span class="line"><span class="keyword">select</span> </span><br><span class="line">b.name <span class="keyword">as</span> Department , a.name   <span class="keyword">as</span> Employee ,  a.salary <span class="keyword">as</span> Salary</span><br><span class="line"><span class="keyword">from</span> Employee  a </span><br><span class="line"><span class="keyword">join</span></span><br><span class="line">Department  b</span><br><span class="line"><span class="keyword">on</span> a.departmentId  <span class="operator">=</span> b.id</span><br><span class="line"># 比自己这行记录salary大， 且在同一组内的数量小于<span class="number">3</span>，则满足前<span class="number">3</span>  </span><br><span class="line"><span class="keyword">and</span> (<span class="keyword">select</span> <span class="built_in">count</span>(<span class="keyword">distinct</span> e.salary) <span class="keyword">from</span> Employee e <span class="keyword">where</span> a.DepartmentId  <span class="operator">=</span> e.DepartmentId  <span class="keyword">and</span> a.salary <span class="operator">&lt;</span> e.salary</span><br><span class="line"> ) <span class="operator">&lt;</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+<hr>
+<ul>
+<li>分组后， SUM(IF(x=y,1,0) 可以统计组内x=y的个数<br>
+那么SUM(IF(x=y,1,0) ） / COUNT(x)  就能得到组内x=y的比率</li>
+<li>ROUND(xxx, 2) 可以保留两位小数。</li>
+<li>between的用法： between ‘2013-10-01’ AND ‘2013-10-03’</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 写一段 <span class="keyword">SQL</span> 语句查出?&quot;2013-10-01&quot;?至?&quot;2013-10-03&quot;?期间非禁止用户（乘客和司机都必须未被禁止）的取消率。非禁止用户即 banned 为 <span class="keyword">No</span> 的用户，禁止用户即 banned 为 Yes 的用户。</span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span> request_at <span class="keyword">as</span> <span class="keyword">DAY</span>, ROUND(</span><br><span class="line">    <span class="built_in">SUM</span>(IF(status <span class="operator">=</span> <span class="string">&#x27;completed&#x27;</span>, <span class="number">0</span>, <span class="number">1</span>))<span class="operator">/</span><span class="built_in">COUNT</span>(status), <span class="number">2</span></span><br><span class="line">) <span class="keyword">as</span> `Cancellation Rate`</span><br><span class="line"> <span class="keyword">from</span> </span><br><span class="line">Trips t, Users u1, Users u2</span><br><span class="line"><span class="keyword">where</span> (t.client_id  <span class="operator">=</span> u1.users_id</span><br><span class="line"><span class="keyword">and</span> t.driver_id <span class="operator">=</span> u2.users_id)</span><br><span class="line"><span class="keyword">and</span> u1.banned <span class="operator">=</span> <span class="string">&#x27;No&#x27;</span> <span class="keyword">and</span> u2.banned <span class="operator">=</span> <span class="string">&#x27;No&#x27;</span> </span><br><span class="line"><span class="keyword">and</span>  request_at <span class="keyword">between</span> <span class="string">&#x27;2013-10-01&#x27;</span> <span class="keyword">AND</span> <span class="string">&#x27;2013-10-03&#x27;</span></span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> request_at</span><br></pre></td></tr></table></figure>
+<hr>
+<p>求3个或3个以上连续id的记录，直接自联结，然后用3个or条件判断<br>
+<a target="_blank" rel="noopener" href="http://t1.id">t1.id</a> <a target="_blank" rel="noopener" href="http://t2.id">t2.id</a> <a target="_blank" rel="noopener" href="http://t3.id">t3.id</a><br>
+<a target="_blank" rel="noopener" href="http://t2.id">t2.id</a> <a target="_blank" rel="noopener" href="http://t1.id">t1.id</a> <a target="_blank" rel="noopener" href="http://t3.id">t3.id</a><br>
+<a target="_blank" rel="noopener" href="http://t2.id">t2.id</a> <a target="_blank" rel="noopener" href="http://t3.id">t3.id</a> <a target="_blank" rel="noopener" href="http://t1.id">t1.id</a><br>
+然后取每种连接表的t1即可</p>
+<p>注意distinct 可以用于星号<br>
+distinct s1.*<br>
+也可用于多列  distict s1.a,s1.b,s1.completed</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># 找出每行的人数大于或等于 <span class="number">100</span> 且 id 连续的三行或更多行记录。</span><br><span class="line"># 返回按 visit_date 升序排列的结果表</span><br><span class="line"><span class="keyword">select</span> </span><br><span class="line"><span class="keyword">distinct</span> s1.id,s1.visit_date , s1.people            </span><br><span class="line"><span class="keyword">from</span> </span><br><span class="line">Stadium s1, Stadium s2,Stadium s3</span><br><span class="line"><span class="keyword">where</span> s1.people  <span class="operator">&gt;=</span> <span class="number">100</span> <span class="keyword">and</span> s2.people <span class="operator">&gt;=</span><span class="number">100</span> <span class="keyword">and</span> s3.people <span class="operator">&gt;=</span> <span class="number">100</span> </span><br><span class="line"><span class="keyword">and</span> (</span><br><span class="line">    (s1.id <span class="operator">=</span> s2.id<span class="number">-1</span> <span class="keyword">and</span> s2.id <span class="operator">=</span> s3.id<span class="number">-1</span> ) <span class="keyword">or</span></span><br><span class="line">(s2.id <span class="operator">=</span> s1.id<span class="number">-1</span> <span class="keyword">and</span> s1.id <span class="operator">=</span> s3.id<span class="number">-1</span> ) <span class="keyword">or</span></span><br><span class="line">(s2.id <span class="operator">=</span> s3.id<span class="number">-1</span> <span class="keyword">and</span> s3.id <span class="operator">=</span> s1.id<span class="number">-1</span> )</span><br><span class="line">)</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> s1.id</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%8A%9B%E6%89%A3%E7%BB%83%E4%B9%A0%E9%A2%98%E9%9B%86%E5%90%88/" title="MYSQL力扣练习题集合">http://breakdawncoder.com/知识库/后台开发应用/关系型数据库/MYSQL力扣练习题集合/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91-SQL%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 后台开发,SQL数据库</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E9%9B%86%E5%90%88/" rel="prev" title="MYSQL常用命令集合">
+      <i class="fa fa-chevron-left"></i> MYSQL常用命令集合
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%BD%91%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%B1%82%E8%AF%A6%E8%A7%A3/" rel="next" title="计网之网络层（IP协议）详解">
+      计网之网络层（IP协议）详解 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共305.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
