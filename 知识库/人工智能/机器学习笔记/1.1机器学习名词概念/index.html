@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="[toc]     数据相关概念  数据集dataset 样本sample&#x2F;示例instance 属性attribute&#x2F;特征feature 属性值attribute value 样本空间sample space 维数dimensionality 特征向量feature vector 以上概念的数学公式表示   学习相关的数据概念  学习learning&#x2F;训练training 训练数据traini">
+<meta property="og:type" content="article">
+<meta property="og:title" content="1.1 机器学习基础名词概念大全">
+<meta property="og:url" content="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%90%8D%E8%AF%8D%E6%A6%82%E5%BF%B5/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="[toc]     数据相关概念  数据集dataset 样本sample&#x2F;示例instance 属性attribute&#x2F;特征feature 属性值attribute value 样本空间sample space 维数dimensionality 特征向量feature vector 以上概念的数学公式表示   学习相关的数据概念  学习learning&#x2F;训练training 训练数据traini">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-01-08T07:17:49.000Z">
+<meta property="article:modified_time" content="2023-01-08T07:23:53.437Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="人工智能,机器学习">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%90%8D%E8%AF%8D%E6%A6%82%E5%BF%B5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>1.1 机器学习基础名词概念大全 | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%90%8D%E8%AF%8D%E6%A6%82%E5%BF%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          1.1 机器学习基础名词概念大全
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-01-08 15:17:49 / 修改时间：15:23:53" itemprop="dateCreated datePublished" datetime="2023-01-08T15:17:49+08:00">2023-01-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%90%8D%E8%AF%8D%E6%A6%82%E5%BF%B5/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%90%8D%E8%AF%8D%E6%A6%82%E5%BF%B5/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>[toc]</p>
+ <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#shu-ju-xiang-guan-gai-nian">数据相关概念</a>
+<ul>
+<li><a href="#shu-ju-ji-dataset">数据集dataset</a></li>
+<li><a href="#yang-ben-sample-shi-li-instance">样本sample/示例instance</a></li>
+<li><a href="#shu-xing-attribute-te-zheng-feature">属性attribute/特征feature</a></li>
+<li><a href="#shu-xing-zhi-attribute-value">属性值attribute value</a></li>
+<li><a href="#yang-ben-kong-jian-sample-space">样本空间sample space</a></li>
+<li><a href="#wei-shu-dimensionality">维数dimensionality</a></li>
+<li><a href="#te-zheng-xiang-liang-feature-vector">特征向量feature vector</a></li>
+<li><a href="#yi-shang-gai-nian-de-shu-xue-gong-shi-biao-shi">以上概念的数学公式表示</a></li>
+</ul>
+</li>
+<li><a href="#xue-xi-xiang-guan-de-shu-ju-gai-nian">学习相关的数据概念</a>
+<ul>
+<li><a href="#xue-xi-learning-xun-lian-training">学习learning/训练training</a></li>
+<li><a href="#xun-lian-shu-ju-training-data">训练数据training data</a></li>
+<li><a href="#xun-lian-yang-ben-training-sample">训练样本training sample</a></li>
+<li><a href="#xun-lian-ji-training-set">训练集training set</a></li>
+<li><a href="#jia-she-hypothesis">假设hypothesis</a></li>
+<li><a href="#zhen-xiang-zhen-shi-ground-truth">真相/真实ground-truth</a></li>
+<li><a href="#xue-xi-qi-learner">学习器learner</a></li>
+<li><a href="#biao-ji-label">标记（label)</a></li>
+<li><a href="#yang-li-example">样例(example)</a></li>
+<li><a href="#biao-ji-kong-jian-label-space-shu-chu-kong-jian">标记空间label space/输出空间</a></li>
+</ul>
+</li>
+<li><a href="#xue-xi-guo-cheng-gai-nian">学习过程概念</a>
+<ul>
+<li><a href="#mo-xing-model">模型model</a></li>
+<li><a href="#xue-xi-suan-fa-learing-algorithm">学习算法learing algorithm</a></li>
+<li><a href="#fen-lei-classification">分类classification</a>
+<ul>
+<li><a href="#er-fen-lei-binary-classification">二分类(binary classification)</a></li>
+<li><a href="#duo-fen-lei-multi-class-classification">多分类 multi-class classification</a></li>
+</ul>
+</li>
+<li><a href="#hui-gui-regression">回归regression</a></li>
+<li><a href="#kong-jian-ying-she">空间映射</a></li>
+<li><a href="#ce-shi-testing">测试testing</a></li>
+<li><a href="#ce-shi-yang-ben-testing-sample">测试样本testing sample</a></li>
+<li><a href="#ju-lei-clustering">聚类（clustering）</a></li>
+<li><a href="#jian-du-xue-xi-supervised-learning">监督学习supervised learning</a></li>
+<li><a href="#wu-jian-du-xue-xi-unsupervised-learning">无监督学习unsupervised learning</a></li>
+<li><a href="#fan-hua-generalization">泛化generalization</a></li>
+<li><a href="#fen-bu-distribution">分布distribution</a></li>
+<li><a href="#du-li-tong-fen-bu-i-i-d">独立同分布i.i.d</a></li>
+<li><a href="#gui-na-induction">归纳induction</a>
+<ul>
+<li><a href="#guang-yi-gui-na-xue-xi">广义归纳学习</a></li>
+<li><a href="#xia-yi-gui-na-xue-xi">狭义归纳学习</a></li>
+</ul>
+</li>
+<li><a href="#yan-yi-deduction">演绎deduction</a></li>
+<li><a href="#jia-she-kong-jian-hypothesis-space">假设空间hypothesis space</a></li>
+<li><a href="#ban-ben-kong-jian-version-space">版本空间version space</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<h2><span id="shu-ju-xiang-guan-gai-nian">数据相关概念</span><a href="#shu-ju-xiang-guan-gai-nian" class="header-anchor">#</a></h2>
+<h3><span id="shu-ju-ji-dataset">数据集dataset</span><a href="#shu-ju-ji-dataset" class="header-anchor">#</a></h3>
+<p>一堆西瓜以及西瓜描述的集合<br>
+(色泽=青绿，根=蜷缩）、（色泽=乌黑，根=粗糙）</p>
+<h3><span id="yang-ben-sample-shi-li-instance">样本sample/示例instance</span><a href="#yang-ben-sample-shi-li-instance" class="header-anchor">#</a></h3>
+<p>指数据集中的某条记录<br>
+即是集合中的某个对象（即某个西瓜）</p>
+<h3><span id="shu-xing-attribute-te-zheng-feature">属性attribute/特征feature</span><a href="#shu-xing-attribute-te-zheng-feature" class="header-anchor">#</a></h3>
+<p>对象在某方面的表现或者性质名称<br>
+例如色泽、根</p>
+<h3><span id="shu-xing-zhi-attribute-value">属性值attribute value</span><a href="#shu-xing-zhi-attribute-value" class="header-anchor">#</a></h3>
+<p>青绿、乌黑都是属性值</p>
+<h3><span id="yang-ben-kong-jian-sample-space">样本空间sample space</span><a href="#yang-ben-kong-jian-sample-space" class="header-anchor">#</a></h3>
+<p>把属性当作坐标轴， 属性值作为坐标点，则构成了样本空间。<br>
+（维度比较多的话，不太适合称为坐标系类比，所以叫做样本空间）</p>
+<h3><span id="wei-shu-dimensionality">维数dimensionality</span><a href="#wei-shu-dimensionality" class="header-anchor">#</a></h3>
+<p>指属性个数</p>
+<h3><span id="te-zheng-xiang-liang-feature-vector">特征向量feature vector</span><a href="#te-zheng-xiang-liang-feature-vector" class="header-anchor">#</a></h3>
+<p>样本空间中的某个点，就叫特征向量。<br>
+特征向量 = 样本 = 示例</p>
+<h3><span id="yi-shang-gai-nian-de-shu-xue-gong-shi-biao-shi">以上概念的数学公式表示</span><a href="#yi-shang-gai-nian-de-shu-xue-gong-shi-biao-shi" class="header-anchor">#</a></h3>
+<p>D={x1,x2,…,xm}<br>
+这个D就是数据集<br>
+X1、xm指示例</p>
+<p>xi = {xi1;xi2;xi3}<br>
+这个xi就是某个示例或者样本<br>
+xij 指 xi的j属性的值。</p>
+<h2><span id="xue-xi-xiang-guan-de-shu-ju-gai-nian">学习相关的数据概念</span><a href="#xue-xi-xiang-guan-de-shu-ju-gai-nian" class="header-anchor">#</a></h2>
+<h3><span id="xue-xi-learning-xun-lian-training">学习learning/训练training</span><a href="#xue-xi-learning-xun-lian-training" class="header-anchor">#</a></h3>
+<p>指从数据中得到模型的这个<strong>过程</strong><br>
+这个过程通过执行某个学习算法来得到（即怎么根据数据，一步步迭代计算，去得到预测模型）</p>
+<h3><span id="xun-lian-shu-ju-training-data">训练数据training data</span><a href="#xun-lian-shu-ju-training-data" class="header-anchor">#</a></h3>
+<p>上面训练过程中使用的数据</p>
+<h3><span id="xun-lian-yang-ben-training-sample">训练样本training sample</span><a href="#xun-lian-yang-ben-training-sample" class="header-anchor">#</a></h3>
+<p>每个样本</p>
+<h3><span id="xun-lian-ji-training-set">训练集training set</span><a href="#xun-lian-ji-training-set" class="header-anchor">#</a></h3>
+<p>训练样本组成的集合</p>
+<ul>
+<li>(还没用于训练的数据，不能叫做训练xxx）</li>
+</ul>
+<h3><span id="jia-she-hypothesis">假设hypothesis</span><a href="#jia-she-hypothesis" class="header-anchor">#</a></h3>
+<p>学习得到的模型，  能够反应数据的规律， 这个反应规律的情况称为“假设”</p>
+<h3><span id="zhen-xiang-zhen-shi-ground-truth">真相/真实ground-truth</span><a href="#zhen-xiang-zhen-shi-ground-truth" class="header-anchor">#</a></h3>
+<p>上面提到的潜在规律， 叫做真相/真实<br>
+比如颜色黑的西瓜一般比较难吃，这个就是潜在规律</p>
+<h3><span id="xue-xi-qi-learner">学习器learner</span><a href="#xue-xi-qi-learner" class="header-anchor">#</a></h3>
+<p>学习得到的模型 也可以叫做学习器<br>
+可以看作是学习算法在给定数据和参数空间上的实例化。</p>
+<h3><span id="biao-ji-label">标记（label)</span><a href="#biao-ji-label" class="header-anchor">#</a></h3>
+<p>各训练样本的实际结果信息<br>
+例如  (色泽=青绿，根=蜷缩）-&gt;好瓜、（色泽=乌黑，根=粗糙）-&gt;坏瓜</p>
+<p>好坏瓜这个名词，则称为标记</p>
+<h3><span id="yang-li-example">样例(example)</span><a href="#yang-li-example" class="header-anchor">#</a></h3>
+<p>样本 + 标记 = 样例<br>
+一般用(xi,yi)来表示某个样例</p>
+<h3><span id="biao-ji-kong-jian-label-space-shu-chu-kong-jian">标记空间label space/输出空间</span><a href="#biao-ji-kong-jian-label-space-shu-chu-kong-jian" class="header-anchor">#</a></h3>
+<p>样例的1个集合，也称为标记空间。<br>
+注意， 样本空间和  标记是区分开的， 不可以把y合并到x中。 完全不同的1个空间维度</p>
+<h2><span id="xue-xi-guo-cheng-gai-nian">学习过程概念</span><a href="#xue-xi-guo-cheng-gai-nian" class="header-anchor">#</a></h2>
+<h3><span id="mo-xing-model">模型model</span><a href="#mo-xing-model" class="header-anchor">#</a></h3>
+<p>指给模型1个西瓜， 模型能判断它是否是好瓜。<br>
+类似1个f(x)的函数</p>
+<h3><span id="xue-xi-suan-fa-learing-algorithm">学习算法learing algorithm</span><a href="#xue-xi-suan-fa-learing-algorithm" class="header-anchor">#</a></h3>
+<p>指根据 数据 得到模型的 计算方法。</p>
+<h3><span id="fen-lei-classification">分类classification</span><a href="#fen-lei-classification" class="header-anchor">#</a></h3>
+<p>如果预测的结果（即标记) 都是离散值或者枚举值，则叫做分类<br>
+例如好瓜/坏瓜 就是一种类</p>
+<h4><span id="er-fen-lei-binary-classification">二分类(binary classification)</span><a href="#er-fen-lei-binary-classification" class="header-anchor">#</a></h4>
+<p>只涉及2个类别的分类，一般会叫作正反类。</p>
+<ul>
+<li>正类positive class</li>
+<li>反类negative class</li>
+</ul>
+<h4><span id="duo-fen-lei-multi-class-classification">多分类 multi-class classification</span><a href="#duo-fen-lei-multi-class-classification" class="header-anchor">#</a></h4>
+<p>涉及多个分类的任务</p>
+<h3><span id="hui-gui-regression">回归regression</span><a href="#hui-gui-regression" class="header-anchor">#</a></h3>
+<p>指得到的结果是一个不明确的数值。<br>
+例如0.95,0.37…之类的</p>
+<h3><span id="kong-jian-ying-she">空间映射</span><a href="#kong-jian-ying-she" class="header-anchor">#</a></h3>
+<p>指任务预测结果的数学表达<br>
+X-&gt;Y<br>
+Y = {-1.1}， 指二分类<br>
+|Y| &gt; 2 ， 即个数大于2，指多分类<br>
+Y = R， R为实数集</p>
+<h3><span id="ce-shi-testing">测试testing</span><a href="#ce-shi-testing" class="header-anchor">#</a></h3>
+<p>得到模型后， 使用模型进行预测的过程， 叫做测试</p>
+<h3><span id="ce-shi-yang-ben-testing-sample">测试样本testing sample</span><a href="#ce-shi-yang-ben-testing-sample" class="header-anchor">#</a></h3>
+<p>被用来预测的样本<br>
+即已经算得模型的情况下， 用来做测试的。<br>
+y = f(x)<br>
+f是模型， x是测试样本， Y是你所预测期望的标记</p>
+<h3><span id="ju-lei-clustering">聚类（clustering）</span><a href="#ju-lei-clustering" class="header-anchor">#</a></h3>
+<p>指西瓜可能被分为很多类， 但是这个分类我们事先并不知道的<br>
+我们希望让学习算法帮我们找出这个分类。</p>
+<h3><span id="jian-du-xue-xi-supervised-learning">监督学习supervised learning</span><a href="#jian-du-xue-xi-supervised-learning" class="header-anchor">#</a></h3>
+<p>指训练数据拥有标记信息</p>
+<h3><span id="wu-jian-du-xue-xi-unsupervised-learning">无监督学习unsupervised learning</span><a href="#wu-jian-du-xue-xi-unsupervised-learning" class="header-anchor">#</a></h3>
+<p>指训练数据没有标记信息，  希望依靠学习过程帮我们得到标记或聚类</p>
+<h3><span id="fan-hua-generalization">泛化generalization</span><a href="#fan-hua-generalization" class="header-anchor">#</a></h3>
+<p>把训练得到的模型， 用到之前没出现过的样本里去预测， 这个过程叫泛化（类似于上其他真实数据了）</p>
+<h3><span id="fen-bu-distribution">分布distribution</span><a href="#fen-bu-distribution" class="header-anchor">#</a></h3>
+<p>指样本属于某种分布（例如正态分布啥的）， 即属性啥的可能是平均可能是不平均。<br>
+但至少有1个分布公式。</p>
+<h3><span id="du-li-tong-fen-bu-i-i-d">独立同分布i.i.d</span><a href="#du-li-tong-fen-bu-i-i-d" class="header-anchor">#</a></h3>
+<p>我们希望所有样本， 取出来时是满足样本的分布规律， 是独立随机取的。<br>
+而不是单独从某个值里取一大批类似的。</p>
+<h3><span id="gui-na-induction">归纳induction</span><a href="#gui-na-induction" class="header-anchor">#</a></h3>
+<p>从特殊归纳出一般的泛化过程<br>
+从具体事实推出一般规律</p>
+<h4><span id="guang-yi-gui-na-xue-xi">广义归纳学习</span><a href="#guang-yi-gui-na-xue-xi" class="header-anchor">#</a></h4>
+<p>从样例中学习规律</p>
+<h4><span id="xia-yi-gui-na-xue-xi">狭义归纳学习</span><a href="#xia-yi-gui-na-xue-xi" class="header-anchor">#</a></h4>
+<p>从数据集中得到概念。  概念学习研究比较少，太难了</p>
+<h3><span id="yan-yi-deduction">演绎deduction</span><a href="#yan-yi-deduction" class="header-anchor">#</a></h3>
+<p>从一般规律推导出具体的其他事实。</p>
+<h3><span id="jia-she-kong-jian-hypothesis-space">假设空间hypothesis space</span><a href="#jia-she-kong-jian-hypothesis-space" class="header-anchor">#</a></h3>
+<p>以好瓜的假设空间为例<br>
+我们要得到好瓜的所有可选假设<br>
+例如<br>
+色泽=绿，根=硬，敲声=响<br>
+或者  色泽=<em>，根=硬，敲声=</em><br>
+或者  无（即无一种情况是好瓜）</p>
+<h3><span id="ban-ben-kong-jian-version-space">版本空间version space</span><a href="#ban-ben-kong-jian-version-space" class="header-anchor">#</a></h3>
+<p>假设空间非常大，就是所有情况的枚举，但肯定存在1个和训练集匹配的好瓜假设空间，我们叫做版本空间</p>
+<p>可以理解为是满足当前训练集正例的的所有假设空间</p>
+<p>例如好瓜的色泽有青和绿<br>
+那么版本空间一定有存在色泽=*，<br>
+不可以是色泽=青，  因为这样的假设没有包含绿色。</p>
+<p><strong>要求这个假设必须包含所有正例</strong></p>
+<p>在假设空间中搜索包含正例且不包含反例的所有假设</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%90%8D%E8%AF%8D%E6%A6%82%E5%BF%B5/" title="1.1 机器学习基础名词概念大全">http://breakdawncoder.com/知识库/人工智能/机器学习笔记/1.1机器学习名词概念/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 人工智能,机器学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.2%E5%BD%92%E7%BA%B3%E5%81%8F%E5%A5%BD/" rel="prev" title="1.2 归纳偏好">
+      <i class="fa fa-chevron-left"></i> 1.2 归纳偏好
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/blockManager%E4%BB%8B%E7%BB%8D/" rel="next" title="blockManager介绍.md">
+      blockManager介绍.md <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">数据相关概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">数据集dataset</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">样本sample&#x2F;示例instance</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">属性attribute&#x2F;特征feature</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.4.</span> <span class="nav-text">属性值attribute value</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.5.</span> <span class="nav-text">样本空间sample space</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.6.</span> <span class="nav-text">维数dimensionality</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.7.</span> <span class="nav-text">特征向量feature vector</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.8.</span> <span class="nav-text">以上概念的数学公式表示</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">学习相关的数据概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">学习learning&#x2F;训练training</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">训练数据training data</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">训练样本training sample</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.4.</span> <span class="nav-text">训练集training set</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.5.</span> <span class="nav-text">假设hypothesis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.6.</span> <span class="nav-text">真相&#x2F;真实ground-truth</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.7.</span> <span class="nav-text">学习器learner</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.8.</span> <span class="nav-text">标记（label)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.9.</span> <span class="nav-text">样例(example)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.10.</span> <span class="nav-text">标记空间label space&#x2F;输出空间</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">学习过程概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">模型model</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">学习算法learing algorithm</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">分类classification</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.3.1.</span> <span class="nav-text">二分类(binary classification)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.3.2.</span> <span class="nav-text">多分类 multi-class classification</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.4.</span> <span class="nav-text">回归regression</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.5.</span> <span class="nav-text">空间映射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.6.</span> <span class="nav-text">测试testing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.7.</span> <span class="nav-text">测试样本testing sample</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.8.</span> <span class="nav-text">聚类（clustering）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.9.</span> <span class="nav-text">监督学习supervised learning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.10.</span> <span class="nav-text">无监督学习unsupervised learning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.11.</span> <span class="nav-text">泛化generalization</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.12.</span> <span class="nav-text">分布distribution</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.13.</span> <span class="nav-text">独立同分布i.i.d</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.14.</span> <span class="nav-text">归纳induction</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.14.1.</span> <span class="nav-text">广义归纳学习</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.14.2.</span> <span class="nav-text">狭义归纳学习</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.15.</span> <span class="nav-text">演绎deduction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.16.</span> <span class="nav-text">假设空间hypothesis space</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.17.</span> <span class="nav-text">版本空间version space</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">239</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共318.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="[toc] 当spark中做完一次map操作，准备发给下游时，究竟会做什么事呢？我按照一些问题来逐步分析。 首先有个问题：map操作之后，数据是直接缓存到内存或者磁盘，等待下游client来拉取吗？ spark是批处理，假设正好map处理完一批数据，会调用insertAll方法去做缓存，然而缓存并不是那么简单的存储，而是如下：  可以看到，spark会判断这个map操作之后，是否会接一个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="map端计算结果缓存解析.md">
+<meta property="og:url" content="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="[toc] 当spark中做完一次map操作，准备发给下游时，究竟会做什么事呢？我按照一些问题来逐步分析。 首先有个问题：map操作之后，数据是直接缓存到内存或者磁盘，等待下游client来拉取吗？ spark是批处理，假设正好map处理完一批数据，会调用insertAll方法去做缓存，然而缓存并不是那么简单的存储，而是如下：  可以看到，spark会判断这个map操作之后，是否会接一个">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210121000052509-1673168167560.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210121000330887-1673168167547.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210121000737619-1673168167554.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210121000901996-1673168167615.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210121001724800-1673168167651.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210121001813717-1673168167668.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210122233456600-1673168167612.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210121001858800-1673168167594.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210122231923947-1673168167667.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210122232818184-1673168167620.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210122233028862-1673168167696.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210122233220283-1673168167653.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210122233248604-1673168167655.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/2021012223355889-1673168167738.png">
+<meta property="article:published_time" content="2023-01-08T08:13:48.000Z">
+<meta property="article:modified_time" content="2023-01-08T08:56:09.490Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="大数据组件,spark">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210121000052509-1673168167560.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>map端计算结果缓存解析.md | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          map端计算结果缓存解析.md
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-01-08 16:13:48 / 修改时间：16:56:09" itemprop="dateCreated datePublished" datetime="2023-01-08T16:13:48+08:00">2023-01-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">大数据组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6/spark/" itemprop="url" rel="index"><span itemprop="name">spark</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<p>当spark中做完一次map操作，准备发给下游时，究竟会做什么事呢？我按照一些问题来逐步分析。</p>
+<p>首先有个问题：map操作之后，数据是直接缓存到内存或者磁盘，等待下游client来拉取吗？</p>
+<p>spark是批处理，假设正好map处理完一批数据，会调用insertAll方法去做缓存，然而缓存并不是那么简单的存储，而是如下：<br>
+<img src="/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210121000052509-1673168167560.png" alt="在这里插入图片描述"><br>
+可以看到，spark会判断这个map操作之后，是否会接一个聚合的操作，如果有，那么会在缓存并准备发给下游时时，提前做好聚合操作， 否则就是简单缓存。</p>
+<p>我们先看下简单缓存的分支：<br>
+<img src="/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210121000330887-1673168167547.png" alt="在这里插入图片描述"><br>
+可以看到在这里地方会做容量判断，如果发现容量不足了，则会试图扩容，看下调用growArray会发生什么：<br>
+<img src="/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210121000737619-1673168167554.png" alt="在这里插入图片描述"><br>
+注意这里有个关键词是预测， spark为了防止出现omm，都是基于预测机制进行内存管理的。看下maybeSpillCollection具体在做什么<br>
+<img src="/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210121000901996-1673168167615.png" alt="在这里插入图片描述"><br>
+当发现内存大小可能不足，就会试图把内存数据放到磁盘。<br>
+然而放到磁盘也不是那么简单地去放，他判断了一个叫byPassMergeSort，这个是什么呢？</p>
+<p>可以理解为是否需要提前为下游做好分区的磁盘排序。<br>
+每次存盘都会排序吗？<br>
+不是的，为了避免不必要的排序，他用bypassMergeThold这个阈值来确认，如果分区数量大于阈值，此时不做合并的话，可能导致频繁的磁盘IO取数据！ 所以他做了如下操作：<br>
+<img src="/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210121001724800-1673168167651.png" alt="在这里插入图片描述"><br>
+临时文件做排序的图解如下：<br>
+<img src="/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210121001813717-1673168167668.png" alt="在这里插入图片描述"><br>
+如果上图不好理解，可以看下面这个图，更详细地解释了如果用做临时文件加合并的：<br>
+<img src="/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210122233456600-1673168167612.png" alt="在这里插入图片描述"></p>
+<p>如果分区文件比较少，就不做排序+合并了，直接落盘让下游过来取<br>
+<img src="/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210121001858800-1673168167594.png" alt="在这里插入图片描述"><br>
+接着看需要在map后做聚合的情况：<br>
+<img src="/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210122231923947-1673168167667.png" alt="在这里插入图片描述"><br>
+可以看到所谓的聚合，必定会经历分组+ 聚合2个操作。看下是如何做mergeValue的：<br>
+<img src="/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210122232818184-1673168167620.png" alt="在这里插入图片描述"></p>
+<p>Q：这里为什么要做采样来判断内存是否会超呢？<br>
+A：因为当前聚合操作都是在内存中进行的，而map的数据是一块块计算出来的，如果这个聚合的key取的有问题，导致分组聚合后的数据总大小几乎没变化，就可能导致内存里分组后的那堆数据越积越大。</p>
+<p>Q：为什么要用采样队列来预测聚合过程的大小？<br>
+A：书里没讲原因，个人理解，如果map的块数比较多，这种采样预测的方式是比较简单且消耗计算少的， 根据这个采样大小，后面会用于做内存预估。</p>
+<hr>
+<p>接着继续看下怎么做mergeValue的细节：<br>
+<img src="/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210122233028862-1673168167696.png" alt="在这里插入图片描述"><br>
+其实就是非常常见的一个哈希表计算的过程。<br>
+为什么中间那个分支里，  要叠加2<em>pos+1的value值呢？<br>
+这是因为为了节省空间，把key和value两两放在一起，如图所示：<br>
+<img src="/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210122233220283-1673168167653.png" alt="在这里插入图片描述"><br>
+另外每次新增key的时候，会需要扩容，看下扩容怎么实现的：<br>
+<img src="/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/20210122233248604-1673168167655.png" alt="在这里插入图片描述"><br>
+可以看到非常简单的一种 每次</em>2后，复制扩容的过程。</p>
+<hr>
+<p>spark做map过程时的计算缓存结果完整图解如下：<br>
+<img src="/images/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/2021012223355889-1673168167738.png" alt="在这里插入图片描述"><br>
+小结一下map后做缓存处理的要点：</p>
+<ol>
+<li>如果map后发给下游时是需要做聚合的操作，则提前做一下聚合处理。<br>
+聚合处理时有以下特点：<br>
+①每次聚合计算后，都会采样内存变化大小，方便预测内存情况<br>
+②使用哈希表做聚合计算<br>
+③哈希表支持扩容，容量每次为*2</li>
+<li>如果map后不需要做聚合，则会缓存结果（注意聚合后同样也是会缓存，只是结果变成聚合后的了）， 但如果发现预测的内存不够了，则会把数据存盘， 存盘时的注意点如下：<br>
+①分区数比较少，则直接落盘<br>
+②分区数较多，1个分区1个文件的话太多了，磁盘IO消耗大，因此会把分区排序并合并</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/" title="map端计算结果缓存解析.md">http://breakdawncoder.com/知识库/开源组件原理/spark/map端计算结果缓存解析/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6-spark/" rel="tag"># 大数据组件,spark</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/" rel="prev" title="RDD缓存管理cacheManager和磁盘管理DiskBlockManager.md">
+      <i class="fa fa-chevron-left"></i> RDD缓存管理cacheManager和磁盘管理DiskBlockManager.md
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">239</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共318.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

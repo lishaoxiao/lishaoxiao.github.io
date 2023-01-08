@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="简述spark的任务运行流程 为什么需要RDD wordCount代码的背后  textFile   第二步做FlatMap 第三步mapToPair 第四步聚合 最后一步collect     Collect的时候发生了什么  stage提交       [toc] 简述spark的任务运行流程# 先是在写spark代码的时候，背后做一些RDD的转换，写完后构建DAG，划分stage， 然">
+<meta property="og:type" content="article">
+<meta property="og:title" content="spark的任务构建和提交流程.md">
+<meta property="og:url" content="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="简述spark的任务运行流程 为什么需要RDD wordCount代码的背后  textFile   第二步做FlatMap 第三步mapToPair 第四步聚合 最后一步collect     Collect的时候发生了什么  stage提交       [toc] 简述spark的任务运行流程# 先是在写spark代码的时候，背后做一些RDD的转换，写完后构建DAG，划分stage， 然">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701232130242-1673168193453.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701231246906-1673168193495.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701232613319-1673168193513.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701233034382-1673168193496.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701233702391-1673168193497.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701233841698-1673168193496.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701233855996-1673168193521.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701233929210-1673168193502.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701234006400-1673168193507.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/2020070123414830-1673168193515.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200702000002595-1673168193526.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/2020070123442336-1673168193530.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701234604605-1673168193549.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/2020070123474745-1673168193542.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200701234922589.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2E3OTk1ODEyMjk=,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="http://breakdawncoder.com/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701234946809-1673168193572.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701235022532-1673168193553.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701235300468-1673168193558.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701235445608-1673168193857.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701235547264-1673168193701.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701235633628-1673168193643.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701235851172-1673168193605.png">
+<meta property="article:published_time" content="2023-01-08T08:13:48.000Z">
+<meta property="article:modified_time" content="2023-01-08T08:56:35.791Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="大数据组件,spark">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701232130242-1673168193453.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>spark的任务构建和提交流程.md | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          spark的任务构建和提交流程.md
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-01-08 16:13:48 / 修改时间：16:56:35" itemprop="dateCreated datePublished" datetime="2023-01-08T16:13:48+08:00">2023-01-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">大数据组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6/spark/" itemprop="url" rel="index"><span itemprop="name">spark</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#jian-shu-spark-de-ren-wu-yun-xing-liu-cheng">简述spark的任务运行流程</a></li>
+<li><a href="#wei-shi-me-xu-yao-rdd">为什么需要RDD</a></li>
+<li><a href="#wordcount-dai-ma-de-bei-hou">wordCount代码的背后</a>
+<ul>
+<li><a href="#textfile">textFile</a></li>
+</ul>
+<ul>
+<li><a href="#di-er-bu-zuo-flatmap">第二步做FlatMap</a></li>
+<li><a href="#di-san-bu-maptopair">第三步mapToPair</a></li>
+<li><a href="#di-si-bu-ju-he">第四步聚合</a></li>
+<li><a href="#zui-hou-yi-bu-collect">最后一步collect</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><a href="#collect-de-shi-hou-fa-sheng-liao-shi-me">Collect的时候发生了什么</a>
+<ul>
+<li><a href="#stage-ti-jiao">stage提交</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h2><span id="jian-shu-spark-de-ren-wu-yun-xing-liu-cheng">简述spark的任务运行流程</span><a href="#jian-shu-spark-de-ren-wu-yun-xing-liu-cheng" class="header-anchor">#</a></h2>
+<p>先是在写spark代码的时候，背后做一些RDD的转换，写完后构建DAG，划分stage， 然后提交到资源管理器分配计算资源， 并在worker上执行。<br>
+<img src="/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701232130242-1673168193453.png" alt="在这里插入图片描述"></p>
+<p>首先写spark代码时离不开对RDD的调用，那么：</p>
+<h2><span id="wei-shi-me-xu-yao-rdd">为什么需要RDD</span><a href="#wei-shi-me-xu-yao-rdd" class="header-anchor">#</a></h2>
+<ol>
+<li>
+<p>数据处理模型统一：<br>
+RDD是1个数据结构， 能够获取数据的分区。<br>
+不区分流式还是批式，只理解为1个数学模型。</p>
+</li>
+<li>
+<p>依赖划分原则：<br>
+RDD之间通过窄依赖(仅1个依赖)和宽依赖（多依赖）进行关联。<br>
+为什么要划分依赖？<br>
+依赖数量不同，决定是否能在1个stage和节点中执行。<br>
+同时也决定了容灾策略，是否需要保存所有父RDD</p>
+</li>
+<li>
+<p>数据处理效率：<br>
+1个RDD，同时可在多个节点并发执行。</p>
+</li>
+<li>
+<p>容错处理：<br>
+RDD本身是不可变的数据集，这样可保证数据恢复<img src="/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701231246906-1673168193495.png" alt="在这里插入图片描述"></p>
+</li>
+</ol>
+<h2><span id="wordcount-dai-ma-de-bei-hou">wordCount代码的背后</span><a href="#wordcount-dai-ma-de-bei-hou" class="header-anchor">#</a></h2>
+<p>以wordCount代码为例</p>
+<h4><span id="textfile">textFile</span><a href="#textfile" class="header-anchor">#</a></h4>
+<p>第一步是读文件数据。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">JavaSparkContext</span> <span class="variable">ctx</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JavaSparkContext</span>(sparkConf);</span><br><span class="line">ctx.textFile(args[<span class="number">0</span>],<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p>这一步会生成HadoopRDD<br>
+<img src="/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701232613319-1673168193513.png" alt="在这里插入图片描述"><br>
+这里注意下， 里面有一个清理序列化的操作， 分布式传输数据时，序列化很重要，而序列化时有些成员是无法被序列化的，在java中的关键字是transien.</p>
+<p>MappedRDD是什么？<br>
+如下:<br>
+<img src="/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701233034382-1673168193496.png" alt="在这里插入图片描述"><br>
+即我们的RDD，会被包装到一个单点依赖的对象里，并指明这是单点依赖。<br>
+并且textFile这个过程， 其实是生成了2个RDD， 1个是HadoopRDD，还有一个是读取数据转成字符串的mapRDD。 他们各自被塞进dependecy对象中，并通过依赖建立连接。</p>
+<ul>
+<li>注意，一般分布式计算设计DAG图时， 都是只有input指针（即用输入对象做连接）， 利用input来确定DAG关系。 在spark里就是依赖dependency的概念</li>
+</ul>
+<h3><span id="di-er-bu-zuo-flatmap">第二步做FlatMap</span><a href="#di-er-bu-zuo-flatmap" class="header-anchor">#</a></h3>
+<p>接着我们调用flatMap</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">JavaRDD&lt;String&gt; words = lines.flatMap(<span class="keyword">new</span> <span class="title class_">FlatMapFunction</span>&lt;String, String&gt;()&#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="keyword">public</span> Iterable&lt;String&gt; <span class="title function_">call</span><span class="params">(String s)</span>&#123;</span><br><span class="line">	<span class="keyword">return</span> Arrays.asList(SPACE.split(s));</span><br><span class="line">&#125;) </span><br></pre></td></tr></table></figure>
+<p>背后的RDD和依赖i情况变成如下：<br>
+<img src="/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701233702391-1673168193497.png" alt="在这里插入图片描述"></p>
+<h3><span id="di-san-bu-maptopair">第三步mapToPair</span><a href="#di-san-bu-maptopair" class="header-anchor">#</a></h3>
+<p>懒得敲了，这里省略java代码。<br>
+<img src="/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701233841698-1673168193496.png" alt="在这里插入图片描述"><br>
+看一下dag。<br>
+<img src="/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701233855996-1673168193521.png" alt="在这里插入图片描述"></p>
+<h3><span id="di-si-bu-ju-he">第四步聚合</span><a href="#di-si-bu-ju-he" class="header-anchor">#</a></h3>
+<p>需要分组，然后进行合并相同的单词数量<br>
+<img src="/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701233929210-1673168193502.png" alt="在这里插入图片描述"><br>
+此时dag如下：<br>
+<img src="/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701234006400-1673168193507.png" alt="在这里插入图片描述"></p>
+<ul>
+<li>注意， 并不是shuffle这个RDD被包装进了shuffle依赖， 而是它的前置RDD被包进了shuffle依赖。</li>
+<li>即dependency确实是只包装依赖的， 你如果是属于某个shuffle过程的依赖，那么就会被包装成shuffleDepnecy。</li>
+</ul>
+<h3><span id="zui-hou-yi-bu-collect">最后一步collect</span><a href="#zui-hou-yi-bu-collect" class="header-anchor">#</a></h3>
+<p>当写完后，执行collet，进行计算执行和提交。<br>
+<img src="/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/2020070123414830-1673168193515.png" alt="在这里插入图片描述"></p>
+<p>完整流程如下：<br>
+<img src="/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200702000002595-1673168193526.png" alt="在这里插入图片描述"></p>
+<h1><span id="collect-de-shi-hou-fa-sheng-liao-shi-me">Collect的时候发生了什么</span><a href="#collect-de-shi-hou-fa-sheng-liao-shi-me" class="header-anchor">#</a></h1>
+<p>collect后， 会通过dagScheduler进行runJob，  submitJob的时候会返回一个waiter，在client端主程序中就会进行等待。<br>
+即client端提交任务时其实是异步的，会返回一个waiter进行等待，<br>
+<img src="/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/2020070123442336-1673168193530.png" alt="在这里插入图片描述"></p>
+<p>看一下submitJob的时候发生了什么<br>
+<img src="/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701234604605-1673168193549.png" alt="在这里插入图片描述"><br>
+前面看起来都是一些业务处理， 关键在handleJobSumitted的时候，会做一个newStage的操作，正好可以看一下spark里的stage是怎么确定和生成的。<br>
+<img src="/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/2020070123474745-1673168193542.png" alt="在这里插入图片描述"><br>
+父(依赖）stage列表是怎么获取的?<br>
+<img src="https://img-blog.csdnimg.cn/20200701234922589.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2E3OTk1ODEyMjk=,size_16,color_FFFFFF,t_70" alt="![在这里插入图片描述](https://img-blog.csdnimg.cn/20200701234813809.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2E3OTk1ODE"><br>
+上图里的关键信息在于， 当遇到shuffle的时候，就会隔离出一个stage。</p>
+<p>可以看一下之前提到的RDD拼成的DAG图，如下：<br>
+<img src="/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701234946809-1673168193572.png" alt="在这里插入图片描述"></p>
+<p>newStage后，有如下情况：<br>
+<img src="/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701235022532-1673168193553.png" alt="在这里插入图片描述"><br>
+可以看到又给stage里有一个rdds的数组， 里面放了该stage的所有RDD， 并建立了依赖关系。<br>
+然后每个stage又通过parent去确定依赖关系。</p>
+<h2><span id="stage-ti-jiao">stage提交</span><a href="#stage-ti-jiao" class="header-anchor">#</a></h2>
+<p>newStage之后，会进行stage的提交<br>
+<img src="/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701235300468-1673168193558.png" alt="在这里插入图片描述"></p>
+<p>看一下submitStage的时候做了什么，注意此时是先从finalStage开始提交的。<br>
+<img src="/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701235445608-1673168193857.png" alt="在这里插入图片描述"><br>
+这里可以看到， 虽然我们做了finalStage的提交， 但是会优先提交它所依赖的前置stage， 一直等待stage 完成了再真正提交自己这个stage。</p>
+<p>这里看一下 stage是怎么发送的<br>
+<img src="/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701235547264-1673168193701.png" alt="在这里插入图片描述"><br>
+上图可以看到stae座位task时，也是区分shuffle类型和map类型。<br>
+<img src="/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701235633628-1673168193643.png" alt="在这里插入图片描述"></p>
+<ul>
+<li>这句话重点： 有多少个未计算的分区，决定了有多少个task， 即stage中的分区和task一一对应</li>
+</ul>
+<p>完成的stage创建和提交流程图如下：<br>
+<img src="/images/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/20200701235851172-1673168193605.png" alt="在这里插入图片描述"></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/" title="spark的任务构建和提交流程.md">http://breakdawncoder.com/知识库/开源组件原理/spark/spark的任务构建和提交流程/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6-spark/" rel="tag"># 大数据组件,spark</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/task%E6%98%AF%E6%80%8E%E4%B9%88%E5%88%86%E5%8F%91%E5%88%B0%E5%90%84%E8%8A%82%E7%82%B9%E4%B8%8A%E5%B9%B6%E6%89%A7%E8%A1%8C%E7%9A%84/" rel="prev" title="task是怎么分发到各节点上并执行的.md">
+      <i class="fa fa-chevron-left"></i> task是怎么分发到各节点上并执行的.md
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/Spark%E5%92%8Cmapreducer%E5%9C%A8shuffle%E6%97%B6%E7%9A%84%E5%8C%BA%E5%88%AB/" rel="next" title="Spark和mapreducer在shuffle时的区别.md">
+      Spark和mapreducer在shuffle时的区别.md <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">简述spark的任务运行流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">为什么需要RDD</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">wordCount代码的背后</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.0.1.</span> <span class="nav-text">textFile</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">第二步做FlatMap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">第三步mapToPair</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">第四步聚合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.4.</span> <span class="nav-text">最后一步collect</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number"></span> <span class="nav-text">Collect的时候发生了什么</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">stage提交</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">239</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共318.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

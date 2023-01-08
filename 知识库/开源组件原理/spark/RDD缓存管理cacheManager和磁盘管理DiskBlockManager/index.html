@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="RDD缓存管理cacheManager diskStore和diskBlockManager有什么关系？ diskBlockManager的getFile过程     [toc] RDD缓存管理cacheManager# 当需要计算RDD时，需要避免重复计算的RDD。  什么时候RDD可能会被重复计算？一般是宽依赖RDD， 即RDD的下游可能有多个， 但是另一个下游的拉去可能较慢， 那么此时">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RDD缓存管理cacheManager和磁盘管理DiskBlockManager.md">
+<meta property="og:url" content="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="RDD缓存管理cacheManager diskStore和diskBlockManager有什么关系？ diskBlockManager的getFile过程     [toc] RDD缓存管理cacheManager# 当需要计算RDD时，需要避免重复计算的RDD。  什么时候RDD可能会被重复计算？一般是宽依赖RDD， 即RDD的下游可能有多个， 但是另一个下游的拉去可能较慢， 那么此时">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/20200630000626827-1673168180625.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/20200630001614715-1673168180692.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/20200630002035127-1673168180556.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/20200630002336941-1673168180792.png">
+<meta property="og:image" content="http://breakdawncoder.com/images/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/20200630002455377-1673168180674.png">
+<meta property="article:published_time" content="2023-01-08T08:13:48.000Z">
+<meta property="article:modified_time" content="2023-01-08T08:56:21.387Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="大数据组件,spark">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/20200630000626827-1673168180625.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>RDD缓存管理cacheManager和磁盘管理DiskBlockManager.md | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RDD缓存管理cacheManager和磁盘管理DiskBlockManager.md
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-01-08 16:13:48 / 修改时间：16:56:21" itemprop="dateCreated datePublished" datetime="2023-01-08T16:13:48+08:00">2023-01-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">大数据组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6/spark/" itemprop="url" rel="index"><span itemprop="name">spark</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#rdd-huan-cun-guan-li-cachemanager">RDD缓存管理cacheManager</a></li>
+<li><a href="#diskstore-he-diskblockmanager-you-shi-me-guan-xi">diskStore和diskBlockManager有什么关系？</a></li>
+<li><a href="#diskblockmanager-de-getfile-guo-cheng">diskBlockManager的getFile过程</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h2><span id="rdd-huan-cun-guan-li-cachemanager">RDD缓存管理cacheManager</span><a href="#rdd-huan-cun-guan-li-cachemanager" class="header-anchor">#</a></h2>
+<p>当需要计算RDD时，需要避免重复计算的RDD。</p>
+<ul>
+<li>什么时候RDD可能会被重复计算？一般是宽依赖RDD， 即RDD的下游可能有多个， 但是另一个下游的拉去可能较慢， 那么此时需要做缓存。<br>
+cacheManager只是对RDD的管理， 真正的缓存以及获取是通过blockManager，然后根据内存情况选择存内存还是存磁盘。<br>
+<img src="/images/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/20200630000626827-1673168180625.png" alt="在这里插入图片描述"></li>
+<li>RDD不是一定会做缓存，这取决于存储级别的设定。</li>
+<li>RDD没缓存时， 不一定要重新计算， 也可能从CheckPoint中拿</li>
+<li>checkPoint概念:</li>
+</ul>
+<blockquote>
+<blockquote>
+<p>checkpoint在spark中主要有两块应用：一块是在spark core中对RDD做checkpoint，可以切断做checkpoint RDD的依赖关系，将RDD数据保存到可靠存储（如HDFS）以便数据恢复；另外一块是应用在spark streaming中，使用checkpoint用来保存DStreamGraph以及相关配置信息，以便在Driver崩溃重启的时候能够接着之前进度继续进行处理（如之前waiting batch的job会在重启后继续处理）。</p>
+</blockquote>
+</blockquote>
+<p>如果需要存入内存，直接使用memoryStore即可，memoryStore的存储过程见上一篇博文。</p>
+<p>如果要写入磁盘，需要调用diskStore提供的put方法把RDD对应的block块写入磁盘</p>
+<h2><span id="diskstore-he-diskblockmanager-you-shi-me-guan-xi">diskStore和diskBlockManager有什么关系？</span><a href="#diskstore-he-diskblockmanager-you-shi-me-guan-xi" class="header-anchor">#</a></h2>
+<p>diskStore里要写入数据时，负责打开某个文件， 然后往文件里写入。<br>
+取出数据时，也是找到对应的文件，然后取出数据。</p>
+<p>而这个磁盘文件的管理并没有放到diskStore里实现，而是独立了一个diskBlockManager模块。<br>
+以DiskStore的putArray方法为例，从下图可看出关系：<br>
+<img src="/images/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/20200630001614715-1673168180692.png" alt="在这里插入图片描述"><br>
+即文件相关、序列化相关，都让diskBlockManager来搞了。</p>
+<h2><span id="diskblockmanager-de-getfile-guo-cheng">diskBlockManager的getFile过程</span><a href="#diskblockmanager-de-getfile-guo-cheng" class="header-anchor">#</a></h2>
+<p>上图里有个getFile的操作，即从DBM中拿到文件对象做写入。<br>
+那么这个文件创建时，怎么选路径，怎么命名？</p>
+<p>首先，文件的路径和文件名， 使用2次哈希得到<br>
+<img src="/images/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/20200630002035127-1673168180556.png" alt="在这里插入图片描述"><br>
+使用2级哈希做路径的目的，是因为一级目录有多个，需要用哈希选择放到哪个一级目录。</p>
+<p>每次创建文件的话，会把该文件放到DBM里的一个数组中，并加上钩子做管理，如果程序中止或者结束，需要主动清理临时文件。<br>
+<img src="/images/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/20200630002336941-1673168180792.png" alt="在这里插入图片描述"><br>
+DiskBlockManager全图:<br>
+<img src="/images/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/20200630002455377-1673168180674.png" alt="在这里插入图片描述"></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/" title="RDD缓存管理cacheManager和磁盘管理DiskBlockManager.md">http://breakdawncoder.com/知识库/开源组件原理/spark/RDD缓存管理cacheManager和磁盘管理DiskBlockManager/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6-spark/" rel="tag"># 大数据组件,spark</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/memoryStore%E5%86%85%E5%AD%98%E6%8E%A7%E5%88%B6%E5%8E%9F%E7%90%86/" rel="prev" title="memoryStore内存控制原理.md">
+      <i class="fa fa-chevron-left"></i> memoryStore内存控制原理.md
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/" rel="next" title="map端计算结果缓存解析.md">
+      map端计算结果缓存解析.md <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">RDD缓存管理cacheManager</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">diskStore和diskBlockManager有什么关系？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">diskBlockManager的getFile过程</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">239</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共318.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
