@@ -181,6 +181,943 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC303%E5%9C%BA%E5%91%A8%E8%B5%9B-463%E5%90%8D-4%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC303%E5%9C%BA%E5%91%A8%E8%B5%9B-463%E5%90%8D-4%E9%A2%98/" class="post-title-link" itemprop="url">第303场周赛-463名-4题（pair类、var特性、双指针而不是二分）</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-07-24 22:12:42" itemprop="dateCreated datePublished" datetime="2022-07-24T22:12:42+08:00">2022-07-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-07-26 00:22:32" itemprop="dateModified" datetime="2022-07-26T00:22:32+08:00">2022-07-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">力扣周赛记录</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC303%E5%9C%BA%E5%91%A8%E8%B5%9B-463%E5%90%8D-4%E9%A2%98/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC303%E5%9C%BA%E5%91%A8%E8%B5%9B-463%E5%90%8D-4%E9%A2%98/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#ben-qi-zong-jie">本期总结：</a></li>
+<li><a href="#2352-xiang-deng-xing-lie-dui-https-leetcode-cn-problems-equal-row-and-column-pairs">2352. 相等行列对</a></li>
+<li><a href="#2353-she-ji-shi-wu-ping-fen-xi-tong-li-kou-leetcode-https-leetcode-cn-problems-design-a-food-rating-system">2353. 设计食物评分系统 - 力扣（LeetCode）</a></li>
+<li><a href="#2354-you-zhi-shu-dui-de-shu-mu-li-kou-leetcode-https-leetcode-cn-problems-number-of-excellent-pairs">2354. 优质数对的数目 - 力扣（LeetCode）</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p><img src="/images/%E7%AC%AC303%E5%9C%BA%E5%91%A8%E8%B5%9B-463%E5%90%8D-4%E9%A2%98/1658763277173.png" alt="1658763277173"></p>
+<p>只记录一下对我而言比较有意义的题目</p>
+<h2><span id="ben-qi-zong-jie">本期总结：</span><a href="#ben-qi-zong-jie" class="header-anchor">#</a></h2>
+<ol>
+<li>考虑用Pair包装而不是设计class实体类</li>
+<li>var特性可以简化变量名的打印</li>
+<li>双点有序(&gt;k)等问题，优先考虑用双指针而不是二分， 先确定固定哪个点，再看怎么移动，最多就4种情况。</li>
+</ol>
+<h2><span id="2352-xiang-deng-xing-lie-dui"></span><a href="#2352-xiang-deng-xing-lie-dui" class="header-anchor">#</a></h2>
+<p><img src="/images/%E7%AC%AC303%E5%9C%BA%E5%91%A8%E8%B5%9B-463%E5%90%8D-4%E9%A2%98/1658763341991.png" alt="1658763341991"></p>
+<p>看着很简单啊，我的想法是直接对每一行搞成一个字符串， 然后做成hasMap，记录这个字符串出现的次数</p>
+<p>在拿列去map里匹配即可</p>
+<p>结果忘记了数字的范围是1-10^9， 并非0-9，不能直接拼，还得加逗号。痛失五分钟。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">equalPairs</span><span class="params">(<span class="type">int</span>[][] grid)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">ylen</span> <span class="operator">=</span> grid.length;</span><br><span class="line">        <span class="type">int</span> <span class="variable">xlen</span> <span class="operator">=</span> grid[<span class="number">0</span>].length;</span><br><span class="line">        String[] rows = <span class="keyword">new</span> <span class="title class_">String</span>[ylen];</span><br><span class="line">        String[] cols = <span class="keyword">new</span> <span class="title class_">String</span>[xlen];</span><br><span class="line">        Map&lt;String, List&lt;Integer&gt;&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;(); </span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">y</span> <span class="operator">=</span> <span class="number">0</span>; y &lt; ylen;y++) &#123;</span><br><span class="line">            <span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">0</span>; x &lt; xlen;x++) &#123;</span><br><span class="line">                sb.append(grid[y][x]).append(<span class="string">&quot;,&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> sb.toString();</span><br><span class="line">            <span class="keyword">if</span> (!map.containsKey(s)) &#123;</span><br><span class="line">                map.put(s, <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;());</span><br><span class="line">            &#125;</span><br><span class="line">            map.get(s).add(y);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">0</span>; x &lt; xlen;x++) &#123;</span><br><span class="line">            <span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">y</span> <span class="operator">=</span> <span class="number">0</span>; y &lt; ylen;y++) &#123;</span><br><span class="line">                sb.append(grid[y][x]).append(<span class="string">&quot;,&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> sb.toString();</span><br><span class="line">            <span class="keyword">if</span> (map.containsKey(s)) &#123;</span><br><span class="line">                count += map.get(s).size();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>另外java处理字符串和map问题确实比python要麻烦，如果要冲速度，我是不是得学一下python？</p>
+<p>题解里的python，可以快速转数量统计的map</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">equalPairs</span>(<span class="params">self, grid: <span class="type">List</span>[<span class="type">List</span>[<span class="built_in">int</span>]]</span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">        cnt = Counter(<span class="built_in">tuple</span>(row) <span class="keyword">for</span> row <span class="keyword">in</span> grid)</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">sum</span>(cnt[col] <span class="keyword">for</span> col <span class="keyword">in</span> <span class="built_in">zip</span>(*grid))</span><br></pre></td></tr></table></figure>
+<h2><span id="2353-she-ji-shi-wu-ping-fen-xi-tong-li-kou-leetcode"></span><a href="#2353-she-ji-shi-wu-ping-fen-xi-tong-li-kou-leetcode" class="header-anchor">#</a></h2>
+<p><img src="/images/%E7%AC%AC303%E5%9C%BA%E5%91%A8%E8%B5%9B-463%E5%90%8D-4%E9%A2%98/1658764007681.png" alt="1658764007681"></p>
+<p>很明显就是一个会更新的优先队列集合</p>
+<p>需要用优先队列加一个检查更新的map实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">    <span class="keyword">class</span> <span class="title class_">FoodRatings</span> &#123;</span><br><span class="line"></span><br><span class="line">         <span class="keyword">class</span> <span class="title class_">Food</span> &#123;</span><br><span class="line">            String name;</span><br><span class="line">            String cuisines;</span><br><span class="line">            <span class="type">int</span> rate;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">public</span> <span class="title function_">Food</span><span class="params">(String name, String cuisines, <span class="type">int</span> rate)</span> &#123;</span><br><span class="line">                <span class="built_in">this</span>.name = name;</span><br><span class="line">                <span class="built_in">this</span>.cuisines = cuisines;</span><br><span class="line">                <span class="built_in">this</span>.rate = rate;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        Map&lt;String, Queue&lt;Food&gt;&gt; queues;</span><br><span class="line">        Map&lt;String, Food&gt; nowFoodMap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        <span class="keyword">public</span> <span class="title function_">FoodRatings</span><span class="params">(String[] foods, String[] cuisines, <span class="type">int</span>[] ratings)</span> &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">len</span> <span class="operator">=</span> foods.length;</span><br><span class="line">            queues = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>;i&lt;len;i++) &#123;</span><br><span class="line">                <span class="type">Food</span> <span class="variable">food</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Food</span>(foods[i], cuisines[i], ratings[i]);</span><br><span class="line">                nowFoodMap.put(foods[i], food);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (!queues.containsKey(cuisines[i])) &#123;</span><br><span class="line">                    queues.put(cuisines[i], <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>&lt;&gt;((a,b)-&gt;(</span><br><span class="line">                            a.rate != b.rate ? (b.rate - a.rate): (a.name.compareTo(b.name)))));</span><br><span class="line">                &#125;</span><br><span class="line">                queues.get(cuisines[i]).offer(food);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">changeRating</span><span class="params">(String food, <span class="type">int</span> newRating)</span> &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">cu</span> <span class="operator">=</span> nowFoodMap.get(food).cuisines;</span><br><span class="line">            <span class="type">Food</span> <span class="variable">food1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Food</span>(food, cu, newRating);</span><br><span class="line">            nowFoodMap.put(food, food1);</span><br><span class="line">            queues.get(cu).offer(food1);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> String <span class="title function_">highestRated</span><span class="params">(String cuisine)</span> &#123;</span><br><span class="line">            Queue&lt;Food&gt; queue = queues.get(cuisine);</span><br><span class="line">            <span class="keyword">while</span> (!queue.isEmpty()) &#123;</span><br><span class="line">                <span class="type">Food</span> <span class="variable">food</span> <span class="operator">=</span> queue.peek();</span><br><span class="line">                <span class="keyword">if</span> (food != nowFoodMap.get(food.name)) &#123;</span><br><span class="line">                    queue.poll();</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">return</span> food.name;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Your FoodRatings object will be instantiated and called as such:</span></span><br><span class="line"><span class="comment"> * FoodRatings obj = new FoodRatings(foods, cuisines, ratings);</span></span><br><span class="line"><span class="comment"> * obj.changeRating(food,newRating);</span></span><br><span class="line"><span class="comment"> * String param_2 = obj.highestRated(cuisine);</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+<p>但是定义类的时候比较麻烦，后面可以考虑以下的效率优化：</p>
+<ol>
+<li>
+<p>用Pair做二元组，避免定义内部类麻烦</p>
+</li>
+<li>
+<p>用var避免定义变量类型</p>
+</li>
+</ol>
+<p><img src="/images/%E7%AC%AC303%E5%9C%BA%E5%91%A8%E8%B5%9B-463%E5%90%8D-4%E9%A2%98/1658764157594.png" alt="1658764157594"></p>
+<h2><span id="2354-you-zhi-shu-dui-de-shu-mu-li-kou-leetcode"></span><a href="#2354-you-zhi-shu-dui-de-shu-mu-li-kou-leetcode" class="header-anchor">#</a></h2>
+<p><img src="/images/%E7%AC%AC303%E5%9C%BA%E5%91%A8%E8%B5%9B-463%E5%90%8D-4%E9%A2%98/1658764316137.png" alt="1658764316137"></p>
+<p>其实这个脑筋急转弯通过纸上推演，很快能得到</p>
+<p><code>num1 OR num2</code> 和 <code>num1 AND num2</code> 的1的个数，等同于num1和num2中1的个数总和</p>
+<p>就变成就一个数组中，a[x] + a[y]共有多少对</p>
+<p>这个子问题的解法我想复杂了，竟然想到用二分法。。。又因为很久没写了，对二分不熟了，导致浪费了大量时间确认二分如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">long</span> <span class="title function_">countExcellentPairs</span><span class="params">(<span class="type">int</span>[] nums, <span class="type">int</span> k)</span> &#123;</span><br><span class="line">        Set&lt;Integer&gt; set = Arrays.stream(nums).mapToObj(Integer::valueOf).collect(Collectors.toSet());</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span>[] ontCounts = <span class="keyword">new</span> <span class="title class_">int</span>[set.size()];</span><br><span class="line">        <span class="type">int</span>[] newNums = <span class="keyword">new</span> <span class="title class_">int</span>[set.size()];</span><br><span class="line">        <span class="type">int</span> <span class="variable">t</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> s : set) &#123;</span><br><span class="line">            newNums[t++] = s;</span><br><span class="line">        &#125;</span><br><span class="line">        nums = newNums;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; nums.length;i++) &#123;</span><br><span class="line">            ontCounts[i] = Integer.bitCount(nums[i]);</span><br><span class="line">        &#125;</span><br><span class="line">        Arrays.sort(ontCounts);</span><br><span class="line"></span><br><span class="line">        <span class="type">long</span> <span class="variable">result</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; nums.length;i++) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">oneCount</span> <span class="operator">=</span> ontCounts[i];</span><br><span class="line">            <span class="type">int</span> <span class="variable">needOneCount</span> <span class="operator">=</span> k - oneCount;</span><br><span class="line"></span><br><span class="line">            <span class="type">int</span> <span class="variable">left</span> <span class="operator">=</span> <span class="number">0</span>, right = nums.length;</span><br><span class="line">            <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">mid</span> <span class="operator">=</span>  left + (right - left)/<span class="number">2</span>;</span><br><span class="line">                <span class="keyword">if</span> (ontCounts[mid] &lt; needOneCount) &#123;</span><br><span class="line">                    left = mid+<span class="number">1</span>;</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (ontCounts[mid] &gt;= needOneCount)&#123;</span><br><span class="line">                    right = mid;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="type">int</span> <span class="variable">select</span> <span class="operator">=</span> right;</span><br><span class="line">            result += Math.max(<span class="number">0</span>, ontCounts.length - select);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>比二分要更快速的可能是用双指针求解这类问题</p>
+<p>但是双指针的方向可能要好好想想</p>
+<p>即2个指针哪个优先固定， 再移动哪个，哪个方向移动</p>
+<p>这题需要left=0, right=length， 固定住left， 让right移动找到一个位置后，right右边的所有点和left想家肯定都满足&gt; k</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">long</span> <span class="variable">result</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">left</span> <span class="operator">=</span> <span class="number">0</span>, right = ontCounts.length - <span class="number">1</span>;</span><br><span class="line"><span class="keyword">for</span> (;left&lt;ontCounts.length;left++) &#123;</span><br><span class="line">    <span class="keyword">while</span> (right &gt;=<span class="number">0</span> &amp;&amp; ontCounts[left] + ontCounts[right] &gt;= k) &#123;</span><br><span class="line">        right--;</span><br><span class="line">    &#125;</span><br><span class="line">    result += (ontCounts.length - <span class="number">1</span> - right);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/AQS%E5%92%8CJUC%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/AQS%E5%92%8CJUC%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">AQS和JUC核心原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-07-17 21:24:55" itemprop="dateCreated datePublished" datetime="2022-07-17T21:24:55+08:00">2022-07-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-10 00:49:08" itemprop="dateModified" datetime="2022-08-10T00:49:08+08:00">2022-08-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">java高级原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/AQS%E5%92%8CJUC%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/AQS%E5%92%8CJUC%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>18k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>16 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#java-zhong-aqs-jiu-jing-shi-zuo-shi-me-de">java中AQS究竟是做什么的？</a></li>
+<li><a href="#aqs-jian-yao-bu-zou">AQS简要步骤</a></li>
+<li><a href="#aqs-de-zi-yuan-state">AQS的资源state</a>
+<ul>
+<li><a href="#state-ding-yi">state定义</a></li>
+<li><a href="#yi-jing-you-cas-fang-fa-liao-wei-shi-me-zi-yuan-state-huan-yao-ding-yi-cheng-volatile-de">已经有CAS方法了，为什么资源state还要定义成volatile的？</a></li>
+<li><a href="#dui-zi-yuan-de-cao-zuo-shi-me-shi-hou-yong-cas-shi-me-shi-yong-setstate">对资源的操作什么时候用CAS，什么使用setState？</a></li>
+</ul>
+</li>
+<li><a href="#aqs-de-clh-dui-lie">AQS的CLH队列</a>
+<ul>
+<li><a href="#wei-shi-me-xu-yao-yi-ge-clh-dui-lie">为什么需要一个CLH队列</a></li>
+<li><a href="#clh-ben-zhi-shi-yi-ge-queue-rong-qi-ma">CLH本质？是一个Queue容器吗</a></li>
+<li><a href="#ru-dui-shi-zen-me-bao-zheng-an-quan-de">入队是怎么保证安全的？</a></li>
+<li><a href="#chu-dui-guo-cheng-hui-fa-sheng-shi-me">出队过程会发生什么？</a></li>
+</ul>
+</li>
+<li><a href="#aqs-xiang-xi-zi-yuan-huo-qu-liu-cheng">AQS详细资源获取流程</a>
+<ul>
+<li><a href="#1-tryacquire-chang-shi-huo-qu-zi-yuan">1. tryAcquire尝试获取资源</a>
+<ul>
+<li><a href="#reentrantlock-zhong-de-tryacquire-shi-xian">ReentrantLock中的tryAcquire实现</a></li>
+</ul>
+</li>
+<li><a href="#2-addwaiter-tian-jia-dao-deng-dai-dui-lie">2.addWaiter 添加到等待队列</a></li>
+<li><a href="#3-acquirequeued-xun-huan-zu-sai-jing-zheng">3. acquireQueued循环阻塞-竞争</a></li>
+<li><a href="#4-shouldparkafterfailedacquire-jian-cha-shi-fou-ke-yi-zu-sai">4.shouldParkAfterFailedAcquire 检查是否可以阻塞</a></li>
+<li><a href="#5-parkandcheckinterrupt-zu-sai-xian-cheng">5.parkAndCheckInterrupt() 阻塞线程</a>
+<ul>
+<li><a href="#locksupport-park-he-pu-tong-de-wait-notify-du-you-sha-qu-bie">lockSupport.park()和普通的wait|notify都有啥区别？</a></li>
+</ul>
+</li>
+<li><a href="#6-zong-ti-liu-cheng-tu">6.总体流程图</a></li>
+<li><a href="#pin-fan-chu-xian-de-interruptd-zhong-duan-biao-ji-shi-zuo-shi-me-yong-de">频繁出现的interruptd中断标记是做什么用的？</a></li>
+</ul>
+</li>
+<li><a href="#aqs-de-xiang-xi-zi-yuan-shi-fang-liu-cheng">AQS的详细资源释放流程</a></li>
+<li><a href="#aqs-ru-he-shi-xian-gong-ping-he-fei-gong-ping">AQS如何实现公平和非公平？</a>
+<ul>
+<li><a href="#gong-ping-he-fei-gong-ping-suo-de-you-dian-he-que-dian">公平和非公平锁的优点和缺点</a></li>
+<li><a href="#lock-lei-shi-mo-ren-gong-ping-huan-shi-fei-gong-ping">Lock类是默认公平还是非公平？</a></li>
+</ul>
+</li>
+<li><a href="#du-zhan-mo-shi-he-gong-xiang-mo-shi-de-aqs-qu-bie">独占模式和共享模式的AQS区别</a>
+<ul>
+<li><a href="#gong-xiang-mo-shi-xin-hao-liang-semaphore-de-sync-tong-bu-qi">共享模式信号量Semaphore的Sync同步器</a></li>
+</ul>
+</li>
+<li><a href="#aqs-ru-he-chu-li-chong-ru">AQS如何处理重入</a></li>
+<li><a href="#aqs-ru-he-xiang-ying-chao-shi">AQS如何响应超时</a>
+<ul>
+<li><a href="#spinfortimeoutthreshold-shi-shi-me">spinForTimeoutThreshold是什么？</a></li>
+</ul>
+</li>
+<li><a href="#aqs-de-condition-tiao-jian-dui-lie">AQS的condition条件队列</a>
+<ul>
+<li><a href="#condition-de-yong-fa">condition的用法</a></li>
+<li><a href="#condition-he-object-wait-notify-de-qu-bie">condition 和 object.wait/notify的区别</a></li>
+<li><a href="#condition-yuan-li-fen-xi">condition原理分析</a>
+<ul>
+<li><a href="#chao-da-yuan-li-liu-cheng-tu">超大原理流程图</a></li>
+<li><a href="#dai-ma-jie-gou-bu-fen">代码结构部分：</a></li>
+<li><a href="#yuan-li-shi-xian-bu-fen">原理实现部分：</a>
+<ul>
+<li><a href="#deng-dai-dui-lie">等待队列：</a></li>
+<li><a href="#deng-dai-guo-cheng">等待过程</a></li>
+<li><a href="#huan-xing-guo-cheng-signal">唤醒过程signal()</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#yong-yu-gao-bing-fa-de-aqs-shi-xian-suo">用于高并发的AQS实现锁</a>
+<ul>
+<li><a href="#du-xie-suo-reentrantreadwritelock">读写锁ReentrantReadWriteLock</a>
+<ul>
+<li><a href="#mei-you-reentrantreadwritelock-qian-jdk-shi-zen-me-shi-xian-du-xie-ji-zhi-de">没有ReentrantReadWriteLock前，jdk是怎么实现读写机制的？</a></li>
+<li><a href="#yong-liao-reentrantreadwritelock-hou-ke-yi-zen-me-zuo">用了ReentrantReadWriteLock后可以怎么做？</a></li>
+<li><a href="#reentrantreadwritelock-zhi-chi-de-te-xing">ReentrantReadWriteLock支持的特性</a></li>
+<li><a href="#du-xie-suo-de-shi-xian-he-xin-yuan-li">读写锁的实现核心原理</a>
+<ul>
+<li><a href="#du-xie-suo-de-state-zi-yuan-zhuang-tai-she-ji">读写锁的state资源状态设计</a></li>
+<li><a href="#xie-suo-de-huo-qu-he-shi-fang">写锁的获取和释放</a></li>
+<li><a href="#du-suo-de-huo-qu-he-shi-fang">读锁的获取和释放</a></li>
+</ul>
+</li>
+<li><a href="#du-xie-suo-de-suo-jiang-ji">读写锁的锁降级</a></li>
+</ul>
+</li>
+<li><a href="#you-chuo-suo-stampedlock">邮戳锁StampedLock</a>
+<ul>
+<li><a href="#du-xie-suo-you-shi-me-que-dian">读写锁有什么缺点？</a></li>
+<li><a href="#you-chuo-suo-wei-shi-me-neng-jie-jue-ji-e">邮戳锁为什么能解决饥饿</a></li>
+<li><a href="#shi-me-shi-hou-yong-du-xie-suo-shi-me-shi-hou-yong-you-chuo-suo">什么时候用读写锁，什么时候用邮戳锁？</a></li>
+<li><a href="#you-chuo-suo-de-que-dian">邮戳锁的缺点</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="java-zhong-aqs-jiu-jing-shi-zuo-shi-me-de">java中AQS究竟是做什么的？</span><a href="#java-zhong-aqs-jiu-jing-shi-zuo-shi-me-de" class="header-anchor">#</a></h1>
+<p>当你使用java实现一个线程同步的对象时，一定会包含一个问题：</p>
+<p><strong>你该如何保证多个线程访问该对象时，正确地进行阻塞等待，正确地被唤醒？</strong></p>
+<p>关于这个问题，java的设计者认为应该是一套通用的机制</p>
+<p>因此将一套线程阻塞等待以及被唤醒时锁分配的机制称之为AQS</p>
+<p>全称 <strong>A</strong>bstract<strong>Q</strong>uened<strong>S</strong>ynchronizer</p>
+<p>中文名即抽象的队列式同步器 。</p>
+<p>基于AQS，实现了例如ReentenLock之类的经典JUC类。</p>
+<h1><span id="aqs-jian-yao-bu-zou">AQS简要步骤</span><a href="#aqs-jian-yao-bu-zou" class="header-anchor">#</a></h1>
+<ol>
+<li>
+<p>线程访问资源，如果资源足够，则把线程封装成一个Node，设置为活跃线程进入CLH队列，并扣去资源</p>
+</li>
+<li>
+<p>资源不足，则变成等待线程Node，也进入CLH队列</p>
+</li>
+<li>
+<p>CLH是一个如下图所示的双向链式队列</p>
+<p><img src="/images/AQS%E5%92%8CJUC%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/1658065224905.png" alt="1658065224905"></p>
+</li>
+</ol>
+<h1><span id="aqs-de-zi-yuan-state">AQS的资源state</span><a href="#aqs-de-zi-yuan-state" class="header-anchor">#</a></h1>
+<h2><span id="state-ding-yi">state定义</span><a href="#state-ding-yi" class="header-anchor">#</a></h2>
+<p>AQS中的资源是一个int值，而且是volatile的，并提供了3个方法给子类使用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> <span class="type">int</span> state;</span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="type">int</span> <span class="title function_">getState</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> state;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">setState</span><span class="params">(<span class="type">int</span> newState)</span> &#123;</span><br><span class="line">    state = newState;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// cas方法</span></span><br><span class="line">compareAndSetState(<span class="type">int</span> oldState, <span class="type">int</span> newState);</span><br></pre></td></tr></table></figure>
+<p>如果state上限只有1，那么就是独占模式Exclusive，例如 ReentrantLock</p>
+<p>如果state上限大于1，那就是共享模式Share，例如 Semaphore、CountDownLatch、ReadWriteLock，CyclicBarrier</p>
+<h2><span id="yi-jing-you-cas-fang-fa-liao-wei-shi-me-zi-yuan-state-huan-yao-ding-yi-cheng-volatile-de">已经有CAS方法了，为什么资源state还要定义成volatile的？</span><a href="#yi-jing-you-cas-fang-fa-liao-wei-shi-me-zi-yuan-state-huan-yao-ding-yi-cheng-volatile-de" class="header-anchor">#</a></h2>
+<p>对外暴露的getter/setter方法，是走不了CAS的。而且setter/getter没有被synchronized修饰。所以必须要volatile，保证可见性</p>
+<p>这样基于AQS的实现可以直接通过getter/setter操作state变量，并且保证可见性，也避免重排序带来的影响。比如CountDownLatch，ReentrantReadWriteLock，Semaphore都有体现（各种getState、setState）</p>
+<h2><span id="dui-zi-yuan-de-cao-zuo-shi-me-shi-hou-yong-cas-shi-me-shi-yong-setstate">对资源的操作什么时候用CAS，什么使用setState？</span><a href="#dui-zi-yuan-de-cao-zuo-shi-me-shi-hou-yong-cas-shi-me-shi-yong-setstate" class="header-anchor">#</a></h2>
+<p>volatile的state成员有一个问题，就是如果是复合操作的话不能保证复合操作的原子性</p>
+<p>因此涉及 state增减的情况，采用CAS</p>
+<p>如果是state设置成某个固定值，则使用setState</p>
+<h1><span id="aqs-de-clh-dui-lie">AQS的CLH队列</span><a href="#aqs-de-clh-dui-lie" class="header-anchor">#</a></h1>
+<h2><span id="wei-shi-me-xu-yao-yi-ge-clh-dui-lie">为什么需要一个CLH队列</span><a href="#wei-shi-me-xu-yao-yi-ge-clh-dui-lie" class="header-anchor">#</a></h2>
+<p>这个队列的目的是为了公平锁的实现</p>
+<p>即为了保证先到先得，要求每个线程封装后的Node按顺序拼接起来。</p>
+<h2><span id="clh-ben-zhi-shi-yi-ge-queue-rong-qi-ma">CLH本质？是一个Queue容器吗</span><a href="#clh-ben-zhi-shi-yi-ge-queue-rong-qi-ma" class="header-anchor">#</a></h2>
+<p>不是的，本质上是一个链表式的队列</p>
+<p>因此核心在于链表节点Node的定义</p>
+<p><img src="/images/AQS%E5%92%8CJUC%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/1658066659779.png" alt="1658066659779"></p>
+<p>除了比较容易想到的prev和next指针外</p>
+<p>还包含了该节点内的线程</p>
+<p>以及 waitStatus 等待状态</p>
+<p>4种等待状态如下：</p>
+<ul>
+<li>CANCELLED（1）： 因为超时或者中断，节点会被设置为取消状态，被取消的节点时不会参与到竞争中的，他会一直保持取消状态不会转变为其他状态；</li>
+<li>SIGNAL（-1）：后继节点的线程处于等待状态，而当前节点的线程如果释放了同步状态或者被取消，将会通知后继节点，使后继节点的线程得以运行</li>
+<li>CONDITION（-2） ： 点在等待队列中，节点线程等待在Condition上，当其他线程对Condition调用了signal()后，改节点将会从等待队列中转移到同步队列中，加入到同步状态的获取中</li>
+<li>PROPAGATE（-3）   ： 表示下一次共享式同步状态获取将会无条件地传播下去</li>
+<li>INIT（ 0）:</li>
+</ul>
+<h2><span id="ru-dui-shi-zen-me-bao-zheng-an-quan-de">入队是怎么保证安全的？</span><a href="#ru-dui-shi-zen-me-bao-zheng-an-quan-de" class="header-anchor">#</a></h2>
+<p>入队过程可能引发冲突</p>
+<p>因此会用CAS保障入队安全。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Node <span class="title function_">enq</span><span class="params">(<span class="keyword">final</span> Node node)</span> &#123;</span><br><span class="line">    <span class="comment">//多次尝试，直到成功为止</span></span><br><span class="line">    <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">        <span class="type">Node</span> <span class="variable">t</span> <span class="operator">=</span> tail;</span><br><span class="line">        <span class="comment">//tail不存在，设置为首节点</span></span><br><span class="line">        <span class="keyword">if</span> (t == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (compareAndSetHead(<span class="keyword">new</span> <span class="title class_">Node</span>()))</span><br><span class="line">                tail = head;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">//设置为尾节点</span></span><br><span class="line">            node.prev = t;</span><br><span class="line">            <span class="keyword">if</span> (compareAndSetTail(t, node)) &#123;</span><br><span class="line">                t.next = node;</span><br><span class="line">                <span class="keyword">return</span> t;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2><span id="chu-dui-guo-cheng-hui-fa-sheng-shi-me">出队过程会发生什么？</span><a href="#chu-dui-guo-cheng-hui-fa-sheng-shi-me" class="header-anchor">#</a></h2>
+<p>一旦有节点出队，说明有线程释放资源了，队头的等待线程可以开始尝试获取了。</p>
+<p>于是首节点的线程释放同步状态后，将会唤醒它的后继节点（next）</p>
+<p>而后继节点将会在获取同步状态成功时将自己设置为首节点</p>
+<p>**注意在这个过程是不需要使用CAS来保证的，因为只有一个线程能够成功获取到同步状态 **</p>
+<h1><span id="aqs-xiang-xi-zi-yuan-huo-qu-liu-cheng">AQS详细资源获取流程</span><a href="#aqs-xiang-xi-zi-yuan-huo-qu-liu-cheng" class="header-anchor">#</a></h1>
+<h2><span id="1-tryacquire-chang-shi-huo-qu-zi-yuan">1. tryAcquire尝试获取资源</span><a href="#1-tryacquire-chang-shi-huo-qu-zi-yuan" class="header-anchor">#</a></h2>
+<p>AQS使用的设计模式是模板方法模式。</p>
+<p>具体代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">acquire</span><span class="params">(<span class="type">int</span> arg)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!tryAcquire(arg) &amp;&amp;</span><br><span class="line">        acquireQueued(addWaiter(Node.EXCLUSIVE), arg))</span><br><span class="line">        <span class="comment">// 发现中断过，则触发中断异常</span></span><br><span class="line">        selfInterrupt();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>即AQS抽象基类AbstractQueuedSynchronizer给外部调用时，都是调的acquire(int arg)方法。这个方法的内容是写死的。<br>
+而acquire中，需要调用<strong>tryAcquire(arg)， 这个方法是需要子类实现的，作用是判断资源是否足够获取arg个</strong></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Mutou_ren/article/details/103864432">(2条消息) AQS子类的tryAcquire和tryRelease的实现_Mutou_ren的博客-CSDN博客_aqs tryacquire</a></p>
+<h3><span id="reentrantlock-zhong-de-tryacquire-shi-xian">ReentrantLock中的tryAcquire实现</span><a href="#reentrantlock-zhong-de-tryacquire-shi-xian" class="header-anchor">#</a></h3>
+<p>这里暂时只谈论一种容易理解的tryAcuire实现，其他附加特性的tryAcquire先不提。</p>
+<p>里面主要就做这几件事：</p>
+<ol>
+<li>获取当前锁的资源数</li>
+<li>资源数为0，说明可以抢， 确认是前置节点是头节点，进行CAS试图争抢，抢成功就返回true，并设置当前线程</li>
+<li>没抢成功，返回false</li>
+<li>如果是重入的，则直接set设置增加后的状态值，状态值此时不一定为0和1了</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="type">boolean</span> <span class="title function_">tryAcquire</span><span class="params">(<span class="type">int</span> acquires)</span>&#123;</span><br><span class="line"> <span class="keyword">final</span> <span class="type">Thread</span> <span class="variable">current</span> <span class="operator">=</span> Thread.currentThread();</span><br><span class="line">            <span class="type">int</span> <span class="variable">c</span> <span class="operator">=</span> getState();</span><br><span class="line">            <span class="comment">// state==0代表当前没有锁，可以进行获取</span></span><br><span class="line">            <span class="keyword">if</span> (c == <span class="number">0</span>) &#123;</span><br><span class="line">            	<span class="comment">// 非公平才有的判断，会判断是否还有前驱节点，直接自己为头节点了或者同步队列空了才会继续后面的锁的获取操作</span></span><br><span class="line">                <span class="keyword">if</span> (!hasQueuedPredecessors() </span><br><span class="line">                     <span class="comment">//CAS设置state为acquires，成功后标记exclusiveOwnerThread为当前线程</span></span><br><span class="line">                    &amp;&amp; compareAndSetState(<span class="number">0</span>, acquires)) &#123;</span><br><span class="line">                    setExclusiveOwnerThread(current);</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 当前占有线程等于自己，代表重入</span></span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (current == getExclusiveOwnerThread()) &#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">nextc</span> <span class="operator">=</span> c + acquires;</span><br><span class="line">                <span class="comment">// 出现负数，说明溢出了</span></span><br><span class="line">                <span class="keyword">if</span> (nextc &lt; <span class="number">0</span>) <span class="comment">// </span></span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">&quot;Maximum lock count exceeded&quot;</span>);</span><br><span class="line">                <span class="comment">// 因为是重入操作，可以直接进行state的增加，所以不需要CAS</span></span><br><span class="line">                setState(nextc);</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2><span id="2-addwaiter-tian-jia-dao-deng-dai-dui-lie">2.addWaiter 添加到等待队列</span><a href="#2-addwaiter-tian-jia-dao-deng-dai-dui-lie" class="header-anchor">#</a></h2>
+<p>当获取资源失败，会进行addWaiter(Node.EXCLUSIVE)， arg)。</p>
+<p>目的是创建一个等待节点Node，并添加到等待队列</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Node <span class="title function_">addWaiter</span><span class="params">(Node mode)</span> &#123;</span><br><span class="line">    <span class="type">Node</span> <span class="variable">node</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Node</span>(Thread.currentThread(), mode);</span><br><span class="line">    <span class="comment">// Try the fast path of enq; backup to full enq on failure</span></span><br><span class="line">    <span class="type">Node</span> <span class="variable">pred</span> <span class="operator">=</span> tail;</span><br><span class="line">    <span class="keyword">if</span> (pred != <span class="literal">null</span>) &#123;</span><br><span class="line">        node.prev = pred;</span><br><span class="line">        <span class="comment">// 通过CAS竞争队尾</span></span><br><span class="line">        <span class="keyword">if</span> (compareAndSetTail(pred, node)) &#123;</span><br><span class="line">            pred.next = node;</span><br><span class="line">            <span class="keyword">return</span> node;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 竞争队尾失败，于是进行CAS频繁循环竞争队尾</span></span><br><span class="line">    enq(node);</span><br><span class="line">    <span class="keyword">return</span> node;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> Node <span class="title function_">enq</span><span class="params">(<span class="keyword">final</span> Node node)</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">        <span class="type">Node</span> <span class="variable">t</span> <span class="operator">=</span> tail;</span><br><span class="line">        <span class="keyword">if</span> (t == <span class="literal">null</span>) &#123; <span class="comment">// Must initialize</span></span><br><span class="line">            <span class="keyword">if</span> (compareAndSetHead(<span class="keyword">new</span> <span class="title class_">Node</span>()))</span><br><span class="line">                tail = head;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            node.prev = t;</span><br><span class="line">            <span class="keyword">if</span> (compareAndSetTail(t, node)) &#123;</span><br><span class="line">                t.next = node;</span><br><span class="line">                <span class="keyword">return</span> t;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2><span id="3-acquirequeued-xun-huan-zu-sai-jing-zheng">3. acquireQueued循环阻塞-竞争</span><a href="#3-acquirequeued-xun-huan-zu-sai-jing-zheng" class="header-anchor">#</a></h2>
+<p>，并在 &quot;处于头节点时尝试获取资源-&gt;睡眠-&gt;唤醒“中循环。</p>
+<p>当已经跑完任务的线程释放资源时，会唤醒之前阻塞的线程。</p>
+<p>当被唤醒后，就会检查自己是不是头节点，如果不是，且认为可以阻塞，那就继续睡觉去了</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/HuiShouGuoQu/p/13596507.html">AQS（acquireQueued(Node, int) 3）–队列同步器 - 小窝蜗 - 博客园 (cnblogs.com)</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="type">boolean</span> <span class="title function_">acquireQueued</span><span class="params">(<span class="keyword">final</span> Node node, <span class="type">int</span> arg)</span> &#123;</span><br><span class="line">    <span class="comment">// 标识是否获取资源失败                </span></span><br><span class="line">    <span class="type">boolean</span> <span class="variable">failed</span> <span class="operator">=</span> <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 标识当前线程是否被中断过</span></span><br><span class="line">        <span class="type">boolean</span> <span class="variable">interrupted</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="comment">// 自旋操作</span></span><br><span class="line">        <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">            <span class="comment">// 获取当前节点的前继节点</span></span><br><span class="line">            <span class="keyword">final</span> <span class="type">Node</span> <span class="variable">p</span> <span class="operator">=</span> node.predecessor();</span><br><span class="line">            <span class="comment">// 如果前继节点为头结点，说明排队马上排到自己了，可以尝试获取资源，若获取资源成功，则执行下述操作</span></span><br><span class="line">            <span class="keyword">if</span> (p == head &amp;&amp; tryAcquire(arg)) &#123;</span><br><span class="line">                <span class="comment">// 将当前节点设置为头结点</span></span><br><span class="line">                setHead(node);</span><br><span class="line">                <span class="comment">// 说明前继节点已经释放掉资源了，将其next置空，好让虚拟机提前回收掉前继节点</span></span><br><span class="line">                p.next = <span class="literal">null</span>; <span class="comment">// help GC</span></span><br><span class="line">                <span class="comment">// 获取资源成功，修改标记位</span></span><br><span class="line">                failed = <span class="literal">false</span>;</span><br><span class="line">                <span class="comment">// 返回中断标记</span></span><br><span class="line">                <span class="keyword">return</span> interrupted;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 若前继节点不是头结点，或者获取资源失败，</span></span><br><span class="line">            <span class="comment">// 则需要判断是否需要阻塞该节点持有的线程</span></span><br><span class="line">            <span class="comment">// 若可以阻塞，则继续执行parkAndCheckInterrupt()函数，</span></span><br><span class="line">            <span class="comment">// 将该线程阻塞直至被唤醒</span></span><br><span class="line">            <span class="comment">// 唤醒后会检查是否已经被中断，若返回true，则将interrupted标志置于true</span></span><br><span class="line">            <span class="keyword">if</span> (shouldParkAfterFailedAcquire(p, node) &amp;&amp; parkAndCheckInterrupt())</span><br><span class="line">                interrupted = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="comment">// 最终获取资源失败，则当前节点放弃获取资源</span></span><br><span class="line">        <span class="keyword">if</span> (failed)</span><br><span class="line">            cancelAcquire(node);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<h2><span id="4-shouldparkafterfailedacquire-jian-cha-shi-fou-ke-yi-zu-sai">4.shouldParkAfterFailedAcquire 检查是否可以阻塞</span><a href="#4-shouldparkafterfailedacquire-jian-cha-shi-fou-ke-yi-zu-sai" class="header-anchor">#</a></h2>
+<p>该方法不会直接阻塞线程，因为一旦线程挂起，后续就只能通过唤醒机制，中间还发生了内核态用户态切换，消耗很大。</p>
+<p>因此会先不断确认前继节点的实际状态，在只能阻塞的情况下才会去阻塞。</p>
+<p>并且会过滤掉cancel的线程节点</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="type">boolean</span> <span class="title function_">shouldParkAfterFailedAcquire</span><span class="params">(Node pred, Node node)</span> &#123;</span><br><span class="line">    <span class="comment">// 获取前继节点的等待状态</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">ws</span> <span class="operator">=</span> pred.waitStatus;</span><br><span class="line">    <span class="comment">// 如果等待状态为Node.SIGNAL(-1)，则直接返回true即可以阻塞</span></span><br><span class="line">    <span class="comment">// 因为这说明前继节点完成资源的释放或者中断后，会主动唤醒后继节点的（这也即是signal信号的含义），因此方法外面不用再反复CAS了，直接阻塞吧</span></span><br><span class="line">    <span class="keyword">if</span> (ws == Node.SIGNAL) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果前继节点的等待值大于0即CANCELLED（1）,说明前继节点的线程发生过cancel动作</span></span><br><span class="line">    <span class="comment">// 那就继续往前遍历，直到当前节点的前继节点的状态不为cancel</span></span><br><span class="line">    <span class="keyword">if</span> (ws &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            node.prev = pred = pred.prev;</span><br><span class="line">        &#125; <span class="keyword">while</span> (pred.waitStatus &gt; <span class="number">0</span>);</span><br><span class="line">        pred.next = node;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 前继节点的等待状态不为SIGNAL(-1)，也不为Cancel(1)</span></span><br><span class="line">        <span class="comment">// 那么只能是PROPAGATE(-3)或者CONDITION(-2)或者INITIAL（0）</span></span><br><span class="line">        <span class="comment">// 直接设置成SIGNAL，下一次还没CAS成功，就直接睡觉了</span></span><br><span class="line">        <span class="comment">// 因此在前面所有节点没辩护的情况下， 最多一次之后就会返回true让外面阻塞</span></span><br><span class="line">       compareAndSetWaitStatus(pred, ws, Node.SIGNAL);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2><span id="5-parkandcheckinterrupt-zu-sai-xian-cheng">5.parkAndCheckInterrupt()  阻塞线程</span><a href="#5-parkandcheckinterrupt-zu-sai-xian-cheng" class="header-anchor">#</a></h2>
+<p>使用LockSupport.park来阻塞当前这个对象所在的线程</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> <span class="type">boolean</span> <span class="title function_">parkAndCheckInterrupt</span><span class="params">()</span> &#123;</span><br><span class="line">             LockSupport.park(<span class="built_in">this</span>);</span><br><span class="line">    		 <span class="comment">// 确认是否是中断导致的park结束，并清除中断标记</span></span><br><span class="line">             <span class="keyword">return</span> Thread.interrupted();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">park</span><span class="params">(Object blocker)</span> &#123;</span><br><span class="line">    <span class="type">Thread</span> <span class="variable">t</span> <span class="operator">=</span> Thread.currentThread();</span><br><span class="line">    setBlocker(t, blocker);</span><br><span class="line">    UNSAFE.park(<span class="literal">false</span>, <span class="number">0L</span>);</span><br><span class="line">    setBlocker(t, <span class="literal">null</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3><span id="locksupport-park-he-pu-tong-de-wait-notify-du-you-sha-qu-bie">lockSupport.park()和普通的wait|notify都有啥区别？</span><a href="#locksupport-park-he-pu-tong-de-wait-notify-du-you-sha-qu-bie" class="header-anchor">#</a></h3>
+<ol>
+<li>面向的主体不一样。LockSuport主要是针对Thread进进行阻塞处理，可以指定阻塞队列的目标对象，每次可以指定具体的线程唤醒。Object.wait()是以对象为纬度，阻塞当前的线程和唤醒单个(随机)或者所有线程。</li>
+<li>实现机制不同。虽然LockSuport可以指定monitor的object对象，但和object.wait()，两者的阻塞队列并不交叉。可以看下测试例子。object.notifyAll()不能唤醒LockSupport的阻塞Thread.</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/1f16b838ccd8">底层实现原理</a><br>
+简而言之，是用mutex和condition保护了一个_counter的变量，当park时，这个变量置为了0，当unpark时，这个变量置为1。<br>
+底层用的C语言的pthread_mutex_unlock、pthread_cond_wait 、pthread_cond_signal ，但是针对了mutex和_cond两个变量进行加锁。</p>
+<h2><span id="6-zong-ti-liu-cheng-tu">6.总体流程图</span><a href="#6-zong-ti-liu-cheng-tu" class="header-anchor">#</a></h2>
+<p><img src="/images/AQS%E5%92%8CJUC%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/1658647899304.png" alt="1658647899304"></p>
+<h2><span id="pin-fan-chu-xian-de-interruptd-zhong-duan-biao-ji-shi-zuo-shi-me-yong-de">频繁出现的interruptd中断标记是做什么用的？</span><a href="#pin-fan-chu-xian-de-interruptd-zhong-duan-biao-ji-shi-zuo-shi-me-yong-de" class="header-anchor">#</a></h2>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u010499733/article/details/106982708/">(2条消息) JUC并发编程基石AQS之中断_LuxBai的博客-CSDN博客_aqs中断</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/218f7f81d2da">看！源码之AQS中断设计与实现(内涵jvm部分实现) - 简书 (jianshu.com)</a></p>
+<p>对线程调用 t1.interrupt();时</p>
+<p>会导致 LockSupport.park() 阻塞的线程重新被唤醒</p>
+<p>即有两种唤醒情况： 被前置节点唤醒，或者被外部中断唤醒</p>
+<p>这时候要根据调用的acuire类型决定是否在中断发生时结束锁的获取。</p>
+<p>上面介绍的是不可中断锁。</p>
+<p>在parkAndCheckInterrupt中，当park结束阻塞时时,使用的是 Thread.interrupted() 而不是 .isInterrupted() 来返回中断状态</p>
+<p>因为前者会返回线程当前的中断标记状态<strong>同时清除中断标志位</strong>（置为false）</p>
+<p>外层CAS循环时， 就不会让线程受中断标记影响，只是记录一下是否发生过中断</p>
+<p><img src="/images/AQS%E5%92%8CJUC%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/1658419508199.png" alt="1658419508199"></p>
+<p>当获取锁成功后，如果发现有过线程中断，则会触发中断异常，</p>
+<p><img src="/images/AQS%E5%92%8CJUC%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/1658419648382.png" alt="1658419648382"></p>
+<p>之后便由获取锁的调用者自己决定是否要处理线程中断。像下面这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">reentrantLock.lock();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;t1&quot;</span>);</span><br><span class="line">    TimeUnit.SECONDS.sleep(<span class="number">30</span>);</span><br><span class="line">&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    reentrantLock.unlock();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么另一种情况就是可中断锁了。</p>
+<p>ReentranLock有一个lockInterruptibly()方法就是这种情况</p>
+<p>线程被唤醒时，如果发现自己被中断过，就会直接抛异常而不是继续获取锁</p>
+<p><img src="/images/AQS%E5%92%8CJUC%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/1658419756962.png" alt="1658419756962"></p>
+<p>因此如果你的线程对中断很敏感，那么就是用可中断锁，及时响应。</p>
+<p>如果不敏感，也要注意处理中断异常。</p>
+<h1><span id="aqs-de-xiang-xi-zi-yuan-shi-fang-liu-cheng">AQS的详细资源释放流程</span><a href="#aqs-de-xiang-xi-zi-yuan-shi-fang-liu-cheng" class="header-anchor">#</a></h1>
+<p>首先AQS提供的模板方法为release方法。</p>
+<p>核心逻辑就是对资源进行尝试性释放</p>
+<p>如果成功，就唤醒等待队列中的第一个头节点</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="type">boolean</span> <span class="title function_">release</span><span class="params">(<span class="type">int</span> arg)</span> &#123;</span><br><span class="line">    <span class="comment">// 是否释放成功，tryRelease是子类要实现的方法</span></span><br><span class="line">    <span class="keyword">if</span> (tryRelease(arg)) &#123;</span><br><span class="line">        <span class="type">Node</span> <span class="variable">h</span> <span class="operator">=</span> head;</span><br><span class="line">        <span class="comment">// 判断头节点是否正在阻塞中，是的话唤醒</span></span><br><span class="line">        <span class="keyword">if</span> (h != <span class="literal">null</span> &amp;&amp; h.waitStatus != <span class="number">0</span>)</span><br><span class="line">            <span class="comment">// 唤醒头节点</span></span><br><span class="line">            unparkSuccessor(h);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看一下ReteenLock中的tryRelease实现</p>
+<p>就是减一下资源值。</p>
+<p>当资源值清零，则说明可以解除了对当前点的占用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="type">boolean</span> <span class="title function_">tryRelease</span><span class="params">(<span class="type">int</span> releases)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">c</span> <span class="operator">=</span> getState() - releases;</span><br><span class="line">    <span class="keyword">if</span> (Thread.currentThread() != getExclusiveOwnerThread())</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalMonitorStateException</span>();</span><br><span class="line">    <span class="type">boolean</span> <span class="variable">free</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">if</span> (c == <span class="number">0</span>) &#123;</span><br><span class="line">        free = <span class="literal">true</span>;</span><br><span class="line">     	<span class="comment">// 设置当前占用线程为null</span></span><br><span class="line">        setExclusiveOwnerThread(<span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 不需要CAS，因为只有持有锁的人才能做释放，不担心竞争</span></span><br><span class="line">    setState(c);</span><br><span class="line">    <span class="keyword">return</span> free;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1><span id="aqs-ru-he-shi-xian-gong-ping-he-fei-gong-ping">AQS如何实现公平和非公平？</span><a href="#aqs-ru-he-shi-xian-gong-ping-he-fei-gong-ping" class="header-anchor">#</a></h1>
+<p>以ReteenLock为例，它内部tryAcquire有两种同步器的实现</p>
+<ul>
+<li>
+<p>非公平同步器NonfairSync</p>
+</li>
+<li>
+<p>公平同步器FairSync</p>
+</li>
+</ul>
+<p>公平同步器和非公平同步器都是ReentrantLock中定义的一个static内部类</p>
+<p>ReentrantLock根据配置的不同，使用这2个同步器做资源的获取和同步操作</p>
+<p>他们二者的提供的lock操作，本质上就是AQS的acquire(1)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">FairSync</span> <span class="keyword">extends</span> <span class="title class_">Sync</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">long</span> <span class="variable">serialVersionUID</span> <span class="operator">=</span> -<span class="number">3000897897090466540L</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">lock</span><span class="params">()</span> &#123;</span><br><span class="line">        acquire(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>二者在公平和非公平的实现区别上，就是唤醒线程后，只有等待队列的队头节点才会尝试竞争。</p>
+<p>而非公平锁是只要唤醒了就可以尝试竞争。</p>
+<p>因此核心区别在于hasQueuedPredecessors方法！</p>
+<p><img src="/images/AQS%E5%92%8CJUC%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/1658665318338.png" alt="1658665318338"></p>
+<h2><span id="gong-ping-he-fei-gong-ping-suo-de-you-dian-he-que-dian">公平和非公平锁的优点和缺点</span><a href="#gong-ping-he-fei-gong-ping-suo-de-you-dian-he-que-dian" class="header-anchor">#</a></h2>
+<ol>
+<li>饥饿问题</li>
+</ol>
+<p>非公平锁可能引发“饥饿”，即一个线程反复抢占获取，而其他线程一直拿不到。</p>
+<p>而公平锁不存在饥饿，只要排上队了就一定能拿到</p>
+<ol start="2">
+<li>
+<p>性能问题</p>
+<p>非公平锁的平均性能比公平锁要高， 因为非公平锁中所有人都可以CAS抢占，如果同步块的时间非常短，那么可能所有人都不需要阻塞，减少CPU唤醒线程的开销，整体的吞吐效率会高点，CPU也不必取唤醒所有线程，会减少唤起线程的数量。</p>
+</li>
+</ol>
+<p>性能测试中公平锁的耗时是非公平锁的94.3倍， 总切换次数是133倍</p>
+<h2><span id="lock-lei-shi-mo-ren-gong-ping-huan-shi-fei-gong-ping">Lock类是默认公平还是非公平？</span><a href="#lock-lei-shi-mo-ren-gong-ping-huan-shi-fei-gong-ping" class="header-anchor">#</a></h2>
+<p>默认是非公平的，原因就是上文考虑的性能差距过大问题， 因此公平锁只能用于特定对性能要求不高且饥饿发生概率不大的场景中。</p>
+<h1><span id="du-zhan-mo-shi-he-gong-xiang-mo-shi-de-aqs-qu-bie">独占模式和共享模式的AQS区别</span><a href="#du-zhan-mo-shi-he-gong-xiang-mo-shi-de-aqs-qu-bie" class="header-anchor">#</a></h1>
+<ul>
+<li>
+<p>名字上， 共享模式都会带一个shard</p>
+</li>
+<li>
+<p>返回值上，独占模式相关acuire方法放回的是boolean类型， 而共享模式返回的是int值</p>
+</li>
+<li>
+<p>核心概念上， 区别在于同一时刻能否有多个线程可以获取到其同步状态</p>
+</li>
+<li>
+<p>释放时，共享模式需要用CAS进行释放， 而独占模式的release方法则不需要，直接setState即可。</p>
+</li>
+<li>
+<p>共享模式应用：信号量、读写锁</p>
+</li>
+</ul>
+<h2><span id="gong-xiang-mo-shi-xin-hao-liang-semaphore-de-sync-tong-bu-qi">共享模式信号量Semaphore的Sync同步器</span><a href="#gong-xiang-mo-shi-xin-hao-liang-semaphore-de-sync-tong-bu-qi" class="header-anchor">#</a></h2>
+<p>先实现了一个静态内部类Sync</p>
+<p>和上面的RLock类一个区别在于需要state初始化值，不一定为1</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Sync(<span class="type">int</span> permits) &#123;</span><br><span class="line">    setState(permits);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再继承实现了FairSync和NoFairSync</p>
+<p>使用CAS实现值的增加或者减少</p>
+<p>公平/非公平的区别同样是hasQueuedPredecessors的判断</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="type">int</span> <span class="title function_">tryAcquireShared</span><span class="params">(<span class="type">int</span> acquires)</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">        <span class="comment">// 队头判断，公平锁核心</span></span><br><span class="line">        <span class="keyword">if</span> (hasQueuedPredecessors())</span><br><span class="line">            <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">available</span> <span class="operator">=</span> getState();</span><br><span class="line">        <span class="type">int</span> <span class="variable">remaining</span> <span class="operator">=</span> available - acquires;</span><br><span class="line">        <span class="comment">// 信号量不足，直接返回负数</span></span><br><span class="line">        <span class="keyword">if</span> (remaining &lt; <span class="number">0</span> ||</span><br><span class="line">            <span class="comment">// 能抢成功，返回修改后的值，抢失败则for循环继续</span></span><br><span class="line">            compareAndSetState(available, remaining))</span><br><span class="line">            <span class="keyword">return</span> remaining;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1><span id="aqs-ru-he-chu-li-chong-ru">AQS如何处理重入</span><a href="#aqs-ru-he-chu-li-chong-ru" class="header-anchor">#</a></h1>
+<p>通过current == getExclusiveOwnerThread()来判断并进行非CAS的setState操作</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (current == getExclusiveOwnerThread()) &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">nextc</span> <span class="operator">=</span> c + acquires;</span><br><span class="line">    <span class="comment">// 出现负数，说明溢出了</span></span><br><span class="line">    <span class="keyword">if</span> (nextc &lt; <span class="number">0</span>) <span class="comment">// </span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">&quot;Maximum lock count exceeded&quot;</span>);</span><br><span class="line">    <span class="comment">// 因为是重入操作，可以直接进行state的增加，所以不需要CAS</span></span><br><span class="line">    setState(nextc);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意处理重入问题时，如果是独占锁，是可以直接setState而不需要CAS的，因为不会竞争式地重入！</p>
+<p>ReentrantLock释放时，也会处理重入，关键点就是对getState() - release后的处理，是否返回true或者false</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="type">boolean</span> <span class="title function_">tryRelease</span><span class="params">(<span class="type">int</span> releases)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">c</span> <span class="operator">=</span> getState() - releases;</span><br><span class="line">    <span class="keyword">if</span> (Thread.currentThread() != getExclusiveOwnerThread())</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalMonitorStateException</span>();</span><br><span class="line">    <span class="type">boolean</span> <span class="variable">free</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">if</span> (c == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 只有资源数为0才会解锁</span></span><br><span class="line">        <span class="comment">// 才算释放成功，否则这锁还是占住了</span></span><br><span class="line">        free = <span class="literal">true</span>;</span><br><span class="line">        setExclusiveOwnerThread(<span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    setState(c);</span><br><span class="line">    <span class="keyword">return</span> free;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1><span id="aqs-ru-he-xiang-ying-chao-shi">AQS如何响应超时</span><a href="#aqs-ru-he-xiang-ying-chao-shi" class="header-anchor">#</a></h1>
+<p>AQS提供的方法中带有Nanos后缀的方法就是支持超时中断的方法。</p>
+<p>核心逻辑就是每次阻塞前，确认nanosTimeout是否已经超时了。</p>
+<p>每次唤醒时，将nanosTimeout减去阻塞所花的时间，重新确认，并修改lastTime</p>
+<p>关键部分见下图</p>
+<p><img src="/images/AQS%E5%92%8CJUC%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/1658648788193.png" alt="1658648788193"></p>
+<h2><span id="spinfortimeoutthreshold-shi-shi-me">spinForTimeoutThreshold是什么？</span><a href="#spinfortimeoutthreshold-shi-shi-me" class="header-anchor">#</a></h2>
+<p>首先这个值是写死的1000L即1000纳秒</p>
+<p>1000纳秒是个非常小的数字，而小于等于1000纳秒的超时等待，无法做到十分的精确，那么就不要使用这么短的一个超时时间去影响超时计算的精确性，所以这时线程不做超时等待，直接做自旋就好了。</p>
+<h1><span id="aqs-de-condition-tiao-jian-dui-lie">AQS的condition条件队列</span><a href="#aqs-de-condition-tiao-jian-dui-lie" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/glamour2015/article/details/105499426/">(2条消息) AQS条件队列及中断机制_glamour2015的博客-CSDN博客_aqs中断</a></p>
+<h2><span id="condition-de-yong-fa">condition的用法</span><a href="#condition-de-yong-fa" class="header-anchor">#</a></h2>
+<p>condition用于显式的等待通知，等待过程可以挂起并释放锁，唤醒后重新拿到锁。</p>
+<p>和直接用lock\unlock去做等待通知的区别在于，lock是不会释放锁的，但是利用的condition的await则可以，且唤醒后会自动重新拿回锁。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Lock</span> <span class="variable">lock</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReentrantLock</span>();</span><br><span class="line"><span class="type">Condition</span> <span class="variable">condition</span> <span class="operator">=</span> lock.newCondition();</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">conditionWait</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">    lock.lock();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        	<span class="comment">// if(xxxx)判断不满足条件，等待，释放锁</span></span><br><span class="line">            condition.await();</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">conditionSignal</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">    lock.lock();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        	<span class="comment">// 做完事情了，通知condition上等待的开始抢占</span></span><br><span class="line">            condition.signal();</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>也提供了一些支持中断、支持超时的等待方法</p>
+<h2><span id="condition-he-object-wait-notify-de-qu-bie">condition 和 object.wait/notify的区别</span><a href="#condition-he-object-wait-notify-de-qu-bie" class="header-anchor">#</a></h2>
+<ol>
+<li>
+<p>object的wait依赖sync， 只能最多有一个等待队列。  而通过newCondition可以制造多个等待队列</p>
+</li>
+<li>
+<p>wait不支持中断，而condition支持</p>
+</li>
+<li>
+<p>condition支持等待特定时间</p>
+</li>
+</ol>
+<h2><span id="condition-yuan-li-fen-xi">condition原理分析</span><a href="#condition-yuan-li-fen-xi" class="header-anchor">#</a></h2>
+<h3><span id="chao-da-yuan-li-liu-cheng-tu">超大原理流程图</span><a href="#chao-da-yuan-li-liu-cheng-tu" class="header-anchor">#</a></h3>
+<ul>
+<li>
+<p>await()， 简单来讲就是把当前线程放入condition的等待队列中，然后调用LockSupport.park拉起线程。如果被其他线程通过signal唤醒，则放入同步队列中竞争锁，竞争成功则返回，否则继续竞争。</p>
+</li>
+<li>
+<p>signal方法，就是拿到condition的等待队列头节点，用cas修改节点状态，改成功则唤醒线程。但有可能被别人抢先，所以需要cas操作。</p>
+</li>
+</ul>
+<p><img src="/images/AQS%E5%92%8CJUC%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/7f51fc61f099394d01172d9c0b622ff815037302.png" alt="dd"></p>
+<h3><span id="dai-ma-jie-gou-bu-fen">代码结构部分：</span><a href="#dai-ma-jie-gou-bu-fen" class="header-anchor">#</a></h3>
+<p>​	Lock提供了newCondition接口给外部锁调用</p>
+<p>​	而newCondition()返回的Condition是一个接口</p>
+<p><img src="/images/AQS%E5%92%8CJUC%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/1659283503458.png" alt="1659283503458"></p>
+<p>​	这个接口的实现类是ConditionObject，放在AQS抽象类的内部类中</p>
+<p><img src="/images/AQS%E5%92%8CJUC%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/1659283517022.png" alt="1659283517022"></p>
+<h3><span id="yuan-li-shi-xian-bu-fen">原理实现部分：</span><a href="#yuan-li-shi-xian-bu-fen" class="header-anchor">#</a></h3>
+<h4><span id="deng-dai-dui-lie">等待队列：</span><a href="#deng-dai-dui-lie" class="header-anchor">#</a></h4>
+<ul>
+<li>
+<p>每个condition都有一个属于自己的等待队列</p>
+</li>
+<li>
+<p>每次调用condition.await， 就插入到等待队列尾部</p>
+</li>
+<li>
+<p>等待队列插入封装线程的节点时不需要在尾部CAS， 因为必须先获取锁，才能调用await，因此不用CAS竞争</p>
+</li>
+<li>
+<p>每个Lock只有一个同步队列（用于lock()时阻塞和竞争用）， 但是可能会有多个等待队列（用于condition的await）</p>
+</li>
+</ul>
+<h4><span id="deng-dai-guo-cheng">等待过程</span><a href="#deng-dai-guo-cheng" class="header-anchor">#</a></h4>
+<ol>
+<li>
+<p>添加线程到condition的等待队列尾部</p>
+</li>
+<li>
+<p>释放占用的锁，并唤醒同步队列的后继节点</p>
+</li>
+<li>
+<p>此时肯定不在aqs的同步队列中了， 用park方法进入阻塞状态</p>
+</li>
+<li>
+<p>被唤醒，唤醒时可能是通过sign()被人放入了同步队列， 也可能是被中断唤醒，因此要做checkInterruptWhileWaiting检查看是否继续， 如果同意继续，就继续睡眠，直到进入同步队列</p>
+</li>
+<li>
+<p>尝试acquireQueued竞争和抢占state同步状态</p>
+</li>
+<li>
+<p>退出前，顺带用unlinkCancelledWaiters清理已经不是CONDITION状态的等待队列节点</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">await</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">    <span class="keyword">if</span> (Thread.interrupted())</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">InterruptedException</span>();</span><br><span class="line">    <span class="comment">// 添加本线程到等待队列尾部</span></span><br><span class="line">    <span class="type">Node</span> <span class="variable">node</span> <span class="operator">=</span> addConditionWaiter();</span><br><span class="line">    <span class="comment">// 释放锁，唤醒同步队列中的后继节点</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">savedState</span> <span class="operator">=</span> fullyRelease(node);</span><br><span class="line">    <span class="type">int</span> <span class="variable">interruptMode</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 如果已经在同步队列中了，说明被成功sign唤醒</span></span><br><span class="line">    <span class="keyword">while</span> (!isOnSyncQueue(node)) &#123;</span><br><span class="line">        <span class="comment">// 阻塞挂起</span></span><br><span class="line">        LockSupport.park(<span class="built_in">this</span>);</span><br><span class="line">        <span class="comment">// 确认是否需要中断时就退出</span></span><br><span class="line">        <span class="keyword">if</span> ((interruptMode = checkInterruptWhileWaiting(node)) != <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 在同步队列中，那就按同步队列的规则在队列中用CAS竞争同步状态</span></span><br><span class="line">    <span class="keyword">if</span> (acquireQueued(node, savedState) &amp;&amp; interruptMode != THROW_IE)</span><br><span class="line">        interruptMode = REINTERRUPT;</span><br><span class="line">    <span class="comment">// 清理已经不是CONDITION状态的等待队列节点</span></span><br><span class="line">    <span class="keyword">if</span> (node.nextWaiter != <span class="literal">null</span>) </span><br><span class="line">        unlinkCancelledWaiters();</span><br><span class="line">    <span class="keyword">if</span> (interruptMode != <span class="number">0</span>)</span><br><span class="line">        reportInterruptAfterWait(interruptMode);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4><span id="huan-xing-guo-cheng-signal">唤醒过程signal()</span><a href="#huan-xing-guo-cheng-signal" class="header-anchor">#</a></h4>
+<ol>
+<li>
+<p>检查调用signal时，是否当前线程获取了锁，不是则抛异常</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!isHeldExclusively())</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalMonitorStateException</span>();</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>获取condition队列中的第一个等待节点</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Node</span> first = firstWaiter;</span><br><span class="line"><span class="keyword">if</span> (first != <span class="literal">null</span>)</span><br><span class="line">    <span class="title function_">doSignal</span>(first);</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>用CAS清除CONDITION状态</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!node.compareAndSetWaitStatus(Node.CONDITION, <span class="number">0</span>))</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>调用AQS的enq(firstWaitNode)，将这个节点放入到同步队列的队尾（需要CAS支撑？因为可能是共享的，即使获取了锁也需要竞争)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Node</span> <span class="variable">p</span> <span class="operator">=</span> enq(node);</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>移动入同步队列成功后（可能经历了几次CAS），再用unpark方法唤醒，那个线程就进入了上面代码中Park之后的部分了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">ws</span> <span class="operator">=</span> p.waitStatus;</span><br><span class="line"><span class="keyword">if</span> (ws &gt; <span class="number">0</span> || !p.compareAndSetWaitStatus(ws, Node.SIGNAL))</span><br><span class="line">    LockSupport.unpark(node.thread);</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>如果是signalAll方法，则等待队列中每个节点都执行一次signal方法，全部移入同步队列中并唤醒（唤醒后他们很可能还会因为抢不到资源而阻塞，但队列位置不同了，也无法再通过sign唤醒了）</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line">    <span class="type">Node</span> <span class="variable">next</span> <span class="operator">=</span> first.nextWaiter;</span><br><span class="line">    first.nextWaiter = <span class="literal">null</span>;</span><br><span class="line">    transferForSignal(first);</span><br><span class="line">    first = next;</span><br><span class="line">&#125; <span class="keyword">while</span> (first != <span class="literal">null</span>);</span><br></pre></td></tr></table></figure>
+<h1><span id="yong-yu-gao-bing-fa-de-aqs-shi-xian-suo">用于高并发的AQS实现锁</span><a href="#yong-yu-gao-bing-fa-de-aqs-shi-xian-suo" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000041266961?sort=newest">JAVA并发编程——ReentrantReadWriteLock锁降级和StampedLock - SegmentFault 思否</a></p>
+<h2><span id="du-xie-suo-reentrantreadwritelock">读写锁ReentrantReadWriteLock</span><a href="#du-xie-suo-reentrantreadwritelock" class="header-anchor">#</a></h2>
+<p>读写锁，顾名思义，用于读多写少的场景，这种情况下一般读是没必要强行做互斥的。</p>
+<h3><span id="mei-you-reentrantreadwritelock-qian-jdk-shi-zen-me-shi-xian-du-xie-ji-zhi-de">没有ReentrantReadWriteLock前，jdk是怎么实现读写机制的？</span><a href="#mei-you-reentrantreadwritelock-qian-jdk-shi-zen-me-shi-xian-du-xie-ji-zhi-de" class="header-anchor">#</a></h3>
+<p>jdk5之前是没有读写锁的。</p>
+<p>因此需要手写一套等待和通知机制。</p>
+<p>写操作开始时，所有晚于写操作的读操作会通过wait进入阻塞状态。</p>
+<p>写操作完成后，主动用notifyAll进行通知，其他的读操作再继续执行</p>
+<p>写操作和写操作之间的同步则通过sync关键字保障同步</p>
+<h3><span id="yong-liao-reentrantreadwritelock-hou-ke-yi-zen-me-zuo">用了ReentrantReadWriteLock后可以怎么做？</span><a href="#yong-liao-reentrantreadwritelock-hou-ke-yi-zen-me-zuo" class="header-anchor">#</a></h3>
+<p>提供了读锁和写锁</p>
+<p>读的时候获取读锁</p>
+<p>写的时候获取写锁</p>
+<p>一旦写锁lock住，后面的读写都会阻塞住，直到写锁被释放。</p>
+<p>代码示例: 一个用HashMap + 读写锁实现的安全Cache(代码出自《java并发编程艺术）)</p>
+<p>关注里面什么时候用r.lock，什么时候用的w.lock</p>
+<p>且都用了finally来保证锁的释放</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Cache</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> Map&lt;String, Object&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;String, Object&gt;();</span><br><span class="line">    <span class="keyword">static</span> <span class="type">ReentrantReadWriteLock</span> <span class="variable">rwl</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReentrantReadWriteLock</span>();</span><br><span class="line">    <span class="keyword">static</span> <span class="type">Lock</span> <span class="variable">r</span> <span class="operator">=</span> rwl.readLock();</span><br><span class="line">    <span class="keyword">static</span> <span class="type">Lock</span> <span class="variable">w</span> <span class="operator">=</span> rwl.writeLock();</span><br><span class="line">    <span class="comment">// 获取一个key对应的value</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Object <span class="title function_">get</span><span class="params">(String key)</span> &#123;</span><br><span class="line">            <span class="comment">// </span></span><br><span class="line">        	r.lock();</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="keyword">return</span> map.get(key);</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                    r.unlock();</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 设置key对应的value，并返回旧的value</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Object <span class="title function_">put</span><span class="params">(String key, Object value)</span> &#123;</span><br><span class="line">            w.lock();</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="keyword">return</span> map.put(key, value);</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                    w.unlock();</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 清空所有的内容</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">clear</span><span class="params">()</span> &#123;</span><br><span class="line">            w.lock();</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                    map.clear();</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                    w.unlock();</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3><span id="reentrantreadwritelock-zhi-chi-de-te-xing">ReentrantReadWriteLock支持的特性</span><a href="#reentrantreadwritelock-zhi-chi-de-te-xing" class="header-anchor">#</a></h3>
+<p>支持公平和非公平锁的实现：提供了带Fair的读写锁，吞吐量仍旧是非公平优先</p>
+<p>支持重进入： 写线程获取写锁后， 可以再次基于这个线程获取写锁或者读进行重入</p>
+<h3><span id="du-xie-suo-de-shi-xian-he-xin-yuan-li">读写锁的实现核心原理</span><a href="#du-xie-suo-de-shi-xian-he-xin-yuan-li" class="header-anchor">#</a></h3>
+<h4><span id="du-xie-suo-de-state-zi-yuan-zhuang-tai-she-ji">读写锁的state资源状态设计</span><a href="#du-xie-suo-de-state-zi-yuan-zhuang-tai-she-ji" class="header-anchor">#</a></h4>
+<p>因为AQS只提供了getState()和setState（）两个方法来表示状态， 为了不引入新的成员破坏设计，仍旧基于一个state值来实现读写状态。</p>
+<p>state是一个32位的int值， 此时前16位表示写锁的重入数量， 后16位表示为写锁持有的数量。</p>
+<p>可直接通过excludesiveCount(getState())得到写锁的数量值。</p>
+<h4><span id="xie-suo-de-huo-qu-he-shi-fang">写锁的获取和释放</span><a href="#xie-suo-de-huo-qu-he-shi-fang" class="header-anchor">#</a></h4>
+<p>核心关键点：</p>
+<ol>
+<li>
+<p>写锁属于独占锁，因此实现和调用的都是tryAcquire方法，不带shard</p>
+</li>
+<li>
+<p>发现有读锁的时候，会直接false获取写锁失败</p>
+</li>
+<li>
+<p>写锁支持重入，重入时同样不需要CAS</p>
+</li>
+<li>
+<p>公平锁仍然会考虑头节点问题，非头节点直接获取写锁失败</p>
+</li>
+</ol>
+<p><img src="/images/AQS%E5%92%8CJUC%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/1658673384503.png" alt="1658673384503"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="type">boolean</span> <span class="title function_">tryAcquire</span><span class="params">(<span class="type">int</span> acquires)</span> &#123;</span><br><span class="line">    <span class="type">Thread</span> <span class="variable">current</span> <span class="operator">=</span> Thread.currentThread();</span><br><span class="line">    <span class="type">int</span> <span class="variable">c</span> <span class="operator">=</span> getState();</span><br><span class="line">    <span class="type">int</span> <span class="variable">w</span> <span class="operator">=</span> exclusiveCount(c);</span><br><span class="line">    <span class="keyword">if</span> (c != <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">// 存在读锁或者当前获取线程不是已经获取写锁的线程</span></span><br><span class="line">            <span class="keyword">if</span> (w == <span class="number">0</span> || current != getExclusiveOwnerThread())</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            <span class="keyword">if</span> (w + exclusiveCount(acquires) &gt; MAX_COUNT)</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">&quot;Maximum lock count exceeded&quot;</span>);</span><br><span class="line">            setState(c + acquires);</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (writerShouldBlock() || !compareAndSetState(c, c + acquires)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    setExclusiveOwnerThread(current);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4><span id="du-suo-de-huo-qu-he-shi-fang">读锁的获取和释放</span><a href="#du-suo-de-huo-qu-he-shi-fang" class="header-anchor">#</a></h4>
+<ol>
+<li>
+<p>读锁属于共享锁，因此相关方法都带了一个shard</p>
+</li>
+<li>
+<p>读锁中对state的处理都多了一个1&lt;&lt;16</p>
+</li>
+<li>
+<p>读锁是共享锁，所以tryAcquire方法中就已经在一直做CAS试图获取读锁</p>
+<p><strong>读锁之间不存在阻塞只有CAS，除非遇到写锁，才有可能在外层阻塞</strong></p>
+</li>
+<li>
+<p>存在写锁， 但如果是重入场景（即同一个线程），则允许读锁的重入，这是下文锁降级的应用基础</p>
+</li>
+<li>
+<p>JDK6中引入了当前线程读取读锁的次数getHoldCount，增加了threadLocal来保存各线程读锁的次数情况，实现比较复杂。下面只给出去掉hold的代码：</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="type">int</span> <span class="title function_">tryAcquireShared</span><span class="params">(<span class="type">int</span> unused)</span> &#123;</span><br><span class="line">    <span class="comment">// 一直处理，读锁竞争都是CAS，不存在阻塞！</span></span><br><span class="line">    <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">c</span> <span class="operator">=</span> getState();</span><br><span class="line">            <span class="type">int</span> <span class="variable">nextc</span> <span class="operator">=</span> c + (<span class="number">1</span> &lt;&lt; <span class="number">16</span>);</span><br><span class="line">            <span class="keyword">if</span> (nextc &lt; c)</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">&quot;Maximum lock count exceeded&quot;</span>);</span><br><span class="line">            <span class="comment">// 有写锁且不是重入，返回-1获取失败</span></span><br><span class="line">            <span class="keyword">if</span> (exclusiveCount(c) != <span class="number">0</span> &amp;&amp; owner != Thread.currentThread())</span><br><span class="line">                    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">            <span class="comment">// cas修改值</span></span><br><span class="line">            <span class="keyword">if</span> (compareAndSetState(c, nextc)) </span><br><span class="line">                    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3><span id="du-xie-suo-de-suo-jiang-ji">读写锁的锁降级</span><a href="#du-xie-suo-de-suo-jiang-ji" class="header-anchor">#</a></h3>
+<p>说人话能一个线程同时加2个锁，支持逐步释放。就是当你在一个线程中需要操作完数据完后马上读数据，且希望数据在方法结束前不会变（避免脏读），可以先加写锁，在写完后加读锁，  然后释放写锁， 此时还会保留读锁（降级）， 就能保证data的正常使用。</p>
+<p>锁降级并非一个特性， 只是一种应用做法，即当你涉及写完要马上读数据操作的情况，可以先加读锁，再释放写锁！</p>
+<p><img src="/images/AQS%E5%92%8CJUC%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/1658670285725.png" alt="1658670285725"></p>
+<h2><span id="you-chuo-suo-stampedlock">邮戳锁StampedLock</span><a href="#you-chuo-suo-stampedlock" class="header-anchor">#</a></h2>
+<h3><span id="du-xie-suo-you-shi-me-que-dian">读写锁有什么缺点？</span><a href="#du-xie-suo-you-shi-me-que-dian" class="header-anchor">#</a></h3>
+<p>读写锁容易造成写饥饿。例如读有9999+的时候，写动作就得等9999+结束才能触发</p>
+<p>即读的动作占用了太多写动作的等待时间了。</p>
+<h3><span id="you-chuo-suo-wei-shi-me-neng-jie-jue-ji-e">邮戳锁为什么能解决饥饿</span><a href="#you-chuo-suo-wei-shi-me-neng-jie-jue-ji-e" class="header-anchor">#</a></h3>
+<p>邮戳锁提供了一个乐观读的方法</p>
+<p>这个方法并不需解锁动作，它也不会去阻塞写动作</p>
+<p>只有当发现邮戳（可以理解为数据库MVCC里的版本号）有变化</p>
+<p>则升级为悲观读，以期待读到最新的数据。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回当前邮戳，这个方法不会阻塞写方法！</span></span><br><span class="line"><span class="type">long</span> <span class="variable">stamp</span> <span class="operator">=</span> lock.tryOptimisticRead();</span><br><span class="line"><span class="comment">// 校验此时是否邮戳不匹配</span></span><br><span class="line"><span class="keyword">if</span>(!lock.validate(stamp))&#123;</span><br><span class="line">    <span class="comment">// 如果不匹配，说明发生了写操作！读动作最好等写动作结束后再触发！</span></span><br><span class="line">	<span class="comment">// 锁升级 为悲观读readLock</span></span><br><span class="line">    stamp = stampedLock.readLock();<span class="comment">//锁升级为悲观读</span></span><br><span class="line">    <span class="comment">// 处理...</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 解锁</span></span><br><span class="line">    stampedLock.unlockRead(stamp);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3><span id="shi-me-shi-hou-yong-du-xie-suo-shi-me-shi-hou-yong-you-chuo-suo">什么时候用读写锁，什么时候用邮戳锁？</span><a href="#shi-me-shi-hou-yong-du-xie-suo-shi-me-shi-hou-yong-you-chuo-suo" class="header-anchor">#</a></h3>
+<p>读写锁是读可以阻塞写，读是优先的！</p>
+<p>而邮戳锁中，只有写才可以阻塞读， 写是优先的！</p>
+<p><strong>因此读动作重要的话选读写锁， 如果写动作（写要及时响应）比较重要的话则选邮戳锁</strong></p>
+<h3><span id="you-chuo-suo-de-que-dian">邮戳锁的缺点</span><a href="#you-chuo-suo-de-que-dian" class="header-anchor">#</a></h3>
+<ul>
+<li>
+<p>StampedLock 不支持重入，如果写锁之后再做写，就阻塞了</p>
+</li>
+<li>
+<p>StampedLock 的悲观读锁和写锁都不支持条件变量（Condition），这个也需要注意。</p>
+</li>
+<li>
+<p>使用 StampedLock一定不要调用中断操作，即不要调用interrupt() 方法</p>
+</li>
+</ul>
+<p>​        如果需要支持中断功能，一定使用可中断的悲观读锁 readLockInterruptibly()和写锁writeLockInterruptibly()</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/%E8%A2%AB%E8%AE%A8%E5%8E%8C%E7%9A%84%E5%8B%87%E6%B0%94/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/%E8%A2%AB%E8%AE%A8%E5%8E%8C%E7%9A%84%E5%8B%87%E6%B0%94/" class="post-title-link" itemprop="url">被讨厌的勇气</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-07-10 19:48:56 / 修改时间：23:46:41" itemprop="dateCreated datePublished" datetime="2022-07-10T19:48:56+08:00">2022-07-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9A%8F%E7%AC%94/" itemprop="url" rel="index"><span itemprop="name">随笔</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">心理</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/%E8%A2%AB%E8%AE%A8%E5%8E%8C%E7%9A%84%E5%8B%87%E6%B0%94/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/%E8%A2%AB%E8%AE%A8%E5%8E%8C%E7%9A%84%E5%8B%87%E6%B0%94/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>922</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2><span id="bai-tuo-guo-qu-lun">摆脱过去论</span><a href="#bai-tuo-guo-qu-lun" class="header-anchor">#</a></h2>
+<p>封闭自己不愿接触外界，因为自己遭遇了不公的对待</p>
+<p>哀叹家暴，导致自己无法自立</p>
+<p>因为脸红恐惧症，无法接触对方……</p>
+<p>本质上都是因为害怕被别人讨厌，所以故意用过去的经历作为借口，来拒绝被讨厌的情况发生。</p>
+<p>对于那些人来说，维持现状是最符合内心舒适的感觉，因此会制造很多的借口。</p>
+<p>但现状所带来的后果又一直在折磨，反复循环。</p>
+<h2><span id="fan-nao-de-gen-yuan">烦恼的根源</span><a href="#fan-nao-de-gen-yuan" class="header-anchor">#</a></h2>
+<p>人的不幸都是自己选择的，不是社会或者世界，而是自己亲手选择的。</p>
+<p>烦恼的根源，都来自于人际关系。</p>
+<p>总是希望获得别人的认可，因此为了避免不认可的情况，刻意做出了逃避</p>
+<h2><span id="ru-he-kan-dai-zi-bei-gan">如何看待自卑感</span><a href="#ru-he-kan-dai-zi-bei-gan" class="header-anchor">#</a></h2>
+<p>认为我是世界的中心。</p>
+<p>认为所有人都在关注我的一举一动</p>
+<p>认为我的事情，就是别人的事情，  以及别人的看法，就是我的价值。</p>
+<p>为了避免被讨厌，搬出自己不行的自卑，来逃避</p>
+<h2><span id="zen-me-huo-de-bei-tao-yan-de-yong-qi">怎么获得被讨厌的勇气？</span><a href="#zen-me-huo-de-bei-tao-yan-de-yong-qi" class="header-anchor">#</a></h2>
+<p>课题分离</p>
+<p>我无法掌控他人，他人也无法掌控我。</p>
+<p>我的选择是我的课题，他的想法干涉不了我。</p>
+<p>他的选择是他的课题，我不需要去干涉他。</p>
+<p>我只要尽力做我想做的， 他如何回应，他是接受还是讨厌，是他的课题。我不应该为之付出痛苦或者焦虑的情绪。</p>
+<p>我不能可以追求对方的回报，我也不能无底线的回报别人的付出，分离！</p>
+<h2><span id="zen-me-huo-de-xing-fu">怎么获得幸福？</span><a href="#zen-me-huo-de-xing-fu" class="header-anchor">#</a></h2>
+<h4><span id="ta-ren-gong-xian">“他人贡献”</span><a href="#ta-ren-gong-xian" class="header-anchor">#</a></h4>
+<p>只要知道自己的存在是有价值的，是对他人、社会、整体有贡献的</p>
+<p>只有在感觉自己有价值的时候，才能有勇气。</p>
+<p>这个价值不是别人赋予的，而是自己赋予的，自己认可的价值。</p>
+<p><strong>他人贡献不代表为了他人的期待而活，共同体，范围要看广，不只是某个人不满意就不代表你没有了他人贡献！</strong></p>
+<h4><span id="zhi-mian-ren-sheng-de-ke-ti-gong-zuo-jiao-you-ai">直面人生的课题（工作、交友、爱）</span><a href="#zhi-mian-ren-sheng-de-ke-ti-gong-zuo-jiao-you-ai" class="header-anchor">#</a></h4>
+<p>自己主动动起来，而不是等着别人来赠予。</p>
+<p>无论遇到什么不好的反馈，都是别人的课题，我只要做了自己希望做的事情就好！</p>
+<h2><span id="ru-he-shi-bie-ta-ren-gong-xian-zhong-de-ta-ren">如何识别他人贡献中的“他人”？</span><a href="#ru-he-shi-bie-ta-ren-gong-xian-zhong-de-ta-ren" class="header-anchor">#</a></h2>
+<ol>
+<li>
+<p>优先信任而不是怀疑</p>
+<p>永远保持对人的信任，而不是怀疑……</p>
+</li>
+<li>
+<p>共同体理论。</p>
+</li>
+</ol>
+<p>当你的行为被某人讨厌， 这个人并不代表的全部，不代表整个“共同体”</p>
+<p>你的行为或者存在可以放大， 学校、公司、社会、家庭，都是共同体。</p>
+<p>因此不要因为部分人的讨厌而自责，你对其他的人肯定仍然存在着贡献，不一定是行为，仅仅是存在就可以是贡献。</p>
+<h2><span id="ru-he-gai-bian">如何改变</span><a href="#ru-he-gai-bian" class="header-anchor">#</a></h2>
+<p>不再关注过去，不再幻想未来。</p>
+<p>关注此时此刻</p>
+<p>此时此刻就像漫无目的的跳舞。</p>
+<p>但只要跳了，做了，就有一定的微小变化，无论最终是否达到，只要享受此时此刻就好。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/java%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86%EF%BC%88Map-List%E7%AD%89%EF%BC%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2448,603 +3385,10 @@ A:<br>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/" class="post-title-link" itemprop="url">力扣周赛记录</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-06-05 22:10:31" itemprop="dateCreated datePublished" datetime="2022-06-05T22:10:31+08:00">2022-06-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-01-08 16:59:19" itemprop="dateModified" datetime="2023-01-08T16:59:19+08:00">2023-01-08</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>259</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <a href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC296%E5%9C%BA%E5%91%A8%E8%B5%9B-209%E5%90%8D-36%E5%88%86%E9%92%9F4%E9%A2%98/" title="第296场周赛-209名-36分钟4题">第296场周赛-209名-36分钟4题</a><br>
-<a href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC301%E5%9C%BA%E5%91%A8%E8%B5%9B-808%E5%90%8D-3%E9%A2%98/" title="第301场周赛-808名-3题">第301场周赛-808名-3题</a><br>
-<a href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC303%E5%9C%BA%E5%91%A8%E8%B5%9B-463%E5%90%8D-4%E9%A2%98/" title="第303场周赛-463名-4题（pair类、var特性、双指针而不是二分）">第303场周赛-463名-4题（pair类、var特性、双指针而不是二分）</a><br>
-<a href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC304%E5%9C%BA%E5%91%A8%E8%B5%9B-897-4%E9%A2%98/" title="第304场周赛-897-4题（心态重要）">第304场周赛-897-4题（心态重要）</a><br>
-<a href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC305%E5%9C%BA%E5%91%A8%E8%B5%9B-264%E5%90%8D-22%E5%88%86%E9%92%9F4%E9%A2%98/" title="第305场周赛-264名-22分钟4题">第305场周赛-264名-22分钟4题</a><br>
-<a href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC306%E5%9C%BA%E5%91%A8%E8%B5%9B-763%E5%90%8D-80%E5%88%86%E9%92%9F4%E9%A2%98/" title="第306场周赛-763名-80分钟4题">第306场周赛-763名-80分钟4题</a><br>
-<a href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC307%E5%9C%BA%E5%91%A8%E8%B5%9B-1232%E5%90%8D-3%E9%A2%98/" title="第307场周赛-1232名-3题">第307场周赛-1232名-3题</a><br>
-<a href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC308%E5%9C%BA%E5%91%A8%E8%B5%9B-357%E5%90%8D-4%E9%A2%98/" title="第308场周赛-357名-4题">第308场周赛-357名-4题</a><br>
-<a href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC309%E5%9C%BA%E5%91%A8%E8%B5%9B-1345%E5%90%8D-3%E9%A2%98/" title="第309场周赛-1345名-3题">第309场周赛-1345名-3题</a><br>
-<a href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC311%E5%9C%BA%E5%91%A8%E8%B5%9B-104%E5%90%8D-4%E9%A2%98/" title="第311场周赛-104名-4题">第311场周赛-104名-4题</a><br>
-<a href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC85%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-1322-3%E9%A2%98/" title="第85场双周赛-1322-3题">第85场双周赛-1322-3题</a><br>
-<a href="#">Post not found: 编程/力扣周赛记录/第86 场双周赛-930名-3题</a><br>
-<a href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/" title="第86场双周赛-376名-4题">第86场双周赛-376名-4题</a><br>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%BC%96%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%BC%96%E7%A8%8B/" class="post-title-link" itemprop="url">编程</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-06-05 22:09:09" itemprop="dateCreated datePublished" datetime="2022-06-05T22:09:09+08:00">2022-06-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-01-08 16:59:19" itemprop="dateModified" datetime="2023-01-08T16:59:19+08:00">2023-01-08</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%BC%96%E7%A8%8B/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>18</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <a href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/" title="力扣周赛记录">力扣周赛记录</a><br>
-<a href="/%E7%BC%96%E7%A8%8B/%E6%80%9D%E8%80%83/" title="思考">思考</a><br>
-<a href="/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/" title="日常刷题日记">日常刷题日记</a><br>
-<a href="/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/" title="算法大全">算法大全</a><br>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/" class="post-title-link" itemprop="url">java-class类文件原理详解</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-06-05 16:40:27" itemprop="dateCreated datePublished" datetime="2022-06-05T16:40:27+08:00">2022-06-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-10 00:50:02" itemprop="dateModified" datetime="2022-08-10T00:50:02+08:00">2022-08-10</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">java高级原理</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/jvm%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">jvm原理</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E9%AB%98%E7%BA%A7%E5%8E%9F%E7%90%86/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>7.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>7 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>重读了一遍《深入理解java虚拟机》， 发现第一遍读类文件相关内容的时候，真的是囫囵吞枣，很多细节都被我跳过了，无论是符号引用的含义，还是属性表的理解，都没有弄懂，当时想着“反正也用不到，跳过吧”，却没注意到他们包含了许多java底层实现的核心原理。</p>
-<p><strong>看来经典书籍要多读多总结，是有道理的。</strong></p>
-<p>于是在阅读这个章节时，用processorOn做了一副超大的类文件解析图，方便自己通过浏览这个图能马上回忆起class文件的结构以及内部的指令。<br>
-下面的内容是拆分后的内容，对于每块拆分的内容，会有详细的解释。<br>
-<strong>对于完整大图，我放在文末，需要收藏的可以自取</strong></p>
-<p>好了下面我们开始，文章内容较长，建议收藏一下分时段阅读。</p>
- <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#mo-shu-ban-ben-hao">魔数、版本号</a></li>
-<li><a href="#chang-liang-chi-chang-liang-chi-ge-shu-duo-ge-chang-liang-xiang">常量池（常量池个数、多个常量项）</a>
-<ul>
-<li><a href="#chang-liang-chi-zhong-de-chang-liang-dao-di-shi-gan-ma-de-he-wo-men-li-jie-de-static-final-string-xxx-chang-liang-shi-yi-ge-yi-si-ma">常量池中的常量到底是干嘛的？和我们理解的static final String xxx常量是一个意思吗？</a></li>
-<li><a href="#chang-liang-chi-de-suo-yin-ji-shu-wei-shi-me-cong-1-kai-shi-ji-qi-ta-di-fang-yao-shi-yong-chang-liang-chi-de-di-yi-ge-chang-liang-shi-bi-xu-xie-cheng-1-er-bu-shi-0">常量池的索引计数为什么从1开始（即其他地方要使用常量池的第一个常量时，必须写成1而不是0）？</a></li>
-</ul>
-</li>
-<li><a href="#lei-ding-yi-de-di-yi-xing-lei-fang-wen-biao-zhi-ben-lei-fu-lei-shi-xian-jie-kou">类定义的第一行（类访问标志、本类、父类、实现接口）</a>
-<ul>
-<li><a href="#wei-shi-me-yao-zhe-yang-duo-zou-yi-ceng-wei-shi-me-bu-neng-zhi-jie-zhi-xiang-yi-ge-zi-fu-chuan-chang-liang">为什么要这样多走一层？为什么不能直接指向一个字符串常量？</a></li>
-</ul>
-</li>
-<li><a href="#zi-duan-biao-zi-duan-shu-liang-ge-zi-duan-xiu-shi-fu-ming-lei-xing-shu-xing">字段表（字段数量，各字段（修饰符、名、类型、属性））</a>
-<ul>
-<li><a href="#zi-duan-xiu-shi-fu-zhong-de-synchetics-zhi-de-shi-bian-yi-qi-zi-dong-sheng-cheng-de-zi-duan-zen-me-li-jie-ni-shi-me-qing-kuang-xia-hui-yong-dao">字段修饰符中的synchetics指的是编译器自动生成的字段，怎么理解呢？什么情况下会用到？</a></li>
-<li><a href="#shang-mian-ke-yi-kan-dao-mei-ge-zi-duan-xiang-de-zui-hou-bao-han-shu-xing-shu-liang-he-shu-xing-chang-du-na-me-class-zhong-de-shu-xing-he-shang-mian-de-zi-duan-ming-zi-duan-lei-xing-you-shi-me-qu-bie-ni">上面可以看到每个字段项的最后包含属性数量和属性长度，那么class中的属性和上面的“字段名”、“字段类型”有什么区别呢？</a></li>
-</ul>
-</li>
-<li><a href="#fang-fa-biao-fang-fa-shu-liang-fang-fa-xiang-xiu-shi-fu-ming-miao-shu-shu-xing">方法表（方法数量、方法项（修饰符、名、描述、属性））</a>
-<ul>
-<li><a href="#fang-fa-xiu-shi-fu-zhong-de-qiao-jie">方法修饰符中的桥接</a></li>
-<li><a href="#shu-xing-de-jie-gou">属性的结构</a></li>
-<li><a href="#zui-guan-jian-de-code-shu-xing">最关键的Code属性</a>
-<ul>
-<li><a href="#cao-zuo-shu-zhan-ju-bu-bian-liang-biao-da-xiao-zhi-ling-ma-shu-liang">操作数栈、局部变量表大小、指令码数量</a></li>
-<li><a href="#zhi-ling-ma-jie-du">指令码解读</a>
-<ul>
-<li><a href="#shu-ju-ji-suan-yong-de-zhi-ling-ma">数据计算用的指令码</a></li>
-<li><a href="#dui-xiang-cao-zuo-de-zhi-ling-ma">对象操作的指令码</a>
-<ul>
-<li><a href="#wei-shi-me-dui-xiang-cao-zuo-zhi-ling-ma-zhong-zhi-bao-han-liao-lei-yin-yong-he-ming-cheng-ni-wo-zen-me-zhi-dao-wo-diao-yong-de-shi-na-ge-dui-xiang-de-zi-duan">为什么对象操作指令码中只包含了类引用和名称呢，我怎么知道我调用的是哪个对象的字段？</a></li>
-<li><a href="#new-dui-xiang-he-new-shu-zu-yong-de-shi-2-ge-bu-tong-de-zhi-ling-wei-shi-me-yao-you-qu-fen-bu-neng-ba-shu-zu-dang-cheng-yi-ge-java-dui-xiang-ma">new对象和new数组，用的是2个不同的指令，为什么要有区分？不能把数组当成一个java对象吗</a></li>
-</ul>
-</li>
-<li><a href="#cao-zuo-shu-zhan-zhi-ling-pop-deng">操作数栈指令（pop等）</a></li>
-<li><a href="#fang-fa-diao-yong-zhi-ling-invokevirtual-deng">方法调用指令（invokevirtual等)</a></li>
-</ul>
-</li>
-<li><a href="#yi-chang-biao-shu-xing">异常表属性</a>
-<ul>
-<li><a href="#na-finally-de-cao-zuo-bei-fang-dao-na-liao-catch-cao-zuo-wan-liao-zhi-hou-ta-zen-me-zhi-dao-yao-tiao-zhuan-dao-na-li">那finally的操作被放到哪了？catch操作完了之后，它怎么知道要跳转到哪里？</a></li>
-<li><a href="#dui-yu-synchronized-guan-jian-zi-ta-ben-zhi-shi-sheng-cheng-liao-monitorenter-he-monitorexit-liang-ge-zhi-ling-shang-mian-fang-fa-diao-yong-zhi-ling-li-de-zui-hou-2-ge-dan-ru-guo-fa-sheng-liao-yi-chang-na-hui-bu-hui-wu-fa-monitorexit-liao">对于synchronized关键字，它本质是生成了monitorenter和monitorexit两个指令（上面方法调用指令里的最后2个）。但如果发生了异常，那会不会无法monitorexit了？</a></li>
-<li><a href="#qian-mian-ti-dao-fang-fa-shu-xing-zhong-yi-jing-you-yi-ge-ming-jiao-exception-de-shu-xing-he-zhe-ge-code-shu-xing-zhong-de-yi-chang-biao-you-shi-me-qu-bie">前面提到方法属性中，已经有一个名叫“Exception”的属性，和这个code属性中的异常表有什么区别？</a></li>
-</ul>
-</li>
-<li><a href="#code-de-kuo-zhan-shu-xing">Code的扩展属性</a></li>
-<li><a href="#qi-ta-de-fang-fa-shu-xing">其他的方法属性</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#lei-shu-xing">类属性</a>
-<ul>
-<li><a href="#wei-shi-me-nei-bu-lei-shu-xing-zhong-yao-bao-han-su-zhu-lei-de-lei-ming-nan-dao-su-zhu-lei-bu-jiu-shi-ta-ben-shen-ma">为什么内部类属性中，要包含宿主类的类名？难道宿主类，不就是它本身吗？</a></li>
-</ul>
-</li>
-<li><a href="#zui-hou-de-wan-zheng-tu">最后的完整图</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="mo-shu-ban-ben-hao">魔数、版本号</span><a href="#mo-shu-ban-ben-hao" class="header-anchor">#</a></h1>
-<p><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652269180508772459.png" alt="image.png"></p>
-<ul>
-<li>每类文件都有一个魔数，用于快速校验文件类型。</li>
-<li>对于高低版本号，只要明确java11\java8这种版本是主版本号</li>
-<li>永远向下兼容， <strong>即高版本jvm可以读取低版本的class文件， 但是低版本的jvm无法读取高版本的class文件</strong>。</li>
-</ul>
-<hr>
-<h1><span id="chang-liang-chi-chang-liang-chi-ge-shu-duo-ge-chang-liang-xiang">常量池（常量池个数、多个常量项）</span><a href="#chang-liang-chi-chang-liang-chi-ge-shu-duo-ge-chang-liang-xiang" class="header-anchor">#</a></h1>
-<p><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652269423338180081.png" alt="image.png"><br>
-大部分文件协议格式中，都会先给定一个某项的数量长度，再决定某项的个数，方便确认遍历几次才结束。常量池的设置也是这个原理。<br>
-<strong>因此学习java的class格式，对我们设计某些文件格式或者协议都是一种不错的借鉴。</strong></p>
-<hr>
-<h2><span id="chang-liang-chi-zhong-de-chang-liang-dao-di-shi-gan-ma-de-he-wo-men-li-jie-de-static-final-string-xxx-chang-liang-shi-yi-ge-yi-si-ma">常量池中的常量到底是干嘛的？和我们理解的static final String xxx常量是一个意思吗？</span><a href="#chang-liang-chi-zhong-de-chang-liang-dao-di-shi-gan-ma-de-he-wo-men-li-jie-de-static-final-string-xxx-chang-liang-shi-yi-ge-yi-si-ma" class="header-anchor">#</a></h2>
-<p>不对！代码中定义的final类型字符串常量只是一种用途。更重要的一种用途是符号引用。<br>
-而对符号引用的理解，是对java类文件原理最难也最重要的地方。<br>
-直接去解释符号引用的话，还是很难理解的，因此我们按下不表，在第4部分“类索引”部分会给出详细解释。</p>
-<hr>
-<h2><span id="chang-liang-chi-de-suo-yin-ji-shu-wei-shi-me-cong-1-kai-shi-ji-qi-ta-di-fang-yao-shi-yong-chang-liang-chi-de-di-yi-ge-chang-liang-shi-bi-xu-xie-cheng-1-er-bu-shi-0">常量池的索引计数为什么从1开始（即其他地方要使用常量池的第一个常量时，必须写成1而不是0）？</span><a href="#chang-liang-chi-de-suo-yin-ji-shu-wei-shi-me-cong-1-kai-shi-ji-qi-ta-di-fang-yao-shi-yong-chang-liang-chi-de-di-yi-ge-chang-liang-shi-bi-xu-xie-cheng-1-er-bu-shi-0" class="header-anchor">#</a></h2>
-<p>因为要留一个0，表示不引用任何常量</p>
-<blockquote>
-<blockquote>
-<ul>
-<li>举例：匿名类就是没有名字的，但是类文件结构中，类名那边总需要填入类名常量索引，因此可以填入0，表示“没有类名”的意思。</li>
-<li>再来一个例子：object类，是没有父类的，所以他的父类那一栏填的常量索引也是0</li>
-</ul>
-</blockquote>
-</blockquote>
-<ul>
-<li>对于常量池的作用，后面会有更详细的体现和解释。</li>
-</ul>
-<h1><span id="lei-ding-yi-de-di-yi-xing-lei-fang-wen-biao-zhi-ben-lei-fu-lei-shi-xian-jie-kou">类定义的第一行（类访问标志、本类、父类、实现接口）</span><a href="#lei-ding-yi-de-di-yi-xing-lei-fang-wen-biao-zhi-ben-lei-fu-lei-shi-xian-jie-kou" class="header-anchor">#</a></h1>
-<p><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652271151313964089.png" alt="image.png"></p>
-<p>为什么叫类定义的第一行，因为这就来自我们写每个类时的第一行内容。<br>
-例如<br>
-public abstract class A extend B implement C,D<br>
-这句话对应的所有信息就包含在了上图中，因此我叫他“类定义的第一行”</p>
-<hr>
-<p>CONSTANT_class_info这个类常量到底是干嘛的？<br>
-从图上可以看到，他其实就是指向了一个表示类名的字符串常量。<br>
-这里也可以看到，java文件中的所有名称例如类名、方法名、字段名，都会以Utf_info的形式，存储在常量池中。<br>
-<img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652272385081190034.png" alt="image.png"></p>
-<hr>
-<h2><span id="wei-shi-me-yao-zhe-yang-duo-zou-yi-ceng-wei-shi-me-bu-neng-zhi-jie-zhi-xiang-yi-ge-zi-fu-chuan-chang-liang">为什么要这样多走一层？为什么不能直接指向一个字符串常量？</span><a href="#wei-shi-me-yao-zhe-yang-duo-zou-yi-ceng-wei-shi-me-bu-neng-zhi-jie-zhi-xiang-yi-ge-zi-fu-chuan-chang-liang" class="header-anchor">#</a></h2>
-<p>这个问题我没找到解释，但可以理解为这是最基础的一层封装。</p>
-<p><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652271891308501334.png" alt="image.png"></p>
-<hr>
-<h1><span id="zi-duan-biao-zi-duan-shu-liang-ge-zi-duan-xiu-shi-fu-ming-lei-xing-shu-xing">字段表（字段数量，各字段（修饰符、名、类型、属性））</span><a href="#zi-duan-biao-zi-duan-shu-liang-ge-zi-duan-xiu-shi-fu-ming-lei-xing-shu-xing" class="header-anchor">#</a></h1>
-<p><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652275768314487190.png" alt="image.png"></p>
-<hr>
-<p>可以看到，字段名、字段类型分别对应了2个字符串常量。<br>
-特别注意字段类型使用一个字符串来表示的，而不是一个constant_field_info。<br>
-那么constant_field_info是干嘛的呢？</p>
-<hr>
-<h2><span id="zi-duan-xiu-shi-fu-zhong-de-synchetics-zhi-de-shi-bian-yi-qi-zi-dong-sheng-cheng-de-zi-duan-zen-me-li-jie-ni-shi-me-qing-kuang-xia-hui-yong-dao">字段修饰符中的synchetics指的是编译器自动生成的字段，怎么理解呢？什么情况下会用到？</span><a href="#zi-duan-xiu-shi-fu-zhong-de-synchetics-zhi-de-shi-bian-yi-qi-zi-dong-sheng-cheng-de-zi-duan-zen-me-li-jie-ni-shi-me-qing-kuang-xia-hui-yong-dao" class="header-anchor">#</a></h2>
-<p>找到一个简单的例子(<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/228854843">代码出处:知乎-不凋花</a>),用枚举做switch：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">Foobar</span> &#123;</span><br><span class="line">    FOO,</span><br><span class="line">    BAR;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">test</span><span class="params">(Foobar var0)</span> &#123;</span><br><span class="line">        <span class="keyword">switch</span> (var0) &#123;</span><br><span class="line">            <span class="keyword">case</span> FOO:</span><br><span class="line">                <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">case</span> BAR:</span><br><span class="line">                <span class="keyword">return</span> <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>switch的原理，我们应该很容易想到，就是做一次顺序检查，那么检查时，肯定程序里需要有一个列表吧，因此上面switch的背后逻辑代码是长这样的：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Test$1</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span>[] $SwitchMap$Foobar;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        $SwitchMap$Foobar = <span class="keyword">new</span> <span class="title class_">int</span>[Foobar.values().length];</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            $SwitchMap$Foobar[Foobar.FOO.ordinal()] = <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NoSuchFieldError e) &#123;</span><br><span class="line">            ;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            $SwitchMap$Foobar[Foobar.BAR.ordinal()] = <span class="number">2</span>;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NoSuchFieldError e) &#123;</span><br><span class="line">            ;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以看到有一个“static final int[] $SwitchMap$Foobar;”， 这个静态数组字段，就是编译器帮忙生成的字段，他会被标记成synchetics</p>
-<hr>
-<h2><span id="shang-mian-ke-yi-kan-dao-mei-ge-zi-duan-xiang-de-zui-hou-bao-han-shu-xing-shu-liang-he-shu-xing-chang-du-na-me-class-zhong-de-shu-xing-he-shang-mian-de-zi-duan-ming-zi-duan-lei-xing-you-shi-me-qu-bie-ni">上面可以看到每个字段项的最后包含属性数量和属性长度，那么class中的属性和上面的“字段名”、“字段类型”有什么区别呢？</span><a href="#shang-mian-ke-yi-kan-dao-mei-ge-zi-duan-xiang-de-zui-hou-bao-han-shu-xing-shu-liang-he-shu-xing-chang-du-na-me-class-zhong-de-shu-xing-he-shang-mian-de-zi-duan-ming-zi-duan-lei-xing-you-shi-me-qu-bie-ni" class="header-anchor">#</a></h2>
-<p>属性是可有可无的，而且提供了高度的“jvm可扩展性”。<br>
-换言之，在jvm虚拟机规范中，“字段修饰符”、“字段名”、“字段类型”都是必备的，而属性则没有限制。<br>
-<strong>因此我们甚至可以自己实现一个虚拟机，定义新的属性，在class中加上属性项然后自己使用</strong></p>
-<p>对于属性作用的更详细理解，可以看后面的方法章节，方法中的属性是比较重要且用得最多的。</p>
-<hr>
-<p>从字段属性可以看到， 类似于static final int a =10这种常量，就是通过属性里的constant属性来设置的。</p>
-<p>有个泛型签名的属性，可能不太好马上理解，后面在方法章节中会一并提到这个属性的作用！</p>
-<h1><span id="fang-fa-biao-fang-fa-shu-liang-fang-fa-xiang-xiu-shi-fu-ming-miao-shu-shu-xing">方法表（方法数量、方法项（修饰符、名、描述、属性））</span><a href="#fang-fa-biao-fang-fa-shu-liang-fang-fa-xiang-xiu-shi-fu-ming-miao-shu-shu-xing" class="header-anchor">#</a></h1>
-<p><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652317738015425066.png" alt="image.png"><br>
-class文件中，最值得学习的就是常量池和方法表了！</p>
-<hr>
-<h2><span id="fang-fa-xiu-shi-fu-zhong-de-qiao-jie">方法修饰符中的桥接</span><a href="#fang-fa-xiu-shi-fu-zhong-de-qiao-jie" class="header-anchor">#</a></h2>
-<p>对于方法修饰符，大部分都很好理解，有2个修饰符需要关注：“bridge”和“synthetic”。</p>
-<p>其实很多bridge桥接方法本身也是synthetics系统生成的，所以我不太想去区分二者，只要关注他们2个用来做什么。</p>
-<p>思考下面这个问题：<br>
-<strong>1. 假设有个非公开的类A，A中有个public方法f()，有个继承自A的公开类B，没有重写f()，那么外部是否可以调用b.f()？</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">	f() &#123;..&#125;</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">B</span> extend A&#123;</span><br><span class="line">	<span class="comment">// 不重写任何方法</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String args[])</span> &#123;</span><br><span class="line">	<span class="type">B</span> <span class="variable">b</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">B</span>();</span><br><span class="line">   b.f();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们很容易可以得出b.f()可以调用的结论。<br>
-但由于B没有重写f(), 所以对于编译后的B.class而言，这意味着不会在class文件中包含f方法。<br>
-那么当执行f时，通过多态，会定位到A.f()，此时A是非公开的类，权限就会出错，因为不允许直接引用非公开的类的方法，只能间接使用。</p>
-<p>如何解决？要修改多态的动态分派校验机制吗？</p>
-<p>不需要，<strong>编译器为了方便，直接为我们在B中重写了f()来间接调用父类方法</strong>，类似于</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public void f() &#123;</span><br><span class="line">	super.f()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这样的话就不用担心外部调用者没有权限使用A.f()了。</p>
-<p><strong>2. 有个泛型基类Base&lt;T&gt;，包含一个方法f(T t),  有个子类Sub&lt;String&gt;, 实现了方法f(String s)， 两个f方法的入参并不一致，为什么还多态的机制还能生效？</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Base</span>&lt;T&gt; &#123;</span><br><span class="line">	f(T t);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Sub</span> extend Base&lt;String&gt;&#123;</span><br><span class="line">	f(String t);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这2个方法的入参确实不同， 前者的方法签名是f(Ljava/lang/Object;)V，  后者是f(Ljava/lang/String;)V。 多态（动态分派）的规则也没有变，确实是要求入参一致。<br>
-因此编译器为Sub类自动生成了一个f(Ljava/lang/Object;)V,代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">f</span><span class="params">(Object o)</span> &#123;</span><br><span class="line">	<span class="built_in">this</span>.f((String)o);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这样多态的机制也能实现了。<br>
-<strong>可以看到这一切都是为了适配多态，同时避免过多的特殊逻辑，因此使用桥接方法，来生成了我们看不到的重写方法</strong></p>
-<hr>
-<p>从下面可以看到， 方法描述符是一个**包含“入参和返回值”**的描述符<br>
-<img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652355928364525434.png" alt="image.png"></p>
-<p>因此，java是允许 <strong>同入参、同方法名、不同返回值</strong>的方法存在于同一个class文件中的。</p>
-<p>这是不是有点反常识？这种情况我们好像编写不出来的，编译器不会通过！</p>
-<p>其实这也是桥接+自动生成才会有这种情况。<br>
-前文的泛型例子，用泛型T做入参，会生成一个桥接方法，和父类的匹配。</p>
-<p>那么如果泛型T是一个返回值呢:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Base</span>&lt;T&gt; &#123;</span><br><span class="line">	T <span class="title function_">f</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Sub</span> extend Base&lt;String&gt;&#123;</span><br><span class="line">	String <span class="title function_">f</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>那么也是一样的道理，桥接了一个父类的f方法，但仅仅是返回值不同而已。所以会出现只有返回值不同的方法。</p>
-<hr>
-<p>方法表的属性和字段的属性类似， 也是属性数量 + N个属性项。<br>
-但是方法表属性里的干货就更多了！</p>
-<h2><span id="shu-xing-de-jie-gou">属性的结构</span><a href="#shu-xing-de-jie-gou" class="header-anchor">#</a></h2>
-<p>之前字段属性中没提到属性到底长啥样，以方法中的throws异常属性为例，：<br>
-<img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652395329500135926.png" alt="image.png"></p>
-<p>从这里可以看到，每个属性都有个属性名，和常量不同，区分不同常量用的是1个2字节的数字，而属性则是用一个字符串来表示。<br>
-这样的区别就是因为常量个数有限，而属性为了扩展性，不能存在数量限制。</p>
-<p>另外从这也可以知道， 我们在方法名上写的f() throws IOException 都是存在于异常属性中的。</p>
-<hr>
-<h2><span id="zui-guan-jian-de-code-shu-xing">最关键的Code属性</span><a href="#zui-guan-jian-de-code-shu-xing" class="header-anchor">#</a></h2>
-<p>Code属性是方法属性中最最最重要的属性。<br>
-他告诉我们编译器是怎样将我们的文本代码封装成一个class文件的。<br>
-首先，code属性的属性名就是一个“Code”<br>
-<img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652395457163163025.png" alt="image.png"></p>
-<h3><span id="cao-zuo-shu-zhan-ju-bu-bian-liang-biao-da-xiao-zhi-ling-ma-shu-liang">操作数栈、局部变量表大小、指令码数量</span><a href="#cao-zuo-shu-zhan-ju-bu-bian-liang-biao-da-xiao-zhi-ling-ma-shu-liang" class="header-anchor">#</a></h3>
-<p>接着会包含3个重要的内容：max_stack、max_local和code_length<br>
-<img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652395539642165989.png" alt="image.png"><br>
-从max_stack和max_local我们可以看到，操作数栈和局部变量表的大小，已经在class文件中计算出来了，因此当开辟一个新的栈帧时，jvm便能够知道给这个方法开辟多大的空间，不用担心栈上分配不够的问题。<br>
-<strong>注意，是操作数栈的大小，而不是程序执行的栈的深度，程序可没法感知我们能够递归多少次。</strong></p>
-<hr>
-<h3><span id="zhi-ling-ma-jie-du">指令码解读</span><a href="#zhi-ling-ma-jie-du" class="header-anchor">#</a></h3>
-<p>code_length代表了我们这个方法在编译后，有多少条字节码指令，而后面紧跟着的，就是对应数量的java字节码指令了。<br>
-<img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652397966852235844.png" alt="image.png"></p>
-<p>指令码种类非常多，这里只列举关键的一些信息。</p>
-<h4><span id="shu-ju-ji-suan-yong-de-zhi-ling-ma">数据计算用的指令码</span><a href="#shu-ju-ji-suan-yong-de-zhi-ling-ma" class="header-anchor">#</a></h4>
-<p>首先，每种涉及基本数据类型的计算指令，都会在指令最前方，携带一个T，如图：<br>
-<img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652396223751707461.png" alt="image.png"><br>
-里面有句话：<strong>“不是每种数据类型和每个操作都有指令对应（否则数量太多）”</strong><br>
-这句话怎么理解呢，可以结果图上右侧的表格，从而得知，有些指令是不包含所有类型的，所以可能会借用一些的技巧，比如把byte、short都视为int在操作上去操作。</p>
-<h4><span id="dui-xiang-cao-zuo-de-zhi-ling-ma">对象操作的指令码</span><a href="#dui-xiang-cao-zuo-de-zhi-ling-ma" class="header-anchor">#</a></h4>
-<p>另一个类指令码是和对象操作有关，例如：<br>
-<img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652396601906806136.png" alt="image.png"><br>
-可以看到，当试图获取一个类字段时，他指向的是一个class_field_info常量索引，这个常量会提前被放进class文件的常量池中。</p>
-<hr>
-<h5><span id="wei-shi-me-dui-xiang-cao-zuo-zhi-ling-ma-zhong-zhi-bao-han-liao-lei-yin-yong-he-ming-cheng-ni-wo-zen-me-zhi-dao-wo-diao-yong-de-shi-na-ge-dui-xiang-de-zi-duan">为什么对象操作指令码中只包含了类引用和名称呢，我怎么知道我调用的是哪个对象的字段？</span><a href="#wei-shi-me-dui-xiang-cao-zuo-zhi-ling-ma-zhong-zhi-bao-han-liao-lei-yin-yong-he-ming-cheng-ni-wo-zen-me-zhi-dao-wo-diao-yong-de-shi-na-ge-dui-xiang-de-zi-duan" class="header-anchor">#</a></h5>
-<p>A: 你要调用的对象，已经通过前面提到的操作数栈相关指令，把引用放到了操作数栈的第一个，因此，jvm只要取栈顶对象，然后根据名字进行字段操作即可，后面的方法调用也是一样的道理。</p>
-<hr>
-<h5><span id="new-dui-xiang-he-new-shu-zu-yong-de-shi-2-ge-bu-tong-de-zhi-ling-wei-shi-me-yao-you-qu-fen-bu-neng-ba-shu-zu-dang-cheng-yi-ge-java-dui-xiang-ma">new对象和new数组，用的是2个不同的指令，为什么要有区分？不能把数组当成一个java对象吗</span><a href="#new-dui-xiang-he-new-shu-zu-yong-de-shi-2-ge-bu-tong-de-zhi-ling-wei-shi-me-yao-you-qu-fen-bu-neng-ba-shu-zu-dang-cheng-yi-ge-java-dui-xiang-ma" class="header-anchor">#</a></h5>
-<p>这要从对象的内存结构，以及类加载机制上去思考。<br>
-因为数组的对象头，和普通对象的对象头是不一样的。</p>
-<ul>
-<li>数组的对象头中包含了数组长度，而普通对象没有</li>
-<li>new一个数组时，数组中包含的类并不会做类加载。<br>
-有这么多区别，肯定是新增一个单独针对数组的指令来处理，要简单很多</li>
-</ul>
-<hr>
-<h4><span id="cao-zuo-shu-zhan-zhi-ling-pop-deng">操作数栈指令（pop等）</span><a href="#cao-zuo-shu-zhan-zhi-ling-pop-deng" class="header-anchor">#</a></h4>
-<p><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652397315515649848.png" alt="image.png"><br>
-其他指令好理解， 但操作数栈指令有个dup_x指令，例如dup1_1 就是复制栈顶并再放入1个。为什么需要这么一个指令？</p>
-<p>其实当我们调用 A a = new A()时，这一句话生成的指令中就包含了dup指令<br>
-因为当我们new出1个A引用时，它有两件事要做：</p>
-<ol>
-<li>调用A的构造函数。</li>
-<li>把引用地址赋值给a这个局部变量<br>
-而每件事都会消耗一个A的引用！所以才需要赋值。<br>
-因此可以看到，<strong>指令码很多时候都是基于操作数栈进行操作的，每操作一个数据或引用，就消耗一个</strong></li>
-</ol>
-<h4><span id="fang-fa-diao-yong-zhi-ling-invokevirtual-deng">方法调用指令（invokevirtual等)</span><a href="#fang-fa-diao-yong-zhi-ling-invokevirtual-deng" class="header-anchor">#</a></h4>
-<p><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652397689648709059.png" alt="image.png"><br>
-对于方法调用指令，和前面的类字段调用有点像，也是一个方法常量，方法常量包含类索引和方法描述索引。<br>
-对于方法究竟是如何触发调用实现多态的、invokevirtual指令和invokedynamic指令有什么区别，这个内容就更多了，后面我会放到类加载的图解笔记中讲解。</p>
-<h3><span id="yi-chang-biao-shu-xing">异常表属性</span><a href="#yi-chang-biao-shu-xing" class="header-anchor">#</a></h3>
-<p>指令码结束后，后面会紧跟着一个异常表。表中的每一行长这样：<br>
-<img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652398026144920939.png" alt="image.png"><br>
-是不是恍然大悟，原来try-catch代码的逻辑在这边， 它本质上就是抛异常时，根据try的位置和异常类型，这个异常表中进行查找到对应的catch代码位置，从而实现异常处理。</p>
-<hr>
-<h4><span id="na-finally-de-cao-zuo-bei-fang-dao-na-liao-catch-cao-zuo-wan-liao-zhi-hou-ta-zen-me-zhi-dao-yao-tiao-zhuan-dao-na-li">那finally的操作被放到哪了？catch操作完了之后，它怎么知道要跳转到哪里？</span><a href="#na-finally-de-cao-zuo-bei-fang-dao-na-liao-catch-cao-zuo-wan-liao-zhi-hou-ta-zen-me-zhi-dao-yao-tiao-zhuan-dao-na-li" class="header-anchor">#</a></h4>
-<p>finally模块在java语言中是必须执行的，在编译的时候，通过将finally中代码块分别在try模块的最后和catch模块的最后都复制了一份，通过这样来保证finally的必定执行</p>
-<hr>
-<h4><span id="dui-yu-synchronized-guan-jian-zi-ta-ben-zhi-shi-sheng-cheng-liao-monitorenter-he-monitorexit-liang-ge-zhi-ling-shang-mian-fang-fa-diao-yong-zhi-ling-li-de-zui-hou-2-ge-dan-ru-guo-fa-sheng-liao-yi-chang-na-hui-bu-hui-wu-fa-monitorexit-liao">对于synchronized关键字，它本质是生成了monitorenter和monitorexit两个指令（上面方法调用指令里的最后2个）。但如果发生了异常，那会不会无法monitorexit了？</span><a href="#dui-yu-synchronized-guan-jian-zi-ta-ben-zhi-shi-sheng-cheng-liao-monitorenter-he-monitorexit-liang-ge-zhi-ling-shang-mian-fang-fa-diao-yong-zhi-ling-li-de-zui-hou-2-ge-dan-ru-guo-fa-sheng-liao-yi-chang-na-hui-bu-hui-wu-fa-monitorexit-liao" class="header-anchor">#</a></h4>
-<p>生成code字节码时，jvm会自动为synchronized生成1个默认的异常表和throw指令，保证中间同步块发生异常时，monitorexit能够正确被指令（类似于放了一个自动生成的try-catch代码，或者在已有的catch操作后添加）。</p>
-<hr>
-<h4><span id="qian-mian-ti-dao-fang-fa-shu-xing-zhong-yi-jing-you-yi-ge-ming-jiao-exception-de-shu-xing-he-zhe-ge-code-shu-xing-zhong-de-yi-chang-biao-you-shi-me-qu-bie">前面提到方法属性中，已经有一个名叫“Exception”的属性，和这个code属性中的异常表有什么区别？</span><a href="#qian-mian-ti-dao-fang-fa-shu-xing-zhong-yi-jing-you-yi-ge-ming-jiao-exception-de-shu-xing-he-zhe-ge-code-shu-xing-zhong-de-yi-chang-biao-you-shi-me-qu-bie" class="header-anchor">#</a></h4>
-<p>上面code<strong>异常表</strong>指的是代码执行时try-catch的逻辑部分<br>
-而方法中的<strong>exception属性</strong>则是方法名上所声明的throws异常。</p>
-<h3><span id="code-de-kuo-zhan-shu-xing">Code的扩展属性</span><a href="#code-de-kuo-zhan-shu-xing" class="header-anchor">#</a></h3>
-<p>在code属性中，竟然还携带了属性，也就是说，是允许“属性中的属性”。毕竟属性的实现是可以完全自定义的，那么自己给自己新增额外特性完全是允许的。<br>
-<img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652398314647685943.png" alt="image.png"><br>
-里面有个属性叫“局部变量描述属性”，长这样：<br>
-<img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652398431353725133.png" alt="image.png"><br>
-从这里，你就能明白，为什么你从IDEA里看到反解后的class文件，有时候是var1、var2之类莫名其妙的局部变量，有时候却又能看到完整的变量名了吧？就是通过这个属性决定的。毕竟存储局部变量名的代价还是很高的。</p>
-<h3><span id="qi-ta-de-fang-fa-shu-xing">其他的方法属性</span><a href="#qi-ta-de-fang-fa-shu-xing" class="header-anchor">#</a></h3>
-<p><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652398713702736921.png" alt="image.png"><br>
-泛型签名这个属性很迷惑，不是有泛型擦除吗，为什么还需要这个属性？<br>
-<strong>其实泛型签名属性是为了方便反射的。</strong><br>
-我们通过前面关于桥接的原理，可以知道编译时会发生泛型擦除，方法入参都变成了object。<br>
-但是反射API可能希望获取泛型信息因此可通过这个扩展属性进行获取。所以会增加这个属性，从而能感知一些泛型属性相关的信息。</p>
-<h1><span id="lei-shu-xing">类属性</span><a href="#lei-shu-xing" class="header-anchor">#</a></h1>
-<p>既然方法和字段都有属性，那么类肯定也有属性：<br>
-<img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/1652399133483878712.png" alt="image.png"><br>
-其他属性都比较好理解或者不重要，重点讲一下内部类属性。<br>
-通过内部类属性，我们可以看到内部类并不是直接包含在这个class文件中，它其实是生成了另一个class文件，所以才需要一个内部类属性，来确认对应的名字，方便类加载时能找到内部类。</p>
-<hr>
-<h2><span id="wei-shi-me-nei-bu-lei-shu-xing-zhong-yao-bao-han-su-zhu-lei-de-lei-ming-nan-dao-su-zhu-lei-bu-jiu-shi-ta-ben-shen-ma">为什么内部类属性中，要包含宿主类的类名？难道宿主类，不就是它本身吗？</span><a href="#wei-shi-me-nei-bu-lei-shu-xing-zhong-yao-bao-han-su-zhu-lei-de-lei-ming-nan-dao-su-zhu-lei-bu-jiu-shi-ta-ben-shen-ma" class="header-anchor">#</a></h2>
-<p>因为，内部类中，还可以继续定义内部类</p>
-<hr>
-<p>另外，从上面的一些属性中可以看到， <strong>很多debug用的调试、展示信息，都会包含在class中</strong><br>
-因此，当我们希望调试一些环境上执行的程序时，如果想提供最为贴近原代码，那就需要class文件中能有充足的信息，如果想要class文件小，那就去掉，具体怎么去掉或者添加，肯定就是一些编译选项的区别了。</p>
-<hr>
-<hr>
-<h1><span id="zui-hou-de-wan-zheng-tu">最后的完整图</span><a href="#zui-hou-de-wan-zheng-tu" class="header-anchor">#</a></h1>
-<p>好累，终于写完了，感觉能看到最后的人不会太多，但一通详细地分析和解决中间发现的问题，还是收获了不少。<br>
-最后贴上完整的大图，欢迎保存和收藏。<br>
-<a target="_blank" rel="noopener" href="https://www.processon.com/view/link/5d1a2d97e4b07c7231731b02">图片在线查看</a><br>
-<a target="_blank" rel="noopener" href="https://www.processon.com/view/link/5d1a2d97e4b07c7231731b02">https://www.processon.com/view/link/5d1a2d97e4b07c7231731b02</a></p>
-<p><img src="/images/java-class%E7%B1%BB%E6%96%87%E4%BB%B6%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/5d1a2d97e4b0f7ca49d84a3a.png" alt="完整大图"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/21/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><span class="page-number current">22</span><a class="page-number" href="/page/23/">23</a><a class="page-number" href="/page/24/">24</a><a class="extend next" rel="next" href="/page/23/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/21/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><span class="page-number current">22</span><a class="page-number" href="/page/23/">23</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/23/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -3112,18 +3456,18 @@ class文件中，最值得学习的就是常量池和方法表了！</p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">239</span>
+          <span class="site-state-item-count">242</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-count">61</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-count">33</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -3183,7 +3527,7 @@ class文件中，最值得学习的就是常量池和方法表了！</p>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共318.6k字</span>
+  <span class="post-count">博客全站共318.7k字</span>
 </div>
 
         
