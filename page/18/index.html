@@ -181,6 +181,154 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-18/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-18/" class="post-title-link" itemprop="url">2022-0818</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-18 23:12:42" itemprop="dateCreated datePublished" datetime="2022-08-18T23:12:42+08:00">2022-08-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-19 00:26:57" itemprop="dateModified" datetime="2022-08-19T00:26:57+08:00">2022-08-19</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">刷题日记</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022%E5%B9%B48%E6%9C%88/" itemprop="url" rel="index"><span itemprop="name">2022年8月</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-18/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-18/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<!-- tocstop -->
+</div> 
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/sort-array-by-increasing-frequency/">1636. 按照频率将数组升序排序 - 力扣（LeetCode）</a></p>
+<p><img src="/images/2022-08-18/1660838816939.png" alt="1660838816939"></p>
+<p>先统计个数，然后按照个数进行排序</p>
+<p>注意：</p>
+<p>对于int[]，不可以直接进行Arrays.sort(nums, (a,b)-&gt;a-b);</p>
+<p>要么先转成Integer[]</p>
+<p>要么用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Arrays.stream(nums).boxed().sorted((a,b)-&gt;</span><br><span class="line">                (counts[a] - counts[b) ).mapToInt(Integer::intValue).toArray()</span><br></pre></td></tr></table></figure>
+<p>来实现，先stream然后boxed最后还要mapToInt才能toArray</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span>[] frequencySort(<span class="type">int</span>[] nums) &#123;</span><br><span class="line">        <span class="type">int</span>[] counts = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">201</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> num : nums) &#123;</span><br><span class="line">            counts[num + <span class="number">100</span>]++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// int[]数组不可以直接自定义排序</span></span><br><span class="line">        <span class="comment">// Arrays.sort(nums, (a,b)-&gt;a-b);</span></span><br><span class="line">        <span class="keyword">return</span> Arrays.stream(nums).boxed().sorted((a,b)-&gt;</span><br><span class="line">                counts[a+<span class="number">100</span>] != counts[b+<span class="number">100</span>] ? (counts[a+<span class="number">100</span>] - counts[b+<span class="number">100</span>]) : (b-a)).mapToInt(Integer::intValue).toArray();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/bao-han-minhan-shu-de-zhan-lcof/submissions/">剑指 Offer 30. 包含min函数的栈 - 力扣（LeetCode）</a></p>
+<p><img src="/images/2022-08-18/1660838926999.png" alt="1660838926999"></p>
+<p>维护2个数组即可，stack数组和min数组（毕竟往栈底看过去的最小值一定是确定的）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MinStack</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** initialize your data structure here. */</span></span><br><span class="line">    <span class="type">int</span>[] min = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">20001</span>];</span><br><span class="line">    <span class="type">int</span>[] stack = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">20001</span>];</span><br><span class="line">    <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">MinStack</span><span class="params">()</span> &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">push</span><span class="params">(<span class="type">int</span> x)</span> &#123;</span><br><span class="line">        min[index] = Math.min(x, index-<span class="number">1</span>&gt;=<span class="number">0</span> ? min[index-<span class="number">1</span>] : Integer.MAX_VALUE);</span><br><span class="line">        stack[index++] = x;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">pop</span><span class="params">()</span> &#123;</span><br><span class="line">        min[index-<span class="number">1</span>] = Integer.MAX_VALUE;</span><br><span class="line">        index--;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">top</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> stack[index-<span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">min</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> min[index-<span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/coin-change/">322. 零钱兑换 - 力扣（LeetCode）</a></p>
+<p><img src="/images/2022-08-18/1660838978323.png" alt="1660838978323"></p>
+<p>时间很紧，先是相当了bfs并用记忆化处理，每次出队硬币个数最少的，类似于走迷宫了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">coinChange</span><span class="params">(<span class="type">int</span>[] coins, <span class="type">int</span> amount)</span> &#123;</span><br><span class="line">        Queue&lt;<span class="type">int</span>[]&gt; queue = <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>&lt;&gt;((a,b)-&gt;(a[<span class="number">0</span>]-b[<span class="number">0</span>]));</span><br><span class="line">    </span><br><span class="line">        queue.offer(<span class="keyword">new</span> <span class="title class_">int</span>[]&#123;<span class="number">0</span>,<span class="number">0</span>&#125;);</span><br><span class="line">        Set&lt;Integer&gt; vis = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">        vis.add(<span class="number">0</span>);</span><br><span class="line">        <span class="keyword">while</span>(!queue.isEmpty()) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> queue.peek()[<span class="number">0</span>];</span><br><span class="line">            <span class="type">int</span> <span class="variable">am</span> <span class="operator">=</span> queue.poll()[<span class="number">1</span>];</span><br><span class="line">            <span class="keyword">if</span> (am == amount) &#123;</span><br><span class="line">                <span class="keyword">return</span> count;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> coin : coins) &#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">newAmount</span> <span class="operator">=</span> am + coin;</span><br><span class="line">                <span class="keyword">if</span> (newAmount &gt; amount) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (vis.contains(newAmount)) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                vis.add(newAmount);</span><br><span class="line">                queue.offer(<span class="keyword">new</span> <span class="title class_">int</span>[]&#123;count+<span class="number">1</span>, newAmount&#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2022-08-18/1660839037340.png" alt="1660839037340"></p>
+<p>性能太差了</p>
+<p>看了答案想起来这个完全可以动态规划</p>
+<p>因为amount的范围是0~10<sup>4而非10</sup>9，完全可以把amount作为一个dp状态处理， 且coin的数量也只有12个</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">coinChange</span><span class="params">(<span class="type">int</span>[] coins, <span class="type">int</span> amount)</span> &#123;</span><br><span class="line">        <span class="type">long</span>[] dp = <span class="keyword">new</span> <span class="title class_">long</span>[amount+<span class="number">1</span>];</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="type">long</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>; a &lt;= amount;a++) &#123;</span><br><span class="line">            dp[(<span class="type">int</span>)a] = Integer.MAX_VALUE;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> coin : coins) &#123;</span><br><span class="line">                <span class="keyword">if</span> (a - coin &lt; <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                dp[(<span class="type">int</span>)a] = Math.min(dp[(<span class="type">int</span>)a], dp[(<span class="type">int</span>)a-coin] + <span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> (<span class="type">int</span>)dp[amount] == Integer.MAX_VALUE ? -<span class="number">1</span> : (<span class="type">int</span>)dp[amount];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2022-08-18/1660839089263.png" alt="1660839089263"></p>
+<p>性能一下子就上去了</p>
+<p>再做一下优化，根据数据范围，去除long和int的强转</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">coinChange</span><span class="params">(<span class="type">int</span>[] coins, <span class="type">int</span> amount)</span> &#123;</span><br><span class="line">        <span class="type">int</span>[] dp = <span class="keyword">new</span> <span class="title class_">int</span>[amount+<span class="number">1</span>];</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>; a &lt;= amount;a++) &#123;</span><br><span class="line">            dp[a] = <span class="number">10001</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> coin : coins) &#123;</span><br><span class="line">                <span class="keyword">if</span> (a &lt; coin) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                dp[a] = Math.min(dp[a], dp[a-coin] + <span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dp[amount] == <span class="number">10001</span> ? -<span class="number">1</span> : dp[amount];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2022-08-18/1660839698405.png" alt="1660839698405"></p>
+<p>提升到11ms了</p>
+<p>另外有个很奇怪的，下面这个的性能始终慢2ms，我感觉明明过滤了很多不必要的coins循环才对</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">coinChange</span><span class="params">(<span class="type">int</span>[] coins, <span class="type">int</span> amount)</span> &#123;</span><br><span class="line">        <span class="type">int</span>[] dp = <span class="keyword">new</span> <span class="title class_">int</span>[amount+<span class="number">1</span>];</span><br><span class="line">        <span class="type">int</span> <span class="variable">minCoin</span> <span class="operator">=</span> coins[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt; coins.length;i++) &#123;</span><br><span class="line">            minCoin= Math.min(minCoin, coins[i]);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Arrays.sort(coins);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>; a &lt;= amount;a++) &#123;</span><br><span class="line">            dp[a] = <span class="number">10001</span>;</span><br><span class="line">            <span class="keyword">if</span> (a &lt; minCoin) &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> coin : coins) &#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">lastCoinSum</span> <span class="operator">=</span> a-coin;</span><br><span class="line">                <span class="keyword">if</span> (lastCoinSum &lt; <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                dp[a] = Math.min(dp[a], dp[lastCoinSum] + <span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dp[amount] == <span class="number">10001</span> ? -<span class="number">1</span> : dp[amount];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2022-08-18/1660839823484.png" alt="1660839823484"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java-JVM%E5%B8%B8%E7%94%A8%E5%8F%82%E6%95%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1730,220 +1878,6 @@ epoll原理见<a target="_blank" rel="noopener" href="http://doc.minidown.cn/ejx
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java-Socket%E5%BA%94%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java-Socket%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">java-Socket应用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-08-15 23:44:16 / 修改时间：23:54:43" itemprop="dateCreated datePublished" datetime="2022-08-15T23:44:16+08:00">2022-08-15</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">java高级应用</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java-Socket%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java-Socket%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#fu-wu-duan">服务端</a>
-<ul>
-<li><a href="#fu-wu-duan-kai-qi-guo-cheng">服务端开启过程</a></li>
-<li><a href="#q-server-duan-ru-he-you-xiao-pan-duan-client-xiao-xi-chuan-shu-wan-bi">Q：server端如何有效判断client消息传输完毕？</a></li>
-<li><a href="#q-ru-he-bi-mian-shang-mian-yong-while-xun-huan-chu-li-yi-ge-qing-qiu-chu-li-shi-yong-shi-jiao-jiu-ying-xiang-liao-qi-ta-qing-qiu-de-chu-li">Q：如何避免上面用while循环处理一个请求处理时用时较久，影响了其他请求的处理?</a></li>
-<li><a href="#serversocket-xuan-xiang">ServerSocket选项</a></li>
-</ul>
-</li>
-<li><a href="#ke-hu-duan">客户端</a>
-<ul>
-<li><a href="#q-ke-hu-duan-jin-xing-shu-chu-liu-shu-chu-shi-ru-guo-zhi-xing-liao-outputstream-close-hou-huan-xu-yao-zhi-xing-socket-close-ma">Q: 客户端进行输出流输出时，如果执行了outputStream.close()后， 还需要执行socket.close()吗？</a></li>
-</ul>
-</li>
-<li><a href="#udp">UDP</a>
-<ul>
-<li><a href="#q-ru-guo-yao-zuo-udp-tong-xin-na-me-yao-yong-shi-me-socket">Q：如果要做UDP通信， 那么要用什么socket？</a></li>
-<li><a href="#q-datagramsocket-he-java-zhong-pu-tong-serversocket-huo-zhe-socket-ke-hu-duan-de-qu-bie">Q: DatagramSocket和java中普通ServerSocket或者 Socket客户端的区别？</a></li>
-<li><a href="#q-multicastsocket-shi-shi-me">Q： MulticastSocket是什么？</a></li>
-<li><a href="#q-shang-mian-de-socketa-hui-fa-song-gei-zi-ji-ma">Q: 上面的socketA会发送给自己吗？</a></li>
-</ul>
-</li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="fu-wu-duan">服务端</span><a href="#fu-wu-duan" class="header-anchor">#</a></h1>
-<h2><span id="fu-wu-duan-kai-qi-guo-cheng">服务端开启过程</span><a href="#fu-wu-duan-kai-qi-guo-cheng" class="header-anchor">#</a></h2>
-<p>用accept开启一个Socket</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ServerSocket</span> <span class="variable">server</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ServerSocket</span>(port);</span><br><span class="line"><span class="type">Socket</span> <span class="variable">socket</span> <span class="operator">=</span> server.accept();</span><br></pre></td></tr></table></figure>
-<p>调用后会进入阻塞。</p>
-<ul>
-<li>用socket.getInputStream()， 得到一个socket输入流， 进行read时，就是从客户端那边读取发来的数据</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">InputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> socket.getInputStream();</span><br><span class="line"><span class="keyword">while</span>(len = inputStream.read(bytes))!=-<span class="number">1</span>) &#123;</span><br><span class="line">	<span class="comment">//注意指定编码格式，发送方和接收方需要统一</span></span><br><span class="line">	sb.append(<span class="keyword">new</span> <span class="title class_">String</span>(bytes, <span class="number">0</span>, len, <span class="string">&quot;UTF-8&quot;</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>如果server端要返回数据，就再从socket对象里get输出流，往输出流写东西，就会传到客户端那边了。</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">OuputStream</span> <span class="variable">outputStream</span> <span class="operator">=</span> socket.getOuputStream();</span><br><span class="line">outputStream.write(<span class="string">&quot;hahah, this is response&quot;</span>.getBytes(<span class="string">&quot;UTF-8&quot;</span>))</span><br></pre></td></tr></table></figure>
-<hr>
-<h2><span id="q-server-duan-ru-he-you-xiao-pan-duan-client-xiao-xi-chuan-shu-wan-bi">Q：server端如何有效判断client消息传输完毕？</span><a href="#q-server-duan-ru-he-you-xiao-pan-duan-client-xiao-xi-chuan-shu-wan-bi" class="header-anchor">#</a></h2>
-<p>A：</p>
-<ul>
-<li>客户端不再发送时，那边会调用socket.shutdownOutput(),  对方的read()方法就会返回-1.<br>
-*建议使用长度+类型+数据的协议传输方式， 这样服务端可以明确直到自己这一次这要读多少字节以及是什么样的消息， 减少做消息结束判断导致的异常问题。</li>
-</ul>
-<hr>
-<h2><span id="q-ru-he-bi-mian-shang-mian-yong-while-xun-huan-chu-li-yi-ge-qing-qiu-chu-li-shi-yong-shi-jiao-jiu-ying-xiang-liao-qi-ta-qing-qiu-de-chu-li">Q：如何避免上面用while循环处理一个请求处理时用时较久，影响了其他请求的处理?</span><a href="#q-ru-he-bi-mian-shang-mian-yong-while-xun-huan-chu-li-yi-ge-qing-qiu-chu-li-shi-yong-shi-jiao-jiu-ying-xiang-liao-qi-ta-qing-qiu-de-chu-li" class="header-anchor">#</a></h2>
-<p>A:<br>
-每当accept 返回1个socket之后， 把这个socket放进一个线程中，交给线程池去处理。</p>
-<hr>
-<h2><span id="serversocket-xuan-xiang">ServerSocket选项</span><a href="#serversocket-xuan-xiang" class="header-anchor">#</a></h2>
-<ol>
-<li>SO_TIMEOUT  accept的超时时间</li>
-<li>SO_REUSEADDR   是否支持复用端口<br>
-即另一个serverSocket还没有close的时候， 新的serverSocket能否重用那个端口。</li>
-<li>SO_RCVBUF 缓冲区大小<br>
-收到到特定缓存的大小才会从inputStream中返回。</li>
-</ol>
-<ul>
-<li>设置方式：serverScoket.setSoXXX(…)</li>
-</ul>
-<hr>
-<h1><span id="ke-hu-duan">客户端</span><a href="#ke-hu-duan" class="header-anchor">#</a></h1>
-<h2><span id="q-ke-hu-duan-jin-xing-shu-chu-liu-shu-chu-shi-ru-guo-zhi-xing-liao-outputstream-close-hou-huan-xu-yao-zhi-xing-socket-close-ma">Q: 客户端进行输出流输出时，如果执行了outputStream.close()后， 还需要执行socket.close()吗？</span><a href="#q-ke-hu-duan-jin-xing-shu-chu-liu-shu-chu-shi-ru-guo-zhi-xing-liao-outputstream-close-hou-huan-xu-yao-zhi-xing-socket-close-ma" class="header-anchor">#</a></h2>
-<p>A：<br>
-不需要。对于同一个socket， 如果关闭了输出流比如pw.close()， 则与该输出流关联的socket也会关闭， 所以一般不需要关闭输出流。  当关闭socket的时候， 输出流也会同时关闭。<br>
-因此如果执行了以下代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从socket中拿到inputStream和outputStream</span></span><br><span class="line">...</span><br><span class="line">outputStream.close()</span><br><span class="line">inputStream.read();</span><br><span class="line">inputStream.close();</span><br></pre></td></tr></table></figure>
-<p>这时候inputStream.read()的就会报错， 因为socket已经被关闭了。</p>
-<h1><span id="udp">UDP</span><a href="#udp" class="header-anchor">#</a></h1>
-<h2><span id="q-ru-guo-yao-zuo-udp-tong-xin-na-me-yao-yong-shi-me-socket">Q：如果要做UDP通信， 那么要用什么socket？</span><a href="#q-ru-guo-yao-zuo-udp-tong-xin-na-me-yao-yong-shi-me-socket" class="header-anchor">#</a></h2>
-<p>A: DatagramSocket</p>
-<hr>
-<h2><span id="q-datagramsocket-he-java-zhong-pu-tong-serversocket-huo-zhe-socket-ke-hu-duan-de-qu-bie">Q: DatagramSocket和java中普通ServerSocket或者 Socket客户端的区别？</span><a href="#q-datagramsocket-he-java-zhong-pu-tong-serversocket-huo-zhe-socket-ke-hu-duan-de-qu-bie" class="header-anchor">#</a></h2>
-<p>A:</p>
-<ul>
-<li>TCP的socket建立时， 需要先指定对端口的op和端口， 并用输出流去输出数据</li>
-<li>而java中的UDP客户端建立时， 不需要在socket里指定ip和端口， 而是将ip+端口放在datagramPacket包里去指定。(所以一个socket可以用来发送好几份不同目的组的UDP包）</li>
-<li>另一个区别是， tcp两边用流来传输数据， 而UDP用datagramPacket来传递数据</li>
-</ul>
-<hr>
-<h2><span id="q-multicastsocket-shi-shi-me">Q： MulticastSocket是什么？</span><a href="#q-multicastsocket-shi-shi-me" class="header-anchor">#</a></h2>
-<p>A：<br>
-多点广播的socket实现， 也是用DatagramPacket来传输数据。<br>
-类似于一个客户端可以把数据包发给号借给目的端。<br>
-multicastSocket.joinGroup(多播ip)<br>
-则这个socket会加入到这个多播组中。<br>
-举例：</p>
-<blockquote>
-<blockquote>
-<p>假设环境中有4个MulticastSocket,  分别为socketA、socketB、socketC、socketD。<br>
-socketA、socketB、socketC都通过joinGroup方法，加入到了224.0.0.1这个多播组中<br>
-那么当socketA发送了某个DatagramPacket时，会只发送给B和C， 不会发送给D。</p>
-</blockquote>
-</blockquote>
-<hr>
-<h2><span id="q-shang-mian-de-socketa-hui-fa-song-gei-zi-ji-ma">Q: 上面的socketA会发送给自己吗？</span><a href="#q-shang-mian-de-socketa-hui-fa-song-gei-zi-ji-ma" class="header-anchor">#</a></h2>
-<p>A:<br>
-默认会的。</p>
-<p>发送给自己的话， 那就是设置了环回。<br>
-如果执行过 multicastSocket.setLoopbackMode(true)，那就是禁止环回机制。<br>
-注意：默认是开启的。</p>
-<hr>
-<p>参考资料：<br>
-<a target="_blank" rel="noopener" href="https://blog.csdn.net/a78270528/article/details/80318571%EF%BC%88%E8%BF%99%E7%AF%87%E5%86%99%E5%BE%97%E5%BE%88%E6%A3%92%EF%BC%89">https://blog.csdn.net/a78270528/article/details/80318571（这篇写得很棒）</a><br>
-<a target="_blank" rel="noopener" href="https://blog.csdn.net/woshisap/article/details/6597413">https://blog.csdn.net/woshisap/article/details/6597413</a><br>
-<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_44618862/article/details/98480120">https://blog.csdn.net/weixin_44618862/article/details/98480120</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8%E5%BA%94%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2202,6 +2136,220 @@ socketA、socketB、socketC都通过joinGroup方法，加入到了224.0.0.1这�
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java-Socket%E5%BA%94%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java-Socket%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">java-Socket应用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-15 23:44:16 / 修改时间：23:54:43" itemprop="dateCreated datePublished" datetime="2022-08-15T23:44:16+08:00">2022-08-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">java高级应用</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java-Socket%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java-Socket%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#fu-wu-duan">服务端</a>
+<ul>
+<li><a href="#fu-wu-duan-kai-qi-guo-cheng">服务端开启过程</a></li>
+<li><a href="#q-server-duan-ru-he-you-xiao-pan-duan-client-xiao-xi-chuan-shu-wan-bi">Q：server端如何有效判断client消息传输完毕？</a></li>
+<li><a href="#q-ru-he-bi-mian-shang-mian-yong-while-xun-huan-chu-li-yi-ge-qing-qiu-chu-li-shi-yong-shi-jiao-jiu-ying-xiang-liao-qi-ta-qing-qiu-de-chu-li">Q：如何避免上面用while循环处理一个请求处理时用时较久，影响了其他请求的处理?</a></li>
+<li><a href="#serversocket-xuan-xiang">ServerSocket选项</a></li>
+</ul>
+</li>
+<li><a href="#ke-hu-duan">客户端</a>
+<ul>
+<li><a href="#q-ke-hu-duan-jin-xing-shu-chu-liu-shu-chu-shi-ru-guo-zhi-xing-liao-outputstream-close-hou-huan-xu-yao-zhi-xing-socket-close-ma">Q: 客户端进行输出流输出时，如果执行了outputStream.close()后， 还需要执行socket.close()吗？</a></li>
+</ul>
+</li>
+<li><a href="#udp">UDP</a>
+<ul>
+<li><a href="#q-ru-guo-yao-zuo-udp-tong-xin-na-me-yao-yong-shi-me-socket">Q：如果要做UDP通信， 那么要用什么socket？</a></li>
+<li><a href="#q-datagramsocket-he-java-zhong-pu-tong-serversocket-huo-zhe-socket-ke-hu-duan-de-qu-bie">Q: DatagramSocket和java中普通ServerSocket或者 Socket客户端的区别？</a></li>
+<li><a href="#q-multicastsocket-shi-shi-me">Q： MulticastSocket是什么？</a></li>
+<li><a href="#q-shang-mian-de-socketa-hui-fa-song-gei-zi-ji-ma">Q: 上面的socketA会发送给自己吗？</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="fu-wu-duan">服务端</span><a href="#fu-wu-duan" class="header-anchor">#</a></h1>
+<h2><span id="fu-wu-duan-kai-qi-guo-cheng">服务端开启过程</span><a href="#fu-wu-duan-kai-qi-guo-cheng" class="header-anchor">#</a></h2>
+<p>用accept开启一个Socket</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ServerSocket</span> <span class="variable">server</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ServerSocket</span>(port);</span><br><span class="line"><span class="type">Socket</span> <span class="variable">socket</span> <span class="operator">=</span> server.accept();</span><br></pre></td></tr></table></figure>
+<p>调用后会进入阻塞。</p>
+<ul>
+<li>用socket.getInputStream()， 得到一个socket输入流， 进行read时，就是从客户端那边读取发来的数据</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">InputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> socket.getInputStream();</span><br><span class="line"><span class="keyword">while</span>(len = inputStream.read(bytes))!=-<span class="number">1</span>) &#123;</span><br><span class="line">	<span class="comment">//注意指定编码格式，发送方和接收方需要统一</span></span><br><span class="line">	sb.append(<span class="keyword">new</span> <span class="title class_">String</span>(bytes, <span class="number">0</span>, len, <span class="string">&quot;UTF-8&quot;</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>如果server端要返回数据，就再从socket对象里get输出流，往输出流写东西，就会传到客户端那边了。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">OuputStream</span> <span class="variable">outputStream</span> <span class="operator">=</span> socket.getOuputStream();</span><br><span class="line">outputStream.write(<span class="string">&quot;hahah, this is response&quot;</span>.getBytes(<span class="string">&quot;UTF-8&quot;</span>))</span><br></pre></td></tr></table></figure>
+<hr>
+<h2><span id="q-server-duan-ru-he-you-xiao-pan-duan-client-xiao-xi-chuan-shu-wan-bi">Q：server端如何有效判断client消息传输完毕？</span><a href="#q-server-duan-ru-he-you-xiao-pan-duan-client-xiao-xi-chuan-shu-wan-bi" class="header-anchor">#</a></h2>
+<p>A：</p>
+<ul>
+<li>客户端不再发送时，那边会调用socket.shutdownOutput(),  对方的read()方法就会返回-1.<br>
+*建议使用长度+类型+数据的协议传输方式， 这样服务端可以明确直到自己这一次这要读多少字节以及是什么样的消息， 减少做消息结束判断导致的异常问题。</li>
+</ul>
+<hr>
+<h2><span id="q-ru-he-bi-mian-shang-mian-yong-while-xun-huan-chu-li-yi-ge-qing-qiu-chu-li-shi-yong-shi-jiao-jiu-ying-xiang-liao-qi-ta-qing-qiu-de-chu-li">Q：如何避免上面用while循环处理一个请求处理时用时较久，影响了其他请求的处理?</span><a href="#q-ru-he-bi-mian-shang-mian-yong-while-xun-huan-chu-li-yi-ge-qing-qiu-chu-li-shi-yong-shi-jiao-jiu-ying-xiang-liao-qi-ta-qing-qiu-de-chu-li" class="header-anchor">#</a></h2>
+<p>A:<br>
+每当accept 返回1个socket之后， 把这个socket放进一个线程中，交给线程池去处理。</p>
+<hr>
+<h2><span id="serversocket-xuan-xiang">ServerSocket选项</span><a href="#serversocket-xuan-xiang" class="header-anchor">#</a></h2>
+<ol>
+<li>SO_TIMEOUT  accept的超时时间</li>
+<li>SO_REUSEADDR   是否支持复用端口<br>
+即另一个serverSocket还没有close的时候， 新的serverSocket能否重用那个端口。</li>
+<li>SO_RCVBUF 缓冲区大小<br>
+收到到特定缓存的大小才会从inputStream中返回。</li>
+</ol>
+<ul>
+<li>设置方式：serverScoket.setSoXXX(…)</li>
+</ul>
+<hr>
+<h1><span id="ke-hu-duan">客户端</span><a href="#ke-hu-duan" class="header-anchor">#</a></h1>
+<h2><span id="q-ke-hu-duan-jin-xing-shu-chu-liu-shu-chu-shi-ru-guo-zhi-xing-liao-outputstream-close-hou-huan-xu-yao-zhi-xing-socket-close-ma">Q: 客户端进行输出流输出时，如果执行了outputStream.close()后， 还需要执行socket.close()吗？</span><a href="#q-ke-hu-duan-jin-xing-shu-chu-liu-shu-chu-shi-ru-guo-zhi-xing-liao-outputstream-close-hou-huan-xu-yao-zhi-xing-socket-close-ma" class="header-anchor">#</a></h2>
+<p>A：<br>
+不需要。对于同一个socket， 如果关闭了输出流比如pw.close()， 则与该输出流关联的socket也会关闭， 所以一般不需要关闭输出流。  当关闭socket的时候， 输出流也会同时关闭。<br>
+因此如果执行了以下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从socket中拿到inputStream和outputStream</span></span><br><span class="line">...</span><br><span class="line">outputStream.close()</span><br><span class="line">inputStream.read();</span><br><span class="line">inputStream.close();</span><br></pre></td></tr></table></figure>
+<p>这时候inputStream.read()的就会报错， 因为socket已经被关闭了。</p>
+<h1><span id="udp">UDP</span><a href="#udp" class="header-anchor">#</a></h1>
+<h2><span id="q-ru-guo-yao-zuo-udp-tong-xin-na-me-yao-yong-shi-me-socket">Q：如果要做UDP通信， 那么要用什么socket？</span><a href="#q-ru-guo-yao-zuo-udp-tong-xin-na-me-yao-yong-shi-me-socket" class="header-anchor">#</a></h2>
+<p>A: DatagramSocket</p>
+<hr>
+<h2><span id="q-datagramsocket-he-java-zhong-pu-tong-serversocket-huo-zhe-socket-ke-hu-duan-de-qu-bie">Q: DatagramSocket和java中普通ServerSocket或者 Socket客户端的区别？</span><a href="#q-datagramsocket-he-java-zhong-pu-tong-serversocket-huo-zhe-socket-ke-hu-duan-de-qu-bie" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>TCP的socket建立时， 需要先指定对端口的op和端口， 并用输出流去输出数据</li>
+<li>而java中的UDP客户端建立时， 不需要在socket里指定ip和端口， 而是将ip+端口放在datagramPacket包里去指定。(所以一个socket可以用来发送好几份不同目的组的UDP包）</li>
+<li>另一个区别是， tcp两边用流来传输数据， 而UDP用datagramPacket来传递数据</li>
+</ul>
+<hr>
+<h2><span id="q-multicastsocket-shi-shi-me">Q： MulticastSocket是什么？</span><a href="#q-multicastsocket-shi-shi-me" class="header-anchor">#</a></h2>
+<p>A：<br>
+多点广播的socket实现， 也是用DatagramPacket来传输数据。<br>
+类似于一个客户端可以把数据包发给号借给目的端。<br>
+multicastSocket.joinGroup(多播ip)<br>
+则这个socket会加入到这个多播组中。<br>
+举例：</p>
+<blockquote>
+<blockquote>
+<p>假设环境中有4个MulticastSocket,  分别为socketA、socketB、socketC、socketD。<br>
+socketA、socketB、socketC都通过joinGroup方法，加入到了224.0.0.1这个多播组中<br>
+那么当socketA发送了某个DatagramPacket时，会只发送给B和C， 不会发送给D。</p>
+</blockquote>
+</blockquote>
+<hr>
+<h2><span id="q-shang-mian-de-socketa-hui-fa-song-gei-zi-ji-ma">Q: 上面的socketA会发送给自己吗？</span><a href="#q-shang-mian-de-socketa-hui-fa-song-gei-zi-ji-ma" class="header-anchor">#</a></h2>
+<p>A:<br>
+默认会的。</p>
+<p>发送给自己的话， 那就是设置了环回。<br>
+如果执行过 multicastSocket.setLoopbackMode(true)，那就是禁止环回机制。<br>
+注意：默认是开启的。</p>
+<hr>
+<p>参考资料：<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/a78270528/article/details/80318571%EF%BC%88%E8%BF%99%E7%AF%87%E5%86%99%E5%BE%97%E5%BE%88%E6%A3%92%EF%BC%89">https://blog.csdn.net/a78270528/article/details/80318571（这篇写得很棒）</a><br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/woshisap/article/details/6597413">https://blog.csdn.net/woshisap/article/details/6597413</a><br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_44618862/article/details/98480120">https://blog.csdn.net/weixin_44618862/article/details/98480120</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E9%9A%8F%E7%AC%94/%E6%B8%B8%E6%88%8F/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2312,307 +2460,6 @@ socketA、socketB、socketC都通过joinGroup方法，加入到了224.0.0.1这�
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/Java-IO%E5%9F%BA%E7%A1%80/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/Java-IO%E5%9F%BA%E7%A1%80/" class="post-title-link" itemprop="url">Java-IO基础</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-14 23:50:15" itemprop="dateCreated datePublished" datetime="2022-08-14T23:50:15+08:00">2022-08-14</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-15 23:42:30" itemprop="dateModified" datetime="2022-08-15T23:42:30+08:00">2022-08-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E5%88%9D%E7%BA%A7%E8%AF%AD%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">java初级语法</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/Java-IO%E5%9F%BA%E7%A1%80/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/Java-IO%E5%9F%BA%E7%A1%80/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#wen-jian-api">文件API</a>
-<ul>
-<li><a href="#q-file-lei-ke-yi-yong-lai-zuo-mu-lu-cao-zuo-ma">Q: File类可以用来做目录操作吗？</a></li>
-<li><a href="#q-zhi-jie-diao-yong-file-delete-ke-yi-shan-chu-mu-lu-ma">Q：直接调用file.delete()可以删除目录吗？</a></li>
-<li><a href="#q-you-na-xie-fang-fa-pan-duan-gei-ding-lu-jing-xia-wen-jian-shi-fou-cun-zai">Q： 有哪些方法判断给定路径下文件是否存在？</a></li>
-</ul>
-</li>
-<li><a href="#zi-jie-shu-ru-liu-inputstream">字节输入流InputStream</a>
-<ul>
-<li><a href="#shuo-yi-xia-yi-xia-zhe-xie-te-dian-dui-ying-na-xie-inputstream-lei">说一下以下这些特点对应哪些InputStream类</a></li>
-<li><a href="#q-filterinputstream-shi-shi-me">Q： FilterInputStream是什么？</a></li>
-</ul>
-</li>
-<li><a href="#zi-jie-shu-chu-liu-outputstream">字节输出流OutputStream</a>
-<ul>
-<li><a href="#q-outputstream-bao-han-na-xie-shi-xian">Q: OutputStream包含哪些实现？</a></li>
-<li><a href="#q-new-fileoutputstream-name-true-zhe-ge-gou-zao-li-de-true-can-shu-shi-zuo-shi-me-yong-de">Q：new FileOutputStream(name, true)，这个构造里的true参数是做什么用的？</a></li>
-<li><a href="#q-bufferoutputstream-xiang-guan-gai-nian-qi-shi-shi-kao-huan-chong-qu-shi-fou-xu-yao-shua-xin-zhi-lei-de-wen-ti">Q：BufferOutputStream相关概念（其实是考缓冲区是否需要刷新之类的问题）</a></li>
-</ul>
-</li>
-<li><a href="#reader-he-writer">Reader和Writer</a>
-<ul>
-<li><a href="#q-reader-writer-he-inputstream-outputstream-de-qu-bie">Q: Reader/Writer和InputStream/OutputStream的区别？</a></li>
-<li><a href="#ru-he-she-zhi-she-zhi-bian-ma">如何设置设置编码：</a></li>
-</ul>
-</li>
-<li><a href="#xu-lie-hua-wen-ti">序列化问题</a>
-<ul>
-<li><a href="#q-java-de-xu-lie-hua-yi-ban-shi-zuo-shi-me-de">Q: java的序列化一般是做什么的？</a></li>
-<li><a href="#q-dui-mou-dui-xiang-jin-xing-xu-lie-hua-shi-ru-he-rang-li-mian-mou-ge-min-gan-cheng-yuan-bu-bei-xu-lie-hua">Q： 对某对象进行序列化时， 如何让里面某个敏感成员不被序列化？</a></li>
-<li><a href="#q-externalizable-he-serializable-na-ge-kuai-yuan-yin-shi-shi-me">Q： Externalizable和Serializable哪个快？ 原因是什么？</a></li>
-<li><a href="#q-externalizable-xu-yao-chan-sheng-xu-lie-hua-id-ma">Q： Externalizable需要产生序列化ID吗？</a></li>
-</ul>
-</li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="wen-jian-api">文件API</span><a href="#wen-jian-api" class="header-anchor">#</a></h1>
-<h2><span id="q-file-lei-ke-yi-yong-lai-zuo-mu-lu-cao-zuo-ma">Q: File类可以用来做目录操作吗？</span><a href="#q-file-lei-ke-yi-yong-lai-zuo-mu-lu-cao-zuo-ma" class="header-anchor">#</a></h2>
-<p>A：<br>
-可以。<br>
-File对象本身可以是目录。<br>
-调用file.mkdirs()即可创建目录。</p>
-<hr>
-<h2><span id="q-zhi-jie-diao-yong-file-delete-ke-yi-shan-chu-mu-lu-ma">Q：直接调用file.delete()可以删除目录吗？</span><a href="#q-zhi-jie-diao-yong-file-delete-ke-yi-shan-chu-mu-lu-ma" class="header-anchor">#</a></h2>
-<p>A：<br>
-如果是文件或者空目录，可以直接删除。<br>
-但如果目录中有文件或者子目录，则必须递归删除。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="type">boolean</span> <span class="title function_">deleteDir</span><span class="params">(File dir)</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (dir.isDirectory()) &#123;</span><br><span class="line">    String[] children = dir.list();</span><br><span class="line">　　　　　　　<span class="comment">//递归删除目录中的子目录下</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>; i&lt;children.length; i++) &#123;</span><br><span class="line">        <span class="type">boolean</span> <span class="variable">success</span> <span class="operator">=</span> deleteDir(<span class="keyword">new</span> <span class="title class_">File</span>(dir, children[i]));</span><br><span class="line">        <span class="keyword">if</span> (!success) &#123;</span><br><span class="line">           <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">   <span class="comment">// 目录此时为空，可以删除</span></span><br><span class="line">   <span class="keyword">return</span> dir.delete();</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<h2><span id="q-you-na-xie-fang-fa-pan-duan-gei-ding-lu-jing-xia-wen-jian-shi-fou-cun-zai">Q： 有哪些方法判断给定路径下文件是否存在？</span><a href="#q-you-na-xie-fang-fa-pan-duan-gei-ding-lu-jing-xia-wen-jian-shi-fou-cun-zai" class="header-anchor">#</a></h2>
-<p>A：</p>
-<ol>
-<li>File类的exists方法： ? file.exist(string)</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">File</span> <span class="variable">testFile</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(testFilePath);</span><br><span class="line"><span class="keyword">if</span>(!testFile .exists()) &#123;...&#125;</span><br></pre></td></tr></table></figure>
-<ol start="2">
-<li>File类的静态exist方法, File.exist(Path path)</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Path</span> <span class="variable">filePath</span> <span class="operator">=</span> Paths.get(testFilePath);</span><br><span class="line"><span class="keyword">if</span> (Files.exists(filePath) &#123;...&#125;</span><br></pre></td></tr></table></figure>
-<p>注意静态方法和非静态方法的区别</p>
-<h1><span id="zi-jie-shu-ru-liu-inputstream">字节输入流InputStream</span><a href="#zi-jie-shu-ru-liu-inputstream" class="header-anchor">#</a></h1>
-<h2><span id="shuo-yi-xia-yi-xia-zhe-xie-te-dian-dui-ying-na-xie-inputstream-lei">说一下以下这些特点对应哪些InputStream类</span><a href="#shuo-yi-xia-yi-xia-zhe-xie-te-dian-dui-ying-na-xie-inputstream-lei" class="header-anchor">#</a></h2>
-<ul>
-<li>字节数组char[] 作为输入源的InputStream类是————ByteArrayInputStream</li>
-<li>用文件作为输入源的InputStream类是？————FileInputStream</li>
-<li>用字符串作为输入源的是？————StringBufferInputStream</li>
-<li>用于多线程之间管道通信的输入源是————PipeInputStream ?</li>
-</ul>
-<hr>
-<h2><span id="q-filterinputstream-shi-shi-me">Q： FilterInputStream是什么？</span><a href="#q-filterinputstream-shi-shi-me" class="header-anchor">#</a></h2>
-<p>A： 用于装饰上面这些输入流的，可以叠加，每装饰一层就相当于增加了1个功能。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">InputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FilterInputStream</span>(InputStream)</span><br></pre></td></tr></table></figure>
-<p>–<br>
-以下这些特点分别对应哪些FilterInputStream？</p>
-<ul>
-<li>装饰后，不仅可读字符串，还可读取例如int、long等java基本类型的是————DataInputStream<br>
-DataInputStream里面会支持readInt、readLong等方法。</li>
-<li>装饰后，支持分批缓冲读取读取的是————BufferedInputStream<br>
-创建BufferedInputStream时，我们会通过它的构造函数指定某个输入流为参数。BufferedInputStream会将该输入流数据分批读取，每次读取一部分到缓冲中；操作完缓冲中的这部分数据之后，再从输入流中读取下一部分的数据。</li>
-<li>其他：<br>
-PushbackInputStream： 具有1个能回退上一个字节的缓冲区<br>
-ObjectInputStream ： 一般用于反序列化读入<br>
-LineNumberInputStream： 可跟踪输入流中的行号</li>
-</ul>
-<hr>
-<h1><span id="zi-jie-shu-chu-liu-outputstream">字节输出流OutputStream</span><a href="#zi-jie-shu-chu-liu-outputstream" class="header-anchor">#</a></h1>
-<h2><span id="q-outputstream-bao-han-na-xie-shi-xian">Q: OutputStream包含哪些实现？</span><a href="#q-outputstream-bao-han-na-xie-shi-xian" class="header-anchor">#</a></h2>
-<p>ByteArrayOutputStream ?输出到缓冲区?<br>
-FileOutputStream ? 写到文件<br>
-PipedOutputStream ?写入管道<br>
-FilterOutputStream ?</p>
-<p>而FilterOutputStream 包含</p>
-<ul>
-<li>DataOutputStream ?（可以out.writexxx各种类型的数据，writeDouble， writeUTF， ?reader也一样，可以读想要的数据类型）、</li>
-<li>PringtStream （输出到文件用这个， 该类.println(str)即可写入文件）</li>
-<li>BufferOutputString</li>
-</ul>
-<hr>
-<p>FileOutputStream相关</p>
-<h2><span id="q-new-fileoutputstream-name-true-zhe-ge-gou-zao-li-de-true-can-shu-shi-zuo-shi-me-yong-de">Q：new FileOutputStream(name, true)，这个构造里的true参数是做什么用的？</span><a href="#q-new-fileoutputstream-name-true-zhe-ge-gou-zao-li-de-true-can-shu-shi-zuo-shi-me-yong-de" class="header-anchor">#</a></h2>
-<p>A：<br>
-是否支持在文件末追加的意思。<br>
-<img src="/images/Java-IO%E5%9F%BA%E7%A1%80/1618921889243064567.png" alt="image.png"></p>
-<p>默认是false，指的是覆盖整个文本。<br>
-如果设置成true，会在要写入的文件后面追加本次写入的内容。</p>
-<hr>
-<h2><span id="q-bufferoutputstream-xiang-guan-gai-nian-qi-shi-shi-kao-huan-chong-qu-shi-fou-xu-yao-shua-xin-zhi-lei-de-wen-ti">Q：BufferOutputStream相关概念（其实是考缓冲区是否需要刷新之类的问题）</span><a href="#q-bufferoutputstream-xiang-guan-gai-nian-qi-shi-shi-kao-huan-chong-qu-shi-fou-xu-yao-shua-xin-zhi-lei-de-wen-ti" class="header-anchor">#</a></h2>
-<ul>
-<li>BufferOutputStream里的flush()方法是做什么的？</li>
-<li>BufferOutputStream调用close后，会触发flush()来刷新缓冲区吗？</li>
-<li>BufferOutputStream调用close可能会丢数据吗？</li>
-<li>BufferOutputStream多次调用close会报错吗？</li>
-</ul>
-<p>A：</p>
-<ul>
-<li>
-<p>flush把缓冲区里的数据写入文件，并刷新缓冲区<br>
-<img src="/images/Java-IO%E5%9F%BA%E7%A1%80/1618921900764052010.png" alt="image.png"></p>
-</li>
-<li>
-<p>close关闭此输出流并释放与此相关联的任何系统资源， 会调用flush，除了flushBuffer，还会调用父类的flush。</p>
-</li>
-<li>
-<p>不会丢数据，因为上面这条原因。</p>
-</li>
-<li>
-<p>多次调用不会报错。<br>
-*?<br>
-<img src="/images/Java-IO%E5%9F%BA%E7%A1%80/1618921909192091711.png" alt="image.png"></p>
-</li>
-</ul>
-<h1><span id="reader-he-writer">Reader和Writer</span><a href="#reader-he-writer" class="header-anchor">#</a></h1>
-<h2><span id="q-reader-writer-he-inputstream-outputstream-de-qu-bie">Q: Reader/Writer和InputStream/OutputStream的区别？</span><a href="#q-reader-writer-he-inputstream-outputstream-de-qu-bie" class="header-anchor">#</a></h2>
-<p>A：</p>
-<ul>
-<li>InputStream是表示 <em><strong>字节输入流</strong></em> 的所有类的超类<br>
-Reader是用于读取 <em><strong>字符流</strong></em> 的抽象类<br>
-InputStream提供的是字节流的读取，而非文本读取，这是和Reader类的根本区别。<br>
-即用Reader读取出来的是char数组或者String ，使用InputStream读取出来的是byte数组。</li>
-<li>Reader/Writer提供兼容Unicode、面向字符的IO功能，为了国际化</li>
-</ul>
-<hr>
-<ul>
-<li>用reader读取标准输入：<br>
-BufferedReader bufr = new BufferedReader(new InputStreamReader(<a target="_blank" rel="noopener" href="http://System.in">System.in</a>));</li>
-<li>用Writer进行标准输出：<br>
-BufferedWriter bufw = new BufferedWriter(new OutputStreamWriter(System.out));</li>
-</ul>
-<hr>
-<h2><span id="ru-he-she-zhi-she-zhi-bian-ma">如何设置设置编码：</span><a href="#ru-he-she-zhi-she-zhi-bian-ma" class="header-anchor">#</a></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">InputStreamReader</span> <span class="variable">isr</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InputStreamReader</span>(<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(file), <span class="string">&quot;UTF-8&quot;</span>); ?</span><br><span class="line"><span class="type">BufferedReader</span> <span class="variable">read</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedReader</span>(isr); ?</span><br></pre></td></tr></table></figure>
-<h1><span id="xu-lie-hua-wen-ti">序列化问题</span><a href="#xu-lie-hua-wen-ti" class="header-anchor">#</a></h1>
-<h2><span id="q-java-de-xu-lie-hua-yi-ban-shi-zuo-shi-me-de">Q: java的序列化一般是做什么的？</span><a href="#q-java-de-xu-lie-hua-yi-ban-shi-zuo-shi-me-de" class="header-anchor">#</a></h2>
-<p>A:</p>
-<ol>
-<li>永久的保存对象数据(将对象数据保存在文件当中,或者是磁盘中</li>
-<li>通过序列化操作将对象数据在网络上进行传输(由于网络传输是以字节流的方式对数据进行传输的.因此序列化的目的是将对象数据转换成字节流的形式)</li>
-<li>将对象数据在进程之间进行传递(Activity之间传递对象数据时,需要在当前的Activity中对对象数据进行序列化操作.在另一个Activity中需要进行反序列化操作讲数据取出)</li>
-<li>Java平台允许我们在内存中创建可复用的Java对象，但一般情况下，只有当JVM处于运行时，这些对象才可能存在，即，这些对象的生命周期不会比JVM的生命周期更长（即每个对象都在JVM中）但在现实应用中，就可能要停止JVM运行，但有要保存某些指定的对象，并在将来重新读取被保存的对象。这是Java对象序列化就能够实现该功能。（可选择入数据库、或文件的形式保存）</li>
-<li>序列化对象的时候只是针对变量进行序列化,不针对方法进行序列化.</li>
-<li>在Intent之间,基本的数据类型直接进行相关传递即可,但是一旦数据类型比较复杂的时候,就需要进行序列化操作了.</li>
-</ol>
-<hr>
-<h2><span id="q-dui-mou-dui-xiang-jin-xing-xu-lie-hua-shi-ru-he-rang-li-mian-mou-ge-min-gan-cheng-yuan-bu-bei-xu-lie-hua">Q： 对某对象进行序列化时， 如何让里面某个敏感成员不被序列化？</span><a href="#q-dui-mou-dui-xiang-jin-xing-xu-lie-hua-shi-ru-he-rang-li-mian-mou-ge-min-gan-cheng-yuan-bu-bei-xu-lie-hua" class="header-anchor">#</a></h2>
-<p>A:?</p>
-<ul>
-<li>方法一：可使用transient关键字处理那个敏感成员</li>
-<li>方法二：可以通过覆盖Serializable接口的writeObject和readObject来实现序列化， ?但是方法签名必须是private void writeObject(ObjetOutputStream stream) throw IOException;</li>
-<li>方法三： 实现Externalizable接口，可自定义实现writeExternal以及readExternal方法</li>
-</ul>
-<hr>
-<h2><span id="q-externalizable-he-serializable-na-ge-kuai-yuan-yin-shi-shi-me">Q： Externalizable和Serializable哪个快？ 原因是什么？</span><a href="#q-externalizable-he-serializable-na-ge-kuai-yuan-yin-shi-shi-me" class="header-anchor">#</a></h2>
-<p>A： Externalizable更快。<br>
-原因：</p>
-<ul>
-<li>
-<p>Java序列化写入不仅是完整的类名，也包含整个类的定义，包含所有被引用的类。<br>
-类定义可以是相当大的，也许构成了性能和效率的问题，当然这是编写一个单一的对象。如果您正在编写了大量相同的类的对象，这时类定义的开销通常不是一个大问题。另一件事情是，如果你的对象有一类的引用（如元数据对象），那么Java序列化将写入整个类的定义，不只是类的名称，因此，使用Java序列化写出元数据（meta-data）是非常昂贵的</p>
-</li>
-<li>
-<p>通过实现Externalizable接口，这是可能优化Java序列化的。实现此接口，避免写出整个类定义，只是类名被写入</p>
-</li>
-</ul>
-<hr>
-<h2><span id="q-externalizable-xu-yao-chan-sheng-xu-lie-hua-id-ma">Q： Externalizable需要产生序列化ID吗？</span><a href="#q-externalizable-xu-yao-chan-sheng-xu-lie-hua-id-ma" class="header-anchor">#</a></h2>
-<p>A： 采用Externalizable无需产生序列化ID（serialVersionUID）~而Serializable接口则需要</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2684,14 +2531,14 @@ BufferedWriter bufw = new BufferedWriter(new OutputStreamWriter(System.out));</l
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">242</span>
+          <span class="site-state-item-count">243</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-count">62</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -2755,7 +2602,7 @@ BufferedWriter bufw = new BufferedWriter(new OutputStreamWriter(System.out));</l
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共318.7k字</span>
+  <span class="post-count">博客全站共321.6k字</span>
 </div>
 
         

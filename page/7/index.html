@@ -181,6 +181,308 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%A4%87%E4%BB%BD%E5%92%8C%E6%8C%81%E4%B9%85%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%A4%87%E4%BB%BD%E5%92%8C%E6%8C%81%E4%B9%85%E5%8C%96/" class="post-title-link" itemprop="url">redis备份和持久化</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-09-23 00:36:12" itemprop="dateCreated datePublished" datetime="2022-09-23T00:36:12+08:00">2022-09-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-09-24 00:28:15" itemprop="dateModified" datetime="2022-09-24T00:28:15+08:00">2022-09-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">微服务组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/redis/redis%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">redis高可用原理</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%A4%87%E4%BB%BD%E5%92%8C%E6%8C%81%E4%B9%85%E5%8C%96/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%A4%87%E4%BB%BD%E5%92%8C%E6%8C%81%E4%B9%85%E5%8C%96/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#rdb-redis-database-redis-kuai-zhao">RDB（Redis DataBase） redis快照</a>
+<ul>
+<li><a href="#q-rdb-you-na-liang-chong-hong-fa-fang-shi">Q: RDB有哪两种触发方式？</a></li>
+<li><a href="#q-save-ming-ling-he-bgsave-ming-ling-you-shi-me-qu-bie">Q: save命令和bgsave命令有什么区别？</a></li>
+<li><a href="#q-ru-guo-yi-ci-zhi-xing-hao-ji-ge-bgsave-ming-ling-hui-zen-me-yang">Q: 如果一次执行好几个bgsave命令会怎么样？</a></li>
+<li><a href="#q-bgsave-de-guo-cheng-zhong-ru-guo-zhu-jin-cheng-shou-dao-xin-de-xie-shu-ju-zen-me-ban">Q: bgsave的过程中，如果主进程收到新的写数据怎么办？</a></li>
+<li><a href="#q-zhe-ge-tong-bu-fu-ben-gei-zi-jin-cheng-de-shi-hou-jin-cheng-beng-kui-zen-me-ban-dao-zhi-mei-you-luo-pan-dao-rdb">Q: 这个同步副本给子进程的时候进程崩溃怎么办？导致没有落盘到RDB</a></li>
+<li><a href="#q-mei-miao-zuo-yi-ci-bgsave-hui-you-shi-me-wen-ti-ru-guo-shu-ju-liang-bi-jiao-da-de-hua">Q: 每秒做一次bgsave会有什么问题？如果数据量比较大的话</a></li>
+<li><a href="#q-ru-he-jie-jue-shang-mian-de-wen-ti-you-neng-jin-ke-neng-bao-zheng-bei-fen-de-shi-shi-ke-kao-xing">Q: 如何解决上面的问题， 又能尽可能保证备份的实时可靠性？</a></li>
+<li><a href="#q-rdb-de-you-que-dian">Q: RDB的优缺点？</a></li>
+</ul>
+</li>
+<li><a href="#aof-append-only-file-chi-jiu-hua-fang-shi">AOF（append only file）持久化方式</a>
+<ul>
+<li><a href="#q-aof-cai-yong-xian-geng-xin-nei-cun-huan-cun-zai-xie-bei-fen-ri-zhi-he-mysql-ri-zhi-xian-xing-de-si-xiang-bu-tong-wei-shi-me">Q: AOF采用 ”先更新内存缓存， 再写备份日志“， 和”mysql日志先行“的思想不同，为什么？</a></li>
+<li><a href="#q-aof-ji-lu-shi-de-3-ge-bu-zou-shi-zen-yang-de">Q: AOF记录时的3个步骤是怎样的？</a></li>
+<li><a href="#q-sui-zhao-xie-ru-cao-zuo-yue-lai-yue-duo-aof-wen-jian-hui-yue-lai-yue-da-zen-me-ban">Q: 随着写入操作越来越多， AOF文件会越来越大，怎么办？</a></li>
+<li><a href="#q-chong-xie-shi-you-xin-de-shu-ju-xie-ru-zen-me-ban">Q: 重写时，由新的数据写入怎么办？</a></li>
+<li><a href="#q-ru-guo-chong-xie-de-shi-hou-redis-chong-qi-liao-zen-me-ban">Q: 如果重写的时候 redis重启了怎么办？</a></li>
+<li><a href="#q-zhu-jin-cheng-ru-he-kao-bei-shu-ju-gei-zi-jin-cheng">Q: 主进程如何拷贝数据给子进程？</a></li>
+<li><a href="#q-hui-fu-shi-ru-guo-tong-shi-you-rdb-wen-jian-he-aof-wen-jian-zen-me-xuan-ze">Q: 恢复时， 如果同时有RDB文件和AOF文件，怎么选择？</a></li>
+<li><a href="#q-na-me-wei-shi-me-hui-you-xian-jia-zai-aof-ni">Q: 那么为什么会优先加载AOF呢？</a></li>
+<li><a href="#q-xian-shang-gao-ya-huan-jing-ru-he-jin-xing-bei-fen-ji-zhi-de-diao-you-jian-shao-zu-sai">Q: 线上高压环境如何进行备份机制的调优，减少阻塞？</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<hr>
+<p>redis持久化是做什么的？就是为了做备份， 避免redis重启后要重新从数据库里拿缓存。<br>
+redis当前有两种持久化机制： RDB和AOC</p>
+<hr>
+<h1><span id="rdb-redis-database-redis-kuai-zhao">RDB（Redis DataBase） redis快照</span><a href="#rdb-redis-database-redis-kuai-zhao" class="header-anchor">#</a></h1>
+<h2><span id="q-rdb-you-na-liang-chong-hong-fa-fang-shi">Q: RDB有哪两种触发方式？</span><a href="#q-rdb-you-na-liang-chong-hong-fa-fang-shi" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>
+<p>手动触发。 调用save或者bgsave命令进行快照和备份。</p>
+<p>也可以配置redis.conf，做一个周期性快照，但本质上是使用上面这2个命令</p>
+</li>
+<li>
+<p>自动触发。m秒内有n次修改，或者主从复制时会触发。</p>
+</li>
+</ul>
+<hr>
+<h2><span id="q-save-ming-ling-he-bgsave-ming-ling-you-shi-me-qu-bie">Q: save命令和bgsave命令有什么区别？</span><a href="#q-save-ming-ling-he-bgsave-ming-ling-you-shi-me-qu-bie" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>
+<p>save命令会阻塞当前redis线程，导致缓存暂时不可用（stopwolrd）， 只能在开发环境或者测试环境使用。</p>
+</li>
+<li>
+<p>bgsave 会fork创建一个子进程，在子进程中做RDB操作。</p>
+<p>RDB快照存盘完成后，会通知主进程，主进程更新统计信息。</p>
+</li>
+</ul>
+<hr>
+<h2><span id="q-ru-guo-yi-ci-zhi-xing-hao-ji-ge-bgsave-ming-ling-hui-zen-me-yang">Q: 如果一次执行好几个bgsave命令会怎么样？</span><a href="#q-ru-guo-yi-ci-zhi-xing-hao-ji-ge-bgsave-ming-ling-hui-zen-me-yang" class="header-anchor">#</a></h2>
+<p>A:<br>
+当检测到有子进程时， 后面几个bgsave命令会直接返回，不会做创建。</p>
+<hr>
+<h2><span id="q-bgsave-de-guo-cheng-zhong-ru-guo-zhu-jin-cheng-shou-dao-xin-de-xie-shu-ju-zen-me-ban">Q: bgsave的过程中，如果主进程收到新的写数据怎么办？</span><a href="#q-bgsave-de-guo-cheng-zhong-ru-guo-zhu-jin-cheng-shou-dao-xin-de-xie-shu-ju-zen-me-ban" class="header-anchor">#</a></h2>
+<p>A:<br>
+主进程会把写数据生成一个副本，交给bgsave子进程， 子进程会把这个修改作为最新修改写入RDB文件。</p>
+<hr>
+<h2><span id="q-zhe-ge-tong-bu-fu-ben-gei-zi-jin-cheng-de-shi-hou-jin-cheng-beng-kui-zen-me-ban-dao-zhi-mei-you-luo-pan-dao-rdb">Q: 这个同步副本给子进程的时候进程崩溃怎么办？导致没有落盘到RDB</span><a href="#q-zhe-ge-tong-bu-fu-ben-gei-zi-jin-cheng-de-shi-hou-jin-cheng-beng-kui-zen-me-ban-dao-zhi-mei-you-luo-pan-dao-rdb" class="header-anchor">#</a></h2>
+<p>A:<br>
+RDB完全写入成功，才算成功。<br>
+写一半的RDB文件，被认为无效文件，因此会用上一次的有效RDB文件进行恢复。</p>
+<hr>
+<h2><span id="q-mei-miao-zuo-yi-ci-bgsave-hui-you-shi-me-wen-ti-ru-guo-shu-ju-liang-bi-jiao-da-de-hua">Q: 每秒做一次bgsave会有什么问题？如果数据量比较大的话</span><a href="#q-mei-miao-zuo-yi-ci-bgsave-hui-you-shi-me-wen-ti-ru-guo-shu-ju-liang-bi-jiao-da-de-hua" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ol>
+<li>磁盘压力比较大，频繁竞争磁盘通过（注意每次快照的文件都是不同的文件，但磁盘写入器会共用）</li>
+<li>创建fork子线程的操作，本身会阻塞一定的主进程时间。</li>
+</ol>
+<hr>
+<h2><span id="q-ru-he-jie-jue-shang-mian-de-wen-ti-you-neng-jin-ke-neng-bao-zheng-bei-fen-de-shi-shi-ke-kao-xing">Q: 如何解决上面的问题， 又能尽可能保证备份的实时可靠性？</span><a href="#q-ru-he-jie-jue-shang-mian-de-wen-ti-you-neng-jin-ke-neng-bao-zheng-bei-fen-de-shi-shi-ke-kao-xing" class="header-anchor">#</a></h2>
+<p>A:<br>
+做增量快照（只备份新增的修改），而增量快照的话RDB无法支持。</p>
+<hr>
+<h2><span id="q-rdb-de-you-que-dian">Q: RDB的优缺点？</span><a href="#q-rdb-de-you-que-dian" class="header-anchor">#</a></h2>
+<p>A:<br>
+优点：</p>
+<ul>
+<li>
+<p>使用了LZF算法做了压缩，数据量小于内存大小，很适合备份、全量复制。</p>
+</li>
+<li>
+<p>备份恢复速度比AOF快。</p>
+<p>缺点：</p>
+</li>
+<li>
+<p>效率不高，如果数据量太大的话。</p>
+</li>
+<li>
+<p>fork子进程操作比较重</p>
+</li>
+<li>
+<p>文件属于二进制文件，可读性差。</p>
+</li>
+</ul>
+<h1><span id="aof-append-only-file-chi-jiu-hua-fang-shi">AOF（append only file）持久化方式</span><a href="#aof-append-only-file-chi-jiu-hua-fang-shi" class="header-anchor">#</a></h1>
+<h2><span id="q-aof-cai-yong-xian-geng-xin-nei-cun-huan-cun-zai-xie-bei-fen-ri-zhi-he-mysql-ri-zhi-xian-xing-de-si-xiang-bu-tong-wei-shi-me">Q: AOF采用 ”先更新内存缓存， 再写备份日志“， 和”mysql日志先行“的思想不同，为什么？</span><a href="#q-aof-cai-yong-xian-geng-xin-nei-cun-huan-cun-zai-xie-bei-fen-ri-zhi-he-mysql-ri-zhi-xian-xing-de-si-xiang-bu-tong-wei-shi-me" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>
+<p>错误命令得调用redisobject方法的时候才能感知，写日志时不方便做检查。</p>
+<p>如果写了错误命令的日志，再执行命令，就不好恢复了（那mysql为什么没有这个顾虑？）</p>
+</li>
+<li>
+<p>尽快加速写操作的响应</p>
+<p>风险就是正巧写的时候挂了，那日志也丢了。</p>
+</li>
+</ul>
+<hr>
+<h2><span id="q-aof-ji-lu-shi-de-3-ge-bu-zou-shi-zen-yang-de">Q: AOF记录时的3个步骤是怎样的？</span><a href="#q-aof-ji-lu-shi-de-3-ge-bu-zou-shi-zen-yang-de" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ol>
+<li>
+<p>命令追加</p>
+<p>把写命令写道aof_buf缓冲区</p>
+</li>
+<li>
+<p>文件写入和同步</p>
+<p>什么时候写入文件，有3种策略</p>
+</li>
+</ol>
+<ul>
+<li>always：每次写入缓冲区后，都马上写入文件</li>
+<li>everySec:每秒把缓冲区里的数据写一次到文件（可能丢失1秒）</li>
+<li>no:由操作系统控制合何时写文件</li>
+</ul>
+<hr>
+<h2><span id="q-sui-zhao-xie-ru-cao-zuo-yue-lai-yue-duo-aof-wen-jian-hui-yue-lai-yue-da-zen-me-ban">Q: 随着写入操作越来越多， AOF文件会越来越大，怎么办？</span><a href="#q-sui-zhao-xie-ru-cao-zuo-yue-lai-yue-duo-aof-wen-jian-hui-yue-lai-yue-da-zen-me-ban" class="header-anchor">#</a></h2>
+<p>A:<br>
+当大到一定成都时， redis会创建一个新的AOF文件， 对老文件里的命令进行重写，去除一些冗余命令，只保留每个键的最后状态。<br>
+重写操作也是fork了一个子线程进行重写</p>
+<hr>
+<h2><span id="q-chong-xie-shi-you-xin-de-shu-ju-xie-ru-zen-me-ban">Q: 重写时，由新的数据写入怎么办？</span><a href="#q-chong-xie-shi-you-xin-de-shu-ju-xie-ru-zen-me-ban" class="header-anchor">#</a></h2>
+<p>A:<br>
+同步2份写操作， 老AOF文件写一份， 新AOF文件的缓冲区同步一份。</p>
+<ol>
+<li>
+<p>主线程fork出子进程重写aof日志</p>
+</li>
+<li>
+<p>子进程重写日志完成后，主线程追加aof日志缓冲</p>
+</li>
+<li>
+<p>替换日志文件</p>
+<p><img src="/images/redis%E5%A4%87%E4%BB%BD%E5%92%8C%E6%8C%81%E4%B9%85%E5%8C%96/860816c7e75a0e58e1850249253f77bdd72ff327.png" alt="860816c7e75a0e58e1850249253f77bdd72ff327"></p>
+</li>
+</ol>
+<hr>
+<h2><span id="q-ru-guo-chong-xie-de-shi-hou-redis-chong-qi-liao-zen-me-ban">Q: 如果重写的时候 redis重启了怎么办？</span><a href="#q-ru-guo-chong-xie-de-shi-hou-redis-chong-qi-liao-zen-me-ban" class="header-anchor">#</a></h2>
+<p>A:<br>
+没写完的AOF文件默认失效， 使用老的AOF文件。</p>
+<hr>
+<h2><span id="q-zhu-jin-cheng-ru-he-kao-bei-shu-ju-gei-zi-jin-cheng">Q: 主进程如何拷贝数据给子进程？</span><a href="#q-zhu-jin-cheng-ru-he-kao-bei-shu-ju-gei-zi-jin-cheng" class="header-anchor">#</a></h2>
+<p>A:<br>
+使用操作系统的copy on write<br>
+子进程时会拷贝父进程的页表，即虚实映射关系（虚拟内存和物理内存的映射索引表），而不会拷贝物理内存<br>
+<img src="/images/redis%E5%A4%87%E4%BB%BD%E5%92%8C%E6%8C%81%E4%B9%85%E5%8C%96/36b01fbc65c4c5b78e1f61f26f11766dc5a56407.png" alt="36b01fbc65c4c5b78e1f61f26f11766dc5a56407"></p>
+<hr>
+<p>一般都采用RDB和AOF混合的方式， 先全量快照， 然后一段时间内增量AOF。</p>
+<hr>
+<h2><span id="q-hui-fu-shi-ru-guo-tong-shi-you-rdb-wen-jian-he-aof-wen-jian-zen-me-xuan-ze">Q: 恢复时， 如果同时有RDB文件和AOF文件，怎么选择？</span><a href="#q-hui-fu-shi-ru-guo-tong-shi-you-rdb-wen-jian-he-aof-wen-jian-zen-me-xuan-ze" class="header-anchor">#</a></h2>
+<p>A:<br>
+优先选择AOF文件，AOF不存在再RDB。<br>
+<img src="/images/redis%E5%A4%87%E4%BB%BD%E5%92%8C%E6%8C%81%E4%B9%85%E5%8C%96/219bd9996098a234c7a2534fa4e5d24c2a0525c2.png" alt="219bd9996098a234c7a2534fa4e5d24c2a0525c2"></p>
+<hr>
+<h2><span id="q-na-me-wei-shi-me-hui-you-xian-jia-zai-aof-ni">Q: 那么为什么会优先加载AOF呢？</span><a href="#q-na-me-wei-shi-me-hui-you-xian-jia-zai-aof-ni" class="header-anchor">#</a></h2>
+<p>A:<br>
+因为AOF保存的数据更完整，通过上面的分析我们知道AOF基本上最多损失1s的数据。</p>
+<hr>
+<h2><span id="q-xian-shang-gao-ya-huan-jing-ru-he-jin-xing-bei-fen-ji-zhi-de-diao-you-jian-shao-zu-sai">Q: 线上高压环境如何进行备份机制的调优，减少阻塞？</span><a href="#q-xian-shang-gao-ya-huan-jing-ru-he-jin-xing-bei-fen-ji-zhi-de-diao-you-jian-shao-zu-sai" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>关闭非敏感、重要性数据的备份</li>
+<li>通过一些其他补数据机制进行恢复，例如自己写一些缓存重新载入的补数据功能。</li>
+<li>redis集群实现滚动备份，避免全部同时在备份。</li>
+<li>redis主从复制时， 让从节点做备份，主节点不做部分。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E7%BD%91%E7%BB%9CIO%E6%A8%A1%E5%9E%8B%E5%92%8C%E4%BA%8B%E4%BB%B6%E8%A7%A6%E5%8F%91%E5%8E%9F%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -992,6 +1294,237 @@ skip+dict比较复杂，如下图所示：<br>
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" class="post-title-link" itemprop="url">redis性能调优</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-09-22 23:35:12" itemprop="dateCreated datePublished" datetime="2022-09-22T23:35:12+08:00">2022-09-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-09-24 00:28:08" itemprop="dateModified" datetime="2022-09-24T00:28:08+08:00">2022-09-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">微服务组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/redis/redis%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">redis底层原理</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#q-ni-zen-me-que-ren-ni-de-redis-bian-man-liao-huo-zhe-you-wen-ti-ni">Q: 你怎么确认你的redis变慢了或者有问题呢？</a></li>
+<li><a href="#q-shi-yong-shi-me-yang-de-redis-ming-ling-ke-neng-dao-zhi-xing-neng-xia-jiang">Q: 使用什么样的redis命令可能导致性能下降？</a></li>
+<li><a href="#q-pin-fan-xie-ru-huo-zhe-shan-chu-yi-ge-hen-da-de-zi-fu-chuan-you-shi-me-wen-ti">Q: 频繁写入或者删除一个很大的字符串有什么问题？</a></li>
+<li><a href="#q-ru-he-zhao-dao-redis-zhong-shi-fou-you-zhe-chong-bigkey">Q: 如何找到redis中是否有这种bigkey？</a></li>
+<li><a href="#q-you-yi-ge-he-scan-lei-si-de-ming-ling-jiao-keys-ming-ling-you-shi-me-qu-bie">Q: 有一个和scan类似的命令叫keys命令， 有什么区别？</a></li>
+<li><a href="#q-redis-4-0-lazy-free-ji-zhi-you-liao-jie-me">Q: redis 4.0 lazy-free机制有了解么？</a></li>
+<li><a href="#q-da-liang-key-ji-zhong-guo-qi-ye-hui-dao-zhi-mou-yi-shi-ke-xing-neng-da-liang-xia-jiang-chu-liao-jia-sui-ji-guo-qi-shi-jian-wai-huan-neng-ru-he-bi-mian">Q: 大量key集中过期也会导致某一时刻性能大量下降，除了加随机过期时间外，还能如何避免？</a></li>
+<li><a href="#q-ru-he-wo-de-redis-nei-cun-pei-zhi-de-xiao-liao-hui-ru-he-dui-xing-neng-zao-cheng-ying-xiang">Q: 如何我的redis内存配置的小了，会如何对性能造成影响？</a></li>
+<li><a href="#q-redis-shi-li-nei-cun-yue-da-yue-hao-ma-tai-da-de-hua-ke-neng-you-shi-me-wen-ti">Q:Redis 实例内存越大越好吗？太大的话可能有什么问题？</a></li>
+<li><a href="#q-linux-de-nei-cun-da-ye-you-liao-jie-me-kai-qi-hou-dui-redis-de-xing-neng-shi-ti-sheng-huan-shi-xia-jiang">Q: linux的内存大页有了解么？ 开启后对redis的性能是提升还是下降？</a></li>
+<li><a href="#q-aof-xu-yao-zhu-xian-cheng-zuo-tong-bu-xie-wo-pei-zhi-cheng-appendfsync-everysec-xie-nei-cun-mei-miao-xie-ci-pan-shi-bu-shi-jiu-bu-hui-zu-sai-zhu-xian-cheng-zao-cheng-xing-neng-xia-jiang-liao-wei-shi-me">Q: AOF需要主线程做同步写， 我配置成 appendfsync everysec （写内存，每秒写磁盘）， 是不是就不会阻塞主线程，造成性能下降了？为什么？</a></li>
+<li><a href="#q-ru-he-jie-jue-aof-de-xie-ci-pan-zu-sai-wen-ti">Q: 如何解决AOF的写磁盘阻塞问题？</a></li>
+<li><a href="#q-redis-da-liang-de-nei-cun-sui-pian-ye-hui-dao-zhi-xing-neng-xia-jiang-ru-he-you-hua-redis-de-sui-pian">Q: redis大量的内存碎片也会导致性能下降，如何优化redis的碎片？</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="q-ni-zen-me-que-ren-ni-de-redis-bian-man-liao-huo-zhe-you-wen-ti-ni">Q: 你怎么确认你的redis变慢了或者有问题呢？</span><a href="#q-ni-zen-me-que-ren-ni-de-redis-bian-man-liao-huo-zhe-you-wen-ti-ni" class="header-anchor">#</a></h1>
+<p>A:<br>
+用”相同规格“（CPU、内存）的其他redis（基准性能机器）做对比<br>
+用–latency-history 命令获取最近一段时间内各命令的响应延迟<br>
+如果比基准时间大了2倍以上，那就是变慢了。</p>
+<hr>
+<h1><span id="q-shi-yong-shi-me-yang-de-redis-ming-ling-ke-neng-dao-zhi-xing-neng-xia-jiang">Q: 使用什么样的redis命令可能导致性能下降？</span><a href="#q-shi-yong-shi-me-yang-de-redis-ming-ling-ke-neng-dao-zhi-xing-neng-xia-jiang" class="header-anchor">#</a></h1>
+<p>A:<br>
+O(N) 以上复杂度的命令，例如 SORT、SUNION、ZUNIONSTORE 等需要大量数据做聚合的命令<br>
+*注意， 对于数据的聚合操作，放在客户端做</p>
+<hr>
+<h1><span id="q-pin-fan-xie-ru-huo-zhe-shan-chu-yi-ge-hen-da-de-zi-fu-chuan-you-shi-me-wen-ti">Q: 频繁写入或者删除一个很大的字符串有什么问题？</span><a href="#q-pin-fan-xie-ru-huo-zhe-shan-chu-yi-ge-hen-da-de-zi-fu-chuan-you-shi-me-wen-ti" class="header-anchor">#</a></h1>
+<p>A:<br>
+如果一个 key 写入的 value 非常大，那么 Redis 在分配内存时就会比较耗时。<br>
+同样的，当删除这个 key 时（过期、淘汰），释放内存也会比较耗时，这种类型的 key 我们一般称之为 bigkey。<br>
+还有备份机制中，如果有bigkey，也会导致备份过程的写时复制很慢，导致性能下降。</p>
+<ul>
+<li>除了后台释放的方案外， 尽可能不要写bigkey！</li>
+</ul>
+<hr>
+<h1><span id="q-ru-he-zhao-dao-redis-zhong-shi-fou-you-zhe-chong-bigkey">Q: 如何找到redis中是否有这种bigkey？</span><a href="#q-ru-he-zhao-dao-redis-zhong-shi-fou-you-zhe-chong-bigkey" class="header-anchor">#</a></h1>
+<p>A:<br>
+”–bigkeys -i 频率”命令 可以获取各种类型的key大小分布情况<br>
+本质上就是调用了scan，拿到所有key后统计大小和个数。</p>
+<hr>
+<h1><span id="q-you-yi-ge-he-scan-lei-si-de-ming-ling-jiao-keys-ming-ling-you-shi-me-qu-bie">Q: 有一个和scan类似的命令叫keys命令， 有什么区别？</span><a href="#q-you-yi-ge-he-scan-lei-si-de-ming-ling-jiao-keys-ming-ling-you-shi-me-qu-bie" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>redis的单线程的。keys指令会导致线程阻塞一段时间，线上服务会停顿，直到指令执行完毕，服务才能恢复</li>
+<li>scan指令可以无阻塞的提取出指定模式的key列表,用的是额外线程。</li>
+</ul>
+<hr>
+<hr>
+<h1><span id="q-redis-4-0-lazy-free-ji-zhi-you-liao-jie-me">Q: redis 4.0 lazy-free机制有了解么？</span><a href="#q-redis-4-0-lazy-free-ji-zhi-you-liao-jie-me" class="header-anchor">#</a></h1>
+<p>A:<br>
+执行下面的命令，开启lazy-expire模式<br>
+#释放过期 key 的内存，放到后台线程执行<br>
+lazyfree-lazy-expire yes<br>
+涉及删除、过期造成的主线程延迟问题，都可改成lazy-free，在另外的线程中去释放。</p>
+<hr>
+<h1><span id="q-da-liang-key-ji-zhong-guo-qi-ye-hui-dao-zhi-mou-yi-shi-ke-xing-neng-da-liang-xia-jiang-chu-liao-jia-sui-ji-guo-qi-shi-jian-wai-huan-neng-ru-he-bi-mian">Q: 大量key集中过期也会导致某一时刻性能大量下降，除了加随机过期时间外，还能如何避免？</span><a href="#q-da-liang-key-ji-zhong-guo-qi-ye-hui-dao-zhi-mou-yi-shi-ke-xing-neng-da-liang-xia-jiang-chu-liao-jia-sui-ji-guo-qi-shi-jian-wai-huan-neng-ru-he-bi-mian" class="header-anchor">#</a></h1>
+<p>A:<br>
+通过运维手段处理</p>
+<ul>
+<li>在 Redis 上执行 INFO 命令就可以拿到这个实例所有的运行状态数据。</li>
+<li>重点关注 expired_keys 这一项，它代表整个实例到目前为止，累计删除过期 key 的数量。</li>
+<li>当这个指标在很短时间内出现了突增，需要及时报警出来，并进行这类key超时时间的调整和处理</li>
+</ul>
+<hr>
+<h1><span id="q-ru-he-wo-de-redis-nei-cun-pei-zhi-de-xiao-liao-hui-ru-he-dui-xing-neng-zao-cheng-ying-xiang">Q: 如何我的redis内存配置的小了，会如何对性能造成影响？</span><a href="#q-ru-he-wo-de-redis-nei-cun-pei-zhi-de-xiao-liao-hui-ru-he-dui-xing-neng-zao-cheng-ying-xiang" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>
+<p>Redis 内存达到 maxmemory 后，每次写入新的数据之前，Redis 必须先从实例中踢出一部分数据，让整个实例的内存维持在 maxmemory 之下，然后才能把新数据写进来。</p>
+<p>这个过程就是数据淘汰过程。 如果过小，频繁淘汰删除，肯定会影响性能。</p>
+</li>
+<li>
+<p>机器内存太小，导致频繁做系统的swap磁盘-内存页交换。</p>
+</li>
+</ul>
+<hr>
+<h1><span id="q-redis-shi-li-nei-cun-yue-da-yue-hao-ma-tai-da-de-hua-ke-neng-you-shi-me-wen-ti">Q:Redis 实例内存越大越好吗？太大的话可能有什么问题？</span><a href="#q-redis-shi-li-nei-cun-yue-da-yue-hao-ma-tai-da-de-hua-ke-neng-you-shi-me-wen-ti" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>当 Redis 开启了后台 RDB 和 AOF rewrite 后，在执行时，它们都需要主进程fork出一个子进程进行数据的持久化</li>
+<li>这个 fork 过程会消耗大量的 CPU 资源，在完成 fork 之前，整个 Redis 实例会被阻塞住，无法处理任何客户端请求。</li>
+<li>执行 fork 的耗时与redis实例大小有关，实例越大，耗时越久。</li>
+</ul>
+<blockquote>
+<p>注意，fork和部署类型也有关，如果部署在虚拟机上，fork所用的时间会更久。</p>
+</blockquote>
+<hr>
+<h1><span id="q-linux-de-nei-cun-da-ye-you-liao-jie-me-kai-qi-hou-dui-redis-de-xing-neng-shi-ti-sheng-huan-shi-xia-jiang">Q: linux的内存大页有了解么？ 开启后对redis的性能是提升还是下降？</span><a href="#q-linux-de-nei-cun-da-ye-you-liao-jie-me-kai-qi-hou-dui-redis-de-xing-neng-shi-ti-sheng-huan-shi-xia-jiang" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>Linux 内核从 2.6.38 开始，支持了内存大页机制，该机制允许应用程序以 2MB 大小为单位，向操作系统申请内存。</li>
+<li>这会导致申请内存的时间变大。</li>
+<li>当进行AOF或者RDB备份时，会进行写时复制，如果申请页过大，会导致及时只改20B的数据，也会用2MB单位申请，减慢主线程的请求响应速度。</li>
+</ul>
+<p>建议关闭redis部署机器上的内存大页。</p>
+<hr>
+<h1><span id="q-aof-xu-yao-zhu-xian-cheng-zuo-tong-bu-xie-wo-pei-zhi-cheng-appendfsync-everysec-xie-nei-cun-mei-miao-xie-ci-pan-shi-bu-shi-jiu-bu-hui-zu-sai-zhu-xian-cheng-zao-cheng-xing-neng-xia-jiang-liao-wei-shi-me">Q: AOF需要主线程做同步写， 我配置成 appendfsync everysec （写内存，每秒写磁盘）， 是不是就不会阻塞主线程，造成性能下降了？为什么？</span><a href="#q-aof-xu-yao-zhu-xian-cheng-zuo-tong-bu-xie-wo-pei-zhi-cheng-appendfsync-everysec-xie-nei-cun-mei-miao-xie-ci-pan-shi-bu-shi-jiu-bu-hui-zu-sai-zhu-xian-cheng-zao-cheng-xing-neng-xia-jiang-liao-wei-shi-me" class="header-anchor">#</a></h1>
+<p>A:<br>
+rewrite重写过慢<br>
+或者其他应用占用磁盘IO，导致写增量AOF文件过慢<br>
+这会导致主线吃还没同步写完，就收到了新的写请求，这时候新的写请求就会阻塞。</p>
+<hr>
+<h1><span id="q-ru-he-jie-jue-aof-de-xie-ci-pan-zu-sai-wen-ti">Q: 如何解决AOF的写磁盘阻塞问题？</span><a href="#q-ru-he-jie-jue-aof-de-xie-ci-pan-zu-sai-wen-ti" class="header-anchor">#</a></h1>
+<p>A:<br>
+如果是rewrite， 可以调整配置，让rewrite的时候不要做appendfsync写磁盘。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># AOF rewrite 期间，AOF 后台子线程不进行刷盘操作</span><br><span class="line"># 相当于在这期间，临时把 appendfsync 设置为了 none</span><br><span class="line">no-appendfsync-on-rewrite yes</span><br></pre></td></tr></table></figure>
+<p>提升磁盘性能，更换为SSD固态硬盘。</p>
+<hr>
+<h1><span id="q-redis-da-liang-de-nei-cun-sui-pian-ye-hui-dao-zhi-xing-neng-xia-jiang-ru-he-you-hua-redis-de-sui-pian">Q: redis大量的内存碎片也会导致性能下降，如何优化redis的碎片？</span><a href="#q-redis-da-liang-de-nei-cun-sui-pian-ye-hui-dao-zhi-xing-neng-xia-jiang-ru-he-you-hua-redis-de-sui-pian" class="header-anchor">#</a></h1>
+<p>A:<br>
+redis具有开启碎片整理的功能。<br>
+相关配置参考如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># 开启自动内存碎片整理（总开关）</span><br><span class="line">activedefrag yes</span><br><span class="line"> </span><br><span class="line"># 内存使用 100MB 以下，不进行碎片整理</span><br><span class="line">active-defrag-ignore-bytes 100mb</span><br><span class="line"> </span><br><span class="line"># 内存碎片率超过 10%，开始碎片整理</span><br><span class="line">active-defrag-threshold-lower 10</span><br><span class="line"># 内存碎片率超过 100%，尽最大努力碎片整理</span><br><span class="line">active-defrag-threshold-upper 100</span><br><span class="line"> </span><br><span class="line"># 内存碎片整理占用 CPU 资源最小百分比</span><br><span class="line">active-defrag-cycle-min 1</span><br><span class="line"># 内存碎片整理占用 CPU 资源最大百分比</span><br><span class="line">active-defrag-cycle-max 25</span><br><span class="line"> </span><br><span class="line"># 碎片整理期间，对于 List/Set/Hash/ZSet 类型元素一次 Scan 的数量</span><br><span class="line">active-defrag-max-scan-fields 1000</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1259,237 +1792,6 @@ Redis Sentinal着眼于高可用，在master宕机时会自动将slave提升为m
 Redis Cluster着眼于扩展性，在单个redis内存不足时，使用Cluster进行分片存储。</p>
 <hr>
 
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" class="post-title-link" itemprop="url">redis性能调优</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-09-22 23:35:12" itemprop="dateCreated datePublished" datetime="2022-09-22T23:35:12+08:00">2022-09-22</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-24 00:28:08" itemprop="dateModified" datetime="2022-09-24T00:28:08+08:00">2022-09-24</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">微服务组件</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/redis/redis%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">redis底层原理</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.7k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#q-ni-zen-me-que-ren-ni-de-redis-bian-man-liao-huo-zhe-you-wen-ti-ni">Q: 你怎么确认你的redis变慢了或者有问题呢？</a></li>
-<li><a href="#q-shi-yong-shi-me-yang-de-redis-ming-ling-ke-neng-dao-zhi-xing-neng-xia-jiang">Q: 使用什么样的redis命令可能导致性能下降？</a></li>
-<li><a href="#q-pin-fan-xie-ru-huo-zhe-shan-chu-yi-ge-hen-da-de-zi-fu-chuan-you-shi-me-wen-ti">Q: 频繁写入或者删除一个很大的字符串有什么问题？</a></li>
-<li><a href="#q-ru-he-zhao-dao-redis-zhong-shi-fou-you-zhe-chong-bigkey">Q: 如何找到redis中是否有这种bigkey？</a></li>
-<li><a href="#q-you-yi-ge-he-scan-lei-si-de-ming-ling-jiao-keys-ming-ling-you-shi-me-qu-bie">Q: 有一个和scan类似的命令叫keys命令， 有什么区别？</a></li>
-<li><a href="#q-redis-4-0-lazy-free-ji-zhi-you-liao-jie-me">Q: redis 4.0 lazy-free机制有了解么？</a></li>
-<li><a href="#q-da-liang-key-ji-zhong-guo-qi-ye-hui-dao-zhi-mou-yi-shi-ke-xing-neng-da-liang-xia-jiang-chu-liao-jia-sui-ji-guo-qi-shi-jian-wai-huan-neng-ru-he-bi-mian">Q: 大量key集中过期也会导致某一时刻性能大量下降，除了加随机过期时间外，还能如何避免？</a></li>
-<li><a href="#q-ru-he-wo-de-redis-nei-cun-pei-zhi-de-xiao-liao-hui-ru-he-dui-xing-neng-zao-cheng-ying-xiang">Q: 如何我的redis内存配置的小了，会如何对性能造成影响？</a></li>
-<li><a href="#q-redis-shi-li-nei-cun-yue-da-yue-hao-ma-tai-da-de-hua-ke-neng-you-shi-me-wen-ti">Q:Redis 实例内存越大越好吗？太大的话可能有什么问题？</a></li>
-<li><a href="#q-linux-de-nei-cun-da-ye-you-liao-jie-me-kai-qi-hou-dui-redis-de-xing-neng-shi-ti-sheng-huan-shi-xia-jiang">Q: linux的内存大页有了解么？ 开启后对redis的性能是提升还是下降？</a></li>
-<li><a href="#q-aof-xu-yao-zhu-xian-cheng-zuo-tong-bu-xie-wo-pei-zhi-cheng-appendfsync-everysec-xie-nei-cun-mei-miao-xie-ci-pan-shi-bu-shi-jiu-bu-hui-zu-sai-zhu-xian-cheng-zao-cheng-xing-neng-xia-jiang-liao-wei-shi-me">Q: AOF需要主线程做同步写， 我配置成 appendfsync everysec （写内存，每秒写磁盘）， 是不是就不会阻塞主线程，造成性能下降了？为什么？</a></li>
-<li><a href="#q-ru-he-jie-jue-aof-de-xie-ci-pan-zu-sai-wen-ti">Q: 如何解决AOF的写磁盘阻塞问题？</a></li>
-<li><a href="#q-redis-da-liang-de-nei-cun-sui-pian-ye-hui-dao-zhi-xing-neng-xia-jiang-ru-he-you-hua-redis-de-sui-pian">Q: redis大量的内存碎片也会导致性能下降，如何优化redis的碎片？</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="q-ni-zen-me-que-ren-ni-de-redis-bian-man-liao-huo-zhe-you-wen-ti-ni">Q: 你怎么确认你的redis变慢了或者有问题呢？</span><a href="#q-ni-zen-me-que-ren-ni-de-redis-bian-man-liao-huo-zhe-you-wen-ti-ni" class="header-anchor">#</a></h1>
-<p>A:<br>
-用”相同规格“（CPU、内存）的其他redis（基准性能机器）做对比<br>
-用–latency-history 命令获取最近一段时间内各命令的响应延迟<br>
-如果比基准时间大了2倍以上，那就是变慢了。</p>
-<hr>
-<h1><span id="q-shi-yong-shi-me-yang-de-redis-ming-ling-ke-neng-dao-zhi-xing-neng-xia-jiang">Q: 使用什么样的redis命令可能导致性能下降？</span><a href="#q-shi-yong-shi-me-yang-de-redis-ming-ling-ke-neng-dao-zhi-xing-neng-xia-jiang" class="header-anchor">#</a></h1>
-<p>A:<br>
-O(N) 以上复杂度的命令，例如 SORT、SUNION、ZUNIONSTORE 等需要大量数据做聚合的命令<br>
-*注意， 对于数据的聚合操作，放在客户端做</p>
-<hr>
-<h1><span id="q-pin-fan-xie-ru-huo-zhe-shan-chu-yi-ge-hen-da-de-zi-fu-chuan-you-shi-me-wen-ti">Q: 频繁写入或者删除一个很大的字符串有什么问题？</span><a href="#q-pin-fan-xie-ru-huo-zhe-shan-chu-yi-ge-hen-da-de-zi-fu-chuan-you-shi-me-wen-ti" class="header-anchor">#</a></h1>
-<p>A:<br>
-如果一个 key 写入的 value 非常大，那么 Redis 在分配内存时就会比较耗时。<br>
-同样的，当删除这个 key 时（过期、淘汰），释放内存也会比较耗时，这种类型的 key 我们一般称之为 bigkey。<br>
-还有备份机制中，如果有bigkey，也会导致备份过程的写时复制很慢，导致性能下降。</p>
-<ul>
-<li>除了后台释放的方案外， 尽可能不要写bigkey！</li>
-</ul>
-<hr>
-<h1><span id="q-ru-he-zhao-dao-redis-zhong-shi-fou-you-zhe-chong-bigkey">Q: 如何找到redis中是否有这种bigkey？</span><a href="#q-ru-he-zhao-dao-redis-zhong-shi-fou-you-zhe-chong-bigkey" class="header-anchor">#</a></h1>
-<p>A:<br>
-”–bigkeys -i 频率”命令 可以获取各种类型的key大小分布情况<br>
-本质上就是调用了scan，拿到所有key后统计大小和个数。</p>
-<hr>
-<h1><span id="q-you-yi-ge-he-scan-lei-si-de-ming-ling-jiao-keys-ming-ling-you-shi-me-qu-bie">Q: 有一个和scan类似的命令叫keys命令， 有什么区别？</span><a href="#q-you-yi-ge-he-scan-lei-si-de-ming-ling-jiao-keys-ming-ling-you-shi-me-qu-bie" class="header-anchor">#</a></h1>
-<p>A:</p>
-<ul>
-<li>redis的单线程的。keys指令会导致线程阻塞一段时间，线上服务会停顿，直到指令执行完毕，服务才能恢复</li>
-<li>scan指令可以无阻塞的提取出指定模式的key列表,用的是额外线程。</li>
-</ul>
-<hr>
-<hr>
-<h1><span id="q-redis-4-0-lazy-free-ji-zhi-you-liao-jie-me">Q: redis 4.0 lazy-free机制有了解么？</span><a href="#q-redis-4-0-lazy-free-ji-zhi-you-liao-jie-me" class="header-anchor">#</a></h1>
-<p>A:<br>
-执行下面的命令，开启lazy-expire模式<br>
-#释放过期 key 的内存，放到后台线程执行<br>
-lazyfree-lazy-expire yes<br>
-涉及删除、过期造成的主线程延迟问题，都可改成lazy-free，在另外的线程中去释放。</p>
-<hr>
-<h1><span id="q-da-liang-key-ji-zhong-guo-qi-ye-hui-dao-zhi-mou-yi-shi-ke-xing-neng-da-liang-xia-jiang-chu-liao-jia-sui-ji-guo-qi-shi-jian-wai-huan-neng-ru-he-bi-mian">Q: 大量key集中过期也会导致某一时刻性能大量下降，除了加随机过期时间外，还能如何避免？</span><a href="#q-da-liang-key-ji-zhong-guo-qi-ye-hui-dao-zhi-mou-yi-shi-ke-xing-neng-da-liang-xia-jiang-chu-liao-jia-sui-ji-guo-qi-shi-jian-wai-huan-neng-ru-he-bi-mian" class="header-anchor">#</a></h1>
-<p>A:<br>
-通过运维手段处理</p>
-<ul>
-<li>在 Redis 上执行 INFO 命令就可以拿到这个实例所有的运行状态数据。</li>
-<li>重点关注 expired_keys 这一项，它代表整个实例到目前为止，累计删除过期 key 的数量。</li>
-<li>当这个指标在很短时间内出现了突增，需要及时报警出来，并进行这类key超时时间的调整和处理</li>
-</ul>
-<hr>
-<h1><span id="q-ru-he-wo-de-redis-nei-cun-pei-zhi-de-xiao-liao-hui-ru-he-dui-xing-neng-zao-cheng-ying-xiang">Q: 如何我的redis内存配置的小了，会如何对性能造成影响？</span><a href="#q-ru-he-wo-de-redis-nei-cun-pei-zhi-de-xiao-liao-hui-ru-he-dui-xing-neng-zao-cheng-ying-xiang" class="header-anchor">#</a></h1>
-<p>A:</p>
-<ul>
-<li>
-<p>Redis 内存达到 maxmemory 后，每次写入新的数据之前，Redis 必须先从实例中踢出一部分数据，让整个实例的内存维持在 maxmemory 之下，然后才能把新数据写进来。</p>
-<p>这个过程就是数据淘汰过程。 如果过小，频繁淘汰删除，肯定会影响性能。</p>
-</li>
-<li>
-<p>机器内存太小，导致频繁做系统的swap磁盘-内存页交换。</p>
-</li>
-</ul>
-<hr>
-<h1><span id="q-redis-shi-li-nei-cun-yue-da-yue-hao-ma-tai-da-de-hua-ke-neng-you-shi-me-wen-ti">Q:Redis 实例内存越大越好吗？太大的话可能有什么问题？</span><a href="#q-redis-shi-li-nei-cun-yue-da-yue-hao-ma-tai-da-de-hua-ke-neng-you-shi-me-wen-ti" class="header-anchor">#</a></h1>
-<p>A:</p>
-<ul>
-<li>当 Redis 开启了后台 RDB 和 AOF rewrite 后，在执行时，它们都需要主进程fork出一个子进程进行数据的持久化</li>
-<li>这个 fork 过程会消耗大量的 CPU 资源，在完成 fork 之前，整个 Redis 实例会被阻塞住，无法处理任何客户端请求。</li>
-<li>执行 fork 的耗时与redis实例大小有关，实例越大，耗时越久。</li>
-</ul>
-<blockquote>
-<p>注意，fork和部署类型也有关，如果部署在虚拟机上，fork所用的时间会更久。</p>
-</blockquote>
-<hr>
-<h1><span id="q-linux-de-nei-cun-da-ye-you-liao-jie-me-kai-qi-hou-dui-redis-de-xing-neng-shi-ti-sheng-huan-shi-xia-jiang">Q: linux的内存大页有了解么？ 开启后对redis的性能是提升还是下降？</span><a href="#q-linux-de-nei-cun-da-ye-you-liao-jie-me-kai-qi-hou-dui-redis-de-xing-neng-shi-ti-sheng-huan-shi-xia-jiang" class="header-anchor">#</a></h1>
-<p>A:</p>
-<ul>
-<li>Linux 内核从 2.6.38 开始，支持了内存大页机制，该机制允许应用程序以 2MB 大小为单位，向操作系统申请内存。</li>
-<li>这会导致申请内存的时间变大。</li>
-<li>当进行AOF或者RDB备份时，会进行写时复制，如果申请页过大，会导致及时只改20B的数据，也会用2MB单位申请，减慢主线程的请求响应速度。</li>
-</ul>
-<p>建议关闭redis部署机器上的内存大页。</p>
-<hr>
-<h1><span id="q-aof-xu-yao-zhu-xian-cheng-zuo-tong-bu-xie-wo-pei-zhi-cheng-appendfsync-everysec-xie-nei-cun-mei-miao-xie-ci-pan-shi-bu-shi-jiu-bu-hui-zu-sai-zhu-xian-cheng-zao-cheng-xing-neng-xia-jiang-liao-wei-shi-me">Q: AOF需要主线程做同步写， 我配置成 appendfsync everysec （写内存，每秒写磁盘）， 是不是就不会阻塞主线程，造成性能下降了？为什么？</span><a href="#q-aof-xu-yao-zhu-xian-cheng-zuo-tong-bu-xie-wo-pei-zhi-cheng-appendfsync-everysec-xie-nei-cun-mei-miao-xie-ci-pan-shi-bu-shi-jiu-bu-hui-zu-sai-zhu-xian-cheng-zao-cheng-xing-neng-xia-jiang-liao-wei-shi-me" class="header-anchor">#</a></h1>
-<p>A:<br>
-rewrite重写过慢<br>
-或者其他应用占用磁盘IO，导致写增量AOF文件过慢<br>
-这会导致主线吃还没同步写完，就收到了新的写请求，这时候新的写请求就会阻塞。</p>
-<hr>
-<h1><span id="q-ru-he-jie-jue-aof-de-xie-ci-pan-zu-sai-wen-ti">Q: 如何解决AOF的写磁盘阻塞问题？</span><a href="#q-ru-he-jie-jue-aof-de-xie-ci-pan-zu-sai-wen-ti" class="header-anchor">#</a></h1>
-<p>A:<br>
-如果是rewrite， 可以调整配置，让rewrite的时候不要做appendfsync写磁盘。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># AOF rewrite 期间，AOF 后台子线程不进行刷盘操作</span><br><span class="line"># 相当于在这期间，临时把 appendfsync 设置为了 none</span><br><span class="line">no-appendfsync-on-rewrite yes</span><br></pre></td></tr></table></figure>
-<p>提升磁盘性能，更换为SSD固态硬盘。</p>
-<hr>
-<h1><span id="q-redis-da-liang-de-nei-cun-sui-pian-ye-hui-dao-zhi-xing-neng-xia-jiang-ru-he-you-hua-redis-de-sui-pian">Q: redis大量的内存碎片也会导致性能下降，如何优化redis的碎片？</span><a href="#q-redis-da-liang-de-nei-cun-sui-pian-ye-hui-dao-zhi-xing-neng-xia-jiang-ru-he-you-hua-redis-de-sui-pian" class="header-anchor">#</a></h1>
-<p>A:<br>
-redis具有开启碎片整理的功能。<br>
-相关配置参考如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># 开启自动内存碎片整理（总开关）</span><br><span class="line">activedefrag yes</span><br><span class="line"> </span><br><span class="line"># 内存使用 100MB 以下，不进行碎片整理</span><br><span class="line">active-defrag-ignore-bytes 100mb</span><br><span class="line"> </span><br><span class="line"># 内存碎片率超过 10%，开始碎片整理</span><br><span class="line">active-defrag-threshold-lower 10</span><br><span class="line"># 内存碎片率超过 100%，尽最大努力碎片整理</span><br><span class="line">active-defrag-threshold-upper 100</span><br><span class="line"> </span><br><span class="line"># 内存碎片整理占用 CPU 资源最小百分比</span><br><span class="line">active-defrag-cycle-min 1</span><br><span class="line"># 内存碎片整理占用 CPU 资源最大百分比</span><br><span class="line">active-defrag-cycle-max 25</span><br><span class="line"> </span><br><span class="line"># 碎片整理期间，对于 List/Set/Hash/ZSet 类型元素一次 Scan 的数量</span><br><span class="line">active-defrag-max-scan-fields 1000</span><br></pre></td></tr></table></figure>
       
     </div>
 
@@ -2330,159 +2632,6 @@ A:</p>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%AE%B9%E5%99%A8%E5%8C%96%E9%83%A8%E7%BD%B2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%AE%B9%E5%99%A8%E5%8C%96%E9%83%A8%E7%BD%B2/" class="post-title-link" itemprop="url">容器化部署（docker\K8s)</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-09-22 01:30:12 / 修改时间：00:00:41" itemprop="dateCreated datePublished" datetime="2022-09-22T01:30:12+08:00">2022-09-22</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">系统设计</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%AE%B9%E5%99%A8%E5%8C%96%E9%83%A8%E7%BD%B2/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%AE%B9%E5%99%A8%E5%8C%96%E9%83%A8%E7%BD%B2/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#q-jiang-yi-xia-ni-dui-xu-ni-hua-de-li-jie-shi-me-shi-xu-ni-hua">Q: 讲一下你对虚拟化的理解？什么是虚拟化？</a></li>
-<li><a href="#q-jiang-yi-xia-docker-shi-shi-me">Q: 讲一下docker是什么？</a></li>
-<li><a href="#q-docker-shi-na-chong-lei-xing-de-xu-ni-hua">Q: docker是哪种类型的虚拟化？</a></li>
-<li><a href="#q-ni-men-wei-shi-me-yao-yong-docker-you-shi-me-hao-chu">Q: 你们为什么要用docker？有什么好处？</a></li>
-<li><a href="#q-docker-he-xu-ni-ji-virtual-machine-de-qu-bie">Q: Docker和虚拟机Virtual Machine的区别？</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<hr>
-<h1><span id="q-jiang-yi-xia-ni-dui-xu-ni-hua-de-li-jie-shi-me-shi-xu-ni-hua">Q: 讲一下你对虚拟化的理解？什么是虚拟化？</span><a href="#q-jiang-yi-xia-ni-dui-xu-ni-hua-de-li-jie-shi-me-shi-xu-ni-hua" class="header-anchor">#</a></h1>
-<p>A:<br>
-虚拟化可以理解为，将一台机器上的各种资源，进行抽象和隔离，方便在一台机器上运行多个进程或者系统，而且他们互相隔离，各自使用各自的资源，不会在逻辑上互相竞争资源。</p>
-<p>虚拟机包含硬件和软件虚拟化。我这里只说软件虚拟化，也就是利用软件技术，在现有的物理平台上实现对物理平台访问的截获和模拟。</p>
-<p>经典的有VMWare桌面虚拟、KVM全虚拟化（linux内核模块）、LXC（linux容器，轻量级虚拟化，重点）</p>
-<hr>
-<h1><span id="q-jiang-yi-xia-docker-shi-shi-me">Q: 讲一下docker是什么？</span><a href="#q-jiang-yi-xia-docker-shi-shi-me" class="header-anchor">#</a></h1>
-<p>A:<br>
-Docker是一个开源的应用容器引擎</p>
-<ul>
-<li>它让开发者可以打包他们的应用以及依赖包到一个可移植的容器中，然后发布到安装了任何 Linux 发行版本的机器上</li>
-<li>发布到机器上之后， 会使用沙箱机制完全虚拟出一个完整的内部环境</li>
-<li>容器之间不会有任何接口，从而让容器与宿主机之间、容器与容器之间隔离的更加彻底</li>
-</ul>
-<hr>
-<h1><span id="q-docker-shi-na-chong-lei-xing-de-xu-ni-hua">Q: docker是哪种类型的虚拟化？</span><a href="#q-docker-shi-na-chong-lei-xing-de-xu-ni-hua" class="header-anchor">#</a></h1>
-<p>A:<br>
-docker属于操作系统层虚拟化（将操作系统内核虚拟化，可以允许使用者空间软件实例被分割成几个独立的单元，并没有模拟硬件）， 换句话说，无法改变操作系统的性质。<br>
-底层基于LXC（Linux Container，Linux容器）进行轻量化虚拟的实现。</p>
-<hr>
-<h1><span id="q-ni-men-wei-shi-me-yao-yong-docker-you-shi-me-hao-chu">Q: 你们为什么要用docker？有什么好处？</span><a href="#q-ni-men-wei-shi-me-yao-yong-docker-you-shi-me-hao-chu" class="header-anchor">#</a></h1>
-<p>A:</p>
-<ol>
-<li>
-<p>如果资源有限，只有1台机器，但是有3个微服务需要部署，每台部署3个服务进程后， 万一一个进程跑多线程时， 线程池打满了， 结果把cpu全占用， 让另外2个服务一起变慢了。   或者内存疯狂涨，把内存打满了搞挂另外2个进程。<br>
-因此引入docker后，每个服务隔离在容器中，使用的线程资源和内存受到独立的限制，就不会互相影响了。</p>
-</li>
-<li>
-<p>当需要部署新的微服务时， 如果没有docker，就需要手动部署，按照指导书一点点搭建，配置参数，很容易错，且容易导致开发环境和生产环境参数不一致。<br>
-使用docker后，可以打包docker镜像进行容器部署， 发布的速度也变快了，扩容也变简单了。</p>
-</li>
-</ol>
-<hr>
-<h1><span id="q-docker-he-xu-ni-ji-virtual-machine-de-qu-bie">Q: Docker和虚拟机Virtual Machine的区别？</span><a href="#q-docker-he-xu-ni-ji-virtual-machine-de-qu-bie" class="header-anchor">#</a></h1>
-<p>A:</p>
-<ul>
-<li>Docker容器不是虚拟机， 只是当初被疯狂宣传为“轻量级虚拟机”</li>
-<li>虚拟机必须要自己模拟一个虚拟操作系统guestOs才能运行， 但docker不需要，直接使用linux自身支持的namespace和cgroup实现资源隔离。</li>
-<li>云服务提供商通常采用虚拟机技术隔离不同的用户/租户。  而Docker通常用于隔离不同的应用，例如前端，后端以及数据库</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2554,14 +2703,14 @@ docker属于操作系统层虚拟化（将操作系统内核虚拟化，可以�
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">242</span>
+          <span class="site-state-item-count">243</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-count">62</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -2625,7 +2774,7 @@ docker属于操作系统层虚拟化（将操作系统内核虚拟化，可以�
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共318.7k字</span>
+  <span class="post-count">博客全站共321.6k字</span>
 </div>
 
         

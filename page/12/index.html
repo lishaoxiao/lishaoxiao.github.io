@@ -181,6 +181,187 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" class="post-title-link" itemprop="url">线程基础概念</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-07 23:57:49 / 修改时间：23:34:49" itemprop="dateCreated datePublished" datetime="2022-09-07T23:57:49+08:00">2022-09-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>671</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#3-1-gai-nian">3.1 概念</a>
+<ul>
+<li><a href="#3-1-1-mu-de">3.1.1 目的</a></li>
+<li><a href="#3-1-2-zu-cheng">3.1.2 组成</a>
+<ul>
+<li><a href="#3-1-3-shi-xian-fang-shi">3.1.3 实现方式</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#3-2-jin-cheng-he-xian-cheng-de-qu-bie">3.2 进程和线程的区别</a>
+<ul>
+<li><a href="#q-bing-fa-he-bing-xing-you-shi-me-qu-bie-ni">Q: 并发和并行有什么区别呢？</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="3-1-gai-nian">3.1 概念</span><a href="#3-1-gai-nian" class="header-anchor">#</a></h1>
+<ul>
+<li>是基本的CPU执行单元</li>
+<li>是程序执行流的最小胆小</li>
+<li>被系统调度和分配的基本单位</li>
+</ul>
+<h2><span id="3-1-1-mu-de">3.1.1 目的</span><a href="#3-1-1-mu-de" class="header-anchor">#</a></h2>
+<ul>
+<li>提高系统性能</li>
+<li>减小程序并发执行时的时空开销</li>
+</ul>
+<h2><span id="3-1-2-zu-cheng">3.1.2 组成</span><a href="#3-1-2-zu-cheng" class="header-anchor">#</a></h2>
+<ul>
+<li>线程id</li>
+<li>程序计数器PC</li>
+<li>寄存器集合</li>
+<li>堆栈</li>
+</ul>
+<h3><span id="3-1-3-shi-xian-fang-shi">3.1.3 实现方式</span><a href="#3-1-3-shi-xian-fang-shi" class="header-anchor">#</a></h3>
+<p>一般会有2种线程：</p>
+<ul>
+<li>用户级线程ULT：  创建发生在用户空间</li>
+<li>系统级线程KLT： 完成系统内所有线程的管理，提供给用户一定的线程管理接口。</li>
+</ul>
+<p>ULT和KLT的映射关系分类（即用户线程能给哪些系统线程管理）：</p>
+<ul>
+<li>多用户线程对应1个系统线程。 即所有线程公用一个线程管理接口<br>
+这样如果一旦阻塞就全部阻塞</li>
+<li>一对一： 每个用户线程单独使用1个系统线程做管理<br>
+这样会导致系统线程过多，开销大</li>
+<li>多对多： n个用户线程对应m个内核线程（n&gt;=m)<br>
+这个比较好</li>
+</ul>
+<p>linux用的是哪种呢？</p>
+<h1><span id="3-2-jin-cheng-he-xian-cheng-de-qu-bie">3.2 进程和线程的区别</span><a href="#3-2-jin-cheng-he-xian-cheng-de-qu-bie" class="header-anchor">#</a></h1>
+<ul>
+<li>从调度上看<br>
+线程是CPU调度的最小单位<br>
+进程是拥有资源的基本单位</li>
+<li>切换<br>
+同一进程内的线程之间切换，不用引起进程切换<br>
+从a进程的线程跳到b进程的线程，需要引起进程切换</li>
+<li>资源<br>
+线程只独立拥有一点点小资源（线程栈、共享虚拟地址空间）<br>
+进程则拥有很多</li>
+<li>通信： 线程可通过读写进程的全局变量来通信，但是进程之间通信则无法依赖变量。</li>
+<li>开销<br>
+线程的系统/时空开销少</li>
+<li>并发<br>
+进程和线程都支持并发。<br>
+是否支持并行要看CPU情况。</li>
+</ul>
+<hr>
+<h2><span id="q-bing-fa-he-bing-xing-you-shi-me-qu-bie-ni">Q: 并发和并行有什么区别呢？</span><a href="#q-bing-fa-he-bing-xing-you-shi-me-qu-bie-ni" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>并发指 在某一个时间段内跑多个任务， 这些任务可能抢占同一个CPU资源， ”存在交替执行“</li>
+<li>并行指 同一时刻，有多个任务同时在跑，  即分别占用不同的CPU跑任务。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E8%BF%9B%E7%A8%8B%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1966,240 +2147,6 @@ key可以理解为输入参数？</p>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/ApplicationContext%E5%8E%9F%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/ApplicationContext%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">ApplicationContext原理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-08-31 23:30:12 / 修改时间：22:50:44" itemprop="dateCreated datePublished" datetime="2022-08-31T23:30:12+08:00">2022-08-31</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/spring%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">spring原理</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/spring%E5%8E%9F%E7%90%86/Ioc%E6%B3%A8%E5%85%A5%E6%9C%BA%E5%88%B6/" itemprop="url" rel="index"><span itemprop="name">Ioc注入机制</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/ApplicationContext%E5%8E%9F%E7%90%86/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/ApplicationContext%E5%8E%9F%E7%90%86/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#xin-te-xing-yi-tong-yi-zi-yuan-jia-zai-ce-lue">新特性一：统一资源加载策略</a></li>
-<li><a href="#xin-zeng-te-xing-er-guo-ji-hua-xin-xi-zhi-chi">新增特性二：国际化信息支持</a></li>
-<li><a href="#xin-zeng-te-xing-san-rong-qi-nei-bu-shi-jian-fa-bu">新增特性三：容器内部事件发布</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<p>ApplicationContext除了拥有 BeanFactory支持的所有功能之外，还进一步扩展了基本容器的功能，包括<br>
-BeanFactoryPostProcessor、<br>
-BeanPostProcessor<br>
-其他特殊类型bean的自动识别<br>
-容器启动后bean实例的自动初始化<br>
-国际化的信息支持<br>
-容器内事件发布等</p>
-<hr>
-<p>3种ApplicationContext的实现<br>
-FileSystemXmlApplicationContext  :从文件系统加载bean<br>
-ClassPathXmlApplicationContext :从Classpath加载bean<br>
-XmlWebApplicationContext :用于Web应用程序的ApplicationContext实现</p>
-<hr>
-<h1><span id="xin-te-xing-yi-tong-yi-zi-yuan-jia-zai-ce-lue">新特性一：统一资源加载策略</span><a href="#xin-te-xing-yi-tong-yi-zi-yuan-jia-zai-ce-lue" class="header-anchor">#</a></h1>
-<p>Spring提出了一套基于Resource和ResourceLoader接口的资源抽象和加载策略。</p>
-<ul>
-<li>ByteArrayResource  将字节（byte）数组提供的数据作为一种资源进行封装? ClassPathResource    从Java应用程序的ClassPath中加载具体资源并进行封装</li>
-<li>FileSystemResource 以文件或者URL的形 式对该类型资源进行访问，只要能跟File打的交道</li>
-<li>UrlResource 通过java.net.URL进行的具体资源查找定位的实现类，内部委派URL进行具 体的资源操作。</li>
-<li>InputStreamResource  较为少用。</li>
-</ul>
-<p>ResourceLoader:查找和定位这些资源,资源定位器<br>
-<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/2020121023542886.png" alt="在这里插入图片描述"><br>
-相关资源的ResourceLoader实现类：</p>
-<ul>
-<li>
-<p>DefaultResourceLoader<br>
-<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201210235440383.png" alt="在这里插入图片描述"></p>
-</li>
-<li>
-<p>FileSystemResourceLoader<br>
-<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201210235504403.png" alt="在这里插入图片描述"></p>
-</li>
-<li>
-<p>ResourcePatternResolver（ResourceLoade的子接口）<br>
-是1个批量查找的ResourceLoader，会返回resource数组 实<br>
-可以根据指定的资源路径匹配模式， 每次返回多个Resource实例<br>
-支持基 于Ant风格的路径匹配模式（类似于**/<em>.suffix之类的路径形式），支持ResourcePatternResolver新 增加的classpath</em>:前缀等</p>
-</li>
-</ul>
-<p>总关系图<br>
-<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201210235550881.png" alt="在这里插入图片描述"><br>
-ApplicationContextt<strong>默认继承了ResourcePatternResolver</strong>，间接实现了ResourceLoader接口<br>
-<strong>任何的ApplicationContext实现都可以看作是一个 ResourceLoader甚至ResourcePatternResolver</strong></p>
-<ul>
-<li>ApplicationContext的资源用法：<br>
-1.扮演ResourceLoader的角色<br>
-<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201210235917941.png" alt="在这里插入图片描述"></li>
-</ul>
-<p>2.ResourceLoader类型的注入<br>
-ApplicationContext类型容器可以自动识别Aware接口<br>
-因此会自动把自己注入到需要ResourceLoader的实例中<br>
-<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201210235924349.png" alt="在这里插入图片描述"></p>
-<p>3.Resource类型的注入<br>
-BeanFactory如果想注入Resource类型的bean定义，就需要注册自定义的PropertyEditor到 BeanFactory容器<br>
-而Application- Context容器可以正确识别Resource类型并转换后注入相关对象<br>
-<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201210235930895.png" alt="在这里插入图片描述"></p>
-<ol start="4">
-<li>在特定情况下，ApplicationContext的Resource加载行为</li>
-</ol>
-<p>Spring扩展了协议前缀的集合。<br>
-ResourceLoader中增加了一种新 的资源路径协议——classpath:，<br>
-ResourcePatternResolver又增加了一种——classpath*:。<br>
-classpath*:与classpath:的唯一区别就在于，如果能够在classpath中找到多个指定的资源，则 返回多个</p>
-<p>ClassPathXmlApplicationContext默认从classpath中加载bean定义配置文件<br>
-<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201211000020650.png" alt="在这里插入图片描述"></p>
-<p>FileSystemXmlApplicationContext默认尝试从文件系统中加载bean定义文件<br>
-<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/2020121100002444.png" alt="在这里插入图片描述"></p>
-<p>但通过加前缀file或者classpath，可以修改加载方式</p>
-<h1><span id="xin-zeng-te-xing-er-guo-ji-hua-xin-xi-zhi-chi">新增特性二：国际化信息支持</span><a href="#xin-zeng-te-xing-er-guo-ji-hua-xin-xi-zhi-chi" class="header-anchor">#</a></h1>
-<p>1.Java SE 提供的国际化支持：<br>
-不同的 Locale代表不同的国家和地区，每个国家和地区在Locale这里都有相应的简写代码表ResourceBundle用来保存特定于某个Locale的信息<br>
-通过结合ResourceBundle和Locale，我们就能够实现应用程序的国际化信息支持</p>
-<ol start="2">
-<li></li>
-</ol>
-<p>Spring在Java SE的国际化支持的基础上，进一步抽象了国际化信息的访问接口，也就是 MessageSource<br>
-<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201211000046282.png" alt="在这里插入图片描述"></p>
-<p>ApplicationContext还 实现了MessageSource接口，<br>
-3种MessageSource实现<br>
-StaticMessageSource  。可以通过编程的方式添加信息条目，多用于测试，不应该用于正式的生产环境。<br>
-ResourceBundleMessage  是常用的、用于正式生产环境<br>
-ReloadableResourceBundleMessageSource  定期刷新并检查底层的properties资源文件是否有变更。</p>
-<p>ApplicationContext 启动的时候，会自动识别容器中类型为MessageSourceAware的bean定义<br>
-并将自身作为MessageSource注入相应对象实例中<br>
-PS：看一下自己工程里怎么实现的</p>
-<h1><span id="xin-zeng-te-xing-san-rong-qi-nei-bu-shi-jian-fa-bu">新增特性三：容器内部事件发布</span><a href="#xin-zeng-te-xing-san-rong-qi-nei-bu-shi-jian-fa-bu" class="header-anchor">#</a></h1>
-<p>java自带事件发布：<br>
-<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201211000125858.png" alt="在这里插入图片描述"><br>
-ApplicationContext 容器内部允许以ApplicationEvent的形式发布事件，。<br>
-容器内注册的ApplicationListener类型的bean定义会被ApplicationContext容器自动识别<br>
-一旦容器内发布ApplicationEvent及其子类型的事件， 注册到容器的ApplicationListener就会对这些事件进行处理。</p>
-<p><strong>application自定义事件ApplicationEvent</strong><br>
-Spring提供了三个实现。</p>
-<ul>
-<li>ContextClosedEvent：ApplicationContext容器在即将关闭的时候发布的事件类型。</li>
-<li>ContextRefreshedEvent：ApplicationContext容器在初始化或者刷新的时候发布的事件类 型。</li>
-<li>RequestHandledEvent：Web请求处理后发布的事件，其有一子类ServletRequestHandled- Event提供特定于Java EE的Servlet相关事件。</li>
-</ul>
-<p><strong>application自定义监听器ApplicationListener</strong><br>
-在启动时，会自动识别并加载EventListener类型bean定义， 一旦容器内有事件发布，将通知这些注册到容器的EventListener</p>
-<p><strong>application自定义发布者ApplicationContext</strong><br>
-ApplicationContext接口定义还继承了ApplicationEventPublisher接口</p>
-<p>容器启动伊始，就会检查容器内是否存在名称为ApplicationEventMulticaster的 ApplicationEventMulticaster对象实例。<br>
-有的话就使用提供的实现，没有则默认初始化一个 SimpleApplicationEventMulticaster作为将会使用的ApplicationEventMulticaster<br>
-<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201211000243358.png" alt="在这里插入图片描述"></p>
-<p><strong>Spring的ApplicationContext容器内的事件发布机制，主要用于单一容器内的简单消息通知和处 理，并不适合分布式、多进程、多容器之间的事件通知</strong><br>
-发布步骤：<br>
-1.MethodExecutionEvent的改装<br>
-<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201211000302141.png" alt="在这里插入图片描述"></p>
-<p>2.MethodExecutionEventListener的改<br>
-<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201211000306623.png" alt="在这里插入图片描述"></p>
-<p>3.MethodExeuctionEventPublisher改造<br>
-<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201211000310121.png" alt="在这里插入图片描述"></p>
-<ol start="4">
-<li>注册到ApplicationContext容器<br>
-<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201211000312873.png" alt="在这里插入图片描述"></li>
-</ol>
-<p>特性四：多配置模块加载的简化<br>
-<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201211000326999.png" alt="在这里插入图片描述"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2271,14 +2218,14 @@ ApplicationContext接口定义还继承了ApplicationEventPublisher接口</p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">242</span>
+          <span class="site-state-item-count">243</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-count">62</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -2342,7 +2289,7 @@ ApplicationContext接口定义还继承了ApplicationEventPublisher接口</p>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共318.7k字</span>
+  <span class="post-count">博客全站共321.6k字</span>
 </div>
 
         
