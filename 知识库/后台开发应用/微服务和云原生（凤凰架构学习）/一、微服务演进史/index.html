@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="服务架构演进史  1 原始分布式时代 2 单体系统  单体架构的好处 单体架构的坏处   3 SOA——面向服务架构 4 微服务时代  微服务的九个核心业务与技术特征 微服务相比SOA的优势   5 后微服务时代（云原生时代）  用硬件方案替代软件方案 第二次进化   6无服务（ServerLess）时代  无服务的定义 无服务的愿景 无服务的缺点   总结和思考       服务架构演进史">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一、微服务演进史">
+<meta property="og:url" content="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%B8%80%E3%80%81%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%BC%94%E8%BF%9B%E5%8F%B2/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="服务架构演进史  1 原始分布式时代 2 单体系统  单体架构的好处 单体架构的坏处   3 SOA——面向服务架构 4 微服务时代  微服务的九个核心业务与技术特征 微服务相比SOA的优势   5 后微服务时代（云原生时代）  用硬件方案替代软件方案 第二次进化   6无服务（ServerLess）时代  无服务的定义 无服务的愿景 无服务的缺点   总结和思考       服务架构演进史">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-05-14T02:32:12.000Z">
+<meta property="article:modified_time" content="2023-05-14T02:10:50.074Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="后台开发知识,微服务,云原生">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%B8%80%E3%80%81%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%BC%94%E8%BF%9B%E5%8F%B2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>一、微服务演进史 | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%B8%80%E3%80%81%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%BC%94%E8%BF%9B%E5%8F%B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          一、微服务演进史
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-05-14 10:32:12 / 修改时间：10:10:50" itemprop="dateCreated datePublished" datetime="2023-05-14T10:32:12+08:00">2023-05-14</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F/" itemprop="url" rel="index"><span itemprop="name">微服务和云原生</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%B8%80%E3%80%81%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%BC%94%E8%BF%9B%E5%8F%B2/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%B8%80%E3%80%81%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%BC%94%E8%BF%9B%E5%8F%B2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#fu-wu-jia-gou-yan-jin-shi">服务架构演进史</a>
+<ul>
+<li><a href="#1-yuan-shi-fen-bu-shi-shi-dai">1 原始分布式时代</a></li>
+<li><a href="#2-dan-ti-xi-tong">2 单体系统</a>
+<ul>
+<li><a href="#dan-ti-jia-gou-de-hao-chu">单体架构的好处</a></li>
+<li><a href="#dan-ti-jia-gou-de-pi-chu">单体架构的坏处</a></li>
+</ul>
+</li>
+<li><a href="#3-soa-mian-xiang-fu-wu-jia-gou">3 SOA——面向服务架构</a></li>
+<li><a href="#4-wei-fu-wu-shi-dai">4 微服务时代</a>
+<ul>
+<li><a href="#wei-fu-wu-de-jiu-ge-he-xin-ye-wu-yu-ji-zhu-te-zheng">微服务的九个核心业务与技术特征</a></li>
+<li><a href="#wei-fu-wu-xiang-bi-soa-de-you-shi">微服务相比SOA的优势</a></li>
+</ul>
+</li>
+<li><a href="#5-hou-wei-fu-wu-shi-dai-yun-yuan-sheng-shi-dai">5 后微服务时代（云原生时代）</a>
+<ul>
+<li><a href="#yong-ying-jian-fang-an-ti-dai-ruan-jian-fang-an">用硬件方案替代软件方案</a></li>
+<li><a href="#di-er-ci-jin-hua">第二次进化</a></li>
+</ul>
+</li>
+<li><a href="#6-wu-fu-wu-serverless-shi-dai">6无服务（ServerLess）时代</a>
+<ul>
+<li><a href="#wu-fu-wu-de-ding-yi">无服务的定义</a></li>
+<li><a href="#wu-fu-wu-de-yuan-jing">无服务的愿景</a></li>
+<li><a href="#wu-fu-wu-de-que-dian">无服务的缺点</a></li>
+</ul>
+</li>
+<li><a href="#zong-jie-he-si-kao">总结和思考</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<h1><span id="fu-wu-jia-gou-yan-jin-shi">服务架构演进史</span><a href="#fu-wu-jia-gou-yan-jin-shi" class="header-anchor">#</a></h1>
+<h2><span id="1-yuan-shi-fen-bu-shi-shi-dai">1 原始分布式时代</span><a href="#1-yuan-shi-fen-bu-shi-shi-dai" class="header-anchor">#</a></h2>
+<p>DCE（Distributed Computing Enviroment）也就是分布式运算环境，是一种很经典原始的设计理念。<br>
+<strong>DCE的设计主旨：“开发人员不必关心服务是远程还是本地，都能够透明地调用服务或者访问资源”</strong></p>
+<p>是很早由OSF指定的分布式技术体系理论，解答了很多问题，例如：</p>
+<ul>
+<li>远程服务在哪？——对应服务发现</li>
+<li>要部署多少个？——对应负载均衡</li>
+<li>请求超时怎么办？——对应熔断、隔离、降级</li>
+<li>方法参数和结果如何表示？——对应序列化方式</li>
+<li>信息如何传入？——对应传输协议选型</li>
+<li>服务权限？——对应认证、授权方案</li>
+<li>怎么保证不同机器间的状态最终一致？——对应分布式数据一致性</li>
+</ul>
+<p>但最终发现解决这些问题的代价 远超 分布式所带来的收益，在DCE刚提出的年代（80年代），机器资源并没到那个程度, 于是暂时被搁置了。</p>
+<h2><span id="2-dan-ti-xi-tong">2 单体系统</span><a href="#2-dan-ti-xi-tong" class="header-anchor">#</a></h2>
+<p>单体系统并不一定就代表是坏的，不好的，需要综合分析：</p>
+<h3><span id="dan-ti-jia-gou-de-hao-chu">单体架构的好处</span><a href="#dan-ti-jia-gou-de-hao-chu" class="header-anchor">#</a></h3>
+<p>如果是相同资源的前提下， 单体系统的性能是比分布式要高的。<br>
+所有数据都是进程内通信<br>
+且开发、部署、测试都基于同一个对象进行处理，更加方便。<br>
+单体系统中的代码一般也是做好了分层、分模块的，也是易于敏捷开发和迭代的。</p>
+<h3><span id="dan-ti-jia-gou-de-pi-chu">单体架构的坏处</span><a href="#dan-ti-jia-gou-de-pi-chu" class="header-anchor">#</a></h3>
+<p>然而如果单体系统中一部分代码出现缺陷， 可能直接把进程空间耗光，或者直接打崩整个进程，也没有办法针对某个代码模块做单独的升级或者更新。</p>
+<p>因此当系统规模较小的时候，单体系统有独特的优势。<br>
+系统规模越来越大， 则要求各功能模块能够自治和隔离，减少爆炸范围。<br>
+<strong>从“追求尽量不出错”到“追求出错是必然”，是微服务架构挑战并取代单体架构的底气所在。</strong></p>
+<h2><span id="3-soa-mian-xiang-fu-wu-jia-gou">3 SOA——面向服务架构</span><a href="#3-soa-mian-xiang-fu-wu-jia-gou" class="header-anchor">#</a></h2>
+<p>SOA（Service-Oriented-Architecture），也叫做面向服务的架构。</p>
+<p>它类似于各服务之间协议和通信方式高度一致性，各服务遵循完全相同的消息协议和管理机制</p>
+<p><strong>终极目标是总结出一套自上而下的软件研发方法论，最后新厂家要开发系统时，八股文一般照搬SOA架构和实现即可</strong></p>
+<p>有一种参考的SOA架构是事件驱动架构：<br>
+所有服务连接一个统一的消息管道，从管道中接收统一的事件消息和响应机制。</p>
+<p>SOA最终落寞的原因：</p>
+<ul>
+<li>过于严格的规范定义带来了过度的复杂性</li>
+<li>过于精密的流程和理论需要懂得复杂概念的专业人员才能驾驭</li>
+</ul>
+<h2><span id="4-wei-fu-wu-shi-dai">4 微服务时代</span><a href="#4-wei-fu-wu-shi-dai" class="header-anchor">#</a></h2>
+<h3><span id="wei-fu-wu-de-jiu-ge-he-xin-ye-wu-yu-ji-zhu-te-zheng">微服务的九个核心业务与技术特征</span><a href="#wei-fu-wu-de-jiu-ge-he-xin-ye-wu-yu-ji-zhu-te-zheng" class="header-anchor">#</a></h3>
+<ol>
+<li><strong>围绕业务能力构建</strong>：根据业务划分细粒度的服务和团队</li>
+<li><strong>分散治理</strong>： 各服务、各团队对服务质量各自负责，不受其他服务影响，可以各自演进而不用统一规化</li>
+<li><strong>通过服务而不是类库来实现自治</strong></li>
+<li><strong>产品化思维</strong>：各服务开发人员关注整个微服务的全方位生命周期，大家不是为了仅仅完成某个功能，而是提供一个持续改进、提升的服务。</li>
+<li><strong>数据去中心化</strong>：允许不同的存储方式或者存储位置，但要考虑分布式一致性的成本</li>
+<li><strong>强终端弱管道</strong>：即弱化类似SOAP的通信机制（通信管道设计很重，所有服务强制依赖，多了很多不必要的管道功能），  如果有调用需要，提供服务终端的endpoint去调用而不是强制管道使用。</li>
+<li><strong>容错性设计</strong>：认为各服务是可以出错的，并不会直接影响所有服务的运行</li>
+<li><strong>演进式设计</strong>：不仅可以容错，也可以允许某个服务突然被淘汰</li>
+<li><strong>基础设置自动化</strong>：通过CI/CD等自动化构建、发布、运维，减少人工维护成本</li>
+</ol>
+<h3><span id="wei-fu-wu-xiang-bi-soa-de-you-shi">微服务相比SOA的优势</span><a href="#wei-fu-wu-xiang-bi-soa-de-you-shi" class="header-anchor">#</a></h3>
+<p>微服务不是SOA的变体或者衍生品，微服务中的每一部分可以自由的选择其中的各种可选方案。<br>
+例如远程调用有RMI、Dubbo、Rest，服务发现有ZK、Etcd等。<br>
+也正是因为选择很多，对于架构师而言是一个很沉重的挑战</p>
+<h2><span id="5-hou-wei-fu-wu-shi-dai-yun-yuan-sheng-shi-dai">5 后微服务时代（云原生时代）</span><a href="#5-hou-wei-fu-wu-shi-dai-yun-yuan-sheng-shi-dai" class="header-anchor">#</a></h2>
+<h3><span id="yong-ying-jian-fang-an-ti-dai-ruan-jian-fang-an">用硬件方案替代软件方案</span><a href="#yong-ying-jian-fang-an-ti-dai-ruan-jian-fang-an" class="header-anchor">#</a></h3>
+<p>对于注册、跟踪治理、均衡等问题，能否脱离应用代码实现， 直接在硬件层面来实现？<br>
+很早以前行不通，因为硬件基础设置跟不上软件应用的灵活性。<br>
+直到<strong>docker和k8s</strong>的出现。</p>
+<p><strong>微服务时代离不开以docker为代表的早期容器化技术</strong></p>
+<p>微服务框架springCloud所支持的软件级别微服务治理功能，都能够在k8s中找到硬件层面的替代：</p>
+<table>
+<thead>
+<tr>
+<th>微服务功能</th>
+<th>K8s</th>
+<th>SpringCloud</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>弹性伸缩</td>
+<td>Autoscaling</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>服务发现</td>
+<td>KubeDNS</td>
+<td>SpringCloud Eureka</td>
+</tr>
+<tr>
+<td>配置中心</td>
+<td>ConfigMap</td>
+<td>SpringCloud Config</td>
+</tr>
+<tr>
+<td>服务网关</td>
+<td>Ingress Controller</td>
+<td>SpringCloud zuul</td>
+</tr>
+<tr>
+<td>负载均衡</td>
+<td>Load Balancer</td>
+<td>SpringCloud ribbon</td>
+</tr>
+<tr>
+<td>服务安全</td>
+<td>RBAC API</td>
+<td>SpringCloud security</td>
+</tr>
+<tr>
+<td>跟踪监控</td>
+<td>Dashboard</td>
+<td>SpringCloud turbine</td>
+</tr>
+<tr>
+<td>降级熔断</td>
+<td>N/A</td>
+<td>SpringCloud Hystrix</td>
+</tr>
+</tbody>
+</table>
+<p><strong>通过k8s和相关的虚拟化技术， 与业务无关的技术性问题可以从软件层面剥离，直接在硬件设置层面进行解决！</strong></p>
+<h3><span id="di-er-ci-jin-hua">第二次进化</span><a href="#di-er-ci-jin-hua" class="header-anchor">#</a></h3>
+<p>当涉及调用链路的切换或者变更， 单纯依靠DNS的硬件层面来做切换还是比较困难的，不如软件方案灵活。<br>
+于是引入了“服务网格”的边车代理模式</p>
+<p>类似于脱离应用代码，在容器中部署一个通信代理服务器，对于请求的熔断、变更、流量控制都可通过这个代理服务器来管控。这样微服务应用代码中无需再考虑任何和上面这些通信过程相关的逻辑了，全部通过第三方的代理服务器实现！</p>
+<h2><span id="6-wu-fu-wu-serverless-shi-dai">6无服务（ServerLess）时代</span><a href="#6-wu-fu-wu-serverless-shi-dai" class="header-anchor">#</a></h2>
+<h3><span id="wu-fu-wu-de-ding-yi">无服务的定义</span><a href="#wu-fu-wu-de-ding-yi" class="header-anchor">#</a></h3>
+<ul>
+<li>后端即服务： 数据库、存储、日志等业务无关的后端等都存储在云上</li>
+<li>函数即服务：供使用者调用的函数/接口都是运行在云端，调用者不需要考虑容量规划和算力问题</li>
+</ul>
+<h3><span id="wu-fu-wu-de-yuan-jing">无服务的愿景</span><a href="#wu-fu-wu-de-yuan-jing" class="header-anchor">#</a></h3>
+<ol>
+<li>开发者只需要纯粹地关注业务</li>
+<li>不需要考虑技术组件，后端组件现成的，直接使用，不用考虑如何采购和选型</li>
+<li>不用操心运维，运维能力交给云计算厂商。</li>
+</ol>
+<h3><span id="wu-fu-wu-de-que-dian">无服务的缺点</span><a href="#wu-fu-wu-de-que-dian" class="header-anchor">#</a></h3>
+<p>对于信息管理系统、网络游戏或者对后端接口响应速度较高的应用而言， 无服务并不是最佳选择， 因为无服务的函数肯定不会一直处理高活跃度状态，存在冷启动的情况，对于其响应性能会有影响</p>
+<h2><span id="zong-jie-he-si-kao">总结和思考</span><a href="#zong-jie-he-si-kao" class="header-anchor">#</a></h2>
+<p>在很多年前的架构或者介绍微服务的书中，基本都是从单体-&gt;SOA-&gt;微服务。但是现在，随着云原生和 serverless 等新概念的出现，微服务架构的发展已经越来越多元化。对于需要频繁接触云业务的开发者而言，这些新概念显得更加重要。在学习这个章节时，需要关注这些架构演进的原因和理由，比如SOA相比单体的优点和缺点，后微服务又是如何从理念上逐步领先了传统的微服务等。</p>
+<p>而《凤凰架构》一书的后半章节内容，更多是聚焦容器、k8s等云原生的重要内容。</p>
+<p>像基于容器、k8s的设计，云原生技术将原先软件能力中复杂的内容转移到了硬件层面进行替代，开发者能够用更集中的精力关心业务实现而非服务治理等繁杂的内容。</p>
+<p>像<a target="_blank" rel="noopener" href="https://www.huaweicloud.com/product/cce.html">华为云CCE服务</a>对于部署云业务的服务而言就是云原生时代的重要一环，CCE服务可以面向云原生2.0打造CCE Turbo容器集群，计算、网络、调度全面加速，学习 CCE 服务可以帮助开发者更深入地了解 Kubernetes 和容器技术，从而提高自己的微服务开发和容器化应用部署能力。</p>
+<p>而无服务一般也是基于容器实现，对使用者而言基本不感知底层硬件资源，只需要调用即可，大大减少了创建和维护的学习和精力成本，即开即用的理念。 像<a target="_blank" rel="noopener" href="https://www.huaweicloud.com/product/dli.html">华为云数据湖探索DLI</a>、 <a target="_blank" rel="noopener" href="https://www.huaweicloud.com/product/lakeformation.html">华为云湖仓构建LakeFormation</a>等都是基于serverless实现的云服务，云用户基于这些serverless服务并结合<a target="_blank" rel="noopener" href="https://www.huaweicloud.com/product/mrs.html">华为云MRS</a>等大数据底座之后，可以快速运行自己的大数据作业或者数据统一管理等能力，构建数智融合的相关能力。</p>
+<p>总而言之，相比于传统的微服务架构，云原生和 serverless 技术更加灵活、高效，能够更好地满足用户的需求。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%B8%80%E3%80%81%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%BC%94%E8%BF%9B%E5%8F%B2/" title="一、微服务演进史">http://breakdawncoder.com/知识库/后台开发应用/微服务和云原生（凤凰架构学习）/一、微服务演进史/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86-%E5%BE%AE%E6%9C%8D%E5%8A%A1-%E4%BA%91%E5%8E%9F%E7%94%9F/" rel="tag"># 后台开发知识,微服务,云原生</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%8D%81%E3%80%81%E8%99%9A%E6%8B%9F%E5%8C%96%E5%AE%B9%E5%99%A8/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">服务架构演进史</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">1 原始分布式时代</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">2 单体系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.1.</span> <span class="nav-text">单体架构的好处</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.2.</span> <span class="nav-text">单体架构的坏处</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">3 SOA——面向服务架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.4.</span> <span class="nav-text">4 微服务时代</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.4.1.</span> <span class="nav-text">微服务的九个核心业务与技术特征</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.4.2.</span> <span class="nav-text">微服务相比SOA的优势</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.5.</span> <span class="nav-text">5 后微服务时代（云原生时代）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.5.1.</span> <span class="nav-text">用硬件方案替代软件方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.5.2.</span> <span class="nav-text">第二次进化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.6.</span> <span class="nav-text">6无服务（ServerLess）时代</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.6.1.</span> <span class="nav-text">无服务的定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.6.2.</span> <span class="nav-text">无服务的愿景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.6.3.</span> <span class="nav-text">无服务的缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.7.</span> <span class="nav-text">总结和思考</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">254</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">64</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共346.2k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

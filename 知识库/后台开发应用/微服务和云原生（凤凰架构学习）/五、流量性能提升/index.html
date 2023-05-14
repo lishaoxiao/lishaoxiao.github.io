@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1234567title: 五、流量性能提升categories:  - - 后台开发知识    - 微服务和云原生tags: &amp;#x27;后台开发知识,微服务,云原生&amp;#x27;typora-root-url: ..&#x2F;..&#x2F;..&#x2F;..&#x2F;date: 2023-05-14 10:32:12     透明多级分流系统  1 客户端缓存  1.1 强制缓存 2.2 协商缓存   3 传输通道优化  3.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="破晓的知识屋">
+<meta property="og:url" content="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%BA%94%E3%80%81%E6%B5%81%E9%87%8F%E6%80%A7%E8%83%BD%E6%8F%90%E5%8D%87/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="1234567title: 五、流量性能提升categories:  - - 后台开发知识    - 微服务和云原生tags: &amp;#x27;后台开发知识,微服务,云原生&amp;#x27;typora-root-url: ..&#x2F;..&#x2F;..&#x2F;..&#x2F;date: 2023-05-14 10:32:12     透明多级分流系统  1 客户端缓存  1.1 强制缓存 2.2 协商缓存   3 传输通道优化  3.">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-05-14T02:16:16.393Z">
+<meta property="article:modified_time" content="2023-05-14T02:19:38.490Z">
+<meta property="article:author" content="breakDawn">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%BA%94%E3%80%81%E6%B5%81%E9%87%8F%E6%80%A7%E8%83%BD%E6%8F%90%E5%8D%87/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%BA%94%E3%80%81%E6%B5%81%E9%87%8F%E6%80%A7%E8%83%BD%E6%8F%90%E5%8D%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-05-14 10:16:16 / 修改时间：10:19:38" itemprop="dateCreated datePublished" datetime="2023-05-14T10:16:16+08:00">2023-05-14</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%BA%94%E3%80%81%E6%B5%81%E9%87%8F%E6%80%A7%E8%83%BD%E6%8F%90%E5%8D%87/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%BA%94%E3%80%81%E6%B5%81%E9%87%8F%E6%80%A7%E8%83%BD%E6%8F%90%E5%8D%87/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">title: 五、流量性能提升</span><br><span class="line">categories:</span><br><span class="line">  - - 后台开发知识</span><br><span class="line">    - 微服务和云原生</span><br><span class="line">tags: &#x27;后台开发知识,微服务,云原生&#x27;</span><br><span class="line">typora-root-url: ../../../../</span><br><span class="line">date: 2023-05-14 10:32:12</span><br></pre></td></tr></table></figure>
+ <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#tou-ming-duo-ji-fen-liu-xi-tong">透明多级分流系统</a>
+<ul>
+<li><a href="#1-ke-hu-duan-huan-cun">1 客户端缓存</a>
+<ul>
+<li><a href="#1-1-qiang-zhi-huan-cun">1.1 强制缓存</a></li>
+<li><a href="#2-2-xie-shang-huan-cun">2.2 协商缓存</a></li>
+</ul>
+</li>
+<li><a href="#3-chuan-shu-tong-dao-you-hua">3 传输通道优化</a>
+<ul>
+<li><a href="#3-1-lian-jie-shu-you-hua">3.1 连接数优化</a></li>
+<li><a href="#3-2-chuan-shu-ya-suo">3.2 传输压缩</a></li>
+<li><a href="#3-3-yong-udp-lai-jia-kuai-wang-luo-chuan-shu">3.3 用UDP来加快网络传输</a></li>
+</ul>
+</li>
+<li><a href="#4-nei-rong-fen-fa-wang-luo-cdn">4 内容分发网络CDN</a>
+<ul>
+<li><a href="#4-1-lu-you-jie-xi">4.1 路由解析</a></li>
+<li><a href="#4-2-nei-rong-fen-fa">4.2 内容分发</a></li>
+</ul>
+</li>
+<li><a href="#5-fu-zai-jun-heng">5 负载均衡</a>
+<ul>
+<li><a href="#5-1-shu-ju-lian-lu-ceng-fu-zai-jun-heng-si-ceng-fu-zai-jun-heng">5.1 数据链路层负载均衡（四层负载均衡）</a></li>
+<li><a href="#5-2-wang-luo-ceng-fu-zai-jun-heng-si-ceng-fu-zai-jun-heng">5.2 网络层负载均衡（四层负载均衡）</a>
+<ul>
+<li><a href="#ip-sui-dao-mo-shi">IP隧道模式</a></li>
+<li><a href="#nat-mo-shi">NAT模式</a></li>
+</ul>
+</li>
+<li><a href="#5-3-ying-yong-ceng-fu-zai-jun-heng-qi-ceng-fu-zai-jun-heng">5.3 应用层负载均衡（七层负载均衡）</a></li>
+<li><a href="#5-4-fu-zai-jun-heng-ce-lue">5.4 负载均衡策略</a></li>
+</ul>
+</li>
+<li><a href="#6-fu-wu-duan-huan-cun">6 服务端缓存</a>
+<ul>
+<li><a href="#6-1-huan-cun-de-ji-ge-shu-xing">6.1 缓存的几个属性</a>
+<ul>
+<li><a href="#tun-tu-liang">吞吐量</a></li>
+<li><a href="#ming-zhong-lu-he-tao-tai-ce-lue">命中率和淘汰策略</a></li>
+<li><a href="#fen-bu-shi-neng-li">分布式能力</a></li>
+</ul>
+</li>
+<li><a href="#6-2-huan-cun-feng-xian">6.2 缓存风险</a>
+<ul>
+<li><a href="#huan-cun-chuan-tou">缓存穿透</a></li>
+<li><a href="#huan-cun-ji-chuan">缓存击穿</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<h1><span id="tou-ming-duo-ji-fen-liu-xi-tong">透明多级分流系统</span><a href="#tou-ming-duo-ji-fen-liu-xi-tong" class="header-anchor">#</a></h1>
+<p>对系统流量进行规划， 要注意以下2个原则</p>
+<ol>
+<li>尽可能减少单点部件， 或者减少到达单点部件的流量或者作用</li>
+<li>奥卡姆剃刀原则，确定有再有必要的时候才去使用，避免过度设计</li>
+</ol>
+<h2><span id="1-ke-hu-duan-huan-cun">1 客户端缓存</span><a href="#1-ke-hu-duan-huan-cun" class="header-anchor">#</a></h2>
+<p>即对于某些资源， 在客户端就做缓存，客户端不去重复请求。</p>
+<h3><span id="1-1-qiang-zhi-huan-cun">1.1 强制缓存</span><a href="#1-1-qiang-zhi-huan-cun" class="header-anchor">#</a></h3>
+<p>类似HTTP协议里在header里用到的两种标签，且都是服务端强行控制的，基于时间的</p>
+<ol>
+<li>Expires<br>
+服务端直接返回数据不会变动的截止时间。<br>
+缺点：受限于客户端本地时间、无法表示不缓存除非强制改时间戳、无法表示是否是私有资源（避免私有资源被其他节点缓存）</li>
+<li>Cache-Control<br>
+这个请求头使用max-age、private、no-cache等标签解决了Expires里的3个缺点。</li>
+</ol>
+<h3><span id="2-2-xie-shang-huan-cun">2.2 协商缓存</span><a href="#2-2-xie-shang-huan-cun" class="header-anchor">#</a></h3>
+<p>协商缓存需要考虑是否真的发生变化。 协商和强制可以共同存在，即强制失效的时候就可以用上协商。<br>
+协商缓存不仅存在于地址输入、跳转，也存在F5中（但如果Ctrl+F5强制刷新则会让缓存失效）</p>
+<ol>
+<li>Last-Modified<br>
+告诉客户端资源的最后修改时间， 客户端再次请求时也会对这个时间做修改<br>
+如果服务端发现在那个时间之后资源未变动，返回304 Not Modified<br>
+如果有变动，就返回OK，并携带完整的资源</li>
+<li>ETag<br>
+需要对资源计算哈希值，客户端发请求也会带上自己存的ETag，每次会比对资源的哈希值是否一致，不一致则返回新资源。<br>
+Etag是一致性最强的本地缓存机制，但也是性能最差的。</li>
+</ol>
+<h2><span id="3-chuan-shu-tong-dao-you-hua">3 传输通道优化</span><a href="#3-chuan-shu-tong-dao-you-hua" class="header-anchor">#</a></h2>
+<p>本章节大部分以熟知的HTTP协议作为主要传输通道协议，讲解如何进行优化</p>
+<h3><span id="3-1-lian-jie-shu-you-hua">3.1 连接数优化</span><a href="#3-1-lian-jie-shu-you-hua" class="header-anchor">#</a></h3>
+<p>HTTP是基于TCP的，每次都是重新建立一个TCP连接。 因此前端开发人员开发了很多小优化，来减少请求次数，例如雪碧图、分段文档、合并Ajax请求之类的。</p>
+<p>HTTP1.0里的长连接(keep-alive连接复用）为什么不能解决这个问题？<br>
+因为存在<strong>队首阻塞</strong>问题，本质上是基于FIFO复用连接， 1个请求卡住了，后面9个请求都阻塞住了，但如果同时支持返回，在顺序混乱的情况下无法正常处理</p>
+<p><strong>HTTP2.0的多路复用解决了这个问题</strong>：</p>
+<ul>
+<li>以帧作为最小粒度单位，每个帧都携带流ID识别是哪个流</li>
+<li>客户端可以很容易在不同流中重组HTTP请求和响应报文</li>
+</ul>
+<h3><span id="3-2-chuan-shu-ya-suo">3.2 传输压缩</span><a href="#3-2-chuan-shu-ya-suo" class="header-anchor">#</a></h3>
+<p>HTTP很早就支持GZip压缩来减少大资源的传输量</p>
+<p>HTTP1.0中， 持久连接和传输压缩无法一起使用， 因为压缩后无法识别资源是否传输完毕。</p>
+<p>HTTP1.1中引入了“分块传输编码”，来进行资源结束的判断。</p>
+<h3><span id="3-3-yong-udp-lai-jia-kuai-wang-luo-chuan-shu">3.3 用UDP来加快网络传输</span><a href="#3-3-yong-udp-lai-jia-kuai-wang-luo-chuan-shu" class="header-anchor">#</a></h3>
+<p>HTTP/3中，希望能替换掉HTTP on TCP的依赖、<br>
+谷歌推出了快速UDP网络连接， 即QUIC</p>
+<ul>
+<li>QUIC以UDP为基础， 可靠传输能力由自己实现</li>
+<li>QUIC专门面向移动设备支持， 移动设备的ip地址经常会切换，使用ip作为定位不合适， 因此提出了连接标识符来保持连接。</li>
+<li>对于不支持QUIC的情况，支持回退为TCP连接，实现兼容</li>
+</ul>
+<h2><span id="4-nei-rong-fen-fa-wang-luo-cdn">4 内容分发网络CDN</span><a href="#4-nei-rong-fen-fa-wang-luo-cdn" class="header-anchor">#</a></h2>
+<p>CND可以解决 互联网系统跨运营商、跨地域物理距离所导致的时延问题，为网站流量带宽起到分流、减负的作用。<br>
+主要包含以下4个工作部分</p>
+<h3><span id="4-1-lu-you-jie-xi">4.1 路由解析</span><a href="#4-1-lu-you-jie-xi" class="header-anchor">#</a></h3>
+<p>用户的静态资源请求访问CDN是通过DNS解析来完成的，甚至可能一个网站会有各种不同地域的CDN域名解析地址返回， 通过你的路由配置会自动选择符合地域的ip地址</p>
+<h3><span id="4-2-nei-rong-fen-fa">4.2 内容分发</span><a href="#4-2-nei-rong-fen-fa" class="header-anchor">#</a></h3>
+<p><strong>如何分发内容有两种方式：</strong></p>
+<ol>
+<li>主动分发，  通过CND服务商提供的接口主动推送自己的资源，这样你需要额外编写资源推动的代码。大型活动例如双11会优先考虑主动分发预先准备资源。</li>
+<li>被动回源，  由用户访问触发，当发现没有资源时,CDN会去源站请求并返回，则用你不需要新写相关代码，只要在CDN那边支持回源你的源站即可。小型站点基本都是用这个方法。</li>
+</ol>
+<p><strong>如何更新资源有两种方式：</strong></p>
+<ol>
+<li>超时被动失效，CDN的资源都有有效期，超时了就回源获取</li>
+<li>手工主动失效， CDN服务商提供缓存失效接口，主动触发失效并进行被动回源更新。<br>
+现在一般是1和2结合使用，二者不冲突</li>
+</ol>
+<h2><span id="5-fu-zai-jun-heng">5 负载均衡</span><a href="#5-fu-zai-jun-heng" class="header-anchor">#</a></h2>
+<p>负载均衡有两种大类</p>
+<ul>
+<li>四层负载均衡<br>
+指的是计算机七层模型中四层及以下的均衡策略结合<br>
+即 数据链路层 + 网络层 均可做均衡</li>
+<li>七层负载均衡<br>
+指的是在应用层通过实际代码做均衡</li>
+</ul>
+<h3><span id="5-1-shu-ju-lian-lu-ceng-fu-zai-jun-heng-si-ceng-fu-zai-jun-heng">5.1 数据链路层负载均衡（四层负载均衡）</span><a href="#5-1-shu-ju-lian-lu-ceng-fu-zai-jun-heng-si-ceng-fu-zai-jun-heng" class="header-anchor">#</a></h3>
+<ul>
+<li>通过链路层上的均衡器替换MAC地址，进行链路层的均衡</li>
+<li>各负载节点的IP是一样的（相同的虚拟IP）</li>
+<li>返回时无需经过均衡器，直接返回即可（因为目标ip、源ip基本没变）</li>
+</ul>
+<p>缺点：<br>
+必须是同一个子网内，无法跨VLAN，只能作为最接近数据中心的均衡器</p>
+<h3><span id="5-2-wang-luo-ceng-fu-zai-jun-heng-si-ceng-fu-zai-jun-heng">5.2 网络层负载均衡（四层负载均衡）</span><a href="#5-2-wang-luo-ceng-fu-zai-jun-heng-si-ceng-fu-zai-jun-heng" class="header-anchor">#</a></h3>
+<p>有两种方式：</p>
+<h4><span id="ip-sui-dao-mo-shi">IP隧道模式</span><a href="#ip-sui-dao-mo-shi" class="header-anchor">#</a></h4>
+<p>均衡器在IP报文外面包了一层新的header，header里指定了目标机器的实际ip或者小网ip。 接收机器要支持解header，且同样要求作为返回的虚拟ip是一致的，也是直接返回无需经过均衡器。<br>
+缺点：</p>
+<ol>
+<li>用到的服务器都要支持隧道解包能力（linux系统现在都支持）</li>
+<li>虚拟ip仍然有较大限制，需要人工介入管理众多机器</li>
+</ol>
+<h4><span id="nat-mo-shi">NAT模式</span><a href="#nat-mo-shi" class="header-anchor">#</a></h4>
+<p>NAT模式中，就是进行真正的ip转换， 且返回时也要返回给NAT进行ip转换，这样只需要针对NAT进行人工管理即可。<br>
+缺点在于NAT容易成功性能瓶颈</p>
+<p>SNAT会修改源IP改为NAT的ip， 可以做到对业务真正透明， 但是代价是如果需要对源IP做限制时容易有问题， 因为所有的来源ip都是一样的了。</p>
+<h3><span id="5-3-ying-yong-ceng-fu-zai-jun-heng-qi-ceng-fu-zai-jun-heng">5.3 应用层负载均衡（七层负载均衡）</span><a href="#5-3-ying-yong-ceng-fu-zai-jun-heng-qi-ceng-fu-zai-jun-heng" class="header-anchor">#</a></h3>
+<p>也叫做七层代理（应用层代理），因为这个负载均衡属于反向代理（即部署在服务端的代理，对客户端不感知）</p>
+<p>不适合做下载站、视频站等流量应用<br>
+如果瓶颈在服务计算能力，则可以考虑做应用层均衡<br>
+期</p>
+<p>七层代理除负载均衡外的其他功能：</p>
+<ul>
+<li>支持做CDN类似的缓存能力</li>
+<li>施行智能化路由，根据URL或者特定用户做特殊服务</li>
+<li>抵御安全工具，提前过滤攻击报文</li>
+<li>链路治理</li>
+</ul>
+<h3><span id="5-4-fu-zai-jun-heng-ce-lue">5.4 负载均衡策略</span><a href="#5-4-fu-zai-jun-heng-ce-lue" class="header-anchor">#</a></h3>
+<ul>
+<li>轮询均衡<br>
+轮流分配，从1到N再到1<br>
+适用于所有服务器硬件配置完全相同，服务请求需要相对均衡</li>
+<li>权重轮询<br>
+根据服务器权重分配周期内的轮询次数</li>
+<li>随机均衡<br>
+适用于数据量足够大的相对均衡分布</li>
+<li>权重随机均衡<br>
+提升权重高的随机率</li>
+<li>一致性哈希均衡<br>
+适用于服务器经常可能掉线或者加入，可以避免哈希键全部更新的情况</li>
+<li>响应速度均衡<br>
+定期探测各个服务器的响应速度，根据速度分配权重</li>
+<li>最少连接数均衡<br>
+根据连接数分配权重， 适用于长时处理服务例如FTP等</li>
+</ul>
+<hr>
+<ul>
+<li>软件均衡器包括基于操作系统内核的LVS、 基于应用程序的Nginx、KeepAlive、HAProxy</li>
+<li>硬件均衡器包括F5、A10等公司提供的硬件负载均衡产品</li>
+</ul>
+<h2><span id="6-fu-wu-duan-huan-cun">6 服务端缓存</span><a href="#6-fu-wu-duan-huan-cun" class="header-anchor">#</a></h2>
+<p>引入缓存的理由：</p>
+<ul>
+<li>减缓CPU计算压力</li>
+<li>缓存IO压力<br>
+这2个缓解只是能峰值时的压力缓解，如果普通的响应都很慢，那就算用了缓存也意义不大。</li>
+</ul>
+<h3><span id="6-1-huan-cun-de-ji-ge-shu-xing">6.1 缓存的几个属性</span><a href="#6-1-huan-cun-de-ji-ge-shu-xing" class="header-anchor">#</a></h3>
+<p>缓存需要选型，选型时需要根据实际场景选择你匹配的缓存熟悉</p>
+<h4><span id="tun-tu-liang">吞吐量</span><a href="#tun-tu-liang" class="header-anchor">#</a></h4>
+<p>JDK8改进后的ConcurrentHashMap是并发场景下吞吐量最高的缓存容器，但除了吞吐量其他的能力就很弱了。</p>
+<p>缓存状态更新思路：</p>
+<ul>
+<li>GuavaCache: 同步处理机制，在访问数据时一并更新，分段加锁减少竞争</li>
+<li>Caffeine：异步日志提交机制，参考数据库日志，并且还有环形缓冲区容忍有损失的状态变更，读性能非常快， 使用多读少写的情况。</li>
+</ul>
+<h4><span id="ming-zhong-lu-he-tao-tai-ce-lue">命中率和淘汰策略</span><a href="#ming-zhong-lu-he-tao-tai-ce-lue" class="header-anchor">#</a></h4>
+<p>基础的三种淘汰方案：</p>
+<ul>
+<li>FIFO：先进先出，简单实现，但对于高频访问的缓存命中率低，越常用到越可能先进入队列</li>
+<li>LRU：优先淘汰最久未被访问，基于时间，  用HashMap+链表List实现，但每个缓存都要记录时间，且可能淘汰短期内正好没访问且价值高的数据</li>
+<li>LFU：优先淘汰最不频繁使用，基于使用次数，可以解决LRU的缺点。<br>
+自身缺点：</li>
+</ul>
+<ol>
+<li>每个缓存专门维护要更新次数的计数器，维护开销大还有加锁问题（LRU的更新时间不需要考虑加锁，直接覆盖最新即可）</li>
+<li>如果某个缓存某时期访问很高，比其他缓存高了一个数量级，后面不再使用，想淘汰很困难</li>
+</ol>
+<p>为了解决上面2个缺点，有2个新的策略：</p>
+<ul>
+<li>TinyLFU： 解决修改计数器的开销问题， 采用Sketch分析访问数据，用少量数据估计全体数据特征，采用滑动时间窗、热度衰减等处理</li>
+<li>W-Tinfy-LFU： 结合了LRU+LFU的特点， 考虑热度和时间。</li>
+</ul>
+<h4><span id="fen-bu-shi-neng-li">分布式能力</span><a href="#fen-bu-shi-neng-li" class="header-anchor">#</a></h4>
+<p>分布式缓存介绍了复制式缓存JbossCache以及集中式缓存Memcached。</p>
+<p>jbosscache的缺点在于写入性能太差，容易因为网络同步速度跟不上写入速度，导致内存中积累过多待发对象引发omm</p>
+<p>memcached是C语言实现的，好处在于读写性能高，缺点在于数据结构太过紧密，非常依赖序列化做跨语言传输，如果100个字段中的1个字段发生更新，要把100个字段都发出去更新</p>
+<p>redis基本打败了各种分布式缓存，成为首选。</p>
+<p>对于redis等分布式缓存， 是不会追求一致性C的<br>
+如果一定要一致性C， 那应该选用zk或者etcd等分布式协调框架（但他们一般就不会拿来做缓存，因为高并发下吞吐量太低，没有可用性）</p>
+<p>进程内缓存和分布式缓存通常结合使用，但容易出现二者数据不一致，写维护策略导致缓存对开发者而言不透明。<br>
+一种设置原则是 变更以分布式缓存中的数据为主，访问以进程内缓存的数据优先。<br>
+大致做法是数据发生变动时， 在分布式缓存内推送通知， 让一级缓存失效。<br>
+访问缓存时，提供封装好的一二级联合查询接口， 让开发者对一二级缓存不感知。</p>
+<h3><span id="6-2-huan-cun-feng-xian">6.2 缓存风险</span><a href="#6-2-huan-cun-feng-xian" class="header-anchor">#</a></h3>
+<h4><span id="huan-cun-chuan-tou">缓存穿透</span><a href="#huan-cun-chuan-tou" class="header-anchor">#</a></h4>
+<p>大量不存在的缓存打进来<br>
+要么是支持对不存在的数据缓存空值<br>
+要么是引入布隆过滤器</p>
+<h4><span id="huan-cun-ji-chuan">缓存击穿</span><a href="#huan-cun-ji-chuan" class="header-anchor">#</a></h4>
+<p>同一时间瞬间涌现很多请求，访问数据库有但是缓存里没有的数据，此时可能直接打穿数据库（缓存生效是有延迟的）<br>
+可以是用锁、队列来完成同步<br>
+对于热点缓存，提前预处理或者配置策略</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%BA%94%E3%80%81%E6%B5%81%E9%87%8F%E6%80%A7%E8%83%BD%E6%8F%90%E5%8D%87/" title="">http://breakdawncoder.com/知识库/后台开发应用/微服务和云原生（凤凰架构学习）/五、流量性能提升/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%9B%9B%E3%80%81%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%85%AD%E3%80%81%E6%B5%81%E9%87%8F%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%BF%9D%E9%9A%9C/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">透明多级分流系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">1 客户端缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 强制缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.2.</span> <span class="nav-text">2.2 协商缓存</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">3 传输通道优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.1.</span> <span class="nav-text">3.1 连接数优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.2.</span> <span class="nav-text">3.2 传输压缩</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.3.</span> <span class="nav-text">3.3 用UDP来加快网络传输</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">4 内容分发网络CDN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.1.</span> <span class="nav-text">4.1 路由解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.2.</span> <span class="nav-text">4.2 内容分发</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.4.</span> <span class="nav-text">5 负载均衡</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.4.1.</span> <span class="nav-text">5.1 数据链路层负载均衡（四层负载均衡）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.4.2.</span> <span class="nav-text">5.2 网络层负载均衡（四层负载均衡）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">IP隧道模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">NAT模式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.4.3.</span> <span class="nav-text">5.3 应用层负载均衡（七层负载均衡）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.4.4.</span> <span class="nav-text">5.4 负载均衡策略</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.5.</span> <span class="nav-text">6 服务端缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.5.1.</span> <span class="nav-text">6.1 缓存的几个属性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">吞吐量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">命中率和淘汰策略</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.5.1.3.</span> <span class="nav-text">分布式能力</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.5.2.</span> <span class="nav-text">6.2 缓存风险</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">缓存穿透</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">缓存击穿</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">254</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">64</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共346.2k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

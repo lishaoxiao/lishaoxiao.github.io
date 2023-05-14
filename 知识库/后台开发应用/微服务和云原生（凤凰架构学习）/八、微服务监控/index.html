@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1234567title: 八、微服务监控categories:  - - 后台开发知识    - 微服务和云原生tags: &amp;#x27;后台开发知识,微服务,云原生&amp;#x27;typora-root-url: ..&#x2F;..&#x2F;..&#x2F;..&#x2F;date: 2023-05-14 10:32:12     可观测性  1 事件日志  1.1 如何、怎样输出日志 1.2 收集和缓冲 1.3 加工与聚合 1.4">
+<meta property="og:type" content="article">
+<meta property="og:title" content="破晓的知识屋">
+<meta property="og:url" content="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%85%AB%E3%80%81%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9B%91%E6%8E%A7/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="1234567title: 八、微服务监控categories:  - - 后台开发知识    - 微服务和云原生tags: &amp;#x27;后台开发知识,微服务,云原生&amp;#x27;typora-root-url: ..&#x2F;..&#x2F;..&#x2F;..&#x2F;date: 2023-05-14 10:32:12     可观测性  1 事件日志  1.1 如何、怎样输出日志 1.2 收集和缓冲 1.3 加工与聚合 1.4">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-05-14T02:20:38.960Z">
+<meta property="article:modified_time" content="2023-05-14T02:47:58.871Z">
+<meta property="article:author" content="breakDawn">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%85%AB%E3%80%81%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9B%91%E6%8E%A7/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%85%AB%E3%80%81%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9B%91%E6%8E%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-05-14 10:20:38 / 修改时间：10:47:58" itemprop="dateCreated datePublished" datetime="2023-05-14T10:20:38+08:00">2023-05-14</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%85%AB%E3%80%81%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9B%91%E6%8E%A7/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%85%AB%E3%80%81%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9B%91%E6%8E%A7/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">title: 八、微服务监控</span><br><span class="line">categories:</span><br><span class="line">  - - 后台开发知识</span><br><span class="line">    - 微服务和云原生</span><br><span class="line">tags: &#x27;后台开发知识,微服务,云原生&#x27;</span><br><span class="line">typora-root-url: ../../../../</span><br><span class="line">date: 2023-05-14 10:32:12</span><br></pre></td></tr></table></figure>
+ <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#ke-guan-ce-xing">可观测性</a>
+<ul>
+<li><a href="#1-shi-jian-ri-zhi">1 事件日志</a>
+<ul>
+<li><a href="#1-1-ru-he-zen-yang-shu-chu-ri-zhi">1.1 如何、怎样输出日志</a></li>
+<li><a href="#1-2-shou-ji-he-huan-chong">1.2 收集和缓冲</a></li>
+<li><a href="#1-3-jia-gong-yu-ju-he">1.3 加工与聚合</a></li>
+<li><a href="#1-4-cun-chu-yu-cha-xun">1.4 存储与查询</a></li>
+</ul>
+</li>
+<li><a href="#2-lian-lu-zhui-zong">2 链路追踪</a>
+<ul>
+<li><a href="#2-1-zhui-zong-he-kua-du">2.1 追踪和跨度</a></li>
+<li><a href="#2-2-shu-ju-shou-ji">2.2 数据收集</a></li>
+<li><a href="#2-3-zhui-zong-gui-fan-hua">2.3 追踪规范化</a></li>
+</ul>
+</li>
+<li><a href="#3-ju-he-du-liang">3 聚合度量</a>
+<ul>
+<li><a href="#3-1-zhi-biao-shou-ji">3.1 指标收集</a></li>
+<li><a href="#3-2-cun-chu-cha-xun">3.2 存储查询</a></li>
+<li><a href="#3-3-jian-kong-yu-jing">3.3 监控预警</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<h1><span id="ke-guan-ce-xing">可观测性</span><a href="#ke-guan-ce-xing" class="header-anchor">#</a></h1>
+<p>什么是微服务的可观测性？</p>
+<p>微服务的可观测性是指在微服务架构中，系统的各个组件和服务能够被有效地监控、度量和分析，以便运维人员和开发团队可以了解系统的运行状况、性能指标和故障情况。可观测性能够提供对每个微服务的实时监控和分析，以及对整个系统的全局视图。</p>
+<p>微服务的可观测性有3个具体的方向，分别是</p>
+<ul>
+<li>事件日志（记录离散事件，主流是ELK）</li>
+<li>链路追踪（排查故障用发生在哪个环节用的， k8s下的prometheus相对有优势）</li>
+<li>聚合度量（汇总生成一些统计信息，涉及很多定制化的内容，暂时没有一家独大的情况）。</li>
+</ul>
+<h2><span id="1-shi-jian-ri-zhi">1 事件日志</span><a href="#1-shi-jian-ri-zhi" class="header-anchor">#</a></h2>
+<p>对于事件日志， 现在主流是使用ELK。即 Elasticsearch、Logstash 和 Kibana的结合。<br>
+每个微服务可以使用 Logstash 将其日志数据发送到 Elasticsearch 进行存储和索引。然后，通过 Kibana 可以轻松地搜索、过滤和分析这些日志数据，以获得对整个系统的实时可视化监控和故障排查能力。</p>
+<h3><span id="1-1-ru-he-zen-yang-shu-chu-ri-zhi">1.1 如何、怎样输出日志</span><a href="#1-1-ru-he-zen-yang-shu-chu-ri-zhi" class="header-anchor">#</a></h3>
+<p>对于打印事件日志，作者建议遵循以下这些原则：</p>
+<ul>
+<li>避免打印敏感信息</li>
+<li>避免引用慢操作（应该都是直接能取到的信息，避免要调远程接口或者耗时较久的计算）</li>
+<li>避免打印追踪信息（这种信息交给链路跟踪做）， 包括打印请求体之类的</li>
+<li>避免误导 他人（例如异常已经吃掉了处理了，后面却还往外打异常日志别人）</li>
+<li>尽量记录处理请求时的traceId</li>
+<li>记录关键事件</li>
+<li>记录启动时的配置信息便于观察配置中心对配置的修改是否生效</li>
+</ul>
+<h3><span id="1-2-shou-ji-he-huan-chong">1.2 收集和缓冲</span><a href="#1-2-shou-ji-he-huan-chong" class="header-anchor">#</a></h3>
+<p>所有日志需要集中收集，因为经常是分布式系统。<br>
+相关收集器： Logstash、filebeat。</p>
+<p>Logstash适用于复杂的数据处理和转换场景，对于数据管道的灵活性和功能要求较高。</p>
+<p>而Filebeat更适合轻量级的日志收集和实时传输，对于资源消耗和简单配置要求较低。</p>
+<p>日志可能很大，要保证完全一致性很难，可以加kafka或者redis作为日志的缓冲层</p>
+<h3><span id="1-3-jia-gong-yu-ju-he">1.3 加工与聚合</span><a href="#1-3-jia-gong-yu-ju-he" class="header-anchor">#</a></h3>
+<p>日志一般是非结构化的字符串， 需要有工具处理成结构化的数据，例如处理成json输出到elasticsearch中。<br>
+Logstach就能够支持结构化处理， 且还支持引入各种聚合插件。</p>
+<p>比如下面这3句日志：</p>
+<figure class="highlight vbnet"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2023</span>-<span class="number">05</span>-<span class="number">14</span> <span class="number">10</span>:<span class="number">30</span>:<span class="number">15</span> INFO: User <span class="comment">&#x27;john&#x27; logged in successfully.</span></span><br><span class="line"><span class="number">2023</span>-<span class="number">05</span>-<span class="number">14</span> <span class="number">10</span>:<span class="number">31</span>:<span class="number">02</span> <span class="keyword">ERROR</span>: Failed <span class="keyword">to</span> process request. <span class="keyword">Error</span> message: Timeout expired.</span><br></pre></td></tr></table></figure>
+<p>通过编写好Logstach的配置文件，然后执行logstach处理命令后，即可生成如下的json结构：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;timestamp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2023-05-14 10:30:15&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;loglevel&quot;</span><span class="punctuation">:</span> <span class="string">&quot;INFO&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;User &#x27;john&#x27; logged in successfully.&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;timestamp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2023-05-14 10:31:02&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;loglevel&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ERROR&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Failed to process request. Error message: Timeout expired.&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>后续即可导入到es中进行进一步的分析和检索了。</p>
+<h3><span id="1-4-cun-chu-yu-cha-xun">1.4 存储与查询</span><a href="#1-4-cun-chu-yu-cha-xun" class="header-anchor">#</a></h3>
+<p>存储和查询的选择大部分是elasticsearch（大部分时候简称ES）<br>
+为什么？</p>
+<ul>
+<li>从数据特征看，日志是基于时间的数据流，很容易让es按时间范围做索引。</li>
+<li>数据价值角度看， 日志只会以最近的数据为目标，因此可以进行冷数据和热数据的分开存储。</li>
+<li>从数据使用角度看，分析日志依赖全文检索 和 即席查询（近实时性）正好是es的强项。</li>
+</ul>
+<p>es和kibaba搭配使用还能可视化查看。kibaba是一个</p>
+<h2><span id="2-lian-lu-zhui-zong">2 链路追踪</span><a href="#2-lian-lu-zhui-zong" class="header-anchor">#</a></h2>
+<h3><span id="2-1-zhui-zong-he-kua-du">2.1 追踪和跨度</span><a href="#2-1-zhui-zong-he-kua-du" class="header-anchor">#</a></h3>
+<p>这是2个概念。</p>
+<ul>
+<li>
+<p>Trace追踪：从客户端发起请求抵达系统边界开始，记录请求流经的每一个服务，直到客户端返回响应。</p>
+</li>
+<li>
+<p>Span跨度： 每次开始调用服务前都会预先埋入一个调用记录，记录时间点、时长。<br>
+Span必须简单， Trace中包含多个span。</p>
+</li>
+</ul>
+<p>需要达成以下4个目标：</p>
+<ul>
+<li>低性能损耗</li>
+<li>对应用透明</li>
+<li>随应用收缩</li>
+<li>持续的监控</li>
+</ul>
+<h3><span id="2-2-shu-ju-shou-ji">2.2 数据收集</span><a href="#2-2-shu-ju-shou-ji" class="header-anchor">#</a></h3>
+<p>有三种方式</p>
+<ul>
+<li>
+<p>基于日志的追踪思路。 将Trace、span输出到日志中，然后日志收集后进行分析。<br>
+优点：实现简单，侵入性小。<br>
+缺点：日志本身不追求决定的连续性和一致，容易失真。<br>
+典型代表： Spring Cloud Sleuth</p>
+</li>
+<li>
+<p>基于服务的追踪。是最常见的追踪方式。  通过某些手段给应用注入探针，例如java Agent，然后将调用过程发送请求给追踪系统。<br>
+有比较强的侵入性，但是追踪的精确性和稳定有保证<br>
+典型代表：SkyWalking\zipkin\pinpoint</p>
+</li>
+<li>
+<p>基于边车代理的追踪。<br>
+依赖服务网格的实现，  追踪数据通过控制平面上报，避免了追踪影响通信和日志。但是服务网格还不太普及，而且只能是服务调用层面无法细化到方法层面。<br>
+典型代表： Envoy</p>
+</li>
+</ul>
+<h3><span id="2-3-zhui-zong-gui-fan-hua">2.3 追踪规范化</span><a href="#2-3-zhui-zong-gui-fan-hua" class="header-anchor">#</a></h3>
+<p>在过去，有几个不同的追踪规范和工具被开发出来，其中最著名的是OpenTracing和OpenCensus，而这两者已经合并为一个名为OpenTelemetry的项目。</p>
+<p>OpenTelemetry是一个全面的观测框架，集成了追踪、度量和日志记录。它提供了一组跨语言的API和库，可以在应用程序中插入代码以收集观测数据。</p>
+<h2><span id="3-ju-he-du-liang">3 聚合度量</span><a href="#3-ju-he-du-liang" class="header-anchor">#</a></h2>
+<p>度量的目的是揭示系统的总体运行状态。 经过聚合统计后的高维度信息，以最简单直观的形式来总结复杂的过程，为监控预警提供决策支持。</p>
+<p>本章节主要介绍了Prometheus的功能，是云原生时代的事实标准。</p>
+<p>Prometheus是一款开源的系统监控和警报工具，最初由SoundCloud开发，并于2012年发布。</p>
+<p>它专注于收集、存储、查询和可视化时间序列数据，并提供强大的监控和警报功能。 以下会介绍这款的3个核心能力</p>
+<h3><span id="3-1-zhi-biao-shou-ji">3.1 指标收集</span><a href="#3-1-zhi-biao-shou-ji" class="header-anchor">#</a></h3>
+<p>如何定义指标（有哪些类型）：</p>
+<ul>
+<li>计数度量器</li>
+<li>瞬态度量器</li>
+<li>吞吐率度量器</li>
+<li>直方图度量器</li>
+<li>采样点分位图度量器<br>
+prometheus支持计数、瞬态、直方图和采样点分位。</li>
+</ul>
+<hr>
+<p>如何把指标告诉服务端</p>
+<ul>
+<li>拉取式</li>
+<li>推送式<br>
+prometheus选择拉取式， 并且支持有限兼容推送式。</li>
+</ul>
+<p>对于网络协议， promethus只支持HTTP但提供了强大的客户端包供使用。</p>
+<h3><span id="3-2-cun-chu-cha-xun">3.2 存储查询</span><a href="#3-2-cun-chu-cha-xun" class="header-anchor">#</a></h3>
+<p>对于度量数据的存储， 应该优选“时序数据库”<br>
+即存储跟随时间而变化， 并且以时间来建立索引。</p>
+<p>时序数据库的特点：</p>
+<ul>
+<li>以日志结构的合并数代替B+树</li>
+<li>设置激进的数据保留策略， 用过期时间TTL删除相关数据</li>
+<li>对数据采样节省空间</li>
+</ul>
+<p>prometheus就是内置了时序数据库</p>
+<h3><span id="3-3-jian-kong-yu-jing">3.3 监控预警</span><a href="#3-3-jian-kong-yu-jing" class="header-anchor">#</a></h3>
+<p>prometheus提供了专门用于预警的alert Manager。</p>
+<p>通过将Prometheus与Alertmanager集成，用户可以根据监控数据的变化和指定的规则，及时收到关键问题的警报。Alertmanager提供了一个集中化的警报处理和管理平台，使用户能够根据自己的需求定制和配置警报路由，并将警报发送给适当的团队成员和通知渠道，以便及时响应和解决问题。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%85%AB%E3%80%81%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9B%91%E6%8E%A7/" title="">http://breakdawncoder.com/知识库/后台开发应用/微服务和云原生（凤凰架构学习）/八、微服务监控/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%85%AD%E3%80%81%E6%B5%81%E9%87%8F%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%BF%9D%E9%9A%9C/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%B9%9D%E3%80%81%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">可观测性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">1 事件日志</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 如何、怎样输出日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 收集和缓冲</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 加工与聚合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 存储与查询</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">2 链路追踪</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 追踪和跨度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 数据收集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 追踪规范化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">3 聚合度量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 指标收集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 存储查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 监控预警</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">254</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">64</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共346.2k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

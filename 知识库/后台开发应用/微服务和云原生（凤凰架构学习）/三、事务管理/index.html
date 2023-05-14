@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1234567title: 三、事务管理categories:  - - 后台开发知识    - 微服务和云原生tags: &amp;#x27;后台开发知识,微服务,云原生&amp;#x27;typora-root-url: ..&#x2F;..&#x2F;..&#x2F;..&#x2F;date: 2023-05-14 10:32:12     事务处理  1 本地事务  1.1 本地事务如何实现原子性和持久性 1.2 本地事务如何实现隔离性   2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="破晓的知识屋">
+<meta property="og:url" content="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%B8%89%E3%80%81%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="1234567title: 三、事务管理categories:  - - 后台开发知识    - 微服务和云原生tags: &amp;#x27;后台开发知识,微服务,云原生&amp;#x27;typora-root-url: ..&#x2F;..&#x2F;..&#x2F;..&#x2F;date: 2023-05-14 10:32:12     事务处理  1 本地事务  1.1 本地事务如何实现原子性和持久性 1.2 本地事务如何实现隔离性   2">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-05-14T02:13:28.094Z">
+<meta property="article:modified_time" content="2023-05-14T02:14:56.058Z">
+<meta property="article:author" content="breakDawn">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%B8%89%E3%80%81%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%B8%89%E3%80%81%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-05-14 10:13:28 / 修改时间：10:14:56" itemprop="dateCreated datePublished" datetime="2023-05-14T10:13:28+08:00">2023-05-14</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%B8%89%E3%80%81%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%B8%89%E3%80%81%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">title: 三、事务管理</span><br><span class="line">categories:</span><br><span class="line">  - - 后台开发知识</span><br><span class="line">    - 微服务和云原生</span><br><span class="line">tags: &#x27;后台开发知识,微服务,云原生&#x27;</span><br><span class="line">typora-root-url: ../../../../</span><br><span class="line">date: 2023-05-14 10:32:12</span><br></pre></td></tr></table></figure>
+ <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#shi-wu-chu-li">事务处理</a>
+<ul>
+<li><a href="#1-ben-di-shi-wu">1 本地事务</a>
+<ul>
+<li><a href="#1-1-ben-di-shi-wu-ru-he-shi-xian-yuan-zi-xing-he-chi-jiu-xing">1.1 本地事务如何实现原子性和持久性</a></li>
+<li><a href="#1-2-ben-di-shi-wu-ru-he-shi-xian-ge-chi-xing">1.2 本地事务如何实现隔离性</a></li>
+</ul>
+</li>
+<li><a href="#2-quan-ju-shi-wu">2 全局事务</a>
+<ul>
+<li><a href="#2-1-2pc-xie-yi-liang-jie-duan-ti-jiao">2.1 2PC协议（两阶段提交）</a></li>
+<li><a href="#2-2-3pc-xie-yi">2.2 3PC协议</a></li>
+</ul>
+</li>
+<li><a href="#3-gong-xiang-shi-wu">3 共享事务</a></li>
+<li><a href="#4-fen-bu-shi-shi-wu">4 分布式事务</a>
+<ul>
+<li><a href="#4-1-cap-li-lun">4.1 CAP理论</a></li>
+<li><a href="#4-2-base-ke-kao-xing-dui-lie">4.2 BASE（可靠性队列）</a></li>
+<li><a href="#4-3-tcc-shi-wu">4.3 TCC事务</a></li>
+<li><a href="#4-4-saga-shi-wu">4.4 SAGA事务</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#zong-jie">总结</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<h1><span id="shi-wu-chu-li">事务处理</span><a href="#shi-wu-chu-li" class="header-anchor">#</a></h1>
+<p>事务有四个经典的特性ACID：</p>
+<ul>
+<li>原子性 (Atomicity):事务中的所有操作都必须是原子的，即不可分割或撤销的。在一个事务执行期间，所有的操作都必须同时成功或同时失败，不存在中间状态。</li>
+<li>一致性 (Consistency):事务执行的结果必须保证数据库的一致性，即数据库中的数据必须在事务开始和结束时保持一致。</li>
+<li>隔离性 (Isolation):事务之间的操作相互隔离，即一个事务的操作不会受到其他事务的影响。</li>
+<li>可用性 (Availability):事务执行期间数据库必须保持可用，即可以在任何时候进行访问和修改。</li>
+</ul>
+<p>这四个特性ACID中， C其实是目的， AID是手段。<br>
+只靠内部（单数据源）可以用AID实现C<br>
+但是外部（多数据源）的情况下没法用AID保证C。</p>
+<h2><span id="1-ben-di-shi-wu">1 本地事务</span><a href="#1-ben-di-shi-wu" class="header-anchor">#</a></h2>
+<p>本地事务是一种最基础的事务解决方案，适用单个服务使用单个数据源的场景。<br>
+（注意，对于MyISAM来说，代码层面调用的rollback其实是空操作，引擎内置了事务处理，不需要代码调用rollback）</p>
+<p>本地事务的实现原理来自ARIES（基于语义的恢复与隔离算法）</p>
+<h3><span id="1-1-ben-di-shi-wu-ru-he-shi-xian-yuan-zi-xing-he-chi-jiu-xing">1.1 本地事务如何实现原子性和持久性</span><a href="#1-1-ben-di-shi-wu-ru-he-shi-xian-yuan-zi-xing-he-chi-jiu-xing" class="header-anchor">#</a></h3>
+<p>本地事务中， 写入磁盘的过程可能不是原子的，是会崩溃的。<br>
+因此要考虑2个异常情况：</p>
+<ul>
+<li>未提交事务（调用事务的应用层代码未返回成功），数据还没改完，写了一半崩溃了，导致数据不一致，非原子性</li>
+<li>已提交事务（调用事务的应用层代码已经反悔了），但是实际磁盘内容还没写就崩了，导致数据完全没变化，非持久性。</li>
+</ul>
+<p>解决方式：<br>
+引入commit log， 即将事务对数据的修改先写入commit log，写入成功代表事务成功，写入完成后再写磁盘，如果中途崩溃了就重新写入<br>
+等同于熟知的redo-log！<br>
+这也是为什么redo-log中是针对某个物理块的修改，目的就是能正确重新，不用考虑我写到哪个位置了，直接全部重刷即可。</p>
+<p>但是这样性能太慢，希望能在事务提交完成前提前写入磁盘，但是提前写的话可能会非原子。<br>
+这时候就可以引入 undolog， 即触发回滚时，可以讲已操作的数据进行undo回滚操作。<br>
+这也是为什么undo-log记录的是一条条不可重复执行的语句。</p>
+<p>文中还提了2个特征：<br>
+NO-FORCE：事务提交后，不强求立刻全部写入磁盘，可以延迟(commit-log，有这的存在就不着急了）<br>
+STEAL：事务提交前，可以先写入一部分数据（undo-log）</p>
+<h3><span id="1-2-ben-di-shi-wu-ru-he-shi-xian-ge-chi-xing">1.2 本地事务如何实现隔离性</span><a href="#1-2-ben-di-shi-wu-ru-he-shi-xian-ge-chi-xing" class="header-anchor">#</a></h3>
+<p>隔离性主要就是依赖 数据库锁和数据库隔离级别实现。<br>
+书中用作者自己的话简述了一遍从 可串行化 到 可重复读 到 读已提交 到读未提交的 演变过程和实现原理， 也提了以下MVCC等内容。</p>
+<p>看完后感觉和我这篇文章讲的内容基本对的上：<a target="_blank" rel="noopener" href="https://bbs.huaweicloud.com/blogs/335953">将数据库9种锁、3种读、4种隔离级别一次性串联起来，用15张图呈现背后数据库事务背后的并发原理</a><br>
+里面有几句比较重要的话：</p>
+<ul>
+<li>MYSQL/Innodb的“可重复读级别”只能在“只读”事务中解决幻读问题，但是读写事务还是会幻读</li>
+<li>读未提交仍然是包含了写锁的。</li>
+<li>MVCC只是针对读+写的场景做了优化， 如果是写+写是没法优化的，只能用锁。</li>
+<li>范围锁不是指对范围内的每一条记录加锁， 而是整个范围内甚至都不能做插入了，即包含了间隙的锁。</li>
+</ul>
+<h2><span id="2-quan-ju-shi-wu">2 全局事务</span><a href="#2-quan-ju-shi-wu" class="header-anchor">#</a></h2>
+<p>这里的全局事务指的是 <strong>单个服务</strong> 使用<strong>多个数据源</strong><br>
+核心在于是单个服务，不涉及多服务之间的关联， 视角只有单服务。</p>
+<p>XA接口是双向的，能在一个事务管理器和多个资源管理器之间形成通信桥梁，协调多个数据源的一致动作，实现全局事务的统一提交和回滚。<br>
+Java基于XA接口衍生出的API叫做JTA（javax.transaction.TrancsactionManager和 XAResource）</p>
+<p>注意对于全局事务，调用XA的应用者是可以不需要额外处理的，XA会协助做好以下全局事务的响应操作。</p>
+<h3><span id="2-1-2pc-xie-yi-liang-jie-duan-ti-jiao">2.1 2PC协议（两阶段提交）</span><a href="#2-1-2pc-xie-yi-liang-jie-duan-ti-jiao" class="header-anchor">#</a></h3>
+<p><strong>准备阶段</strong><br>
+数据源将需要做的事务操作记录在redolog中，完成了持久化，并仍旧持有锁，保持隔离性</p>
+<p><strong>提交阶段</strong><br>
+协调者收到了所有数据源的回应后， 给所有数据源发送commit指令，如果有任一失败或者超时，则发送abort回滚指令。</p>
+<p><strong>2PC的缺点：</strong></p>
+<ul>
+<li>协调者单点问题:协调者挂了其他的数据源都会一直在持有锁的情况下等待</li>
+<li>准备阶段的性能问题：整个过程将被最慢的那个数据源所拖累，包括如果连接超时也会影响，导致多余的回滚操作</li>
+<li>一致性风险：指令丢失、数据源机器崩溃且无法恢复（FLP不可能原理：如果岱机后无法恢复，那么没有任何分布式协议可以达成一致性）</li>
+</ul>
+<h3><span id="2-2-3pc-xie-yi">2.2 3PC协议</span><a href="#2-2-3pc-xie-yi" class="header-anchor">#</a></h3>
+<p>为了解决上面的单点问题和 准备阶段的性能问题，引入3PC协议<br>
+将准备阶段扩展为：<br>
+<strong>CanCommit询问阶段</strong><br>
+这个阶段就是为了确认各机器是否还是正常的，如果经过确认都是正常负载的状态，再下发事务操作，这样就能避免被网络超时、不良负载拖累的风险</p>
+<p><strong>PreCommit预提交阶段</strong><br>
+和之前一样，下发事务后各数据源写入重做日志</p>
+<p><strong>DoCommit阶段</strong><br>
+这个过程有一个优化， 如果协调者挂了， 数据源迟迟无法收到，就会默认进行事务提交（注意并非默认回滚）</p>
+<p>3PC仍然存在网络问题导致的一致性问题。<br>
+另外对于2PC，</p>
+<h2><span id="3-gong-xiang-shi-wu">3 共享事务</span><a href="#3-gong-xiang-shi-wu" class="header-anchor">#</a></h2>
+<p>书里说这个不常用，不写了，类似于提供共享的数据连接给不同进程使用，使用同一个事务逻辑</p>
+<h2><span id="4-fen-bu-shi-shi-wu">4 分布式事务</span><a href="#4-fen-bu-shi-shi-wu" class="header-anchor">#</a></h2>
+<h3><span id="4-1-cap-li-lun">4.1 CAP理论</span><a href="#4-1-cap-li-lun" class="header-anchor">#</a></h3>
+<ul>
+<li>C一致性： 各节点同一时刻响应结果一致（数据一致）</li>
+<li>A可用性： 各节点随时随地都要能正常响应，不能存在延迟或者阻塞的情况（快速响应）</li>
+<li>P分区容忍性：某个节点挂了，其他节点能代替服务</li>
+</ul>
+<p>科学家证明CAP只能同时满足2个</p>
+<ul>
+<li>放弃分区容忍性P： 意味着分布式系统不成立。这种情况只有类似于Oracle RAC这种数据通过磁盘共享的情况， 虽然是多个实例，但不算分布式。 基本是分布式系统一定都会包含P，否则没有考虑分布式事务的意义</li>
+<li>放弃可用性A： 这样可能因为数据同步过程的延迟或者超时，造成系统长时间不可用， 这是不能容忍的</li>
+<li>放弃一致性C： 数据有短暂不一致的响应。  <strong>放弃C是当前分布式系统的主流选择</strong>。  一般都是允许数据在中间过程出错， 但允许在输出时能够修正古来。 因此我们放弃了强一致性，追求“最终一致性”</li>
+</ul>
+<h3><span id="4-2-base-ke-kao-xing-dui-lie">4.2 BASE（可靠性队列）</span><a href="#4-2-base-ke-kao-xing-dui-lie" class="header-anchor">#</a></h3>
+<p>BASE指 基本可用性 + 柔性事务 + 最终一致性，  或者叫做最大努力交付</p>
+<p>实现原理是引入一个消息队列，当某个事务动作发生异常时， 在轮询阶段不断重试，直到成功</p>
+<p>要求满足幂等性</p>
+<p>可靠性事件队列只要第一步完成了，后续就没有失败回滚的概念，只许成功，不许失败。</p>
+<h3><span id="4-3-tcc-shi-wu">4.3 TCC事务</span><a href="#4-3-tcc-shi-wu" class="header-anchor">#</a></h3>
+<p>TCC用于解决BASE中无法解决的隔离性问题，因为BASE不允许失败，一定会执行，如果涉及了超售等问题将无法解决。</p>
+<ul>
+<li>Try: 尝试执行阶段， 会先进行业务可执行的检查，并提前预留好需要扣除的资源（类似于冻结那一块资源，但没有实际去扣）</li>
+<li>Confirm:执行阶段，这个过程不再做任何检查，直接执行。如果网络出错等缘故则一直重试，符合幂等</li>
+<li>Cancel:执行完成，释放try阶段中预留的业务资源，也要符合幂等。</li>
+</ul>
+<p>和2PC很类似，但TCC是在用户应用代码层面实现的，业务侵入性很高， 而2PC是基础设施层面提供的。</p>
+<h3><span id="4-4-saga-shi-wu">4.4 SAGA事务</span><a href="#4-4-saga-shi-wu" class="header-anchor">#</a></h3>
+<p>TCC中的缺点在于 try阶段和cancel阶段依赖用户代码实现，但如果你的业务不支持这种操作就麻烦了，比如扣款动作是某个银行做的， 他不支持预扣款的功能。</p>
+<p>SAGA会把事务拆成很多个小事务T，按顺序执行， 并根据情况给事务T失败时选择是继续重试T， 还是用补偿事务C来替代重试</p>
+<p>这样像银行无法预扣款也无法撤销转账的问题，可以改成自己系统来做中间者做转账操作。</p>
+<p>也要引入SAGAlog机制避免长串事务执行过程中崩溃</p>
+<h1><span id="zong-jie">总结</span><a href="#zong-jie" class="header-anchor">#</a></h1>
+<p>其实学习本文时，更重要的是思考为什么要学习这么多的事务概念和原理。在云原生时代。</p>
+<p>像华为云提供的很多数据库类型的云服务也都支持了分布式事务的能力，例如</p>
+<ul>
+<li>
+<p><a target="_blank" rel="noopener" href="https://support.huaweicloud.com/usermanual-rds/rds_sqlserver_01_0001.html">华为云RDS分布式事务</a>：<br>
+基于2PC原理实现的MSDTC分布式事务协调器</p>
+</li>
+<li>
+<p><a target="_blank" rel="noopener" href="https://support.huaweicloud.com/bestpractice-ddm/ddm_01_0004.html">华为云DDM事务模型</a>:<br>
+这里面的分布式事务模块基于 MySQL XA 协议实现，XA 协议是对 2PC(Two Phase Commit) 事务模型的一种实现。</p>
+</li>
+<li>
+<p><a target="_blank" rel="noopener" href="https://support.huaweicloud.com/twp-dws/dws_11_0021.html">华为云DWS分布式事务</a>:<br>
+基于强一致性的CSN事务机制,使用GaussDB分布式框架下的一个组件GTM以及从中获取到的CSN值来处理事务。</p>
+</li>
+</ul>
+<p>毕竟云原生应用程序通常由多个微服务组成，因此需要在微服务之间进行通信，并保证事务的一致性。在这种情况下，就需要一种适用业务场景的分布式事务解决方案。比如TCC可以在微服务之间实现分布式事务的ACID特性，而且相对于其他方案，TCC更轻量级，对性能影响更小，但其他方案也有各自的适应场景。</p>
+<p>因此，分布式事务与云原生技术有很强的关联，可以帮助云原生应用程序实现高效的分布式事务处理。当使用某个关系型数据库产品时，关注他们的分布式事务处理能力并分析是否适合自己当前的业务场景，是非常重要的，也是本书该章节值得学习的一个理由。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%B8%89%E3%80%81%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86/" title="">http://breakdawncoder.com/知识库/后台开发应用/微服务和云原生（凤凰架构学习）/三、事务管理/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%BA%8C%E3%80%81%E5%A6%82%E4%BD%95%E8%AE%BF%E9%97%AE%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%9B%9B%E3%80%81%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">事务处理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">1 本地事务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 本地事务如何实现原子性和持久性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 本地事务如何实现隔离性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">2 全局事务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 2PC协议（两阶段提交）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 3PC协议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">3 共享事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.4.</span> <span class="nav-text">4 分布式事务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 CAP理论</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 BASE（可靠性队列）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 TCC事务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.4.4.</span> <span class="nav-text">4.4 SAGA事务</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">254</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">64</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共346.2k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1234567title: 六、流量治理categories:  - - 后台开发知识    - 微服务和云原生tags: &amp;#x27;后台开发知识,微服务,云原生&amp;#x27;typora-root-url: ..&#x2F;..&#x2F;..&#x2F;..&#x2F;date: 2023-05-14 10:32:12     流量治理  1 服务容错  1.1 容错策略 1.2 容错设计模式  1.断路器模式 2.舱壁隔离模式 3">
+<meta property="og:type" content="article">
+<meta property="og:title" content="破晓的知识屋">
+<meta property="og:url" content="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%85%AD%E3%80%81%E6%B5%81%E9%87%8F%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%BF%9D%E9%9A%9C/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="1234567title: 六、流量治理categories:  - - 后台开发知识    - 微服务和云原生tags: &amp;#x27;后台开发知识,微服务,云原生&amp;#x27;typora-root-url: ..&#x2F;..&#x2F;..&#x2F;..&#x2F;date: 2023-05-14 10:32:12     流量治理  1 服务容错  1.1 容错策略 1.2 容错设计模式  1.断路器模式 2.舱壁隔离模式 3">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E5%85%AD%E3%80%81%E6%B5%81%E9%87%8F%E6%B2%BB%E7%90%86/1682552013732969809.png">
+<meta property="article:published_time" content="2023-05-14T02:17:11.802Z">
+<meta property="article:modified_time" content="2023-05-14T02:18:39.217Z">
+<meta property="article:author" content="breakDawn">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/%E5%85%AD%E3%80%81%E6%B5%81%E9%87%8F%E6%B2%BB%E7%90%86/1682552013732969809.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%85%AD%E3%80%81%E6%B5%81%E9%87%8F%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%BF%9D%E9%9A%9C/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%85%AD%E3%80%81%E6%B5%81%E9%87%8F%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%BF%9D%E9%9A%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-05-14 10:17:11 / 修改时间：10:18:39" itemprop="dateCreated datePublished" datetime="2023-05-14T10:17:11+08:00">2023-05-14</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%85%AD%E3%80%81%E6%B5%81%E9%87%8F%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%BF%9D%E9%9A%9C/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%85%AD%E3%80%81%E6%B5%81%E9%87%8F%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%BF%9D%E9%9A%9C/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">title: 六、流量治理</span><br><span class="line">categories:</span><br><span class="line">  - - 后台开发知识</span><br><span class="line">    - 微服务和云原生</span><br><span class="line">tags: &#x27;后台开发知识,微服务,云原生&#x27;</span><br><span class="line">typora-root-url: ../../../../</span><br><span class="line">date: 2023-05-14 10:32:12</span><br></pre></td></tr></table></figure>
+ <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#liu-liang-zhi-li">流量治理</a>
+<ul>
+<li><a href="#1-fu-wu-rong-cuo">1 服务容错</a>
+<ul>
+<li><a href="#1-1-rong-cuo-ce-lue">1.1 容错策略</a></li>
+<li><a href="#1-2-rong-cuo-she-ji-mo-shi">1.2 容错设计模式</a>
+<ul>
+<li><a href="#1-duan-lu-qi-mo-shi">1.断路器模式</a></li>
+<li><a href="#2-cang-bi-ge-chi-mo-shi">2.舱壁隔离模式</a></li>
+<li><a href="#3-chong-shi-mo-shi">3.重试模式</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#2-liu-liang-kong-zhi">2 流量控制</a>
+<ul>
+<li><a href="#2-1-liu-liang-tong-ji-zhi-biao-yi-ju-shi-me-zhi-biao-lai-xian-liu">2.1 流量统计指标(依据什么指标来限流)</a></li>
+<li><a href="#2-2-xian-liu-she-ji-mo-shi-ru-he-xian-liu">2.2 限流设计模式（如何限流）</a>
+<ul>
+<li><a href="#liu-liang-ji-shu-qi-mo-shi">流量计数器模式</a></li>
+<li><a href="#hua-dong-shi-jian-chuang-mo-shi">滑动时间窗模式</a></li>
+<li><a href="#lou-tong-mo-shi">漏桶模式</a></li>
+<li><a href="#ling-pai-tong-mo-shi">令牌桶模式</a></li>
+</ul>
+</li>
+<li><a href="#2-3-fen-bu-shi-xian-liu">2.3 分布式限流</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#zong-jie">总结</a>
+<ul>
+<li><a href="#liu-liang-zhi-li-ji-zhu-dui-yun-yuan-sheng-chang-jing-de-chong-yao-xing">流量治理技术对云原生场景的重要性</a></li>
+<li><a href="#hua-wei-yun-ru-he-zai-liu-liang-zhi-li-zhong-ti-xian-zuo-yong">华为云如何在流量治理中体现作用</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<h1><span id="liu-liang-zhi-li">流量治理</span><a href="#liu-liang-zhi-li" class="header-anchor">#</a></h1>
+<h2><span id="1-fu-wu-rong-cuo">1 服务容错</span><a href="#1-fu-wu-rong-cuo" class="header-anchor">#</a></h2>
+<h3><span id="1-1-rong-cuo-ce-lue">1.1 容错策略</span><a href="#1-1-rong-cuo-ce-lue" class="header-anchor">#</a></h3>
+<p>文章中介绍了故障转移、快速失败、安全失败、沉默失败、故障恢复、并行调用、广播调用等几种容错策略，我用表格的形式直观呈现一下这几种策略的区别，方便理解和选型：</p>
+<table>
+<thead>
+<tr>
+<th>容错策略</th>
+<th>介绍</th>
+<th>优点</th>
+<th>缺点</th>
+<th>应用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>故障转移Fail-over</td>
+<td>服务出现故障时，自动切换到其他服务副本获取结果</td>
+<td>系统自动处理，调用者不感知第一次失败</td>
+<td>会增加调用时间，在有超时时间的限制下即使第二次调用成功也会造成超时。</td>
+<td>调用幂等服务（可支持多次调用），对调用时间不敏感</td>
+</tr>
+<tr>
+<td>快速失败Fail-fast</td>
+<td>出错的话就直接报错抛异常给调用者自行处理。</td>
+<td>调用者对失败的处理完全自主可控。</td>
+<td>调用者必须处理增加了开发成本，不可以随意外抛。</td>
+<td>调用非幂等的服务，超时阈值比较低（因此不允许失败后做其他的处理）的情况</td>
+</tr>
+<tr>
+<td>安全失败fail-safe</td>
+<td>不抛异常，只记录日志</td>
+<td>不影响主链路逻辑</td>
+<td>只适合旁路调用。</td>
+<td>调用链中的旁路服务</td>
+</tr>
+<tr>
+<td>沉默失败fail-slient</td>
+<td>失败后暂停一段时间服务，避免引起服务间雪崩</td>
+<td>控制错误避免影响全局</td>
+<td>出错的地方可能会在一段时间内不可用</td>
+<td>容易引发频繁超时的服务</td>
+</tr>
+<tr>
+<td>故障恢复 fail-back</td>
+<td>调用失败后，把错误放入一个异步队列，延迟恢复。</td>
+<td>自动重试且不会容易引发超时，也不影响主路逻辑</td>
+<td>重试任务如果短时间内堆积过多，也会造成重试失败或者超时</td>
+<td>调用链中的旁路服务，对实时性要求不高的主路服务。</td>
+</tr>
+<tr>
+<td>并行调用forking</td>
+<td>一开始就对多个服务副本发起调用，只有有任何一个返回成功，就宣告成功。会额外消耗资源可能大部分都是无用调用，适合资源充足且对失败容忍度低的高敏感场景</td>
+<td>能够快速获得响应，提高系统的吞吐量</td>
+<td>可能会浪费大量的资源</td>
+<td>适合资源充足且对失败容忍度低的高敏感场景</td>
+</tr>
+<tr>
+<td>广播调用broadcast</td>
+<td>一开始就对多个服务副本发起调用，必须所有都返回成功才宣告成功，常用语刷新分布式缓存。只适合批量操作的场景，失败概率高。</td>
+<td>能够同时快速更新多个副本的状态，提高系统的数据更新速度</td>
+<td>失败概率高</td>
+<td>只适合批量操作的场景，例如刷新分布式缓存等</td>
+</tr>
+</tbody>
+</table>
+<h3><span id="1-2-rong-cuo-she-ji-mo-shi">1.2 容错设计模式</span><a href="#1-2-rong-cuo-she-ji-mo-shi" class="header-anchor">#</a></h3>
+<h4><span id="1-duan-lu-qi-mo-shi">1.断路器模式</span><a href="#1-duan-lu-qi-mo-shi" class="header-anchor">#</a></h4>
+<p>即服务中发请求的地方都通过一个断路器模块来转发发送<br>
+当10秒内请求数量达到20，且失败阈值达到50%以上（这些参数都可以调整）， 则认为出现问题， 于是主动进行服务熔断， 断路器收到的请求自动返回错误，不再去调用远程服务， 这样可避免请求线程各种阻塞，能及时返回报错。<br>
+中间会保持有间隔的重试直到恢复后，关闭断路。</p>
+<h4><span id="2-cang-bi-ge-chi-mo-shi">2.舱壁隔离模式</span><a href="#2-cang-bi-ge-chi-mo-shi" class="header-anchor">#</a></h4>
+<p>如果一个服务中，可能要同时调用A\B\C三个服务，但是却共用一个线程池。<br>
+如果调用C服务超时，而调用C的请求源源不断打来，会造成C服务的请求线程全在阻塞，直接把整体线程池给占满了，影响了对A\B服务的调用。</p>
+<p>一种隔离措施是对每个调用服务分别维护一个线程池。缺点是额外增加了排队、调度、上下文切换的开销，据说Hystrix线程池如果开启了服务隔离，会增加3~10ms的延迟。</p>
+<p>另一种隔离措施是直接自己定义三个服务的计数器，当服务线程数量到达阈值，自动对这个服务调用做限流。</p>
+<h4><span id="3-chong-shi-mo-shi">3.重试模式</span><a href="#3-chong-shi-mo-shi" class="header-anchor">#</a></h4>
+<p>故障转移和故障恢复这2个策略一般都是借助重试模式来处理的，进行重复调用。<br>
+重试模式应该满足以下条件才能使用：</p>
+<ul>
+<li>仅在主路核心逻辑的关键服务上进行同步的重试， 而非关键的服务</li>
+<li>只对瞬时故障进行重试，对于业务故障不进行重试</li>
+<li>只对幂等型的服务进行重试</li>
+</ul>
+<p>重试模式应该有明确的终止条件，例如：</p>
+<ul>
+<li>超时终止</li>
+<li>次数终止</li>
+</ul>
+<p>重试一定要谨慎开启， 有时候在网关、负载均衡器里也会配置一些默认的重试， 一旦链路很长且都有重试，那么系统中重试的次数将会大大增加。</p>
+<h2><span id="2-liu-liang-kong-zhi">2 流量控制</span><a href="#2-liu-liang-kong-zhi" class="header-anchor">#</a></h2>
+<p>流量控制需要解决以下3个问题</p>
+<ul>
+<li>依据什么指标来限流</li>
+<li>如何限流</li>
+<li>超额流量如何处理</li>
+</ul>
+<h3><span id="2-1-liu-liang-tong-ji-zhi-biao-yi-ju-shi-me-zhi-biao-lai-xian-liu">2.1 流量统计指标(依据什么指标来限流)</span><a href="#2-1-liu-liang-tong-ji-zhi-biao-yi-ju-shi-me-zhi-biao-lai-xian-liu" class="header-anchor">#</a></h3>
+<ul>
+<li>每秒事务数TPS：  事务是业务逻辑上具有原子操作的业务操作，对于对买书接口而言， 买书就是一个事务， 背后的其他请求是不感知的。</li>
+<li>每秒请求数HPS：  就是系统每秒处理的请求数， 如果1事务中只有1个请求， 那么TPS=HPS， 否则HPS&gt;TPS</li>
+<li>每秒查询书QPS： 是<strong>一台服务器</strong>能够响应的查询次数。 对于单节点系统而言，QPS=HPS，对于一个分布式系统而言HPS&gt;TPS</li>
+</ul>
+<p>通过限制最大TPS来限流的话，不能够准确反映出系统的压力， 因此主流系统倾向使用HPS作为首选的限流指标。</p>
+<h3><span id="2-2-xian-liu-she-ji-mo-shi-ru-he-xian-liu">2.2 限流设计模式（如何限流）</span><a href="#2-2-xian-liu-she-ji-mo-shi-ru-he-xian-liu" class="header-anchor">#</a></h3>
+<h4><span id="liu-liang-ji-shu-qi-mo-shi">流量计数器模式</span><a href="#liu-liang-ji-shu-qi-mo-shi" class="header-anchor">#</a></h4>
+<p>统计每秒内的请求数是否大于阈值<br>
+缺点：</p>
+<ol>
+<li>每秒是基于1.0s-2.0这样的区间统计， 但如果是0.5-1.5 和1.5-2.5分别超出阈值，但是1.0-2.0没有超过阈值，则会出现问题。</li>
+<li>每秒的请求超过阈值，也不代表系统就真的承受不住，导致五杀</li>
+</ol>
+<h4><span id="hua-dong-shi-jian-chuang-mo-shi">滑动时间窗模式</span><a href="#hua-dong-shi-jian-chuang-mo-shi" class="header-anchor">#</a></h4>
+<p>滑动时间窗专门解决了流量计数器模式的缺点。<br>
+准备一个长度为10的数组，每秒触发1次的定时器<br>
+①将数组最后一位的元素丢弃，并把所有元素都后移一位，然后在数组的第一位插入一个新的空元素<br>
+②将计数器中所有的统计信息写入第一位的空元素<br>
+③对数组中所有元素做统计，清空计数器数据<br>
+可以保证在任意时间片段内，只通过简单的调用计数比较， 控制请求次数不超过阈值</p>
+<p>缺点在于只能用于否决式限流， 必须强制失败或者降级，无法进行阻塞等待的处理。</p>
+<h4><span id="lou-tong-mo-shi">漏桶模式</span><a href="#lou-tong-mo-shi" class="header-anchor">#</a></h4>
+<p>漏桶和令牌桶可以适用于阻塞等待的限流。<br>
+漏桶就是一个以请求对象作为元素的先入先出队， 队列程度等于漏桶大小，当队列已满拒绝信的请求进入。<br>
+比较困难的原因在于很难确定通的大小和水的流出速度，调参难度很大。</p>
+<h4><span id="ling-pai-tong-mo-shi">令牌桶模式</span><a href="#ling-pai-tong-mo-shi" class="header-anchor">#</a></h4>
+<p>每隔一定时间，往桶里放入令牌，最多可以放X个<br>
+每次请求消耗掉一个。</p>
+<p>可以不依赖定时器实现令牌的放入，而是根据时间戳，在取令牌的时候当发现时间戳满足条件则在那个时候放入令牌即可</p>
+<h3><span id="2-3-fen-bu-shi-xian-liu">2.3 分布式限流</span><a href="#2-3-fen-bu-shi-xian-liu" class="header-anchor">#</a></h3>
+<p>前面的4个限流模式都只是单机限流，经常放在网关入口处，不适用于整个服务集群的复杂情况，例如有的服务消耗多有的服务消耗少，都放在入口处限流情况其实很多。</p>
+<p>可以基于令牌桶的基础上，在入口网关处给不同服务加不同的消耗令牌权重，达到分布式集群限流的目的</p>
+<h1><span id="zong-jie">总结</span><a href="#zong-jie" class="header-anchor">#</a></h1>
+<h2><span id="liu-liang-zhi-li-ji-zhu-dui-yun-yuan-sheng-chang-jing-de-chong-yao-xing">流量治理技术对云原生场景的重要性</span><a href="#liu-liang-zhi-li-ji-zhu-dui-yun-yuan-sheng-chang-jing-de-chong-yao-xing" class="header-anchor">#</a></h2>
+<p>以上主要介绍了服务容错和容错设计模式，涉及到不同的容错策略和容错设计模式，如故障转移、快速失败、安全失败、沉默失败、故障恢复、并行调用和广播调用。</p>
+<p>这2个设计可以保证系统的稳定性和健壮性。这篇文章涉及的话题与云原生服务息息相关，因为云原生应用程序之间会频繁通过进行请求和交互，需要通过容错和弹性来保证高可用性。</p>
+<p>因此，对于那些希望使用华为云的云原生服务的人来说，这篇文章提供了很好的指导，让他们了解如何通过容错来保证他们的服务的可用性和稳定性。</p>
+<h2><span id="hua-wei-yun-ru-he-zai-liu-liang-zhi-li-zhong-ti-xian-zuo-yong">华为云如何在流量治理中体现作用</span><a href="#hua-wei-yun-ru-he-zai-liu-liang-zhi-li-zhong-ti-xian-zuo-yong" class="header-anchor">#</a></h2>
+<p>如果能通过将服务API注册到华为云提供的APIG网关上，似乎能够很方便地达成上述2个设计。<br>
+比如APIG支持断路器策略，是API网关在后端服务出现性能问题时保护系统的内置机制。当API的后端服务出现连续N次超时或者时延较高的情况下，会触发断路器的降级机制，向API调用方返回固定错误或者将请求转发到指定的降级后端。当后端服务恢复正常后，断路器关闭，请求恢复正常。<a target="_blank" rel="noopener" href="https://support.huaweicloud.com/usermanual-apig/apig_03_0023.html">APIG-断路器策略</a></p>
+<p>同时APIG还提供了流量控制策略，支持从用户、凭据和时间段等不同的维度限制对API的调用次数，保护后端服务。支持按分/按秒粒度级别的流量控制，阅读了上文中提到的几个流量策略，再去看APIG里配置的流量策略值，则会很容易理解。<a target="_blank" rel="noopener" href="https://support.huaweicloud.com/usermanual-apig/apig_03_0025.html">APIG-流量控制策略</a><br>
+<img src="../../../../images/%E5%85%AD%E3%80%81%E6%B5%81%E9%87%8F%E6%B2%BB%E7%90%86/1682552013732969809.png" alt="image.png"></p>
+<p>可以看到对于这些常见的经典服务设计策略，无需再重复造轮子，使用已有云服务，可以很快地实现相关功能，提升产品的上线速度和迭代效率。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%85%AD%E3%80%81%E6%B5%81%E9%87%8F%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%BF%9D%E9%9A%9C/" title="">http://breakdawncoder.com/知识库/后台开发应用/微服务和云原生（凤凰架构学习）/六、流量可靠性保障/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%BA%94%E3%80%81%E6%B5%81%E9%87%8F%E6%80%A7%E8%83%BD%E6%8F%90%E5%8D%87/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%85%AB%E3%80%81%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9B%91%E6%8E%A7/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">流量治理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">1 服务容错</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 容错策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 容错设计模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">1.断路器模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">2.舱壁隔离模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">3.重试模式</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">2 流量控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 流量统计指标(依据什么指标来限流)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 限流设计模式（如何限流）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">流量计数器模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">滑动时间窗模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">漏桶模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.2.2.4.</span> <span class="nav-text">令牌桶模式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 分布式限流</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">流量治理技术对云原生场景的重要性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">华为云如何在流量治理中体现作用</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">254</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">64</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共346.2k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

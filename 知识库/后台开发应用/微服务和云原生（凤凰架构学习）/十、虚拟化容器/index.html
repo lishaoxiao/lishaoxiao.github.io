@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1234567title: 一、微服务演进史categories:  - - 后台开发知识    - 微服务和云原生tags: &amp;#x27;后台开发知识,微服务,云原生&amp;#x27;typora-root-url: ..&#x2F;..&#x2F;..&#x2F;..&#x2F;date: 2023-05-14 10:32:12     虚拟化容器  1 容器崛起的全部阶段（这个章节很精彩值得一看）  1.1 隔离文件：chroot 1.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="破晓的知识屋">
+<meta property="og:url" content="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%8D%81%E3%80%81%E8%99%9A%E6%8B%9F%E5%8C%96%E5%AE%B9%E5%99%A8/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="1234567title: 一、微服务演进史categories:  - - 后台开发知识    - 微服务和云原生tags: &amp;#x27;后台开发知识,微服务,云原生&amp;#x27;typora-root-url: ..&#x2F;..&#x2F;..&#x2F;..&#x2F;date: 2023-05-14 10:32:12     虚拟化容器  1 容器崛起的全部阶段（这个章节很精彩值得一看）  1.1 隔离文件：chroot 1.">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-05-14T02:23:02.610Z">
+<meta property="article:modified_time" content="2023-05-14T03:07:51.029Z">
+<meta property="article:author" content="breakDawn">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%8D%81%E3%80%81%E8%99%9A%E6%8B%9F%E5%8C%96%E5%AE%B9%E5%99%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%8D%81%E3%80%81%E8%99%9A%E6%8B%9F%E5%8C%96%E5%AE%B9%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-05-14 10:23:02 / 修改时间：11:07:51" itemprop="dateCreated datePublished" datetime="2023-05-14T10:23:02+08:00">2023-05-14</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%8D%81%E3%80%81%E8%99%9A%E6%8B%9F%E5%8C%96%E5%AE%B9%E5%99%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%8D%81%E3%80%81%E8%99%9A%E6%8B%9F%E5%8C%96%E5%AE%B9%E5%99%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">title: 一、微服务演进史</span><br><span class="line">categories:</span><br><span class="line">  - - 后台开发知识</span><br><span class="line">    - 微服务和云原生</span><br><span class="line">tags: &#x27;后台开发知识,微服务,云原生&#x27;</span><br><span class="line">typora-root-url: ../../../../</span><br><span class="line">date: 2023-05-14 10:32:12</span><br></pre></td></tr></table></figure>
+ <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#xu-ni-hua-rong-qi">虚拟化容器</a>
+<ul>
+<li><a href="#1-rong-qi-jue-qi-de-quan-bu-jie-duan-zhe-ge-zhang-jie-hen-jing-cai-zhi-de-yi-kan">1 容器崛起的全部阶段（这个章节很精彩值得一看）</a>
+<ul>
+<li><a href="#1-1-ge-chi-wen-jian-chroot">1.1 隔离文件：chroot</a></li>
+<li><a href="#1-2-ge-chi-fang-wen-ming-cheng-kong-jian">1.2 隔离访问：名称空间</a></li>
+<li><a href="#1-3-ge-chi-zi-yuan-cgroups">1.3 隔离资源： cgroups</a></li>
+<li><a href="#1-4-feng-zhuang-xi-tong-lxc">1.4 封装系统：LXC</a></li>
+<li><a href="#1-5-feng-zhuang-ying-yong-docker">1.5 封装应用：Docker</a></li>
+<li><a href="#1-6-feng-zhuang-ji-qun-kubernetes">1.6 封装集群：kubernetes</a></li>
+</ul>
+</li>
+<li><a href="#2-yi-rong-qi-gou-jian-da-xing-xi-tong-rong-qi-bian-pai">2 以容器构建大型系统（容器编排）</a>
+<ul>
+<li><a href="#2-1-ge-chi-yu-xie-zuo-pod-de-gai-nian">2.1 隔离与协作（Pod的概念）</a></li>
+<li><a href="#2-2-ren-xing-he-dan-xing-k8s-zi-dong-wei-hu-yuan-li">2.2 韧性和弹性（k8s自动维护原理）</a></li>
+</ul>
+</li>
+<li><a href="#3-yi-ying-yong-wei-zhong-xin-de-feng-zhuang-jie-shao-qi-ta-dui-k8s-zeng-qiang-de-neng-li">3 以应用为中心的封装（介绍其他对k8s增强的能力）</a>
+<ul>
+<li><a href="#3-1-kustomize">3.1 kustomize</a></li>
+<li><a href="#3-2-helm-he-chart">3.2 Helm和Chart</a></li>
+<li><a href="#3-3-operator">3.3 Operator</a></li>
+<li><a href="#3-4-qi-ta-ying-yong-feng-zhuang">3.4 其他应用封装</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<h1><span id="xu-ni-hua-rong-qi">虚拟化容器</span><a href="#xu-ni-hua-rong-qi" class="header-anchor">#</a></h1>
+<p>经典的兼容性问题有</p>
+<ul>
+<li>ISA兼容：目标机器指令集的兼容性</li>
+<li>ABI兼容：目标系统或者依赖库的二进制兼容性</li>
+<li>环境兼容： 目标环境的兼容性。例如环境变量、配置、注册中心等。</li>
+</ul>
+<p>虚拟化技术分为</p>
+<ul>
+<li>指令集虚拟化。用软件模拟不同ISA架构的处理器过程。 例如QEMU和Bochs，甚至可以做到在web上运行操作系统。但是性能损失大</li>
+<li>硬件抽象层虚拟化。 用软件来模拟计算机里的各种硬件设施。例如VMware等虚拟机。</li>
+<li>操作系统层虚拟化。 不会提供真实的操作系统，而是采用隔离手段使不同进程拥有独立的系统资源和资源配额。<strong>熟知的容器化就是在这个层面的虚拟化</strong></li>
+<li>运行库层虚拟化。 使用软件翻译的方法来模拟系统。例如WINE和WSL。</li>
+<li>语言层虚拟化。例如JVM。</li>
+</ul>
+<h2><span id="1-rong-qi-jue-qi-de-quan-bu-jie-duan-zhe-ge-zhang-jie-hen-jing-cai-zhi-de-yi-kan">1 容器崛起的全部阶段（这个章节很精彩值得一看）</span><a href="#1-rong-qi-jue-qi-de-quan-bu-jie-duan-zhe-ge-zhang-jie-hen-jing-cai-zhi-de-yi-kan" class="header-anchor">#</a></h2>
+<h3><span id="1-1-ge-chi-wen-jian-chroot">1.1 隔离文件：chroot</span><a href="#1-1-ge-chi-wen-jian-chroot" class="header-anchor">#</a></h3>
+<p>1979年unix提供了这个命令，让进程的根目录被锁定在指定参数位置中，不能放外该目录之外的其他目录。经常用来作为监控黑客行动的黑盒。<br>
+因此这个命令实现了容器最基础的文件隔离能力</p>
+<h3><span id="1-2-ge-chi-fang-wen-ming-cheng-kong-jian">1.2 隔离访问：名称空间</span><a href="#1-2-ge-chi-fang-wen-ming-cheng-kong-jian" class="header-anchor">#</a></h3>
+<p>2022年 linux引入了 linux名称空间namespace。<br>
+进程在一个独立的名称空间中，享有独立的文件系统、PID、UID、网络等带有名称的资源。</p>
+<h3><span id="1-3-ge-chi-zi-yuan-cgroups">1.3 隔离资源： cgroups</span><a href="#1-3-ge-chi-zi-yuan-cgroups" class="header-anchor">#</a></h3>
+<p>linux的cgroups可用来隔离或者分配进程可以使用的资源， 例如处理器、内存大小、磁盘IO速度等， 能够有效避免一个进程出现问题把同机器上的其他进程直接占用崩溃。</p>
+<h3><span id="1-4-feng-zhuang-xi-tong-lxc">1.4 封装系统：LXC</span><a href="#1-4-feng-zhuang-xi-tong-lxc" class="header-anchor">#</a></h3>
+<p>lxc是linux发布的系统级虚拟化功能。<br>
+lxc的理念在于封装系统，而docker的理念在于封装应用。<br>
+当系统内的部件需要修改，必须重写很多配置，构建无法很便捷快速。</p>
+<h3><span id="1-5-feng-zhuang-ying-yong-docker">1.5 封装应用：Docker</span><a href="#1-5-feng-zhuang-ying-yong-docker" class="header-anchor">#</a></h3>
+<p>docker的容器化能力直接来源自lxc。<br>
+后面又自己用go语言开发了libcontainer避免了对lxc的强依赖。<br>
+为什么选择docker而不是LXC？</p>
+<ul>
+<li>跨机器的绿色部署： 将所有环境依赖打包到一起，避免对机器的依赖。</li>
+<li>以应用为中心的封装：</li>
+<li>自动构建： 无需关注目标机器具体配置，使用任务构建工具在容器中自动构建</li>
+<li>多版本支持： 支持git一样管理容器版本</li>
+<li>组件重用， 可以在基础镜像上构建专业化镜像</li>
+<li>共享，有公共的镜像仓库</li>
+<li>工具生态可以很方便扩展</li>
+</ul>
+<h3><span id="1-6-feng-zhuang-ji-qun-kubernetes">1.6 封装集群：kubernetes</span><a href="#1-6-feng-zhuang-ji-qun-kubernetes" class="header-anchor">#</a></h3>
+<p>k8s是容器编排框架， 把大型软件系统运行所依赖的集群环境也进行了虚拟化，令集群得意实现跨数据中心的绿色部署，实现自动扩缩。<br>
+k8s最开始完全绑定依赖docker， 后面慢慢主题更新依赖路线，最终在调用链中可以解耦对docker engine的依赖了， k8s最终关注的是container而不是背后的docker</p>
+<h2><span id="2-yi-rong-qi-gou-jian-da-xing-xi-tong-rong-qi-bian-pai">2 以容器构建大型系统（容器编排）</span><a href="#2-yi-rong-qi-gou-jian-da-xing-xi-tong-rong-qi-bian-pai" class="header-anchor">#</a></h2>
+<p>分布式系统里应用需要多个进程共同协作，通过集群形式对外提供服务，实现这个目标的过程称为“容器编排”</p>
+<h3><span id="2-1-ge-chi-yu-xie-zuo-pod-de-gai-nian">2.1 隔离与协作（Pod的概念）</span><a href="#2-1-ge-chi-yu-xie-zuo-pod-de-gai-nian" class="header-anchor">#</a></h3>
+<p>这里作者先提出了一个问题：<strong>如果web服务进程和日志收集进程放在同一个容器中，有什么影响？</strong></p>
+<p>回答：这其实会违反了单进程应用理念， dockerfile只允许一个entrypoint，只能监视pid为1的进程来决定是否重启。</p>
+<p>如果自己额外弄一个健康检查进程，可能因为健康检查进程失效却无法被容器侦测到。</p>
+<p>因此关联进程需要放到2个不同的容器中， 可以通过同节点目录挂载进行日志关联。</p>
+<p>另外，如果同节点不同容器之间需要进行基于操作系统的信号通信（不经过网络），则需要这2个容器依赖相同的IPC名称空间。</p>
+<p>同节点上不同容器支持共享部分命名空间，则可以用Pod来实现。<br>
+pod共享以下内容：</p>
+<ul>
+<li>UTS名称空间：所有容器都有相同的主机名和域名</li>
+<li>网络名称空间：所有容器都共享一样的网卡、网络栈、IP地址等。同一个Pod中容器占用的端口不能冲突</li>
+<li>IPC名称空间：可以用信号量或者POSIX共享内存</li>
+<li>时间名称空间： 共享相同的系统时间<br>
+但POD中PID名称空间和文件名称空间仍然是隔离的。</li>
+</ul>
+<blockquote>
+<p>POD中共享空间的能力是通过pause容器实现的，里面大部分都是在执行pause操作，其他时候用来传递各种状态。</p>
+</blockquote>
+<p><strong>POD的另一个关键点： 可以作为资源调度的最小单位（而不是容器）</strong><br>
+如果日志收集和web服务因为资源分配问题被调度到了2个不同的节点上，那么功能就会出现问题。</p>
+<p>因此当这2个服务整合成pod后，无论如何重启或升级，都会统一调度分到同一个节点上。</p>
+<p>K8S里其他资源概念的解释：从小到大</p>
+<ul>
+<li>容器container：镜像管理的最小单位</li>
+<li>生产任务Pod：容器组，资源调度最小单位</li>
+<li>节点Node：对应集群中的单台机器，是硬件单元的最小单位</li>
+<li>集群Cluster：对应整个集群，是处理元数据的最小单位</li>
+<li>集群联邦Federation：对应多个集群，是满足跨可用区域多活、跨地域容灾的要求</li>
+</ul>
+<h3><span id="2-2-ren-xing-he-dan-xing-k8s-zi-dong-wei-hu-yuan-li">2.2 韧性和弹性（k8s自动维护原理）</span><a href="#2-2-ren-xing-he-dan-xing-k8s-zi-dong-wei-hu-yuan-li" class="header-anchor">#</a></h3>
+<p>控制器模式是k8s的核心设计理念。</p>
+<p>对于上文中定义的各种资源，用户只需要管自己设定好期望的资源状态即可，中间由k8s通过检视资源的控制器来逐步实现往期望状态的靠拢。<br>
+<strong>换言之，使用者只需要设置集群的期望状态即可， 而不需要你手动调用什么API去操作。</strong></p>
+<p>k8s设计了统一的控制器框架kube-controller-manager来维护控制器的正常运作，以及统一的指标监视器kube-apiserver来为控制器提供其工作时追踪资源的度量数据。</p>
+<ul>
+<li>
+<p>pod出现故障时，希望自动恢复且能不中断服务，则可以利用ReplicaSet副本集实现， 副本集中包含期望数量个pod</p>
+</li>
+<li>
+<p>pod升级时不希望中断，可以由deployment部署资源实现，由它来创建replicaset和pod，外部用户不感知，只管设置deployement参数。</p>
+</li>
+<li>
+<p>pod压力过大希望扩容，则可以由AutoScaling（资源和自动扩缩通知其）来实现，自动根据度量指标、cpu、内存等进行后续从AutoScaling-&gt;deployement-&gt;relicaset-&gt;pod的自动化变更，无需用户参与任何手动调用。</p>
+</li>
+</ul>
+<h2><span id="3-yi-ying-yong-wei-zhong-xin-de-feng-zhuang-jie-shao-qi-ta-dui-k8s-zeng-qiang-de-neng-li">3 以应用为中心的封装（介绍其他对k8s增强的能力）</span><a href="#3-yi-ying-yong-wei-zhong-xin-de-feng-zhuang-jie-shao-qi-ta-dui-k8s-zeng-qiang-de-neng-li" class="header-anchor">#</a></h2>
+<p>k8s本身还是有缺陷，写配置非常繁琐，需要懂很多方面才能写好一个配置文件。因此衍生出了其他的增强工具或者能力</p>
+<h3><span id="3-1-kustomize">3.1 kustomize</span><a href="#3-1-kustomize" class="header-anchor">#</a></h3>
+<p>kustomize支持根据环境来生成不同的部署配置， 可以建立多kust文件，开发人员就能以基于基准派生的方式，对不同模式（生产、调试模式）、不同的项目（同一个产品对不同客户的客制化）定制出不同的资源整合包。<br>
+即使用Base、overlay、patch来生成最终的k8s配置文件。</p>
+<h3><span id="3-2-helm-he-chart">3.2 Helm和Chart</span><a href="#3-2-helm-he-chart" class="header-anchor">#</a></h3>
+<p>如果k8s是云原生操作系统，则Helm是这个操作系统上的应用商店和包管理工具。<br>
+类似linux里的yum命令。<br>
+Chart则就是linux里的rpm包，封装k8s应用涉及的资源。<br>
+缺点在于无法很好处理有状态的服务，因为会产生依赖关系，不能直接部署安装。</p>
+<h3><span id="3-3-operator">3.3 Operator</span><a href="#3-3-operator" class="header-anchor">#</a></h3>
+<p>k8s里对于有状态应用，是通过statefulSet来管理的，满足对pod的持久化存储、按顺序创建、唯一网络名称等，但很多应用特殊的运维操作无法满足</p>
+<p>Operator支持自定义资源， 即脱离了k8s内置资源的限制</p>
+<p>例如可以让k8s学会怎样操作es，只需要几行配置即可，而无需手写将近一百行的es依赖配置。</p>
+<h3><span id="3-4-qi-ta-ying-yong-feng-zhuang">3.4 其他应用封装</span><a href="#3-4-qi-ta-ying-yong-feng-zhuang" class="header-anchor">#</a></h3>
+<p>这里介绍了阿里云和微软退出的OAM开放应用模型<br>
+核心思想是开发人员关注业务逻辑，运维人员关注程序平稳运行，平台人员关注基础设置， 避免不同人员关注同一个all-in-one资源文件。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%8D%81%E3%80%81%E8%99%9A%E6%8B%9F%E5%8C%96%E5%AE%B9%E5%99%A8/" title="">http://breakdawncoder.com/知识库/后台开发应用/微服务和云原生（凤凰架构学习）/十、虚拟化容器/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%B9%9D%E3%80%81%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%B8%80%E3%80%81%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%BC%94%E8%BF%9B%E5%8F%B2/" rel="next" title="一、微服务演进史">
+      一、微服务演进史 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">虚拟化容器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">1 容器崛起的全部阶段（这个章节很精彩值得一看）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 隔离文件：chroot</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 隔离访问：名称空间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 隔离资源： cgroups</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 封装系统：LXC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.5.</span> <span class="nav-text">1.5 封装应用：Docker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.6.</span> <span class="nav-text">1.6 封装集群：kubernetes</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">2 以容器构建大型系统（容器编排）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 隔离与协作（Pod的概念）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 韧性和弹性（k8s自动维护原理）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">3 以应用为中心的封装（介绍其他对k8s增强的能力）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 kustomize</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 Helm和Chart</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 Operator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 其他应用封装</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">254</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">64</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共346.2k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
