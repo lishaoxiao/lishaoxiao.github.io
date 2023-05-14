@@ -21,16 +21,17 @@
     var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="1234567title: 二、云原生时代下如何访问远程服务categories:  - - 后台开发知识    - 微服务和云原生tags: &amp;#x27;后台开发知识,微服务,云原生&amp;#x27;typora-root-url: ..&#x2F;..&#x2F;..&#x2F;..&#x2F;date: 2023-05-14 10:32:12     访问远程服务  1 远程服务调用 2 REST  2.1 REST核心概念（基于HTT">
+  <meta name="description" content="访问远程服务  1 远程服务调用 2 REST  2.1 REST核心概念（基于HTTP超文本传输协议） 2.2 REST核心设计原则 2.3 REST的好处 2.4 RMM（Richardson提出的restful成熟度模型）  第0级：完全不rest 第1级：开始引入资源的概念 第2级： 引入统一接口，映射到HTTP方法上 第3级：超文本控制，转移行为通过响应控制   2.2.4 RES">
 <meta property="og:type" content="article">
-<meta property="og:title" content="破晓的知识屋">
+<meta property="og:title" content="二、云原生时代下如何访问远程服务">
 <meta property="og:url" content="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%BA%8C%E3%80%81%E5%A6%82%E4%BD%95%E8%AE%BF%E9%97%AE%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1/index.html">
 <meta property="og:site_name" content="破晓的知识屋">
-<meta property="og:description" content="1234567title: 二、云原生时代下如何访问远程服务categories:  - - 后台开发知识    - 微服务和云原生tags: &amp;#x27;后台开发知识,微服务,云原生&amp;#x27;typora-root-url: ..&#x2F;..&#x2F;..&#x2F;..&#x2F;date: 2023-05-14 10:32:12     访问远程服务  1 远程服务调用 2 REST  2.1 REST核心概念（基于HTT">
+<meta property="og:description" content="访问远程服务  1 远程服务调用 2 REST  2.1 REST核心概念（基于HTTP超文本传输协议） 2.2 REST核心设计原则 2.3 REST的好处 2.4 RMM（Richardson提出的restful成熟度模型）  第0级：完全不rest 第1级：开始引入资源的概念 第2级： 引入统一接口，映射到HTTP方法上 第3级：超文本控制，转移行为通过响应控制   2.2.4 RES">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-05-14T02:10:53.091Z">
-<meta property="article:modified_time" content="2023-05-14T02:13:43.664Z">
+<meta property="article:published_time" content="2023-05-14T02:32:12.000Z">
+<meta property="article:modified_time" content="2023-05-14T07:15:21.887Z">
 <meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="后台开发知识,微服务,云原生">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%BA%8C%E3%80%81%E5%A6%82%E4%BD%95%E8%AE%BF%E9%97%AE%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1/">
@@ -46,7 +47,7 @@
   };
 </script>
 
-  <title> | 破晓的知识屋</title>
+  <title>二、云原生时代下如何访问远程服务 | 破晓的知识屋</title>
   
 
 
@@ -197,7 +198,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          
+          二、云原生时代下如何访问远程服务
         </h1>
 
         <div class="post-meta">
@@ -209,7 +210,20 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2023-05-14 10:10:53 / 修改时间：10:13:43" itemprop="dateCreated datePublished" datetime="2023-05-14T10:10:53+08:00">2023-05-14</time>
+              <time title="创建时间：2023-05-14 10:32:12 / 修改时间：15:15:21" itemprop="dateCreated datePublished" datetime="2023-05-14T10:32:12+08:00">2023-05-14</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F/" itemprop="url" rel="index"><span itemprop="name">微服务和云原生</span></a>
+                </span>
             </span>
 
           
@@ -239,14 +253,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.9k</span>
+              <span>2.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -258,8 +272,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">title: 二、云原生时代下如何访问远程服务</span><br><span class="line">categories:</span><br><span class="line">  - - 后台开发知识</span><br><span class="line">    - 微服务和云原生</span><br><span class="line">tags: &#x27;后台开发知识,微服务,云原生&#x27;</span><br><span class="line">typora-root-url: ../../../../</span><br><span class="line">date: 2023-05-14 10:32:12</span><br></pre></td></tr></table></figure>
- <div class="toc">
+        <div class="toc">
 <!-- toc -->
 <ul>
 <li><a href="#fang-wen-yuan-cheng-fu-wu">访问远程服务</a>
@@ -287,6 +300,7 @@
 </ul>
 <!-- tocstop -->
 </div> 
+<p>[toc]</p>
 <h1><span id="fang-wen-yuan-cheng-fu-wu">访问远程服务</span><a href="#fang-wen-yuan-cheng-fu-wu" class="header-anchor">#</a></h1>
 <h2><span id="1-yuan-cheng-fu-wu-diao-yong">1 远程服务调用</span><a href="#1-yuan-cheng-fu-wu-diao-yong" class="header-anchor">#</a></h2>
 <p>这一个章节主要讲解rpc的设计理念和发展历史。<br>
@@ -424,7 +438,7 @@ rest语义里不能涵盖这种情况，得定义特殊的接口或者参数，�
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%BA%8C%E3%80%81%E5%A6%82%E4%BD%95%E8%AE%BF%E9%97%AE%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1/" title="">http://breakdawncoder.com/知识库/后台开发应用/微服务和云原生（凤凰架构学习）/二、如何访问远程服务/</a>
+    <a href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%BA%8C%E3%80%81%E5%A6%82%E4%BD%95%E8%AE%BF%E9%97%AE%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1/" title="二、云原生时代下如何访问远程服务">http://breakdawncoder.com/知识库/后台开发应用/微服务和云原生（凤凰架构学习）/二、如何访问远程服务/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -434,6 +448,9 @@ rest语义里不能涵盖这种情况，得定义特殊的接口或者参数，�
 
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86-%E5%BE%AE%E6%9C%8D%E5%8A%A1-%E4%BA%91%E5%8E%9F%E7%94%9F/" rel="tag"># 后台开发知识,微服务,云原生</a>
+          </div>
 
         
 
@@ -441,12 +458,12 @@ rest语义里不能涵盖这种情况，得定义特殊的接口或者参数，�
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/" rel="prev" title="微服务和云原生（凤凰架构学习）">
-      <i class="fa fa-chevron-left"></i> 微服务和云原生（凤凰架构学习）
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%BA%94%E3%80%81%E6%B5%81%E9%87%8F%E6%80%A7%E8%83%BD%E6%8F%90%E5%8D%87/" rel="prev" title="五、流量性能提升">
+      <i class="fa fa-chevron-left"></i> 五、流量性能提升
     </a></div>
       <div class="post-nav-item">
-    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%B8%89%E3%80%81%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86/" rel="next" title="">
-       <i class="fa fa-chevron-right"></i>
+    <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E4%B9%9D%E3%80%81%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/" rel="next" title="九、通信安全">
+      九、通信安全 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -594,7 +611,7 @@ rest语义里不能涵盖这种情况，得定义特殊的接口或者参数，�
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共346.2k字</span>
+  <span class="post-count">博客全站共345.8k字</span>
 </div>
 
         
