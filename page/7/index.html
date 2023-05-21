@@ -181,6 +181,657 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/presto/presto%E6%9C%8D%E5%8A%A1%E9%AB%98%E5%8F%AF%E7%94%A8%E8%AE%BE%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/presto/presto%E6%9C%8D%E5%8A%A1%E9%AB%98%E5%8F%AF%E7%94%A8%E8%AE%BE%E8%AE%A1/" class="post-title-link" itemprop="url">presto服务高可用设计</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-10-09 21:55:12 / 修改时间：22:03:14" itemprop="dateCreated datePublished" datetime="2022-10-09T21:55:12+08:00">2022-10-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">大数据组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6/presto/" itemprop="url" rel="index"><span itemprop="name">presto</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/presto/presto%E6%9C%8D%E5%8A%A1%E9%AB%98%E5%8F%AF%E7%94%A8%E8%AE%BE%E8%AE%A1/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/presto/presto%E6%9C%8D%E5%8A%A1%E9%AB%98%E5%8F%AF%E7%94%A8%E8%AE%BE%E8%AE%A1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#presto-gao-ke-yong-yuan-li-tu">presto高可用原理图</a></li>
+<li><a href="#presto-gao-ke-yong-pei-zhi">presto高可用配置</a></li>
+<li><a href="#presto-gao-ke-yong-jie-jue-fang-an-xuan-xing">presto高可用解决方案选型</a></li>
+<li><a href="#presto-on-yarn">presto on yarn</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<p>参考资料：<br>
+<a target="_blank" rel="noopener" href="https://www.gameres.com/883796.html">https://www.gameres.com/883796.html</a><br>
+<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/101366898">https://zhuanlan.zhihu.com/p/101366898</a><br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/anghiking20140716/article/details/101312055">https://blog.csdn.net/anghiking20140716/article/details/101312055</a></p>
+<hr>
+<h1><span id="presto-gao-ke-yong-yuan-li-tu">presto高可用原理图</span><a href="#presto-gao-ke-yong-yuan-li-tu" class="header-anchor">#</a></h1>
+<p><img src="/images/presto%E6%9C%8D%E5%8A%A1%E9%AB%98%E5%8F%AF%E7%94%A8%E8%AE%BE%E8%AE%A1/4eb71e56e2bac3dfe405310f0acfbede81b37634.png" alt="4eb71e56e2bac3dfe405310f0acfbede81b37634"></p>
+<h1><span id="presto-gao-ke-yong-pei-zhi">presto高可用配置</span><a href="#presto-gao-ke-yong-pei-zhi" class="header-anchor">#</a></h1>
+<p>在worker的配置中，可以选择配置：</p>
+<ul>
+<li>
+<p>discovery的ip:port。</p>
+</li>
+<li>
+<p>一个http地址，内容是service inventory，包含discovery地址。</p>
+</li>
+<li>
+<p>一个本地文件地址</p>
+<p>2和3的原理是基于service inventory, worker 会动态监听这个文件，如果有变化，load出最新的配置，指向最新的discovery节点。</p>
+<p>在设计上，discovery和coordinator都是单节点。如果有多个coordinator同时存活，worker 会随机的向其中一个汇报进程和task状态，导致脑裂。调度query时有可能会发生死锁。</p>
+<p>discovery和coordinator可用性设计：</p>
+<p>由于service inventory的使用，监控程序可以在发现discovery挂掉后，修改service inventory中的内容，指向备机的discovery，无缝的完成切换。</p>
+<p>coordiantor的配置必须要在进程启动时指定，同一个集群中无法存活多个coordinator。因此最好的办法是和discovery配置到一台机器。 secondary机器部署备用的discovery和coordinator。在平时，secondary机器是一个只包含一台机器的集群，在primary宕机时，worker的心跳瞬间切换到secondary。</p>
+</li>
+</ul>
+<hr>
+<h1><span id="presto-gao-ke-yong-jie-jue-fang-an-xuan-xing">presto高可用解决方案选型</span><a href="#presto-gao-ke-yong-jie-jue-fang-an-xuan-xing" class="header-anchor">#</a></h1>
+<p>Presto的高可用主要解决的是Coordinator/Discovery Server的单点问题。</p>
+<p>Presto高可用的解决有很多种方案，比如用HAProxy+Keepalived或者云服务商提供的lb这样的外部组件，但问题是这样就需要用VRRP这类虚拟IP来解决单点问题，而我们尽量要做到集群内部组件不依赖外部组件，这样从架构上来说，系统复杂度最低，也最容易维护。<br>
+综上，我们需要修改Presto底层源码来解决。<br>
+Presto的discovery其实就是airlift discovery，通过阅读源码，发现其内部是支持HA的，只是Presto的官方文档上没有展示出来。</p>
+<hr>
+<h1><span id="presto-on-yarn">presto on yarn</span><a href="#presto-on-yarn" class="header-anchor">#</a></h1>
+<p>presto on yarn是一种动态的运行策略，在yarn上面，哪个节点运行presto的coordinator和worker是不确定的，这会给外部调用presto的程序带来困扰</p>
+<p>外部的程序和presto的交流一般是通过presto提供的客户端来调用，而它的客户端需要事先知道presto的coordinator地址，在presto on yarn的情况下，coordinator的地址是不确定的，有可能会发生变化。</p>
+<p>这种情况下的处理方案是：将presto的服务发现方案外置，将presto的服务发现服务独立于presto的coordinator运行，将presto的coordinator和worker中的discovery.uri配置成外部独立的发现服务地址，在外部提供具有HA的服务发现，提供稳定的发现服务。</p>
+<p>Presto的服务发现是基于airlift的服务发现做的实现，airlift的服务发现可以在这里查看实现和源码，不过它基本是处于无文档的状态，所以理解要多花些功夫。</p>
+<p>airlift的服务发现的总体思路是基于http提供一个提供服务发现的HA集群，集群之间通过http通信，通过数据同步方式，提供最终一致性的保证。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E9%9A%8F%E7%AC%94/%E8%A7%82%E5%90%8E%E6%84%9F/%E3%80%8A%E8%B5%9B%E5%8D%9A%E6%9C%8B%E5%85%8B-%E8%BE%B9%E7%BC%98%E8%A1%8C%E8%80%85%E3%80%8B%E8%A7%82%E5%90%8E%E6%84%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E9%9A%8F%E7%AC%94/%E8%A7%82%E5%90%8E%E6%84%9F/%E3%80%8A%E8%B5%9B%E5%8D%9A%E6%9C%8B%E5%85%8B-%E8%BE%B9%E7%BC%98%E8%A1%8C%E8%80%85%E3%80%8B%E8%A7%82%E5%90%8E%E6%84%9F/" class="post-title-link" itemprop="url">《赛博朋克-边缘行者》观后感</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-09-27 00:07:32" itemprop="dateCreated datePublished" datetime="2022-09-27T00:07:32+08:00">2022-09-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-09-28 00:06:11" itemprop="dateModified" datetime="2022-09-28T00:06:11+08:00">2022-09-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9A%8F%E7%AC%94/" itemprop="url" rel="index"><span itemprop="name">随笔</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9A%8F%E7%AC%94/%E5%8A%A8%E6%BC%AB/" itemprop="url" rel="index"><span itemprop="name">动漫</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E9%9A%8F%E7%AC%94/%E8%A7%82%E5%90%8E%E6%84%9F/%E3%80%8A%E8%B5%9B%E5%8D%9A%E6%9C%8B%E5%85%8B-%E8%BE%B9%E7%BC%98%E8%A1%8C%E8%80%85%E3%80%8B%E8%A7%82%E5%90%8E%E6%84%9F/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E9%9A%8F%E7%AC%94/%E8%A7%82%E5%90%8E%E6%84%9F/%E3%80%8A%E8%B5%9B%E5%8D%9A%E6%9C%8B%E5%85%8B-%E8%BE%B9%E7%BC%98%E8%A1%8C%E8%80%85%E3%80%8B%E8%A7%82%E5%90%8E%E6%84%9F/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>487</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<!-- tocstop -->
+</div> 
+<p>看完赛博朋克， 为什么后劲很足， 到了周二还在看相关的衍生视频呢？</p>
+<p>因为你会意识到整部作品从主角装上斯维坦因的时候，就已经是注定的悲剧了。</p>
+<p>每个人为了不断变强，让自己装上超出身体承受上限的义肢， 是否意味着为了 残酷的竞争，而不断给自己强加的压力呢？</p>
+<p>为了缓解压力， 即使不得不吃起精神类药物，也不肯让自己的事业有一丝丝的下落， 仿佛一旦下落，自己努力的意义便不复存在。</p>
+<p>然而公司或者资本不会在乎你的压力，当需要你的价值时，就会各种条件去诱惑你，当你的价值榨干完毕，便会立刻抛弃。</p>
+<p>即使你想要反抗， 也会发现 像亚当重锤那样的存在， 是你无法企及的，在当前压力永远无法突破的。</p>
+<p>男主为了妈妈的梦想，即使已经很拮据了， 也还是强忍着不适凑合上学， 错了吗？</p>
+<p>男主为了露西的月球梦，拼命工作，错了吗？</p>
+<p>也许让对方能过得幸福，本身也是他们的愿望，但是都在以为对方好的目的互相各自伤害着。</p>
+<p>露西故意瞒着大卫，为他排除田中记忆的追查， 却不肯真正地表达，。</p>
+<p>大卫怎么做才是对的呢？ 他如果发现不能实现对露西的承诺，他会很难受，很痛苦，因为那是他许下的承诺。 露西如果能清晰地表达说： 月球不重要，我已经有了更想要的东西了，是不是更好？</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">kafka底层核心原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-26 23:55:12 / 修改时间：23:49:45" itemprop="dateCreated datePublished" datetime="2022-09-26T23:55:12+08:00">2022-09-26</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">微服务组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/kafka/" itemprop="url" rel="index"><span itemprop="name">kafka</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>881</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#q-kafka-wei-shi-me-na-me-kuai-di-ceng-yuan-li-shi-shi-me">Q: kafka为什么那么快？底层原理是什么？</a></li>
+<li><a href="#q-kafka-de-message-ge-shi-shi-shi-me-yang-de">Q: kafka的message格式是什么样的？</a></li>
+<li><a href="#q-kafka-ru-he-shi-xian-yan-chi-dui-lie">Q: kafka如何实现延迟队列？</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="q-kafka-wei-shi-me-na-me-kuai-di-ceng-yuan-li-shi-shi-me">Q: kafka为什么那么快？底层原理是什么？</span><a href="#q-kafka-wei-shi-me-na-me-kuai-di-ceng-yuan-li-shi-shi-me" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>Cache Filesystem Cache PageCache缓存</li>
+<li>顺序写 由于现代的操作系统提供了预读和写技术，磁盘的顺序写大多数情况下比随机写内存还要快。</li>
+<li>Zero-copy 零拷技术减少拷贝次数</li>
+<li>Batching of Messages 批量量处理。合并小的请求，然后以流的方式进行交互，直顶网络上限。</li>
+<li>Pull 拉模式 使用拉模式进行消息的获取消费，与消费端处理能力相符。</li>
+</ul>
+<hr>
+<h1><span id="q-kafka-de-message-ge-shi-shi-shi-me-yang-de">Q: kafka的message格式是什么样的？</span><a href="#q-kafka-de-message-ge-shi-shi-shi-me-yang-de" class="header-anchor">#</a></h1>
+<p>A:<br>
+一个Kafka的Message由一个固定长度的header和一个变长的消息体body组成</p>
+<ul>
+<li>
+<p>header部分由一个字节的magic(文件格式)和四个字节的CRC32(用于判断body消息体是否正常)构成。</p>
+</li>
+<li>
+<p>当magic的值为1的时候，会在magic和crc32之间多一个字节的数据：attributes(保存一些相关属性，</p>
+</li>
+<li>
+<p>比如是否压缩、压缩格式等等);如果magic的值为0，那么不存在attributes属性</p>
+</li>
+<li>
+<p>body是由N个字节构成的一个消息体，包含了具体的key/value消息</p>
+<p><img src="/images/kafka%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/72e821130dc3997f28f34e6898927a9c7caa73a2.png" alt="72e821130dc3997f28f34e6898927a9c7caa73a2"></p>
+<p>kafka的消息格式其实具有演变：<a target="_blank" rel="noopener" href="https://blog.csdn.net/u013256816/article/details/80300225">一文看懂Kafka消息格式的演变</a></p>
+</li>
+</ul>
+<hr>
+<h1><span id="q-kafka-ru-he-shi-xian-yan-chi-dui-lie">Q: kafka如何实现延迟队列？</span><a href="#q-kafka-ru-he-shi-xian-yan-chi-dui-lie" class="header-anchor">#</a></h1>
+<p>A:<br>
+Kafka并没有使用JDK自带的Timer或者DelayQueue来实现延迟的功能，而是基于时间轮自定义了一个用于实现延迟功能的定时器（SystemTimer）。JDK的Timer和DelayQueue插入和删除操作的平均时间复杂度为O(nlog(n))，并不能满足Kafka的高性能要求，而基于时间轮可以将插入和删除操作的时间复杂度都降为O(1)。时间轮的应用并非Kafka独有，其应用场景还有很多，在Netty、Akka、Quartz、Zookeeper等组件中都存在时间轮的踪影。<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/u013256816/article/details/80697456">https://blog.csdn.net/u013256816/article/details/80697456</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%A4%9A%E5%89%AF%E6%9C%AC%E6%9C%BA%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%A4%9A%E5%89%AF%E6%9C%AC%E6%9C%BA%E5%88%B6/" class="post-title-link" itemprop="url">kafka多副本机制</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-26 23:45:12 / 修改时间：23:48:10" itemprop="dateCreated datePublished" datetime="2022-09-26T23:45:12+08:00">2022-09-26</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">微服务组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/kafka/" itemprop="url" rel="index"><span itemprop="name">kafka</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%A4%9A%E5%89%AF%E6%9C%AC%E6%9C%BA%E5%88%B6/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%A4%9A%E5%89%AF%E6%9C%AC%E6%9C%BA%E5%88%B6/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#q-shi-me-shi-partition-de-yu-xie-shi-ri-zhi">Q: 什么是partition的预写式日志？</a></li>
+<li><a href="#q-kafka-ru-he-shi-xian-gu-zhang-zi-dong-zhuan-yi">Q: kafka如何实现故障自动转移？</a></li>
+<li><a href="#q-leader-he-flower-ru-he-tong-bu-shu-ju">Q: leader和flower如何同步数据？</a></li>
+<li><a href="#q-hw-he-leo-shi-shi-me">Q: HW和LEO是什么？</a></li>
+<li><a href="#q-ru-guo-mou-ge-follower-la-qu-tong-bu-tai-man-yuan-yuan-luo-hou-leader-hui-zen-me-yang">Q: 如果某个follower拉取同步太慢， 远远落后leader，会怎么样？</a></li>
+<li><a href="#q-wei-shi-me-tong-bu-ke-neng-hui-man">Q: 为什么同步可能会慢？</a></li>
+<li><a href="#q-zen-me-que-ding-duo-man-yao-ti-chu">Q: 怎么确定多慢要剔除？</a></li>
+<li><a href="#q-xiang-xi-miao-shu-yi-xia-dang-producer-sheng-chan-xiao-xi-zhi-broker-hou-isr-yi-ji-hw-he-leo-de-liu-zhuan-guo-cheng">Q： 详细描述一下当producer生产消息至broker后，ISR以及HW和LEO的流转过程</a></li>
+<li><a href="#q-leader-zen-me-zhi-dao-qi-ta-follower-de-tong-bu-jin-du">Q: leader怎么知道其他follower的同步进度？</a></li>
+<li><a href="#q-isr-zen-me-fan-kui-he-cun-chu">Q: ISR怎么反馈和存储？</a></li>
+<li><a href="#q-zhe-chong-qing-kuang-xia-ru-guo-follower-du-huan-mei-you-fu-zhi-wan-luo-hou-yu-leader-shi-tu-ran-leader-dang-ji-hui-zen-me-yang">Q:这种情况下如果follower都还没有复制完，落后于leader时，突然leader宕机，会怎么样？</a></li>
+<li><a href="#q-cong-leader-de-ci-pan-shu-ju-tong-bu-dao-follower-jie-zhu-liao-shi-me-ji-zhi-jia-kuai-liao-chuan-shu-xiao-lu">Q: 从leader的磁盘数据同步到follower，借助了什么机制加快了传输效率？</a></li>
+<li><a href="#q-sheng-chan-zhe-xiang-broker-fa-shu-ju-ack-de-fan-hui-zhi-you-shi-me-han-yi">Q: 生产者向broker发数据， ack的返回值有什么含义？</a></li>
+<li><a href="#q-wei-shi-me-xuan-ze-zhu-xie-du-xie-er-bu-shi-du-xie-fen-chi">Q: 为什么选择主写读写， 而不是读写分离？</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="q-shi-me-shi-partition-de-yu-xie-shi-ri-zhi">Q: 什么是partition的预写式日志？</span><a href="#q-shi-me-shi-partition-de-yu-xie-shi-ri-zhi" class="header-anchor">#</a></h1>
+<p>A:<br>
+Kafka中主题的每个Partition有一个预写式日志文件<br>
+每个Partition都由一系列有序的、不可变的消息组成<br>
+这些消息被连续的追加到Partition中，Partition中的每个消息都有一个连续的序列号叫做offset， 确定它在分区日志中唯一的位置。<br>
+<img src="/images/kafka%E5%A4%9A%E5%89%AF%E6%9C%AC%E6%9C%BA%E5%88%B6/a29e519d65d4c1a270b401545ee4d9e63b504c7f.png" alt="a29e519d65d4c1a270b401545ee4d9e63b504c7f"></p>
+<hr>
+<p>Kafka每个topic的partition有N个副本，其中N是topic的复制因子<br>
+如下图<br>
+<img src="/images/kafka%E5%A4%9A%E5%89%AF%E6%9C%AC%E6%9C%BA%E5%88%B6/d68a1db5ac0df3e30fb8292b3a0f0527db563d39.png" alt="d68a1db5ac0df3e30fb8292b3a0f0527db563d39"></p>
+<hr>
+<hr>
+<h1><span id="q-kafka-ru-he-shi-xian-gu-zhang-zi-dong-zhuan-yi">Q: kafka如何实现故障自动转移？</span><a href="#q-kafka-ru-he-shi-xian-gu-zhang-zi-dong-zhuan-yi" class="header-anchor">#</a></h1>
+<p>A:<br>
+如果leader发生故障或挂掉，一个新leader被选举并被接受客户端的消息成功写入。<br>
+Kafka确保从同步副本列表中选举一个副本为leader。消费者去新的leader进行数据读取。</p>
+<hr>
+<h1><span id="q-leader-he-flower-ru-he-tong-bu-shu-ju">Q: leader和flower如何同步数据？</span><a href="#q-leader-he-flower-ru-he-tong-bu-shu-ju" class="header-anchor">#</a></h1>
+<p>A:<br>
+Kafka的复制机制既不是完全的同步复制，也不是单纯的异步复制。<br>
+事实上，同步复制要求所有能工作的follower都复制完，这条消息才会被commit，这种复制方式极大的影响了吞吐率（写入的响应）。<br>
+而异步复制方式下，follower异步的从leader复制数据，数据只要被leader写入预写log就被认为已经commit，写请求可以返回。 然后让follower异步、被动、定期地去复制leader上的数据</p>
+<hr>
+<h1><span id="q-hw-he-leo-shi-shi-me">Q: HW和LEO是什么？</span><a href="#q-hw-he-leo-shi-shi-me" class="header-anchor">#</a></h1>
+<p>A:<br>
+LEO是log end offset， 预写日志最后的偏移<br>
+HW是HighWatermark，所有副本的水位线，是leader来确定的。<br>
+取一个partition对应的ISR中最小的LEO作为HW，consumer最多只能消费到HW所在的位置<br>
+<img src="/images/kafka%E5%A4%9A%E5%89%AF%E6%9C%AC%E6%9C%BA%E5%88%B6/c31d90b070c371350f63ca038d3911c36a877420.png" alt="c31d90b070c371350f63ca038d3911c36a877420"></p>
+<hr>
+<h1><span id="q-ru-guo-mou-ge-follower-la-qu-tong-bu-tai-man-yuan-yuan-luo-hou-leader-hui-zen-me-yang">Q: 如果某个follower拉取同步太慢， 远远落后leader，会怎么样？</span><a href="#q-ru-guo-mou-ge-follower-la-qu-tong-bu-tai-man-yuan-yuan-luo-hou-leader-hui-zen-me-yang" class="header-anchor">#</a></h1>
+<p>A:<br>
+follower从leader同步数据有一些延迟。任意一个超过阈值都会把follower剔除出ISR, 存入OSR（Outof-Sync Replicas）列表，新加入的follower也会先存放在OSR中。<br>
+AR=ISR+OSR。<br>
+所有的副本（replicas）统称为Assigned Replicas，即AR<br>
+ISR:In-Sync Replicas 副本同步队列</p>
+<hr>
+<h1><span id="q-wei-shi-me-tong-bu-ke-neng-hui-man">Q: 为什么同步可能会慢？</span><a href="#q-wei-shi-me-tong-bu-ke-neng-hui-man" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>慢副本：在一定周期时间内follower不能追赶上leader。最常见的原因之一是I / O瓶颈导致follower追加复制消息速度慢于从leader拉取速度。</li>
+<li>卡住副本：在一定周期时间内follower停止从leader拉取请求。follower replica卡住了是由于GC暂停或follower失效或死亡。</li>
+<li>新启动副本：当用户给主题增加副本因子时，新的follower不在同步副本列表中，直到他们完全赶上了leader日志</li>
+</ul>
+<hr>
+<h1><span id="q-zen-me-que-ding-duo-man-yao-ti-chu">Q: 怎么确定多慢要剔除？</span><a href="#q-zen-me-que-ding-duo-man-yao-ti-chu" class="header-anchor">#</a></h1>
+<p>A:<br>
+replica.lag.time.max.ms和延迟条数replica.lag.max.messages两个维度,<br>
+当前最新的版本0.10.x中只支持replica.lag.time.max.ms这个维度），任意一个超过阈值都会把follower剔除出ISR</p>
+<hr>
+<h1><span id="q-xiang-xi-miao-shu-yi-xia-dang-producer-sheng-chan-xiao-xi-zhi-broker-hou-isr-yi-ji-hw-he-leo-de-liu-zhuan-guo-cheng">Q： 详细描述一下当producer生产消息至broker后，ISR以及HW和LEO的流转过程</span><a href="#q-xiang-xi-miao-shu-yi-xia-dang-producer-sheng-chan-xiao-xi-zhi-broker-hou-isr-yi-ji-hw-he-leo-de-liu-zhuan-guo-cheng" class="header-anchor">#</a></h1>
+<p>A:<br>
+<img src="/images/kafka%E5%A4%9A%E5%89%AF%E6%9C%AC%E6%9C%BA%E5%88%B6/9ff6373f13df967a81d9577c7555964d68291fa6.png" alt="9ff6373f13df967a81d9577c7555964d68291fa6"></p>
+<hr>
+<h1><span id="q-leader-zen-me-zhi-dao-qi-ta-follower-de-tong-bu-jin-du">Q: leader怎么知道其他follower的同步进度？</span><a href="#q-leader-zen-me-zhi-dao-qi-ta-follower-de-tong-bu-jin-du" class="header-anchor">#</a></h1>
+<p>A:<br>
+可以定时检测， follower来拉取时，要携带自己的同步进度偏移的。</p>
+<hr>
+<h1><span id="q-isr-zen-me-fan-kui-he-cun-chu">Q: ISR怎么反馈和存储？</span><a href="#q-isr-zen-me-fan-kui-he-cun-chu" class="header-anchor">#</a></h1>
+<p>A:<br>
+Kafka的ISR的管理最终都会反馈到Zookeeper节点上。具体位置为：/brokers/topics/[topic]/partitions/[partition]/state。目前有两个地方会对这个Zookeeper的节点进行维护：</p>
+<ul>
+<li>Controller来维护：Kafka集群中的其中一个Broker会被选举为Controller，主要负责Partition管理和副本状态管理，也会执行类似于重分配partition之类的管理任务。在符合某些特定条件下，Controller下的LeaderSelector会选举新的leader，ISR和新的leader_epoch及controller_epoch写入Zookeeper的相关节点中。同时发起LeaderAndIsrRequest通知所有的replicas。</li>
+<li>leader来维护：leader有单独的线程定期检测ISR中follower是否脱离ISR, 如果发现ISR变化，则会将新的ISR的信息返回到Zookeeper的相关节点中。</li>
+</ul>
+<hr>
+<h1><span id="q-zhe-chong-qing-kuang-xia-ru-guo-follower-du-huan-mei-you-fu-zhi-wan-luo-hou-yu-leader-shi-tu-ran-leader-dang-ji-hui-zen-me-yang">Q:这种情况下如果follower都还没有复制完，落后于leader时，突然leader宕机，会怎么样？</span><a href="#q-zhe-chong-qing-kuang-xia-ru-guo-follower-du-huan-mei-you-fu-zhi-wan-luo-hou-yu-leader-shi-tu-ran-leader-dang-ji-hui-zen-me-yang" class="header-anchor">#</a></h1>
+<p>A:<br>
+两者之间的HW同步有一个间隙，B在同步A中的消息之后需要再一轮的FetchRequest/FetchResponse才能更新自身的HW为5。</p>
+<ul>
+<li>
+<p>如果在更新HW之前，B宕机了，那么B在重启之后会根据之前HW位置进行日志截断，这样便会将4这条消息截断，然后再向A发送请求拉取消息。</p>
+</li>
+<li>
+<p>此时若A再宕机，那么B就会被选举为新的leader。</p>
+<p>B恢复之后会成为follower，由于follower副本的HW不能比leader副本的HW高，所以还会做一次日志截断，以此将HW调整为4。这样一来4这条数据就丢失了（就算A不能恢复，这条数据也同样丢失了）。</p>
+<p><img src="/images/kafka%E5%A4%9A%E5%89%AF%E6%9C%AC%E6%9C%BA%E5%88%B6/7ed2df0388480852c93f04f2bf44553f30f249d2.png" alt="7ed2df0388480852c93f04f2bf44553f30f249d2"></p>
+<p>会丢失一部分数据，但概率比较低， 一般一定有最近的一个follower同步过去。</p>
+</li>
+</ul>
+<hr>
+<h1><span id="q-cong-leader-de-ci-pan-shu-ju-tong-bu-dao-follower-jie-zhu-liao-shi-me-ji-zhi-jia-kuai-liao-chuan-shu-xiao-lu">Q: 从leader的磁盘数据同步到follower，借助了什么机制加快了传输效率？</span><a href="#q-cong-leader-de-ci-pan-shu-ju-tong-bu-dao-follower-jie-zhu-liao-shi-me-ji-zhi-jia-kuai-liao-chuan-shu-xiao-lu" class="header-anchor">#</a></h1>
+<p>A:<br>
+充分利用磁盘顺序读以及send file(zero copy)机制，这样极大的提高复制性能<br>
+直接从磁盘到网络，避免中间buffer。</p>
+<hr>
+<h1><span id="q-sheng-chan-zhe-xiang-broker-fa-shu-ju-ack-de-fan-hui-zhi-you-shi-me-han-yi">Q: 生产者向broker发数据， ack的返回值有什么含义？</span><a href="#q-sheng-chan-zhe-xiang-broker-fa-shu-ju-ack-de-fan-hui-zhi-you-shi-me-han-yi" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>1（默认） 数据发送到Kafka后，经过leader成功接收消息的的确认，就算是发送成功了。在这种情况下，如果leader宕机了，则会丢失数据。</li>
+<li>0 生产者将数据发送出去就不管了，不去等待任何返回。这种情况下数据传输效率最高，但是数据可靠性确是最低的。</li>
+<li>-1 producer需要等待ISR中的所有follower都确认接收到数据后才算一次发送完成，可靠性最高。当ISR中所有Replica都向Leader发送ACK时，leader才commit，这时候producer才能认为一个请求中的消息都commit了。</li>
+</ul>
+<hr>
+<h1><span id="q-wei-shi-me-xuan-ze-zhu-xie-du-xie-er-bu-shi-du-xie-fen-chi">Q: 为什么选择主写读写， 而不是读写分离？</span><a href="#q-wei-shi-me-xuan-ze-zhu-xie-du-xie-er-bu-shi-du-xie-fen-chi" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ol>
+<li>数据一致性问题。数据从主节点转到从节点必然会有一个延时的时间窗口，这个时间 窗口会导致主从节点之间的数据不一致。某一时刻，在主节点和从节点中 A 数据的值都为 X， 之后将主节点中 A 的值修改为 Y，那么在这个变更通知到从节点之前，应用读取从节点中的 A 数据的值并不为最新的 Y，由此便产生了数据不一致的问题。</li>
+<li>延时问题。类似 Redis 这种组件，数据从写入主节点到同步至从节点中的过程需要经 历网络→主节点内存→网络→从节点内存这几个阶段，整个过程会耗费一定的时间。而在 Kafka 中，主从同步会比 Redis 更加耗时，它需要经历网络→主节点内存→主节点磁盘→网络→从节 点内存→从节点磁盘这几个阶段。对延时敏感的应用而言，主写从读的功能并不太适用。</li>
+</ol>
+<hr>
+<p>参考链接：<br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/aidodoo/p/8873163.html">https://www.cnblogs.com/aidodoo/p/8873163.html</a><br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/kwame211/article/details/107402104">https://blog.csdn.net/kwame211/article/details/107402104</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -924,7 +1575,7 @@ Raft选举算法： 选举的票数大于等于num(sentinels)/2+1时，将成为
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-14 15:15:27" itemprop="dateModified" datetime="2023-05-14T15:15:27+08:00">2023-05-14</time>
+                <time title="修改时间：2023-05-21 16:44:19" itemprop="dateModified" datetime="2023-05-21T16:44:19+08:00">2023-05-21</time>
               </span>
 
           
@@ -1017,7 +1668,7 @@ Raft选举算法： 选举的票数大于等于num(sentinels)/2+1时，将成为
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-14 15:15:27" itemprop="dateModified" datetime="2023-05-14T15:15:27+08:00">2023-05-14</time>
+                <time title="修改时间：2023-05-21 16:44:19" itemprop="dateModified" datetime="2023-05-21T16:44:19+08:00">2023-05-21</time>
               </span>
 
           
@@ -1112,7 +1763,7 @@ Raft选举算法： 选举的票数大于等于num(sentinels)/2+1时，将成为
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-14 15:15:27" itemprop="dateModified" datetime="2023-05-14T15:15:27+08:00">2023-05-14</time>
+                <time title="修改时间：2023-05-21 16:44:19" itemprop="dateModified" datetime="2023-05-21T16:44:19+08:00">2023-05-21</time>
               </span>
 
           
@@ -1157,550 +1808,6 @@ Raft选举算法： 选举的票数大于等于num(sentinels)/2+1时，将成为
           <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" title="kafka基础概念">kafka基础概念</a><br>
 <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%A4%9A%E5%89%AF%E6%9C%AC%E6%9C%BA%E5%88%B6/" title="kafka多副本机制">kafka多副本机制</a><br>
 <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/kafka/kafka%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/" title="kafka底层核心原理">kafka底层核心原理</a><br>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/presto/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/presto/" class="post-title-link" itemprop="url">presto</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-09-24 00:06:57" itemprop="dateCreated datePublished" datetime="2022-09-24T00:06:57+08:00">2022-09-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-14 15:15:27" itemprop="dateModified" datetime="2023-05-14T15:15:27+08:00">2023-05-14</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/presto/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/presto/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>64</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/presto/presto%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/" title="presto任务调度">presto任务调度</a><br>
-<a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/presto/presto%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/" title="presto内存管理机制">presto内存管理机制</a><br>
-<a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/presto/presto%E6%80%A7%E8%83%BD%E4%BC%98%E7%A7%80%E5%8E%9F%E7%90%86%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" title="presto性能优秀原理和性能优化">presto性能优秀原理和性能优化</a><br>
-<a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/presto/presto%E6%9C%8D%E5%8A%A1%E9%AB%98%E5%8F%AF%E7%94%A8%E8%AE%BE%E8%AE%A1/" title="presto服务高可用设计">presto服务高可用设计</a><br>
-<a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/presto/presto%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" title="presto核心数据结构">presto核心数据结构</a><br>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/" class="post-title-link" itemprop="url">spark</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-09-24 00:06:37" itemprop="dateCreated datePublished" datetime="2022-09-24T00:06:37+08:00">2022-09-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-14 15:15:27" itemprop="dateModified" datetime="2023-05-14T15:15:27+08:00">2023-05-14</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>261</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/blockManager%E4%BB%8B%E7%BB%8D/" title="blockManager介绍.md">blockManager介绍.md</a><br>
-<a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/map%E7%AB%AF%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%E8%A7%A3%E6%9E%90/" title="map端计算结果缓存解析.md">map端计算结果缓存解析.md</a><br>
-<a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/memoryStore%E5%86%85%E5%AD%98%E6%8E%A7%E5%88%B6%E5%8E%9F%E7%90%86/" title="memoryStore内存控制原理.md">memoryStore内存控制原理.md</a><br>
-<a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/" title="RDD缓存管理cacheManager和磁盘管理DiskBlockManager.md">RDD缓存管理cacheManager和磁盘管理DiskBlockManager.md</a><br>
-<a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/spark-local%E6%A8%A1%E5%BC%8F%E8%BF%90%E8%A1%8C%E5%8E%9F%E7%90%86/" title="spark-local模式运行原理.md">spark-local模式运行原理.md</a><br>
-<a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/sparkContext%E5%88%9D%E5%A7%8B%E5%8C%96/" title="sparkContext初始化.md">sparkContext初始化.md</a><br>
-<a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/Spark%E5%92%8Cmapreducer%E5%9C%A8shuffle%E6%97%B6%E7%9A%84%E5%8C%BA%E5%88%AB/" title="Spark和mapreducer在shuffle时的区别.md">Spark和mapreducer在shuffle时的区别.md</a><br>
-<a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/spark%E5%A6%82%E4%BD%95%E5%81%9Areduce%E6%97%B6%E7%9A%84%E6%95%B0%E6%8D%AE%E6%8B%89%E5%8F%96/" title="spark如何做reduce时的数据拉取.md">spark如何做reduce时的数据拉取.md</a><br>
-<a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/spark%E7%9A%84master%E3%80%81worker%E3%80%81exeuctor%E5%AE%B9%E9%94%99%E6%9C%BA%E5%88%B6/" title="spark的master、worker、exeuctor容错机制.md">spark的master、worker、exeuctor容错机制.md</a><br>
-<a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/" title="spark的任务构建和提交流程.md">spark的任务构建和提交流程.md</a><br>
-<a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/task%E6%98%AF%E6%80%8E%E4%B9%88%E5%88%86%E5%8F%91%E5%88%B0%E5%90%84%E8%8A%82%E7%82%B9%E4%B8%8A%E5%B9%B6%E6%89%A7%E8%A1%8C%E7%9A%84/" title="task是怎么分发到各节点上并执行的.md">task是怎么分发到各节点上并执行的.md</a><br>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/zookeeper/zk%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/zookeeper/zk%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6/" class="post-title-link" itemprop="url">zk选举机制</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-09-23 23:47:49" itemprop="dateCreated datePublished" datetime="2022-09-23T23:47:49+08:00">2022-09-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-24 00:24:50" itemprop="dateModified" datetime="2022-09-24T00:24:50+08:00">2022-09-24</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">微服务组件</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/zookeeper/" itemprop="url" rel="index"><span itemprop="name">zookeeper</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/zookeeper/zk%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/zookeeper/zk%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#san-chong-xuan-ju-fang-shi">三种选举方式</a></li>
-<li><a href="#xuan-ju-xiao-xi-nei-rong">选举消息内容</a></li>
-<li><a href="#xuan-ju-liu-cheng">选举流程：</a></li>
-<li><a href="#xuan-ju-xiang-xi-liu-cheng">选举详细流程</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/crazymakercircle/article/details/85956246">CSDN:Zookeeper 分布式锁 - 图解 - 秒懂</a></p>
-<hr>
-<h1><span id="san-chong-xuan-ju-fang-shi">三种选举方式</span><a href="#san-chong-xuan-ju-fang-shi" class="header-anchor">#</a></h1>
-<ul>
-<li>
-<p>LeaderElection</p>
-</li>
-<li>
-<p>AuthFastLeaderElection</p>
-</li>
-<li>
-<p>FastLeaderElection （最新默认）</p>
-<p>默认的算法是FastLeaderElection，所以这篇主要分析它的选举机制</p>
-</li>
-</ul>
-<h1><span id="xuan-ju-xiao-xi-nei-rong">选举消息内容</span><a href="#xuan-ju-xiao-xi-nei-rong" class="header-anchor">#</a></h1>
-<p>在投票完成后，需要将投票信息发送给集群中的所有服务器，它包含如下内容。</p>
-<ul>
-<li>
-<p>Serverid：服务器ID</p>
-<p>比如有三台服务器，编号分别是1,2,3。</p>
-<p>编号越大在选择算法中的权重越大。</p>
-</li>
-<li>
-<p>Zxid：数据ID</p>
-<p>服务器中存放的最大数据ID.</p>
-<p>值越大说明数据越新，在选举算法中数据越新权重越大。</p>
-</li>
-<li>
-<p>Epoch：逻辑时钟</p>
-<p>或者叫投票的次数，同一轮投票过程中的逻辑时钟值是相同的。每投完一次票这个数据就会增加，然后与接收到的其它服务器返回的投票信息中的数值相比，根据不同的值做出不同的判断。</p>
-</li>
-<li>
-<p>Server状态：选举状态</p>
-<p>LOOKING，竞选状态。</p>
-<p>FOLLOWING，随从状态，同步leader状态，参与投票。</p>
-<p>OBSERVING，观察状态,同步leader状态，不参与投票。</p>
-<p>LEADING，领导者状态。</p>
-</li>
-</ul>
-<hr>
-<h1><span id="xuan-ju-liu-cheng">选举流程：</span><a href="#xuan-ju-liu-cheng" class="header-anchor">#</a></h1>
-<p>目前有5台服务器，每台服务器均没有数据，它们的编号分别是1,2,3,4,5,按编号依次启动，它们的选择举过程如下：</p>
-<ol>
-<li>服务器1启动，给自己投票，然后发投票信息，由于其它机器还没有启动所以它收不到反馈信息，服务器1的状态一直属于Looking(选举状态)。</li>
-<li>服务器2启动，给自己投票，同时与之前启动的服务器1交换结果，由于服务器2的编号大所以服务器2胜出，但此时投票数没有大于半数，所以两个服务器的状态依然是LOOKING。</li>
-<li>服务器3启动，给自己投票，同时与之前启动的服务器1,2交换信息，由于服务器3的编号最大所以服务器3胜出，此时投票数正好大于半数，所以服务器3成为领导者，服务器1,2成为小弟。</li>
-<li>服务器4启动，给自己投票，同时与之前启动的服务器1,2,3交换信息，尽管服务器4的编号大，但之前服务器3已经胜出，所以服务器4只能成为小弟。</li>
-<li>服务器5启动，后面的逻辑同服务器4成为小弟。</li>
-</ol>
-<p><img src="/images/zk%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6/5926759e436424782c5715da60b0f5b6162c221a.png" alt="选举流程图"><br>
-<img src="/images/zk%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6/663f9286d5c3ffb52f67f3c7977236daeb89e8bb.png" alt="选举状态图"></p>
-<hr>
-<h1><span id="xuan-ju-xiang-xi-liu-cheng">选举详细流程</span><a href="#xuan-ju-xiang-xi-liu-cheng" class="header-anchor">#</a></h1>
-<p>一、首先开始选举阶段，每个Server读取自身的zxid。</p>
-<p>二、发送投票信息</p>
-<p>a、首先，每个Server第一轮都会投票给自己。</p>
-<p>b、投票信息包含 ：所选举leader的Serverid，Zxid，Epoch。Epoch会随着选举轮数的增加而递增。</p>
-<p>三、接收投票信息</p>
-<ol>
-<li>
-<p>如果服务器B接收到服务器A的数据（服务器A处于选举状态(LOOKING 状态)</p>
-<p>1）首先，判断逻辑时钟值：<br>
-a）如果发送过来的逻辑时钟Epoch大于目前的逻辑时钟。首先，更新本逻辑时钟Epoch，同时清空本轮逻辑时钟收集到的来自其他server的选举数据。然后，判断是否需要更新当前自己的选举leader Serverid。判断规则rules judging：保存的zxid最大值和leader Serverid来进行判断的。先看数据zxid,数据zxid大者胜出;其次再判断leader Serverid,leader Serverid大者胜出；然后再将自身最新的选举结果(也就是上面提到的三种数据（leader Serverid，Zxid，Epoch）广播给其他server)<br>
-b）如果发送过来的逻辑时钟Epoch小于目前的逻辑时钟。说明对方server在一个相对较早的Epoch中，这里只需要将本机的三种数据（leader Serverid，Zxid，Epoch）发送过去就行。<br>
-c）如果发送过来的逻辑时钟Epoch等于目前的逻辑时钟。再根据上述判断规则rules judging来选举leader ，然后再将自身最新的选举结果(也就是上面提到的三种数据（leader  Serverid，Zxid，Epoch）广播给其他server)。</p>
-<p>2）其次，判断服务器是不是已经收集到了所有服务器的选举状态：若是，根据选举结果设置自己的角色(FOLLOWING还是LEADER)，退出选举过程就是了。</p>
-</li>
-</ol>
-<p>最后，若没有收到没有收集到所有服务器的选举状态：也可以判断一下根据以上过程之后最新的选举leader是不是得到了超过半数以上服务器的支持,如果是,那么尝试在200ms内接收一下数据,如果没有新的数据到来,说明大家都已经默认了这个结果,同样也设置角色退出选举过程。</p>
-<ol start="2">
-<li>如果所接收服务器A处在其它状态（FOLLOWING或者LEADING）。</li>
-</ol>
-<p>a)逻辑时钟Epoch等于目前的逻辑时钟，将该数据保存到recvset。此时Server已经处于LEADING状态，说明此时这个server已经投票选出结果。若此时这个接收服务器宣称自己是leader, 那么将判断是不是有半数以上的服务器选举它，如果是则设置选举状态退出选举过程。<br>
-　　　　b) 否则这是一条与当前逻辑时钟不符合的消息，那么说明在另一个选举过程中已经有了选举结果，于是将该选举结果加入到outofelection集合中，再根据outofelection来判断是否可以结束选举,如果可以也是保存逻辑时钟，设置选举状态，退出选举过程。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/zookeeper/zk%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/zookeeper/zk%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">zk分布式锁原理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-09-23 22:47:49" itemprop="dateCreated datePublished" datetime="2022-09-23T22:47:49+08:00">2022-09-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-24 00:24:44" itemprop="dateModified" datetime="2022-09-24T00:24:44+08:00">2022-09-24</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">微服务组件</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/zookeeper/" itemprop="url" rel="index"><span itemprop="name">zookeeper</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/zookeeper/zk%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E7%90%86/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/zookeeper/zk%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E7%90%86/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>642</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#q-ru-guo-tong-shi-xi-wang-jia-suo-de-ke-hu-duan-fei-chang-duo-you-yi-qian-duo-ge-tong-shi-jian-ting-yi-ge-jie-dian-qu-suo-de-hua-hui-you-shi-me-wen-ti">Q: 如果同时希望加锁的客户端非常多，有一千多个，同时监听一个节点取锁的话会有什么问题</a></li>
-<li><a href="#q-na-me-ru-he-bi-mian-jian-ting-guo-duo">Q: 那么如何避免监听过多？</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/crazymakercircle/article/details/85956246">CSDN:Zookeeper 分布式锁 - 图解 - 秒懂</a></p>
-<hr>
-<h1><span id="q-ru-guo-tong-shi-xi-wang-jia-suo-de-ke-hu-duan-fei-chang-duo-you-yi-qian-duo-ge-tong-shi-jian-ting-yi-ge-jie-dian-qu-suo-de-hua-hui-you-shi-me-wen-ti">Q: 如果同时希望加锁的客户端非常多，有一千多个，同时监听一个节点取锁的话会有什么问题</span><a href="#q-ru-guo-tong-shi-xi-wang-jia-suo-de-ke-hu-duan-fei-chang-duo-you-yi-qian-duo-ge-tong-shi-jian-ting-yi-ge-jie-dian-qu-suo-de-hua-hui-you-shi-me-wen-ti" class="header-anchor">#</a></h1>
-<p>A:<br>
-会发生羊群效应。<br>
-即节点被删除释放锁时， 需要借助watch机制通知所有客户端， 消耗大量资源</p>
-<ul>
-<li>如果有1000个客户端watch 一个znode的exists调用，当这个节点被创建的时候，将会有1000个通知被发送。这种由于一个被watch的znode变化，导致大量的通知需要被发送，将会导致在这个通知期间的其他操作提交的延迟</li>
-</ul>
-<hr>
-<h1><span id="q-na-me-ru-he-bi-mian-jian-ting-guo-duo">Q: 那么如何避免监听过多？</span><a href="#q-na-me-ru-he-bi-mian-jian-ting-guo-duo" class="header-anchor">#</a></h1>
-<p>A:<br>
-znode不止一个， 但是会存在链式关系的锁，有点像是公平排队锁，先到先得。<br>
-lock之间会按顺序做监听， 而其他的客户端则单独监听自己需要的那个lock即可。<br>
-<img src="/images/zk%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E7%90%86/29492a16312e3133f8973f98d200011a8bb6c589.png" alt="29492a16312e3133f8973f98d200011a8bb6c589"><br>
-比如我们按照上述逻辑创建了有三个znodes.<br>
-/lock/lock-001,/lock/lock-002,/lock/lock-003.<br>
-/lock/lock-001 的这个客户端获得了lock<br>
-/lock/lock-002 的客户端watch /lock/lock-001<br>
-/lock/lock-003 的客户端watch /lock/lock-002<br>
-通过这种方式，每个节点只watch 一个变化</p>
-<ul>
-<li>
-<p>核心逻辑：不需要关心所有的事件，判断自己是否是所有节点中序号最小的。于是，很容易可以联想的到的是，每个节点的创建者只需要关注比自己序号小的那个节点。</p>
-<p><img src="/images/zk%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E7%90%86/a1fed39d5291cbbfc5fb079d9fc4db9b55c00c16.png" alt="a1fed39d5291cbbfc5fb079d9fc4db9b55c00c16"></p>
-</li>
-</ul>
 
       
     </div>
@@ -1787,18 +1894,18 @@ lock之间会按顺序做监听， 而其他的客户端则单独监听自己需
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">254</span>
+          <span class="site-state-item-count">258</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">64</span>
+        <span class="site-state-item-count">65</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-count">35</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -1858,7 +1965,7 @@ lock之间会按顺序做监听， 而其他的客户端则单独监听自己需
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共345.8k字</span>
+  <span class="post-count">博客全站共350.2k字</span>
 </div>
 
         
