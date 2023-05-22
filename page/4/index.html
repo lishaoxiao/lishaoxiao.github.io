@@ -181,6 +181,452 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/spark%E5%A6%82%E4%BD%95%E5%81%9Areduce%E6%97%B6%E7%9A%84%E6%95%B0%E6%8D%AE%E6%8B%89%E5%8F%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/spark%E5%A6%82%E4%BD%95%E5%81%9Areduce%E6%97%B6%E7%9A%84%E6%95%B0%E6%8D%AE%E6%8B%89%E5%8F%96/" class="post-title-link" itemprop="url">spark如何做reduce时的数据拉取.md</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-01-08 16:13:48 / 修改时间：16:56:52" itemprop="dateCreated datePublished" datetime="2023-01-08T16:13:48+08:00">2023-01-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">大数据组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6/spark/" itemprop="url" rel="index"><span itemprop="name">spark</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/spark%E5%A6%82%E4%BD%95%E5%81%9Areduce%E6%97%B6%E7%9A%84%E6%95%B0%E6%8D%AE%E6%8B%89%E5%8F%96/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/spark%E5%A6%82%E4%BD%95%E5%81%9Areduce%E6%97%B6%E7%9A%84%E6%95%B0%E6%8D%AE%E6%8B%89%E5%8F%96/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>787</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#1-cong-blockmanage-chu-huo-qu-map-ren-wu-de-zhuang-tai-xin-xi">1.从BlockManage处获取map任务的状态信息</a></li>
+<li><a href="#2-shi-yong-splitlocalremoteblocks-fang-fa-an-zhao-zhong-jian-jie-guo-suo-zai-jie-dian-hua-fen-ge-ge-block">2.使用splitLocalRemoteBlocks方法 ，按照中间结果所在节点划分各个Block</a></li>
+<li><a href="#3-chuang-jian-shufleblockfetcheriterator-die-dai-qi-cong-yuan-duan-jie-dian-du-qu-zhong-jian-ji-suan-jie-guo-zai-zhe-li-cha-ru-tu-pian-miao-shu-images-spark-e5-a6-82-e4-bd-95-e5-81-9areduce-e6-97-b6-e7-9a-84-e6-95-b0-e6-8d-ae-e6-8b-89-e5-8f-96-20210124004443726-1673168210470-png">3.创建ShufleBlockFetcherIterator迭代器，从远端节点读取中间计算结果<img src="/images/spark%E5%A6%82%E4%BD%95%E5%81%9Areduce%E6%97%B6%E7%9A%84%E6%95%B0%E6%8D%AE%E6%8B%89%E5%8F%96/20210124004443726-1673168210470.png" alt="在这里插入图片描述"></a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<p>spark的reduce过程究竟做了什么呢？我们可以看一下：<br>
+<img src="/images/spark%E5%A6%82%E4%BD%95%E5%81%9Areduce%E6%97%B6%E7%9A%84%E6%95%B0%E6%8D%AE%E6%8B%89%E5%8F%96/20210124002809268-1673168210369.png" alt="在这里插入图片描述"><br>
+先拉取数据，在聚合，最后会调上一章讲map操作时的insertAll方法即缓存结果的方法。<br>
+如何做reduce聚合没啥好说的，我们看下他是怎么读取中间计算结果的</p>
+<h2><span id="1-cong-blockmanage-chu-huo-qu-map-ren-wu-de-zhuang-tai-xin-xi">1.从BlockManage处获取map任务的状态信息</span><a href="#1-cong-blockmanage-chu-huo-qu-map-ren-wu-de-zhuang-tai-xin-xi" class="header-anchor">#</a></h2>
+<p>首先会试图获取任务的状态信息，以确认当前从哪里读取数据<br>
+<img src="/images/spark%E5%A6%82%E4%BD%95%E5%81%9Areduce%E6%97%B6%E7%9A%84%E6%95%B0%E6%8D%AE%E6%8B%89%E5%8F%96/20210124003318192-1673168210406.png" alt><br>
+我们看下是从具体的获取信息过程：<br>
+<img src="/images/spark%E5%A6%82%E4%BD%95%E5%81%9Areduce%E6%97%B6%E7%9A%84%E6%95%B0%E6%8D%AE%E6%8B%89%E5%8F%96/20210124003413446-1673168210429.png" alt="在这里插入图片描述"><br>
+可以看到有以下关键点：</p>
+<ol>
+<li>reduce的上游任务节点状态一开始是不确定的， 如果没有需要自己根据shuffleId去拉取过来。</li>
+<li>取状态信息时，不是马上就去取，而是放入一个fetching队列里取，避免同时发送过多的零碎状态信息请求。<br>
+注意这个时候还没有真正拿到数据，只是获取了数据的情况。</li>
+</ol>
+<h2><span id="2-shi-yong-splitlocalremoteblocks-fang-fa-an-zhao-zhong-jian-jie-guo-suo-zai-jie-dian-hua-fen-ge-ge-block">2.使用splitLocalRemoteBlocks方法 ，按照中间结果所在节点划分各个Block</span><a href="#2-shi-yong-splitlocalremoteblocks-fang-fa-an-zhao-zhong-jian-jie-guo-suo-zai-jie-dian-hua-fen-ge-ge-block" class="header-anchor">#</a></h2>
+<p>获取了上游任务节点该map数据的状态，那么接着是划分block，以确认是本地还是远程。 看下是怎么做block划分的：<br>
+<img src="/images/spark%E5%A6%82%E4%BD%95%E5%81%9Areduce%E6%97%B6%E7%9A%84%E6%95%B0%E6%8D%AE%E6%8B%89%E5%8F%96/20210124003943239-1673168210616.png" alt="在这里插入图片描述"><br>
+有以下特点：</p>
+<ol>
+<li>只有非自己当前节点的数据，才需要去远程获取。</li>
+<li>每次是凑齐了一堆块的数量才去取，而不是频繁地取。</li>
+</ol>
+<h2><span id="3-chuang-jian-shufleblockfetcheriterator-die-dai-qi-cong-yuan-duan-jie-dian-du-qu-zhong-jian-ji-suan-jie-guo">3.创建ShufleBlockFetcherIterator迭代器，从远端节点读取中间计算结果<img src="/images/spark%E5%A6%82%E4%BD%95%E5%81%9Areduce%E6%97%B6%E7%9A%84%E6%95%B0%E6%8D%AE%E6%8B%89%E5%8F%96/20210124004443726-1673168210470.png" alt="在这里插入图片描述"></span><a href="#3-chuang-jian-shufleblockfetcheriterator-die-dai-qi-cong-yuan-duan-jie-dian-du-qu-zhong-jian-ji-suan-jie-guo" class="header-anchor">#</a></h2>
+<p>接着就是要读取了，看下怎么读的：<br>
+<img src="/images/spark%E5%A6%82%E4%BD%95%E5%81%9Areduce%E6%97%B6%E7%9A%84%E6%95%B0%E6%8D%AE%E6%8B%89%E5%8F%96/20210124004506677-1673168210638.png" alt="在这里插入图片描述"><br>
+有以下特点：</p>
+<ol>
+<li>发送fetch请求时， 会做随机排序（因为取的数据可能来自多个节点，为了避免总是只取1个节点的，选择了随机取）</li>
+</ol>
+<p>取完数据之后，就是调用之前map操作里也调用过的insertAll放去缓存或者先计算再缓存，提供给下游调用。</p>
+<p>完整流程如下：<br>
+<img src="/images/spark%E5%A6%82%E4%BD%95%E5%81%9Areduce%E6%97%B6%E7%9A%84%E6%95%B0%E6%8D%AE%E6%8B%89%E5%8F%96/2021012400480886-1673168210543.png" alt="在这里插入图片描述"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/spark%E7%9A%84master%E3%80%81worker%E3%80%81exeuctor%E5%AE%B9%E9%94%99%E6%9C%BA%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/spark%E7%9A%84master%E3%80%81worker%E3%80%81exeuctor%E5%AE%B9%E9%94%99%E6%9C%BA%E5%88%B6/" class="post-title-link" itemprop="url">spark的master、worker、exeuctor容错机制.md</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-01-08 16:13:48 / 修改时间：16:56:41" itemprop="dateCreated datePublished" datetime="2023-01-08T16:13:48+08:00">2023-01-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">大数据组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6/spark/" itemprop="url" rel="index"><span itemprop="name">spark</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/spark%E7%9A%84master%E3%80%81worker%E3%80%81exeuctor%E5%AE%B9%E9%94%99%E6%9C%BA%E5%88%B6/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/spark%E7%9A%84master%E3%80%81worker%E3%80%81exeuctor%E5%AE%B9%E9%94%99%E6%9C%BA%E5%88%B6/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#rong-cuo-ji-zhi-exeuctor-tui-chu">容错机制-exeuctor退出</a></li>
+<li><a href="#worker-yi-chang-tui-chu">worker异常退出</a></li>
+<li><a href="#master-yi-chang">master异常</a>
+<ul>
+<li><a href="#1-ren-wu-zheng-chang-yun-xing-shi-master-yi-chang-tui-chu">1：任务正常运行时master异常退出</a></li>
+<li><a href="#2-dang-ren-wu-zhi-xing-guo-cheng-zhong-master-gua-diao-hou-worker-he-executor-ye-yi-chang-liao">2:当任务执行过程中，master挂掉后，worker和executor也异常了</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<p>@[toc]<br>
+我们看下spark是怎么针对master、worker、executor的异常情况做处理的。</p>
+<h2><span id="rong-cuo-ji-zhi-exeuctor-tui-chu">容错机制-exeuctor退出</span><a href="#rong-cuo-ji-zhi-exeuctor-tui-chu" class="header-anchor">#</a></h2>
+<p>首先可以假设worker中的executor执行任务时，发送了莫名其妙的异常或者错误，然后对应线程消失了。<br>
+我们看这个时候会做什么事情<br>
+<img src="/images/spark%E7%9A%84master%E3%80%81worker%E3%80%81exeuctor%E5%AE%B9%E9%94%99%E6%9C%BA%E5%88%B6/20210215005834109-1673168199265.png" alt="在这里插入图片描述"><br>
+上图总结下来就是：<br>
+executor由backend进程包着，如果抛异常，他会感知到，并调用executorRunner.exitStatus()， 通知worker</p>
+<p>看下通知worker之后发生了什么：<br>
+<img src="/images/spark%E7%9A%84master%E3%80%81worker%E3%80%81exeuctor%E5%AE%B9%E9%94%99%E6%9C%BA%E5%88%B6/2021021501034395-1673168199283.png" alt="在这里插入图片描述"></p>
+<ul>
+<li>worker会通知master，master会将exectorInfo清除，然后调度worker让他重新创建</li>
+<li>这里可以看到worker创建executor的指令仍然是让master来调度和管理的，不是自己想创建就创建。<br>
+接下来就是重建executor，然后重新开始执行这个地方的任务了（因此数据也会重新拉，之前发送端缓存的数据就能够派上用场了）<br>
+<img src="/images/spark%E7%9A%84master%E3%80%81worker%E3%80%81exeuctor%E5%AE%B9%E9%94%99%E6%9C%BA%E5%88%B6/20210215010545671-1673168199302.png" alt="在这里插入图片描述"><br>
+完整流程图如下：<br>
+<img src="/images/spark%E7%9A%84master%E3%80%81worker%E3%80%81exeuctor%E5%AE%B9%E9%94%99%E6%9C%BA%E5%88%B6/20210215012133527-1673168199303.png" alt="在这里插入图片描述"></li>
+</ul>
+<h2><span id="worker-yi-chang-tui-chu">worker异常退出</span><a href="#worker-yi-chang-tui-chu" class="header-anchor">#</a></h2>
+<p>假设此时是worker挂掉了， 那么正在执行任务的exeuctor和master会怎么做呢？如下：<br>
+<img src="/images/spark%E7%9A%84master%E3%80%81worker%E3%80%81exeuctor%E5%AE%B9%E9%94%99%E6%9C%BA%E5%88%B6/20210215010712861-1673168199302.png" alt="在这里插入图片描述"><br>
+可以看到worker有一个shutdownHook，会帮忙关闭正在执行的executor。<br>
+但是此时worker挂了，因此没法往master发送消息了，怎么办？<br>
+上一节有讲到master和worker之间存在心跳，因此就会有如下处理：<br>
+<img src="/images/spark%E7%9A%84master%E3%80%81worker%E3%80%81exeuctor%E5%AE%B9%E9%94%99%E6%9C%BA%E5%88%B6/2021021501084548-1673168199331.png" alt="在这里插入图片描述"><br>
+可以看到当master发现worker的心跳丢失时，会进行：</p>
+<ul>
+<li>删除执行列表里的worker信息</li>
+<li>重新下发创建worker的操作给对应spark节点</li>
+<li>通知driver这个worker里面的exector都已经lost了</li>
+</ul>
+<p>看下此时worker重建和driver分别做了什么：<br>
+<img src="/images/spark%E7%9A%84master%E3%80%81worker%E3%80%81exeuctor%E5%AE%B9%E9%94%99%E6%9C%BA%E5%88%B6/20210215011245675-1673168199330.png" alt="在这里插入图片描述"><br>
+这里还可以看到1个很重要的概念：</p>
+<ul>
+<li>master关心worker状态</li>
+<li>driver会关心executor进展</li>
+<li>exeuctor重建后需要注册到driver上</li>
+</ul>
+<p>完整流程图如下：<br>
+<img src="/images/spark%E7%9A%84master%E3%80%81worker%E3%80%81exeuctor%E5%AE%B9%E9%94%99%E6%9C%BA%E5%88%B6/20210215012156205-1673168199503.png" alt="在这里插入图片描述"></p>
+<h2><span id="master-yi-chang">master异常</span><a href="#master-yi-chang" class="header-anchor">#</a></h2>
+<p>由于master不参与任务的计算，只是对worker做管理，因此对于master的异常，分两种情况：</p>
+<h4><span id="1-ren-wu-zheng-chang-yun-xing-shi-master-yi-chang-tui-chu">1：任务正常运行时master异常退出</span><a href="#1-ren-wu-zheng-chang-yun-xing-shi-master-yi-chang-tui-chu" class="header-anchor">#</a></h4>
+<p>则流程如下：<br>
+<img src="/images/spark%E7%9A%84master%E3%80%81worker%E3%80%81exeuctor%E5%AE%B9%E9%94%99%E6%9C%BA%E5%88%B6/20210215011442711-1673168199331.png" alt="在这里插入图片描述"><br>
+从这里可以看到当任务正常运行时，只会在结束时，由driver去触发master的清理资源操作，但是master进程已经挂掉了，所以也没关系。</p>
+<h4><span id="2-dang-ren-wu-zhi-xing-guo-cheng-zhong-master-gua-diao-hou-worker-he-executor-ye-yi-chang-liao">2:当任务执行过程中，master挂掉后，worker和executor也异常了</span><a href="#2-dang-ren-wu-zhi-xing-guo-cheng-zhong-master-gua-diao-hou-worker-he-executor-ye-yi-chang-liao" class="header-anchor">#</a></h4>
+<p><img src="/images/spark%E7%9A%84master%E3%80%81worker%E3%80%81exeuctor%E5%AE%B9%E9%94%99%E6%9C%BA%E5%88%B6/20210215011805367-1673168199332.png" alt="在这里插入图片描述"><br>
+可以看到这时候时没办法重启exeuctor的<br>
+此时driver那边就会看起来任务一直没进展了。</p>
+<p>为了避免这种情况，master可以做成无状态化，然后做主备容灾。当然master节点做的时候比较少，一般不容易崩溃，除非认为kill或者部署节点故障。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/sparkContext%E5%88%9D%E5%A7%8B%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/sparkContext%E5%88%9D%E5%A7%8B%E5%8C%96/" class="post-title-link" itemprop="url">sparkContext初始化.md</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-01-08 16:13:48 / 修改时间：16:56:57" itemprop="dateCreated datePublished" datetime="2023-01-08T16:13:48+08:00">2023-01-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">大数据组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6/spark/" itemprop="url" rel="index"><span itemprop="name">spark</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/sparkContext%E5%88%9D%E5%A7%8B%E5%8C%96/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/sparkContext%E5%88%9D%E5%A7%8B%E5%8C%96/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>403</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#sparkcontext-chu-shi-hua-de-nei-rong">sparkContext初始化的内容</a></li>
+<li><a href="#yi-xie-wen-ti-he-si-kao">一些问题和思考</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<p>之前看了半本书《深入理解Spark：核心思想与源码分析》， 为什么说是半本，因为看不下去了，这本书太喜欢贴scala代码却不解释，但自己那时候不太了解如何去阅读源码，所以希望借助它学习一下。这里贴一贴学习的过程。</p>
+<hr>
+<h2><span id="sparkcontext-chu-shi-hua-de-nei-rong">sparkContext初始化的内容</span><a href="#sparkcontext-chu-shi-hua-de-nei-rong" class="header-anchor">#</a></h2>
+<p><img src="/images/sparkContext%E5%88%9D%E5%A7%8B%E5%8C%96/20200606000736739-1673168216908.png" alt="在这里插入图片描述"></p>
+<h2><span id="yi-xie-wen-ti-he-si-kao">一些问题和思考</span><a href="#yi-xie-wen-ti-he-si-kao" class="header-anchor">#</a></h2>
+<hr>
+<p>Q： SparkConf配置信息来自哪些？<br>
+A： spark-submit时spark-default.conf里的配置，   spark-submit时写入的命令参数</p>
+<hr>
+<p>Q： SparkContext必须指定哪2个内容？<br>
+A： 指定s.master部署模式和s.app.name应用名</p>
+<hr>
+<p>Q：SparkContext到底是干嘛的？<br>
+A：任务执行中所有角色都要从sparkContext中获取一些信息，来进行任务的执行。比如各worker需要知道shufflerManager、blockservice之类的信息。<br>
+<img src="/images/sparkContext%E5%88%9D%E5%A7%8B%E5%8C%96/20200606001407361-1673168216899.png" alt="在这里插入图片描述"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/spark%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%9E%84%E5%BB%BA%E5%92%8C%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1545,323 +1991,10 @@ D1数据集中， A排第1， B排第2，C排第3</p>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">机器学习笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-01-08 15:09:53" itemprop="dateCreated datePublished" datetime="2023-01-08T15:09:53+08:00">2023-01-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-23 07:32:08" itemprop="dateModified" datetime="2023-05-23T07:32:08+08:00">2023-05-23</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>42</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%90%8D%E8%AF%8D%E6%A6%82%E5%BF%B5/" title="1.1 机器学习基础名词概念大全">1.1 机器学习基础名词概念大全</a><br>
-<a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.2%E5%BD%92%E7%BA%B3%E5%81%8F%E5%A5%BD/" title="1.2 归纳偏好">1.2 归纳偏好</a><br>
-<a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/2%E6%A8%A1%E5%9E%8B%E8%AF%84%E4%BC%B0%E5%92%8C%E9%80%89%E6%8B%A9/" title="2 模型评估和选择">2 模型评估和选择</a><br>
-<a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E3%80%90%E8%BD%AC%E8%BD%BD%E3%80%91%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8%E6%8C%87%E5%AF%BC/" title="【转载】机器学习入门指导">【转载】机器学习入门指导</a><br>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" class="post-title-link" itemprop="url">人工智能</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-01-08 15:09:44" itemprop="dateCreated datePublished" datetime="2023-01-08T15:09:44+08:00">2023-01-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-23 07:32:08" itemprop="dateModified" datetime="2023-05-23T07:32:08+08:00">2023-05-23</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>6</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="机器学习笔记">机器学习笔记</a><br>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E4%B8%80%E7%AB%A0%E8%BF%90%E7%AE%97%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E4%B8%80%E7%AB%A0%E8%BF%90%E7%AE%97%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="post-title-link" itemprop="url">第一章基础运算</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-01-07 23:44:16 / 修改时间：16:39:23" itemprop="dateCreated datePublished" datetime="2023-01-07T23:44:16+08:00">2023-01-07</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/python%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">python基础</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E4%B8%80%E7%AB%A0%E8%BF%90%E7%AE%97%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E4%B8%80%E7%AB%A0%E8%BF%90%E7%AE%97%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>237</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>整数相除一般默认为整数除法若想为普通除法，则可from_future_import division</p>
-<p><a target="_blank" rel="noopener" href="//xn--1-848as05cpa84g350a25qdxii37d.0//2.0=0.0">//是整数除法的符号1.0//2.0=0.0</a></p>
-<p>**是幂运算符</p>
-<p>即2**3=8</p>
-<p>末尾加L是长整数</p>
-<p>输入方式：x=input(“x=”)</p>
-<ul>
-<li>
-<p>pow（2,3） 平方</p>
-</li>
-<li>
-<p>abs 绝对值</p>
-</li>
-<li>
-<p>round（浮点数）  四舍五入</p>
-</li>
-</ul>
-<p>import math</p>
-<p>math.floor()  浮点数取整math.sqrt()  开根号</p>
-<p>import cmath</p>
-<p>则可以引入复数计算cmath.sqrt(-1)=1j</p>
-<p>并可以做运算，1j*1j=-1+0j</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/27/">27</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1929,18 +2062,18 @@ D1数据集中， A排第1， B排第2，C排第3</p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-count">263</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">66</span>
+        <span class="site-state-item-count">67</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-count">36</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -2000,7 +2133,7 @@ D1数据集中， A排第1， B排第2，C排第3</p>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共350.9k字</span>
+  <span class="post-count">博客全站共351.9k字</span>
 </div>
 
         
