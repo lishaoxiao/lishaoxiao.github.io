@@ -181,6 +181,316 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%B9%B6%E6%9F%A5%E9%9B%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%B9%B6%E6%9F%A5%E9%9B%86/" class="post-title-link" itemprop="url">并查集</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-20 23:12:42" itemprop="dateCreated datePublished" datetime="2022-08-20T23:12:42+08:00">2022-08-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-30 00:58:25" itemprop="dateModified" datetime="2022-08-30T00:58:25+08:00">2022-08-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">算法大全</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%9B%BE/" itemprop="url" rel="index"><span itemprop="name">图</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%B9%B6%E6%9F%A5%E9%9B%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%B9%B6%E6%9F%A5%E9%9B%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>686</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#gai-nian">概念</a></li>
+<li><a href="#he-xin-si-lu">核心思路：</a></li>
+<li><a href="#dai-ma-mo-ban">代码模板</a></li>
+<li><a href="#xiang-guan-ti-mu">相关题目</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="gai-nian">概念</span><a href="#gai-nian" class="header-anchor">#</a></h1>
+<ul>
+<li>
+<p>谁和谁相互关联， 问你最终每个集体或者最多集体有多少人， 或者有多少个集体，用并查集即可。</p>
+</li>
+<li>
+<p>区间合并问题直接上并查集，别整更新左区间，更新右区间这种玩意，很容易错。</p>
+</li>
+</ul>
+<h1><span id="he-xin-si-lu">核心思路：</span><a href="#he-xin-si-lu" class="header-anchor">#</a></h1>
+<ol>
+<li>partent[k] 指k的父亲节点是什么</li>
+<li>每次getParent(k)时， 要通过递归， 将其父节点更新成最上面的父节点，实现并查集的压缩，大大减少了复杂度</li>
+<li>union时， 则随意选一方进行连接</li>
+<li>如何涉及集合中的数量问题，尽量别在union中更新，容易写错，  建议最后全部遍历一边，得到集合中的数量或者价值总数。</li>
+<li>如果一定要union更新，注意顺序，p[p1]] = p2的话，说明p1的父亲变成了p2，那么应该是p2作为被加方，即sum[p2] += sum[p1]，反过来了。且注意在getParent中不需要更新val</li>
+</ol>
+<h1><span id="dai-ma-mo-ban">代码模板</span><a href="#dai-ma-mo-ban" class="header-anchor">#</a></h1>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">   <span class="type">long</span>[] sums;</span><br><span class="line">   <span class="type">int</span>[] parent;    </span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">union</span><span class="params">(<span class="type">int</span> n1, <span class="type">int</span> n2)</span> &#123;</span><br><span class="line">       <span class="type">int</span> <span class="variable">p1</span> <span class="operator">=</span> getParent(n1);</span><br><span class="line">       <span class="type">int</span> <span class="variable">p2</span> <span class="operator">=</span> getParent(n2);</span><br><span class="line">       parent[p1] = p2;</span><br><span class="line">       sums[p2] += sums[p1];</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="type">int</span> <span class="title function_">getParent</span><span class="params">(<span class="type">int</span> num)</span> &#123;</span><br><span class="line">       <span class="type">int</span> <span class="variable">p</span> <span class="operator">=</span> parent[num];</span><br><span class="line">       <span class="keyword">if</span> (p == num) &#123;</span><br><span class="line">           <span class="keyword">return</span> p;</span><br><span class="line">       &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">           p = getParent(p);</span><br><span class="line">       &#125;</span><br><span class="line">       parent[num] = p;</span><br><span class="line">       <span class="keyword">return</span> p;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<h1><span id="xiang-guan-ti-mu">相关题目</span><a href="#xiang-guan-ti-mu" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/maximum-segment-sum-after-removals/">6159. 删除操作后的最大子段和 - 力扣（LeetCode）</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/" class="post-title-link" itemprop="url">第86场双周赛-376名-4题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-20 22:12:42" itemprop="dateCreated datePublished" datetime="2022-08-20T22:12:42+08:00">2022-08-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-21 00:45:44" itemprop="dateModified" datetime="2022-08-21T00:45:44+08:00">2022-08-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">力扣周赛记录</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><img src="/images/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/1661012250432.png" alt="1661012250432"></p>
+<h2><span id="ben-qi-zong-jie">本期总结：</span><a href="#ben-qi-zong-jie" class="header-anchor">#</a></h2>
+<ol>
+<li>
+<p>涉及边界问题一定要自己检查看是否写错了，花1分钟检查总好过避免WA浪费5分钟</p>
+</li>
+<li>
+<p>取余问题一定要注意负数的情况，必须要用加上Mod值直到大于0才能去取余</p>
+</li>
+<li>
+<p>区间合并问题直接上并查集，别整更新左区间，更新右区间这种玩意，很容易错。</p>
+</li>
+</ol>
+<hr>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/minimum-recolors-to-get-k-consecutive-black-blocks/">6156. 得到 K 个黑块的最少涂色次数 - 力扣（LeetCode）</a></p>
+<p>很简单，滑动窗口，而且因为数量够小，直接暴力解决即可，不用做滑动窗口的特殊处理</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">minimumRecolors</span><span class="params">(String blocks, <span class="type">int</span> k)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">min</span> <span class="operator">=</span> Integer.MAX_VALUE;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; blocks.length();i++) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (j = i; j &lt; i+k &amp;&amp;  j &lt; blocks.length();j++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (blocks.charAt(j) == <span class="string">&#x27;W&#x27;</span>) &#123;</span><br><span class="line">                    count++;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (j != i+k) &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            min = Math.min(count, min);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> min;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/time-needed-to-rearrange-a-binary-string/">6157. 二进制字符串重新安排顺序需要的时间 - 力扣（LeetCode）</a></p>
+<p><img src="/images/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/1661012329860.png" alt="1661012329860"></p>
+<p><img src="/images/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/1661012381790.png" alt="1661012381790"></p>
+<p>首先花了几分钟，推断出来最多变化n次（因为每处理一次至少前缀1会增加1个）</p>
+<p>那么直接暴力O(n2)即可</p>
+<p>但是因为边界处理写急了导致出错，我应该自己提交前再检查一下的</p>
+<p>下面是错误的地方：</p>
+<p><img src="/images/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/1661012470616.png" alt="1661012470616"></p>
+<p>i+1==s.length()了，怎么可能添加11， 最多添加1个1才对。</p>
+<p>正确答案：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">secondsToRemoveOccurrences</span><span class="params">(String s)</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">            <span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">            <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (s.charAt(i) == <span class="string">&#x27;0&#x27;</span> &amp;&amp; (i+<span class="number">1</span>!=s.length() &amp;&amp; s.charAt(i + <span class="number">1</span>) == <span class="string">&#x27;1&#x27;</span>)) &#123;</span><br><span class="line">                    sb.append(<span class="string">&quot;10&quot;</span>);</span><br><span class="line">                    i++;</span><br><span class="line">                    count++;</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (s.charAt(i) == <span class="string">&#x27;0&#x27;</span> &amp;&amp; (i+<span class="number">1</span> == s.length() || s.charAt(i + <span class="number">1</span>) == <span class="string">&#x27;0&#x27;</span>)) &#123;</span><br><span class="line">                    sb.append(<span class="string">&quot;0&quot;</span>);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (s.charAt(i) == <span class="string">&#x27;1&#x27;</span> &amp;&amp; (i+<span class="number">1</span> != s.length() &amp;&amp; s.charAt(i + <span class="number">1</span>) == <span class="string">&#x27;1&#x27;</span>)) &#123;</span><br><span class="line">                    sb.append(<span class="string">&quot;11&quot;</span>);</span><br><span class="line">                    i++;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    sb.append(<span class="string">&quot;1&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            s = sb.toString();</span><br><span class="line">            <span class="keyword">if</span> (count == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> res;</span><br><span class="line">            &#125;</span><br><span class="line">            res++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/shifting-letters-ii/">6158. 字母移位 II - 力扣（LeetCode）</a></p>
+<p><img src="/images/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/1661012520347.png" alt="1661012520347"></p>
+<p><img src="/images/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/1661012525774.png" alt="1661012525774"></p>
+<p>做过这类题，和那种任务流的题目类似</p>
+<p>直接记录每个位置有多少起点，多少终点，根据情况进行加或者减。</p>
+<p>但是对于移位的处理有点问题</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; s.length();i++) &#123;</span><br><span class="line">    count += startPlaces[i];</span><br><span class="line">    cs[i] = (<span class="type">char</span>)((s.charAt(i) -<span class="string">&#x27;a&#x27;</span> + count)%<span class="number">26</span> + <span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">    count += endPlaces[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看似很对， 却忘记了 负数取余也是负数。。</p>
+<p>对负数取余应当通过加上26的倍数让他大于0才对。于是改成下面这样得到移位后的字符：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span> <span class="title function_">getMod</span><span class="params">(<span class="type">char</span> c, <span class="type">int</span> count)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">num</span> <span class="operator">=</span> c - <span class="string">&#x27;a&#x27;</span>  + count;</span><br><span class="line">    <span class="keyword">if</span> (num &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">mul</span> <span class="operator">=</span> num / <span class="number">26</span>;</span><br><span class="line">        num += (mul+<span class="number">2</span>)*<span class="number">26</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    num %= <span class="number">26</span>;</span><br><span class="line">    <span class="keyword">return</span> (<span class="type">char</span>)(num + <span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果还是错</p>
+<p>因为我忘记了num是负数的时候，num/26也是负数。。应该要加一个Math.abs</p>
+<p>正确做法如下getMod：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="type">char</span> <span class="title function_">getMod</span><span class="params">(<span class="type">char</span> c, <span class="type">int</span> count)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">num</span> <span class="operator">=</span> c - <span class="string">&#x27;a&#x27;</span>  + count;</span><br><span class="line">        <span class="keyword">if</span> (num &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">mul</span> <span class="operator">=</span> Math.abs(num / <span class="number">26</span>);</span><br><span class="line">            num += (mul+<span class="number">1</span>)*<span class="number">26</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        num %= <span class="number">26</span>;</span><br><span class="line">        <span class="keyword">return</span> (<span class="type">char</span>)(num + <span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">shiftingLetters</span><span class="params">(String s, <span class="type">int</span>[][] shifts)</span> &#123;</span><br><span class="line">        <span class="type">int</span>[] startPlaces = <span class="keyword">new</span> <span class="title class_">int</span>[s.length()+<span class="number">1</span>];</span><br><span class="line">        <span class="type">int</span>[] endPlaces = <span class="keyword">new</span> <span class="title class_">int</span>[s.length()+<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; shifts.length;i++) &#123;</span><br><span class="line">            <span class="type">int</span>[] shift = shifts[i];</span><br><span class="line">            startPlaces[shift[<span class="number">0</span>]] += (shift[<span class="number">2</span>] == <span class="number">1</span> ? <span class="number">1</span>: -<span class="number">1</span>);</span><br><span class="line">            endPlaces[shift[<span class="number">1</span>]] += (shift[<span class="number">2</span>] == <span class="number">0</span> ? <span class="number">1</span>: -<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">char</span>[] cs = <span class="keyword">new</span> <span class="title class_">char</span>[s.length()];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; s.length();i++) &#123;</span><br><span class="line">            count += startPlaces[i];</span><br><span class="line">            cs[i] = getMod(s.charAt(i), count);</span><br><span class="line">            count += endPlaces[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">String</span>(cs);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/maximum-segment-sum-after-removals/">6159. 删除操作后的最大子段和 - 力扣（LeetCode）</a></p>
+<p><img src="/images/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/1661012916961.png" alt="1661012916961"></p>
+<p><img src="/images/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/1661012929643.png" alt="1661012929643">、</p>
+<p>这题又是做过类似的题，删点的题目可以反过来变成加点。</p>
+<p>即从后往前逐步遍历，新增，逐步合并区间</p>
+<p>结果还是用了错误的方式去更新，想着直接更新左右两个索引的sum值即可</p>
+<p>实际上你要更新的应该是左边索引的最左点， 右边索引的最右点才对，而且每次合并都要修改左右的最左点或者最右点，非常麻烦，如下中间那4个if， 绕来绕去，注定要搞一次WA才能知道问题，非常不对劲：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">long</span>[] maximumSegmentSum(<span class="type">int</span>[] nums, <span class="type">int</span>[] removeQueries) &#123;</span><br><span class="line">        <span class="type">long</span>[] sums = <span class="keyword">new</span> <span class="title class_">long</span>[nums.length];</span><br><span class="line">        <span class="type">long</span>[] results = <span class="keyword">new</span> <span class="title class_">long</span>[nums.length];</span><br><span class="line">        <span class="type">int</span>[] lefts = <span class="keyword">new</span> <span class="title class_">int</span>[nums.length];</span><br><span class="line">        <span class="type">int</span>[] rights = <span class="keyword">new</span> <span class="title class_">int</span>[nums.length];</span><br><span class="line">        <span class="type">long</span> <span class="variable">maxNum</span> <span class="operator">=</span> Long.MIN_VALUE;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> removeQueries.length-<span class="number">1</span>;i&gt;=<span class="number">1</span>;i--) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> removeQueries[i];</span><br><span class="line">            <span class="type">long</span> <span class="variable">leftSum</span> <span class="operator">=</span> index-<span class="number">1</span> &gt;= <span class="number">0</span> ? sums[index-<span class="number">1</span>] :<span class="number">0</span>;</span><br><span class="line">            <span class="type">long</span> <span class="variable">rightSum</span> <span class="operator">=</span> index + <span class="number">1</span> &lt; nums.length ? sums[index+<span class="number">1</span>] : <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">            <span class="type">long</span> <span class="variable">sum</span> <span class="operator">=</span> leftSum + rightSum + nums[index];</span><br><span class="line">            lefts[index] = rights[index] = index;</span><br><span class="line">            sums[index] = sum;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (leftSum &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                lefts[index] = lefts[index-<span class="number">1</span>];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (rightSum &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                rights[index] = rights[index+<span class="number">1</span>];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (leftSum &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                rights[lefts[index]] = rights[index];</span><br><span class="line">                sums[lefts[index]] = sum;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (rightSum &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                lefts[rights[index]] = lefts[index];</span><br><span class="line">                sums[rights[index]] = sum;</span><br><span class="line">            &#125;</span><br><span class="line">            maxNum = Math.max(maxNum, sum);</span><br><span class="line">            results[i-<span class="number">1</span>] = maxNum;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> results;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这种合并的题目就别取巧了， 直接并查集走起</p>
+<p>注意并查集合并时，涉及val的合并， 在getParent中不需要更新val</p>
+<p>在union中，注意顺序，p[p1]] = p2的话，说明p1的父亲变成了p2，那么应该是p2作为被加方，即sum[p2] += sum[p1]，反过来了</p>
+<p>另外注意要先取变量，不要直接基于函数去搞，下面这样是错误的！因为第一步之后已经发生变成了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">union</span><span class="params">(<span class="type">int</span> n1, <span class="type">int</span> n2)</span> &#123;</span><br><span class="line">    parent[getParent(n1)] = getParent(n2);</span><br><span class="line">    sums[getParent(n2)] += sums[getParent(n1)];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>应该是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">union</span><span class="params">(<span class="type">int</span> n1, <span class="type">int</span> n2)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">p1</span> <span class="operator">=</span> getParent(n1);</span><br><span class="line">    <span class="type">int</span> <span class="variable">p2</span> <span class="operator">=</span> getParent(n2);</span><br><span class="line">    parent[p1] = p2;</span><br><span class="line">    sums[p2] += sums[p1];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>并查集正确做法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="type">long</span>[] sums;</span><br><span class="line">    <span class="type">int</span>[] parent;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">long</span>[] maximumSegmentSum(<span class="type">int</span>[] nums, <span class="type">int</span>[] removeQueries) &#123;</span><br><span class="line">        <span class="type">long</span>[] results = <span class="keyword">new</span> <span class="title class_">long</span>[nums.length];</span><br><span class="line">        sums = <span class="keyword">new</span> <span class="title class_">long</span>[nums.length];</span><br><span class="line">        <span class="type">long</span> <span class="variable">maxNum</span> <span class="operator">=</span> Long.MIN_VALUE;</span><br><span class="line">        parent = <span class="keyword">new</span> <span class="title class_">int</span>[nums.length];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; parent.length;i++) &#123;</span><br><span class="line">            parent[i] = i;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> removeQueries.length-<span class="number">1</span>;i&gt;=<span class="number">1</span>;i--) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> removeQueries[i];</span><br><span class="line"></span><br><span class="line">            <span class="type">long</span> <span class="variable">leftSum</span> <span class="operator">=</span> index-<span class="number">1</span> &gt;= <span class="number">0</span> ? sums[getParent(index-<span class="number">1</span>)] :<span class="number">0</span>;</span><br><span class="line">            <span class="type">long</span> <span class="variable">rightSum</span> <span class="operator">=</span> index + <span class="number">1</span> &lt; nums.length ? sums[getParent(index+<span class="number">1</span>)] : <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">            sums[index] = nums[index];</span><br><span class="line">            <span class="keyword">if</span> (leftSum &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                union(index-<span class="number">1</span>, index);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (rightSum &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                union(index, index+<span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            maxNum = Math.max(maxNum, sums[getParent(index)]);</span><br><span class="line">            results[i-<span class="number">1</span>] = maxNum;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> results;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">union</span><span class="params">(<span class="type">int</span> n1, <span class="type">int</span> n2)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">p1</span> <span class="operator">=</span> getParent(n1);</span><br><span class="line">        <span class="type">int</span> <span class="variable">p2</span> <span class="operator">=</span> getParent(n2);</span><br><span class="line">        parent[p1] = p2;</span><br><span class="line">        sums[p2] += sums[p1];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> <span class="title function_">getParent</span><span class="params">(<span class="type">int</span> num)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">p</span> <span class="operator">=</span> parent[num];</span><br><span class="line">        <span class="keyword">if</span> (p == num) &#123;</span><br><span class="line">            <span class="keyword">return</span> p;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            p = getParent(p);</span><br><span class="line">        &#125;</span><br><span class="line">        parent[num] = p;</span><br><span class="line">        <span class="keyword">return</span> p;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/Web%E5%AE%89%E5%85%A8%E9%98%B2%E6%8A%A4%E5%92%8C%E8%AE%A4%E8%AF%81%E6%8E%AA%E6%96%BD/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1353,6 +1663,178 @@ CA证书的机构笑了笑，说：“你只管提供就好了，顾客们自有
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7/" class="post-title-link" itemprop="url">java新版本特性</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-17 23:45:16 / 修改时间：00:19:37" itemprop="dateCreated datePublished" datetime="2022-08-17T23:45:16+08:00">2022-08-17</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">java高级应用</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#java8-te-xing">java8特性</a>
+<ul>
+<li><a href="#1-lambda-biao-da-shi-ba-han-shu-zuo-wei-yi-ge-fang-fa-de-can-shu">1. lambda表达式。把函数作为一个方法的参数</a></li>
+<li><a href="#2-stream-api">2. Stream api</a></li>
+<li><a href="#3-xin-zeng-liao-jie-kou-de-mo-ren-fang-fa-zhi-chi-default-shi-xian-liao">3.新增了接口的默认方法，支持default实现了</a></li>
+<li><a href="#4-xin-zeng-optional-lei-jie-jue-kong-zhi-zhen-pan-duan-wen-ti">4.新增Optional 类，解决空指针判断问题</a></li>
+<li><a href="#5-xin-zeng-base64-bian-ma-ku">5.新增Base64编码库</a></li>
+</ul>
+</li>
+<li><a href="#java11-xin-te-xing">JAVA11新特性</a>
+<ul>
+<li><a href="#1-zhi-chi-ju-bu-bian-liang-lei-xing-tui-duan">1. 支持局部变量类型推断</a></li>
+<li><a href="#2-zi-fu-chuan-api-zeng-qiang">2. 字符串api增强</a></li>
+<li><a href="#3-stream-zeng-qiang">3. stream增强</a></li>
+<li><a href="#4-optional-zeng-qiang">4. Optional增强</a></li>
+<li><a href="#5-zheng-shi-yin-ru-http-client-api">5. 正式引入HTTP Client API</a></li>
+<li><a href="#6-zhi-chi-jshell-lei-si-py-shell">6.支持jshell，类似py shell</a></li>
+<li><a href="#7-mo-ren-shi-yong-g1-shou-ji-qi-qie-jvm-he-la-ji-shou-ji-you-guan-de-can-shu-she-zhi-jin-xing-liao-hen-duo-diao-zheng">7.默认使用G1收集器，且jvm和垃圾收集有关的参数设置进行了很多调整</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<blockquote></blockquote>
+<hr>
+<h1><span id="java8-te-xing">java8特性</span><a href="#java8-te-xing" class="header-anchor">#</a></h1>
+<h2><span id="1-lambda-biao-da-shi-ba-han-shu-zuo-wei-yi-ge-fang-fa-de-can-shu">1. lambda表达式。把函数作为一个方法的参数</span><a href="#1-lambda-biao-da-shi-ba-han-shu-zuo-wei-yi-ge-fang-fa-de-can-shu" class="header-anchor">#</a></h2>
+<ul>
+<li>也叫闭包</li>
+<li>相对应的，还多了函数式接口，二者可以配合使用</li>
+</ul>
+<h2><span id="2-stream-api">2. Stream api</span><a href="#2-stream-api" class="header-anchor">#</a></h2>
+<ul>
+<li>提供一种对Java集合运算和表达的高阶抽象，引入map、reduce等方法。</li>
+<li>map方法中还支持 类名::方法名的调用方式，来单独调用方法<br>
+把map(a-&gt;a.getX())简写成了map(A::getX)</li>
+</ul>
+<h2><span id="3-xin-zeng-liao-jie-kou-de-mo-ren-fang-fa-zhi-chi-default-shi-xian-liao">3.新增了接口的默认方法，支持default实现了</span><a href="#3-xin-zeng-liao-jie-kou-de-mo-ren-fang-fa-zhi-chi-default-shi-xian-liao" class="header-anchor">#</a></h2>
+<h2><span id="4-xin-zeng-optional-lei-jie-jue-kong-zhi-zhen-pan-duan-wen-ti">4.新增Optional 类，解决空指针判断问题</span><a href="#4-xin-zeng-optional-lei-jie-jue-kong-zhi-zhen-pan-duan-wen-ti" class="header-anchor">#</a></h2>
+<h2><span id="5-xin-zeng-base64-bian-ma-ku">5.新增Base64编码库</span><a href="#5-xin-zeng-base64-bian-ma-ku" class="header-anchor">#</a></h2>
+<hr>
+<h1><span id="java11-xin-te-xing">JAVA11新特性</span><a href="#java11-xin-te-xing" class="header-anchor">#</a></h1>
+<h2><span id="1-zhi-chi-ju-bu-bian-liang-lei-xing-tui-duan">1. 支持局部变量类型推断</span><a href="#1-zhi-chi-ju-bu-bian-liang-lei-xing-tui-duan" class="header-anchor">#</a></h2>
+<p>可以写var这种变量声明了，编译器能自动识别，可加快部分情况下的编程速度。<br>
+var a = 1;<br>
+var s = “abcd”;</p>
+<p>但是会加重编译器负担。</p>
+<h2><span id="2-zi-fu-chuan-api-zeng-qiang">2. 字符串api增强</span><a href="#2-zi-fu-chuan-api-zeng-qiang" class="header-anchor">#</a></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">String</span> <span class="variable">str1</span> <span class="operator">=</span> <span class="string">&quot;\t \n\r &quot;</span>;</span><br><span class="line">        <span class="comment">//判断字符串是否是空白字符</span></span><br><span class="line">        System.out.println(str1.isBlank());</span><br><span class="line">        System.out.println(<span class="string">&quot;*****===========&quot;</span>);</span><br><span class="line">        str1 = <span class="string">&quot;\t abc \r \n  &quot;</span>;</span><br><span class="line">        <span class="comment">//去除字符串首尾中的空白，包括英文和其它所有语言的空白字符</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">strip</span> <span class="operator">=</span> str1.strip();</span><br><span class="line">        <span class="comment">//去除字符串首部的空白，包括汉字</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">stripLeading</span> <span class="operator">=</span> strip.stripLeading();</span><br><span class="line">        <span class="comment">//去除字符串尾部的空白，包括汉字</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">stripTrailing</span> <span class="operator">=</span> strip.stripTrailing();</span><br><span class="line">        System.out.println(strip+<span class="string">&quot;&lt;====&gt;&quot;</span>+strip.length());</span><br><span class="line"></span><br><span class="line">        str1 = <span class="string">&quot;java&quot;</span>;</span><br><span class="line">        str1.repeat(<span class="number">3</span>);<span class="comment">//把str1 重复三次，输出   javajavajava</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//去除字符串首尾中的空白，只能去除码值小于32的(如果是中文全角的空白是去除不了的)</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">trim</span> <span class="operator">=</span> str1.trim();</span><br><span class="line">        System.out.println(trim+<span class="string">&quot;&lt;====&gt;&quot;</span>+trim.length());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2><span id="3-stream-zeng-qiang">3. stream增强</span><a href="#3-stream-zeng-qiang" class="header-anchor">#</a></h2>
+<ul>
+<li>支持Stream.ofNullable(null)生成一个值的流</li>
+<li>支持while循环，符合一个条件就take结束或者开始计算</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从第一个开始计算，当 n &lt; 3 时就截止</span></span><br><span class="line">Stream.of(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>).takeWhile(n -&gt; n &lt; <span class="number">3</span>) .collect(Collectors.toList()); <span class="comment">// [1, 2]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 一开始不计算，当n&lt;3不成立时开始计算</span></span><br><span class="line">Stream.of(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>).dropWhile(n -&gt; n &lt; <span class="number">3</span>) .collect(Collectors.toList()); <span class="comment">// [3, 2, 1]</span></span><br></pre></td></tr></table></figure>
+<h2><span id="4-optional-zeng-qiang">4. Optional增强</span><a href="#4-optional-zeng-qiang" class="header-anchor">#</a></h2>
+<p>支持orElseThrow等语法。</p>
+<h2><span id="5-zheng-shi-yin-ru-http-client-api">5. 正式引入HTTP Client API</span><a href="#5-zheng-shi-yin-ru-http-client-api" class="header-anchor">#</a></h2>
+<p>和Apache 的 HttpClient的区别？<br>
+<img src="/images/java%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7/8d27930b8e75caf9a2a4c131ad4d6380131d2630.png" alt="8d27930b8e75caf9a2a4c131ad4d6380131d2630"></p>
+<h2><span id="6-zhi-chi-jshell-lei-si-py-shell">6.支持jshell，类似py shell</span><a href="#6-zhi-chi-jshell-lei-si-py-shell" class="header-anchor">#</a></h2>
+<p>可以节省验证demo的时间<br>
+<img src="/images/java%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7/83c6d5568870f9f8ac73fe489efa93832ab7d598.png" alt="83c6d5568870f9f8ac73fe489efa93832ab7d598"></p>
+<h2><span id="7-mo-ren-shi-yong-g1-shou-ji-qi-qie-jvm-he-la-ji-shou-ji-you-guan-de-can-shu-she-zhi-jin-xing-liao-hen-duo-diao-zheng">7.默认使用G1收集器，且jvm和垃圾收集有关的参数设置进行了很多调整</span><a href="#7-mo-ren-shi-yong-g1-shou-ji-qi-qie-jvm-he-la-ji-shou-ji-you-guan-de-can-shu-she-zhi-jin-xing-liao-hen-duo-diao-zheng" class="header-anchor">#</a></h2>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java-JVM%E5%B8%B8%E7%94%A8%E5%8F%82%E6%95%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1550,594 +2032,6 @@ Xmx的值（堆最大值）- Xmn的值（新生代内存）</p>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7/" class="post-title-link" itemprop="url">java新版本特性</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-08-17 23:45:16 / 修改时间：00:19:37" itemprop="dateCreated datePublished" datetime="2022-08-17T23:45:16+08:00">2022-08-17</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">java高级应用</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.7k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#java8-te-xing">java8特性</a>
-<ul>
-<li><a href="#1-lambda-biao-da-shi-ba-han-shu-zuo-wei-yi-ge-fang-fa-de-can-shu">1. lambda表达式。把函数作为一个方法的参数</a></li>
-<li><a href="#2-stream-api">2. Stream api</a></li>
-<li><a href="#3-xin-zeng-liao-jie-kou-de-mo-ren-fang-fa-zhi-chi-default-shi-xian-liao">3.新增了接口的默认方法，支持default实现了</a></li>
-<li><a href="#4-xin-zeng-optional-lei-jie-jue-kong-zhi-zhen-pan-duan-wen-ti">4.新增Optional 类，解决空指针判断问题</a></li>
-<li><a href="#5-xin-zeng-base64-bian-ma-ku">5.新增Base64编码库</a></li>
-</ul>
-</li>
-<li><a href="#java11-xin-te-xing">JAVA11新特性</a>
-<ul>
-<li><a href="#1-zhi-chi-ju-bu-bian-liang-lei-xing-tui-duan">1. 支持局部变量类型推断</a></li>
-<li><a href="#2-zi-fu-chuan-api-zeng-qiang">2. 字符串api增强</a></li>
-<li><a href="#3-stream-zeng-qiang">3. stream增强</a></li>
-<li><a href="#4-optional-zeng-qiang">4. Optional增强</a></li>
-<li><a href="#5-zheng-shi-yin-ru-http-client-api">5. 正式引入HTTP Client API</a></li>
-<li><a href="#6-zhi-chi-jshell-lei-si-py-shell">6.支持jshell，类似py shell</a></li>
-<li><a href="#7-mo-ren-shi-yong-g1-shou-ji-qi-qie-jvm-he-la-ji-shou-ji-you-guan-de-can-shu-she-zhi-jin-xing-liao-hen-duo-diao-zheng">7.默认使用G1收集器，且jvm和垃圾收集有关的参数设置进行了很多调整</a></li>
-</ul>
-</li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<blockquote></blockquote>
-<hr>
-<h1><span id="java8-te-xing">java8特性</span><a href="#java8-te-xing" class="header-anchor">#</a></h1>
-<h2><span id="1-lambda-biao-da-shi-ba-han-shu-zuo-wei-yi-ge-fang-fa-de-can-shu">1. lambda表达式。把函数作为一个方法的参数</span><a href="#1-lambda-biao-da-shi-ba-han-shu-zuo-wei-yi-ge-fang-fa-de-can-shu" class="header-anchor">#</a></h2>
-<ul>
-<li>也叫闭包</li>
-<li>相对应的，还多了函数式接口，二者可以配合使用</li>
-</ul>
-<h2><span id="2-stream-api">2. Stream api</span><a href="#2-stream-api" class="header-anchor">#</a></h2>
-<ul>
-<li>提供一种对Java集合运算和表达的高阶抽象，引入map、reduce等方法。</li>
-<li>map方法中还支持 类名::方法名的调用方式，来单独调用方法<br>
-把map(a-&gt;a.getX())简写成了map(A::getX)</li>
-</ul>
-<h2><span id="3-xin-zeng-liao-jie-kou-de-mo-ren-fang-fa-zhi-chi-default-shi-xian-liao">3.新增了接口的默认方法，支持default实现了</span><a href="#3-xin-zeng-liao-jie-kou-de-mo-ren-fang-fa-zhi-chi-default-shi-xian-liao" class="header-anchor">#</a></h2>
-<h2><span id="4-xin-zeng-optional-lei-jie-jue-kong-zhi-zhen-pan-duan-wen-ti">4.新增Optional 类，解决空指针判断问题</span><a href="#4-xin-zeng-optional-lei-jie-jue-kong-zhi-zhen-pan-duan-wen-ti" class="header-anchor">#</a></h2>
-<h2><span id="5-xin-zeng-base64-bian-ma-ku">5.新增Base64编码库</span><a href="#5-xin-zeng-base64-bian-ma-ku" class="header-anchor">#</a></h2>
-<hr>
-<h1><span id="java11-xin-te-xing">JAVA11新特性</span><a href="#java11-xin-te-xing" class="header-anchor">#</a></h1>
-<h2><span id="1-zhi-chi-ju-bu-bian-liang-lei-xing-tui-duan">1. 支持局部变量类型推断</span><a href="#1-zhi-chi-ju-bu-bian-liang-lei-xing-tui-duan" class="header-anchor">#</a></h2>
-<p>可以写var这种变量声明了，编译器能自动识别，可加快部分情况下的编程速度。<br>
-var a = 1;<br>
-var s = “abcd”;</p>
-<p>但是会加重编译器负担。</p>
-<h2><span id="2-zi-fu-chuan-api-zeng-qiang">2. 字符串api增强</span><a href="#2-zi-fu-chuan-api-zeng-qiang" class="header-anchor">#</a></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">String</span> <span class="variable">str1</span> <span class="operator">=</span> <span class="string">&quot;\t \n\r &quot;</span>;</span><br><span class="line">        <span class="comment">//判断字符串是否是空白字符</span></span><br><span class="line">        System.out.println(str1.isBlank());</span><br><span class="line">        System.out.println(<span class="string">&quot;*****===========&quot;</span>);</span><br><span class="line">        str1 = <span class="string">&quot;\t abc \r \n  &quot;</span>;</span><br><span class="line">        <span class="comment">//去除字符串首尾中的空白，包括英文和其它所有语言的空白字符</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">strip</span> <span class="operator">=</span> str1.strip();</span><br><span class="line">        <span class="comment">//去除字符串首部的空白，包括汉字</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">stripLeading</span> <span class="operator">=</span> strip.stripLeading();</span><br><span class="line">        <span class="comment">//去除字符串尾部的空白，包括汉字</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">stripTrailing</span> <span class="operator">=</span> strip.stripTrailing();</span><br><span class="line">        System.out.println(strip+<span class="string">&quot;&lt;====&gt;&quot;</span>+strip.length());</span><br><span class="line"></span><br><span class="line">        str1 = <span class="string">&quot;java&quot;</span>;</span><br><span class="line">        str1.repeat(<span class="number">3</span>);<span class="comment">//把str1 重复三次，输出   javajavajava</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//去除字符串首尾中的空白，只能去除码值小于32的(如果是中文全角的空白是去除不了的)</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">trim</span> <span class="operator">=</span> str1.trim();</span><br><span class="line">        System.out.println(trim+<span class="string">&quot;&lt;====&gt;&quot;</span>+trim.length());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2><span id="3-stream-zeng-qiang">3. stream增强</span><a href="#3-stream-zeng-qiang" class="header-anchor">#</a></h2>
-<ul>
-<li>支持Stream.ofNullable(null)生成一个值的流</li>
-<li>支持while循环，符合一个条件就take结束或者开始计算</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从第一个开始计算，当 n &lt; 3 时就截止</span></span><br><span class="line">Stream.of(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>).takeWhile(n -&gt; n &lt; <span class="number">3</span>) .collect(Collectors.toList()); <span class="comment">// [1, 2]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 一开始不计算，当n&lt;3不成立时开始计算</span></span><br><span class="line">Stream.of(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>).dropWhile(n -&gt; n &lt; <span class="number">3</span>) .collect(Collectors.toList()); <span class="comment">// [3, 2, 1]</span></span><br></pre></td></tr></table></figure>
-<h2><span id="4-optional-zeng-qiang">4. Optional增强</span><a href="#4-optional-zeng-qiang" class="header-anchor">#</a></h2>
-<p>支持orElseThrow等语法。</p>
-<h2><span id="5-zheng-shi-yin-ru-http-client-api">5. 正式引入HTTP Client API</span><a href="#5-zheng-shi-yin-ru-http-client-api" class="header-anchor">#</a></h2>
-<p>和Apache 的 HttpClient的区别？<br>
-<img src="/images/java%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7/8d27930b8e75caf9a2a4c131ad4d6380131d2630.png" alt="8d27930b8e75caf9a2a4c131ad4d6380131d2630"></p>
-<h2><span id="6-zhi-chi-jshell-lei-si-py-shell">6.支持jshell，类似py shell</span><a href="#6-zhi-chi-jshell-lei-si-py-shell" class="header-anchor">#</a></h2>
-<p>可以节省验证demo的时间<br>
-<img src="/images/java%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7/83c6d5568870f9f8ac73fe489efa93832ab7d598.png" alt="83c6d5568870f9f8ac73fe489efa93832ab7d598"></p>
-<h2><span id="7-mo-ren-shi-yong-g1-shou-ji-qi-qie-jvm-he-la-ji-shou-ji-you-guan-de-can-shu-she-zhi-jin-xing-liao-hen-duo-diao-zheng">7.默认使用G1收集器，且jvm和垃圾收集有关的参数设置进行了很多调整</span><a href="#7-mo-ren-shi-yong-g1-shou-ji-qi-qie-jvm-he-la-ji-shou-ji-you-guan-de-can-shu-she-zhi-jin-xing-liao-hen-duo-diao-zheng" class="header-anchor">#</a></h2>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java-JDBC-API/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java-JDBC-API/" class="post-title-link" itemprop="url">java-JDBC应用和原理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-08-17 23:44:16 / 修改时间：00:23:01" itemprop="dateCreated datePublished" datetime="2022-08-17T23:44:16+08:00">2022-08-17</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">java高级应用</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java-JDBC-API/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java-JDBC-API/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#connection-setautocommit-boolean">Connection.setAutoCommit(boolean)</a>
-<ul>
-<li><a href="#q-setautocommit-mo-ren-shi-true-huan-shi-false">Q： setAutoCommit默认是true还是false</a></li>
-<li><a href="#q-setautocommit-false-hou-ru-guo-chu-liao-cuo-que-mei-you-zai-catch-zhong-jin-xing-connection-de-rollback-cao-zuo-hui-fa-sheng-shi-me">Q： setAutoCommit(false)后，如果出了错却没有在catch中进行Connection的rollBack操作，会发生什么？</a></li>
-</ul>
-</li>
-<li><a href="#fetchsize">fetchSize</a>
-<ul>
-<li><a href="#fetchsize-shi-she-ding-jdbc-de-statement-du-qu-shu-ju-de-shi-hou-mei-ci-cong-shu-ju-ku-zhong-qu-chu-de-ji-lu-tiao-shu">fetchSize 是设定JDBC的Statement读取数据的时候每次从数据库中取出的记录条数</a></li>
-<li><a href="#q-oracle-he-mysql-zhong-de-fetchsize-you-shi-me-qu-bie">Q： Oracle和Mysql中的fetchSize有什么区别？</a></li>
-</ul>
-</li>
-<li><a href="#preparedstatement">PreparedStatement</a>
-<ul>
-<li><a href="#q-shi-yong-preparedstatement-xiang-bi-statement-de-hao-chu">Q：使用PreparedStatement相比Statement的好处？</a></li>
-<li><a href="#q-preparestatement-shi-statement-jie-kou-de-shi-xian-ma">Q：prepareStatement是statement接口的实现吗？</a></li>
-</ul>
-</li>
-<li><a href="#callablestatement">CallableStatement</a></li>
-<li><a href="#connection-pool">Connection Pool</a></li>
-<li><a href="#resultset">ResultSet</a>
-<ul>
-<li><a href="#q-connection-statement-resultset-de-guan-bi-shun-xu-shi">Q:Connection、statement、ResultSet的关闭顺序是？</a></li>
-</ul>
-</li>
-<li><a href="#xiang-guan-yuan-li">相关原理</a>
-<ul>
-<li><a href="#q-jdbc-de-spi-ji-zhi-you-liao-jie-ma">Q: JDBC 的spi机制有了解吗？</a></li>
-<li><a href="#q-jdbc-driver-shi-yong-shi-me-classloader-jia-zai-de-he-xian-cheng-shang-xia-wen-you-you-shi-me-guan-xi">Q: jdbc driver是用什么classloader加载的？  和线程上下文又有什么关系？</a></li>
-</ul>
-</li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="connection-setautocommit-boolean">Connection.setAutoCommit(boolean)</span><a href="#connection-setautocommit-boolean" class="header-anchor">#</a></h1>
-<p>用于事务提交。<br>
-setAutoCommit（true），  则执行的所有sql执行都会作为单个事务直接提交并运行<br>
-setAutoCommit（false）， 则必须等调用conn.commit(）才会提交运行</p>
-<h2><span id="q-setautocommit-mo-ren-shi-true-huan-shi-false">Q： setAutoCommit默认是true还是false</span><a href="#q-setautocommit-mo-ren-shi-true-huan-shi-false" class="header-anchor">#</a></h2>
-<p>A： 默认是true。</p>
-<p>Q： setAutoCommit（true）的缺点是什么？<br>
-A： 如果一次性执行多个sql语句， 中间sql出错时，就会造成脏数据。</p>
-<h2><span id="q-setautocommit-false-hou-ru-guo-chu-liao-cuo-que-mei-you-zai-catch-zhong-jin-xing-connection-de-rollback-cao-zuo-hui-fa-sheng-shi-me">Q： setAutoCommit(false)后，如果出了错却没有在catch中进行Connection的rollBack操作，会发生什么？</span><a href="#q-setautocommit-false-hou-ru-guo-chu-liao-cuo-que-mei-you-zai-catch-zhong-jin-xing-connection-de-rollback-cao-zuo-hui-fa-sheng-shi-me" class="header-anchor">#</a></h2>
-<p>A;  操作的表就会被锁住，造成数据库死锁</p>
-<h1><span id="fetchsize">fetchSize</span><a href="#fetchsize" class="header-anchor">#</a></h1>
-<h2><span id="fetchsize-shi-she-ding-jdbc-de-statement-du-qu-shu-ju-de-shi-hou-mei-ci-cong-shu-ju-ku-zhong-qu-chu-de-ji-lu-tiao-shu">fetchSize 是设定JDBC的Statement读取数据的时候每次从数据库中取出的记录条数</span><a href="#fetchsize-shi-she-ding-jdbc-de-statement-du-qu-shu-ju-de-shi-hou-mei-ci-cong-shu-ju-ku-zhong-qu-chu-de-ji-lu-tiao-shu" class="header-anchor">#</a></h2>
-<ul>
-<li>fetchSize越 <em><strong>大</strong></em>， 客户端内存占用越 <em><strong>大</strong></em>，读取数据库次数越 <em><strong>少</strong></em>，速度越 <em><strong>快</strong></em>。</li>
-</ul>
-<h2><span id="q-oracle-he-mysql-zhong-de-fetchsize-you-shi-me-qu-bie">Q： Oracle和Mysql中的fetchSize有什么区别？</span><a href="#q-oracle-he-mysql-zhong-de-fetchsize-you-shi-me-qu-bie" class="header-anchor">#</a></h2>
-<p>A： Oracle会每次网络传输fetchSize条数据到客户端， MYSQL则会一次性全部传送到客户端，因此Mysql中的fetchSize是一种模拟游标。</p>
-<h1><span id="preparedstatement">PreparedStatement</span><a href="#preparedstatement" class="header-anchor">#</a></h1>
-<h2><span id="q-shi-yong-preparedstatement-xiang-bi-statement-de-hao-chu">Q：使用PreparedStatement相比Statement的好处？</span><a href="#q-shi-yong-preparedstatement-xiang-bi-statement-de-hao-chu" class="header-anchor">#</a></h2>
-<p>A：</p>
-<ol>
-<li>PreparedStatement是预编译的，比Statement速度快，执行效率高，因此即使sql中不带参数也最好使用PreparedStatement</li>
-<li>代码的可读性和可维护性更好(相比于sql拼接）</li>
-<li>PreparedStatement可以防止SQL注入攻击，而Statement却不能</li>
-</ol>
-<hr>
-<h2><span id="q-preparestatement-shi-statement-jie-kou-de-shi-xian-ma">Q：prepareStatement是statement接口的实现吗？</span><a href="#q-preparestatement-shi-statement-jie-kou-de-shi-xian-ma" class="header-anchor">#</a></h2>
-<p>A：<br>
-prepareStatement不是实现，而是继承的接口<br>
-<img src="/images/java-JDBC-API/0a20a5f49a20cca0aa7b8e2b3bf04a98ad855e40.png" alt="0a20a5f49a20cca0aa7b8e2b3bf04a98ad855e40"></p>
-<h1><span id="callablestatement">CallableStatement</span><a href="#callablestatement" class="header-anchor">#</a></h1>
-<ul>
-<li>CallableStatement继承自PreparedStatement</li>
-<li>CallableStatement接口添加了 <em><strong>调用存储过程</strong></em> 核函数以及处理输出参数(INOUT)的方法。</li>
-<li>即存储过程就用CallableStatement</li>
-</ul>
-<h1><span id="connection-pool">Connection Pool</span><a href="#connection-pool" class="header-anchor">#</a></h1>
-<p>连接池优点：</p>
-<ol>
-<li>减少连接创建次数</li>
-<li>更快的系统整体响应速度</li>
-<li>统一连接管理，减少失误性的连接未关闭。</li>
-</ol>
-<h1><span id="resultset">ResultSet</span><a href="#resultset" class="header-anchor">#</a></h1>
-<p>作用： 缓存数据结果集</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Statement</span> <span class="variable">st</span> <span class="operator">=</span> conn. createStatement (<span class="type">int</span> resultSetType, <span class="type">int</span> resultSetConcurrency)</span><br><span class="line"><span class="type">ResultSet</span> <span class="variable">rs</span> <span class="operator">=</span> st.executeQuery(sqlStr)</span><br></pre></td></tr></table></figure>
-<p>滚动，就是指调用.next()或者.previous()或者移动到对应行<br>
-<br><br>
-resultSetType 是设置 ResultSet 对象的类型可滚动，或者是不可滚动。取值如下（见单词知意）：</p>
-<ul>
-<li>ResultSet.TYPE_FORWARD_ONLY 只能向前滚动</li>
-<li>ResultSet.TYPE_SCROLL_INSENSITIVE, 支持前后滚动，对修改不敏感</li>
-<li>ResultSet.TYPE_SCROLL_SENSITIVE   支持前后滚动，对修改敏感</li>
-</ul>
-<br>  
-resultSetConcurency 是设置 ResultSet 对象能够修改的，取值如下：
-<ul>
-<li>ResultSet.CONCUR_READ_ONLY 设置为只读类型的参数。</li>
-<li>ResultSet.CONCUR_UPDATABLE 设置为可修改类型的参数。</li>
-</ul>
-<hr>
-<h2><span id="q-connection-statement-resultset-de-guan-bi-shun-xu-shi">Q:Connection、statement、ResultSet的关闭顺序是？</span><a href="#q-connection-statement-resultset-de-guan-bi-shun-xu-shi" class="header-anchor">#</a></h2>
-<p>A：<br>
-先ResultSet、再Statement、最后再connection。<br>
-因为这种操作很麻烦，最好使用jdbc连接池，或者try-with-resource</p>
-<hr>
-<h1><span id="xiang-guan-yuan-li">相关原理</span><a href="#xiang-guan-yuan-li" class="header-anchor">#</a></h1>
-<h2><span id="q-jdbc-de-spi-ji-zhi-you-liao-jie-ma">Q: JDBC 的spi机制有了解吗？</span><a href="#q-jdbc-de-spi-ji-zhi-you-liao-jie-ma" class="header-anchor">#</a></h2>
-<p>A：<br>
-SPI机制（Service Provider Interface)其实源自服务提供者框架（Service Provider Framework，参考【EffectiveJava】page6)，是一种将服务接口与服务实现分离以达到解耦、大大提升了程序可扩展性的机制。引入服务提供者就是引入了spi接口的实现者，通过本地的注册发现获取到具体的实现类，轻松可插拔</p>
-<p>关键在于serviceLoader去加载某路径下相关的driver包，获取出一个列表。</p>
-<ol>
-<li>通过SPI方式，读取 META-INF/services 下文件中的类名，使用TCCL加载；</li>
-<li>通过System.getProperty(“jdbc.drivers”)获取设置，然后通过系统类加载器加载。<br>
-<img src="/images/java-JDBC-API/00f3c667eed44817134e87e4bb8ec08084a89177.png" alt="00f3c667eed44817134e87e4bb8ec08084a89177"><br>
-<img src="/images/java-JDBC-API/dd2a60f8ad344663f1502b1604b1db5519659a73.png" alt="dd2a60f8ad344663f1502b1604b1db5519659a73"><br>
-后面根据url去查找匹配的driver，每个deriver都有一个match方法</li>
-</ol>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/lemon89/article/details/79189475?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_title~default-0.no_search_link&amp;spm=1001.2101.3001.4242.1">深入理解java SPI机制</a></p>
-<hr>
-<h2><span id="q-jdbc-driver-shi-yong-shi-me-classloader-jia-zai-de-he-xian-cheng-shang-xia-wen-you-you-shi-me-guan-xi">Q: jdbc driver是用什么classloader加载的？  和线程上下文又有什么关系？</span><a href="#q-jdbc-driver-shi-yong-shi-me-classloader-jia-zai-de-he-xian-cheng-shang-xia-wen-you-you-shi-me-guan-xi" class="header-anchor">#</a></h2>
-<p>A:</p>
-<ul>
-<li>
-<p>Class.forName(DriverName, false, loader)代码所在的类在java.util.ServiceLoader类中，而ServiceLoader.class又加载在BootrapLoader中，因此传给 forName 的 loader 必然不能是BootrapLoader，复习双亲委派加载机制请看：java类加载器不完整分析 。这时候只能使用TCCL了，也就是说把自己加载不了的类加载到TCCL中（通过Thread.currentThread()获取，简直作弊啊！）。上面那篇文章末尾也讲到了TCCL默认使用当前执行的是代码所在应用的系统类加载器AppClassLoader。</p>
-</li>
-<li>
-<p>ContextClassLoader默认存放了AppClassLoader的引用，由于它是在运行时被放在了线程中，所以不管当前程序处于何处（BootstrapClassLoader或是ExtClassLoader等），在任何需要的时候都可以用Thread.currentThread().getContextClassLoader()取出应用程序类加载器来完成需要的操作。</p>
-</li>
-<li>
-<p>我（JDK）提供了一种帮你（第三方实现者）加载服务（如数据库驱动、日志库）的便捷方式，只要你遵循约定（把类名写在/META-INF里），那当我启动时我会去扫描所有jar包里符合约定的类名，再调用forName加载，但我的ClassLoader是没法加载的，那就把它加载到当前执行线程的TCCL里，后续你想怎么操作（驱动实现类的static代码块）就是你的事了。<br>
-<a target="_blank" rel="noopener" href="https://blog.csdn.net/yangcheng33/article/details/52631940">真正理解线程上下文类加载器（多案例分析)</a></p>
-</li>
-<li></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java-JNI%E5%BA%94%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java-JNI%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">java-JNI应用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-08-17 23:44:16 / 修改时间：00:13:32" itemprop="dateCreated datePublished" datetime="2022-08-17T23:44:16+08:00">2022-08-17</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/java%E5%9F%BA%E7%A1%80/java%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">java高级应用</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java-JNI%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/java/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/java-JNI%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#shi-me-shi-jni">什么是JNI？</a></li>
-<li><a href="#jni-ying-yong-bu-zou">JNI应用步骤</a></li>
-<li><a href="#jni-de-di-ceng-yuan-li">JNI的底层原理</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<hr>
-<h1><span id="shi-me-shi-jni">什么是JNI？</span><a href="#shi-me-shi-jni" class="header-anchor">#</a></h1>
-<p>JNI即Java Native Interface(Java本地接口)<br>
-是一个协议，主要作用为：实现Java调用c/c<ins>代码（类库）,或者C/C</ins>调用Java代码</p>
-<hr>
-<h1><span id="jni-ying-yong-bu-zou">JNI应用步骤</span><a href="#jni-ying-yong-bu-zou" class="header-anchor">#</a></h1>
-<ol>
-<li>首先定义java类</li>
-</ol>
-<ul>
-<li>类里需要有一个native关键字的方法</li>
-<li>静态代码块加载一个C++生成的dll</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//JNI.java文件</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JNI</span>&#123;</span><br><span class="line">   <span class="comment">//创建一个native接口方法，此方法在C++代码中实现</span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">native</span> <span class="type">int</span> <span class="title function_">call</span><span class="params">()</span>;</span><br><span class="line">   <span class="comment">//静态代码块，加载由C++代码生成的.dll动态链接文件（.dll相当于Java中的jar包吧...）</span></span><br><span class="line">   <span class="keyword">static</span>&#123;</span><br><span class="line">       System.loadLibrary(<span class="string">&quot;JNIdll&quot;</span>);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ol start="2">
-<li>
-<p>使用javac 编译JNI.java生成字节码文件JNI.class<br>
-<img src="/images/java-JNI%E5%BA%94%E7%94%A8/2e3b00fcc7db910ee0cc332308f69b08448d0333.png" alt="2e3b00fcc7db910ee0cc332308f69b08448d0333"></p>
-</li>
-<li>
-<p>使用javah 编译JNI.class， 将class文件转成头文件<br>
-<img src="/images/java-JNI%E5%BA%94%E7%94%A8/c5a38ef4c9ca5f2aaf60ee8a01699958fe0f0ece.png" alt="c5a38ef4c9ca5f2aaf60ee8a01699958fe0f0ece"><br>
-头文件中包含了call方法的声明<br>
-<img src="/images/java-JNI%E5%BA%94%E7%94%A8/ef461a898064377ae54e50e2c75daac5ad35b3a3.png" alt="ef461a898064377ae54e50e2c75daac5ad35b3a3"></p>
-</li>
-<li>
-<p>编写cpp文件，实现头文件中的call方法</p>
-</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//JNIdll.cpp文件</span></span><br><span class="line"></span><br><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">#include&lt;jni.h&gt;</span><br><span class="line">#include <span class="string">&quot;JNI.h&quot;</span></span><br><span class="line"></span><br><span class="line">JNIEXPORT jint JNICALL <span class="title function_">Java_JNI_call</span></span><br><span class="line">  <span class="params">(JNIEnv *, jobject)</span>&#123;</span><br><span class="line">      <span class="comment">//实现代码</span></span><br><span class="line">      <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">777</span>;</span><br><span class="line">      <span class="keyword">return</span> i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ol start="5">
-<li>
-<p>将java目录下的include目录下的两个文件jni.h和jni_md.h（jni_md.h在include目录下的win32目录中）拷贝到vc的include目录下, 好让C++环境支持jni</p>
-</li>
-<li>
-<p>用C/C++编译命令编译cpp和h文件，生成dll动态链接库<br>
-<img src="/images/java-JNI%E5%BA%94%E7%94%A8/7da23cd5f25cc82ce66c07e3ee06f7e09717a5f9.png" alt="7da23cd5f25cc82ce66c07e3ee06f7e09717a5f9"></p>
-</li>
-</ol>
-<hr>
-<h1><span id="jni-de-di-ceng-yuan-li">JNI的底层原理</span><a href="#jni-de-di-ceng-yuan-li" class="header-anchor">#</a></h1>
-<ol>
-<li>
-<p>jvm调用native方法时， 其方法指针nativeFunc默认先指向resolveNativeMethod方法</p>
-</li>
-<li>
-<p>resolveNativeMethod方法中， 是一段通用的实现代码<br>
-首先，判断这个方法如果是静态方法，首先确保所属的class已经初始化，否则会报错<br>
-<img src="/images/java-JNI%E5%BA%94%E7%94%A8/c1b4d05e0a5342c8159fbc8187caf6c2fb514775.png" alt="c1b4d05e0a5342c8159fbc8187caf6c2fb514775"></p>
-</li>
-<li>
-<p>接着先在内部本地方法表中查询。<br>
-内部本地方法表是一个集合，这个集合里包含了java语言和虚拟机本身用到的所有native方法<br>
-根据类描述符的hash值从集合中寻找对应的方法<br>
-如果找到了，就修改nativeFunc的指针，指向对应方法</p>
-</li>
-<li>
-<p>如果内部本地方法表里没找到， 才会通过System.loadLibrary加载的so，虚拟机会将所有的so存入一个表中<br>
-gDvm.nativeLibs是一个HashTable，其中存的是动态链接库的信息。其中的数据是通过System.loadLibrary添加进去的。</p>
-</li>
-</ol>
-<p>① 检查是否已经加载过该so，如果是还需要判断加载so的classLoader是否相同，不同的话也会报错，<br>
-②如果没有加载过，则使用dlopen打开so，然后创建一个ShareLib加入到gDvm.nativeLibs哈希表中。<br>
-③如果so中有JNI_OnLoad方法，则执行该方法。我们可以在该方法中做一些初始化工作，还可以手动建立java类中的native方法和so中的native方法的对应关系。</p>
-<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/0b7976fbf81b">【源码解读】JNI的实现原理</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2209,14 +2103,14 @@ gDvm.nativeLibs是一个HashTable，其中存的是动态链接库的信息。�
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">258</span>
+          <span class="site-state-item-count">260</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">65</span>
+        <span class="site-state-item-count">66</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -2280,7 +2174,7 @@ gDvm.nativeLibs是一个HashTable，其中存的是动态链接库的信息。�
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共350.2k字</span>
+  <span class="post-count">博客全站共350.9k字</span>
 </div>
 
         
