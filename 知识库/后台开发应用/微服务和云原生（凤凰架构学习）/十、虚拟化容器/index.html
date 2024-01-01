@@ -21,16 +21,16 @@
     var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="虚拟化容器  1 容器崛起的全部阶段（这个章节很精彩值得一看）  1.1 隔离文件：chroot 1.2 隔离访问：名称空间 1.3 隔离资源： cgroups 1.4 封装系统：LXC 1.5 封装应用：Docker 1.6 封装集群：kubernetes   2 以容器构建大型系统（容器编排）  2.1 隔离与协作（Pod的概念） 2.2 韧性和弹性（k8s自动维护原理）   3 以应用">
+  <meta name="description" content="虚拟化容器  1 容器崛起的全部阶段  1.1 隔离文件：chroot 1.2 隔离访问：名称空间 1.3 隔离资源： cgroups 1.4 封装系统：LXC 1.5 封装应用：Docker 1.6 封装集群：kubernetes   2 以容器构建大型系统（容器编排）  2.1 隔离与协作（Pod的概念） 2.2 韧性和弹性（k8s自动维护原理）   3 以应用为中心的封装（介绍其他对k">
 <meta property="og:type" content="article">
 <meta property="og:title" content="十、虚拟化容器">
 <meta property="og:url" content="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%EF%BC%88%E5%87%A4%E5%87%B0%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0%EF%BC%89/%E5%8D%81%E3%80%81%E8%99%9A%E6%8B%9F%E5%8C%96%E5%AE%B9%E5%99%A8/index.html">
 <meta property="og:site_name" content="破晓的知识屋">
-<meta property="og:description" content="虚拟化容器  1 容器崛起的全部阶段（这个章节很精彩值得一看）  1.1 隔离文件：chroot 1.2 隔离访问：名称空间 1.3 隔离资源： cgroups 1.4 封装系统：LXC 1.5 封装应用：Docker 1.6 封装集群：kubernetes   2 以容器构建大型系统（容器编排）  2.1 隔离与协作（Pod的概念） 2.2 韧性和弹性（k8s自动维护原理）   3 以应用">
+<meta property="og:description" content="虚拟化容器  1 容器崛起的全部阶段  1.1 隔离文件：chroot 1.2 隔离访问：名称空间 1.3 隔离资源： cgroups 1.4 封装系统：LXC 1.5 封装应用：Docker 1.6 封装集群：kubernetes   2 以容器构建大型系统（容器编排）  2.1 隔离与协作（Pod的概念） 2.2 韧性和弹性（k8s自动维护原理）   3 以应用为中心的封装（介绍其他对k">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://breakdawncoder.com/images/%E5%8D%81%E3%80%81%E8%99%9A%E6%8B%9F%E5%8C%96%E5%AE%B9%E5%99%A8/1684798983851.png">
 <meta property="article:published_time" content="2023-05-14T02:32:12.000Z">
-<meta property="article:modified_time" content="2023-05-22T23:44:07.449Z">
+<meta property="article:modified_time" content="2023-07-03T15:14:06.231Z">
 <meta property="article:author" content="breakDawn">
 <meta property="article:tag" content="后台开发知识,微服务,云原生">
 <meta name="twitter:card" content="summary">
@@ -218,7 +218,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-23 07:44:07" itemprop="dateModified" datetime="2023-05-23T07:44:07+08:00">2023-05-23</time>
+                <time title="修改时间：2023-07-03 23:14:06" itemprop="dateModified" datetime="2023-07-03T23:14:06+08:00">2023-07-03</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -261,7 +261,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.3k</span>
+              <span>3.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -285,7 +285,7 @@
 <ul>
 <li><a href="#xu-ni-hua-rong-qi">虚拟化容器</a>
 <ul>
-<li><a href="#1-rong-qi-jue-qi-de-quan-bu-jie-duan-zhe-ge-zhang-jie-hen-jing-cai-zhi-de-yi-kan">1 容器崛起的全部阶段（这个章节很精彩值得一看）</a>
+<li><a href="#1-rong-qi-jue-qi-de-quan-bu-jie-duan">1 容器崛起的全部阶段</a>
 <ul>
 <li><a href="#1-1-ge-chi-wen-jian-chroot">1.1 隔离文件：chroot</a></li>
 <li><a href="#1-2-ge-chi-fang-wen-ming-cheng-kong-jian">1.2 隔离访问：名称空间</a></li>
@@ -326,11 +326,12 @@
 <ul>
 <li>指令集虚拟化。用软件模拟不同ISA架构的处理器过程。 例如QEMU和Bochs，甚至可以做到在web上运行操作系统。但是性能损失大</li>
 <li>硬件抽象层虚拟化。 用软件来模拟计算机里的各种硬件设施。例如VMware等虚拟机。</li>
-<li>操作系统层虚拟化。 不会提供真实的操作系统，而是采用隔离手段使不同进程拥有独立的系统资源和资源配额。<strong>熟知的容器化就是在这个层面的虚拟化</strong></li>
+<li>操作系统层虚拟化。 不会提供真实的操作系统，而是采用隔离手段使不同进程拥有独立的系统资源和资源配额。<strong>我们熟知的容器化就是指在这个层面的虚拟化</strong></li>
 <li>运行库层虚拟化。 使用软件翻译的方法来模拟系统。例如WINE和WSL。</li>
 <li>语言层虚拟化。例如JVM。</li>
 </ul>
-<h2><span id="1-rong-qi-jue-qi-de-quan-bu-jie-duan-zhe-ge-zhang-jie-hen-jing-cai-zhi-de-yi-kan">1 容器崛起的全部阶段（这个章节很精彩值得一看）</span><a href="#1-rong-qi-jue-qi-de-quan-bu-jie-duan-zhe-ge-zhang-jie-hen-jing-cai-zhi-de-yi-kan" class="header-anchor">#</a></h2>
+<h2><span id="1-rong-qi-jue-qi-de-quan-bu-jie-duan">1 容器崛起的全部阶段</span><a href="#1-rong-qi-jue-qi-de-quan-bu-jie-duan" class="header-anchor">#</a></h2>
+<p>这个章节的详细部分非常很精彩，很值得大家去原文完整看看：</p>
 <h3><span id="1-1-ge-chi-wen-jian-chroot">1.1 隔离文件：chroot</span><a href="#1-1-ge-chi-wen-jian-chroot" class="header-anchor">#</a></h3>
 <p>1979年unix提供了这个命令，让进程的根目录被锁定在指定参数位置中，不能放外该目录之外的其他目录。经常用来作为监控黑客行动的黑盒。<br>
 因此这个命令实现了容器最基础的文件隔离能力</p>
@@ -345,16 +346,17 @@ lxc的理念在于封装系统，而docker的理念在于封装应用。<br>
 当系统内的部件需要修改，必须重写很多配置，构建无法很便捷快速。</p>
 <h3><span id="1-5-feng-zhuang-ying-yong-docker">1.5 封装应用：Docker</span><a href="#1-5-feng-zhuang-ying-yong-docker" class="header-anchor">#</a></h3>
 <p>docker的容器化能力直接来源自lxc。<br>
-后面又自己用go语言开发了libcontainer避免了对lxc的强依赖。<br>
-为什么选择docker而不是LXC？</p>
+后面又自己用go语言开发了libcontainer避免了对lxc的强依赖。</p>
+<p>问题：为什么选择docker而不是LXC？</p>
+<p>答：docker相比于lxc，有以下七点优势</p>
 <ul>
 <li>跨机器的绿色部署： 将所有环境依赖打包到一起，避免对机器的依赖。</li>
-<li>以应用为中心的封装：</li>
-<li>自动构建： 无需关注目标机器具体配置，使用任务构建工具在容器中自动构建</li>
-<li>多版本支持： 支持git一样管理容器版本</li>
-<li>组件重用， 可以在基础镜像上构建专业化镜像</li>
-<li>共享，有公共的镜像仓库</li>
-<li>工具生态可以很方便扩展</li>
+<li>以应用为中心的封装。</li>
+<li>自动构建： 无需关注目标机器具体配置，使用任务构建工具在容器中自动构建。</li>
+<li>多版本支持： 支持git一样管理容器版本。</li>
+<li>组件重用， 可以在基础镜像上构建专业化镜像。</li>
+<li>共享，有公共的镜像仓库。</li>
+<li>工具生态可以很方便扩展。</li>
 </ul>
 <h3><span id="1-6-feng-zhuang-ji-qun-kubernetes">1.6 封装集群：kubernetes</span><a href="#1-6-feng-zhuang-ji-qun-kubernetes" class="header-anchor">#</a></h3>
 <p>k8s是容器编排框架， 把大型软件系统运行所依赖的集群环境也进行了虚拟化，令集群得以实现跨数据中心的绿色部署，实现自动扩缩。<br>
@@ -366,10 +368,10 @@ k8s最开始完全绑定依赖docker， 后面慢慢更新依赖路线，最终�
 <p>这里作者先提出了一个问题：<strong>如果web服务进程和日志收集进程放在同一个容器中，有什么影响？</strong></p>
 <p>回答：这其实会违反了单进程应用理念， dockerfile只允许一个entrypoint，只能监视pid为1的进程来决定是否重启。</p>
 <p>如果自己额外弄一个健康检查进程，可能因为健康检查进程失效却无法被容器侦测到。</p>
-<p>因此关联进程需要放到2个不同的容器中， 可以通过同节点目录挂载进行日志关联。</p>
-<p>另外，如果同节点不同容器之间需要进行基于操作系统的信号通信（不经过网络），则需要这2个容器依赖相同的IPC名称空间。</p>
-<p>同节点上不同容器支持共享部分命名空间，则可以用Pod来实现。<br>
-pod共享以下内容：</p>
+<p>因此这2个进程为了维持健康检查的有效性，必须被放到2个不同的容器中， 并且还要支持通过同节点目录挂载进行日志关联。</p>
+<p>另外，如果同节点、不同容器之间需要进行基于操作系统的信号通信（不经过网络），则需要这2个容器依赖相同的IPC名称空间。</p>
+<p>同节点上不同容器如果要支持共享部分命名空间，则可以用Pod来实现。<br>
+因为pod能共享以下内容：</p>
 <ul>
 <li>UTS名称空间：所有容器都有相同的主机名和域名</li>
 <li>网络名称空间：所有容器都共享一样的网卡、网络栈、IP地址等。同一个Pod中容器占用的端口不能冲突</li>
@@ -378,7 +380,7 @@ pod共享以下内容：</p>
 但POD中PID名称空间和文件名称空间仍然是隔离的。</li>
 </ul>
 <blockquote>
-<p>POD中共享空间的能力是通过pause容器实现的，里面大部分都是在执行pause操作，其他时候用来传递各种状态。</p>
+<p>注：POD中共享空间的能力是通过pause容器实现的，里面大部分都是在执行pause操作，其他时候用来传递各种状态。</p>
 </blockquote>
 <p><strong>POD的另一个关键点： 可以作为资源调度的最小单位（而不是容器）</strong><br>
 如果日志收集和web服务因为资源分配问题被调度到了2个不同的节点上，那么功能就会出现问题。</p>
@@ -398,7 +400,7 @@ pod共享以下内容：</p>
 <p>k8s设计了统一的控制器框架kube-controller-manager来维护控制器的正常运作，以及统一的指标监视器kube-apiserver来为控制器提供其工作时追踪资源的度量数据。</p>
 <ul>
 <li>
-<p>pod出现故障时，希望自动恢复且能不中断服务，则可以利用ReplicaSet副本集实现， 副本集中包含期望数量个pod</p>
+<p>pod出现故障时，希望自动恢复且能不中断服务，则可以利用ReplicaSet副本集实现， 副本集中包含期望数量个pod。</p>
 </li>
 <li>
 <p>pod升级时不希望中断，可以由deployment部署资源实现，由它来创建replicaset和pod，外部用户不感知，只管设置deployement参数。</p>
@@ -418,11 +420,11 @@ pod共享以下内容：</p>
 Chart则就是linux里的rpm包，封装k8s应用涉及的资源。<br>
 缺点在于无法很好处理有状态的服务，因为会产生依赖关系，不能直接部署安装。</p>
 <h3><span id="3-3-operator">3.3 Operator</span><a href="#3-3-operator" class="header-anchor">#</a></h3>
-<p>k8s里对于有状态应用，是通过statefulSet来管理的，满足对pod的持久化存储、按顺序创建、唯一网络名称等，但很多应用特殊的运维操作无法满足</p>
-<p>Operator支持自定义资源， 即脱离了k8s内置资源的限制</p>
-<p>例如可以让k8s学会怎样操作es，只需要几行配置即可，而无需手写将近一百行的es依赖配置。</p>
+<p>k8s里对于有状态应用，是通过有状态工作负载statefulSet来管理的，满足对pod的持久化存储、按顺序创建、唯一网络名称等，但很多应用特殊的运维操作无法满足。</p>
+<p>Operator则支持自定义资源， 即脱离了k8s内置资源的限制。</p>
+<p>例如它可以让k8s学会怎样操作es，只需要几行配置即可，而无需手写将近一百行的es依赖配置。</p>
 <h3><span id="3-4-qi-ta-ying-yong-feng-zhuang">3.4 其他应用封装</span><a href="#3-4-qi-ta-ying-yong-feng-zhuang" class="header-anchor">#</a></h3>
-<p>这里介绍了阿里云和微软推出的OAM开放应用模型<br>
+<p>这里介绍了一些软件公司所推出的OAM开放应用模型<br>
 核心思想是开发人员关注业务逻辑，运维人员关注程序平稳运行，平台人员关注基础设置， 避免不同人员关注同一个all-in-one资源文件。</p>
 
     </div>
@@ -525,7 +527,7 @@ Chart则就是linux里的rpm包，封装k8s应用涉及的资源。<br>
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">虚拟化容器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">1 容器崛起的全部阶段（这个章节很精彩值得一看）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 隔离文件：chroot</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 隔离访问：名称空间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 隔离资源： cgroups</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 封装系统：LXC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.5.</span> <span class="nav-text">1.5 封装应用：Docker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.6.</span> <span class="nav-text">1.6 封装集群：kubernetes</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">2 以容器构建大型系统（容器编排）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 隔离与协作（Pod的概念）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 韧性和弹性（k8s自动维护原理）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">3 以应用为中心的封装（介绍其他对k8s增强的能力）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 kustomize</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 Helm和Chart</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 Operator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 其他应用封装</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">虚拟化容器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">1 容器崛起的全部阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 隔离文件：chroot</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 隔离访问：名称空间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 隔离资源： cgroups</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 封装系统：LXC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.5.</span> <span class="nav-text">1.5 封装应用：Docker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.6.</span> <span class="nav-text">1.6 封装集群：kubernetes</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">2 以容器构建大型系统（容器编排）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 隔离与协作（Pod的概念）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 韧性和弹性（k8s自动维护原理）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">3 以应用为中心的封装（介绍其他对k8s增强的能力）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 kustomize</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 Helm和Chart</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 Operator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 其他应用封装</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -541,18 +543,18 @@ Chart则就是linux里的rpm包，封装k8s应用涉及的资源。<br>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">263</span>
+          <span class="site-state-item-count">276</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">67</span>
+        <span class="site-state-item-count">72</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">36</span>
+        <span class="site-state-item-count">37</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -596,7 +598,7 @@ Chart则就是linux里的rpm包，封装k8s应用涉及的资源。<br>
 <div class="copyright">
   
   &copy; 2022-05 – 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -612,7 +614,7 @@ Chart则就是linux里的rpm包，封装k8s应用涉及的资源。<br>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共352k字</span>
+  <span class="post-count">博客全站共359.3k字</span>
 </div>
 
         

@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"breakdawncoder.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="[toc]  此文来自于我和ChatGpt的讨论，并让他输出总结的这篇文章。 掌握艺术：程序员的高效任务管理之道# 在快节奏的职场生活中，我们经常会被各种任务淹没，从紧急的客户需求到突如其来的问题修复，再到那些永远不减的日常工作。让我们通过一个程序员在处理160个API分析、需求设计、问题单清理和文档编写这些任务的真实故事来探索如何有效地管理这些看似永无止境的任务列表。 遇到的困难# 小李是一位软">
+<meta property="og:type" content="article">
+<meta property="og:title" content="工作的优先级排序理论">
+<meta property="og:url" content="http://breakdawncoder.com/%E9%9A%8F%E7%AC%94/%E5%B7%A5%E4%BD%9C%E6%96%B9%E6%B3%95%E8%AE%BA/%E5%B7%A5%E4%BD%9C%E7%9A%84%E4%BC%98%E5%85%88%E7%BA%A7%E6%8E%92%E5%BA%8F%E7%90%86%E8%AE%BA/index.html">
+<meta property="og:site_name" content="破晓的知识屋">
+<meta property="og:description" content="[toc]  此文来自于我和ChatGpt的讨论，并让他输出总结的这篇文章。 掌握艺术：程序员的高效任务管理之道# 在快节奏的职场生活中，我们经常会被各种任务淹没，从紧急的客户需求到突如其来的问题修复，再到那些永远不减的日常工作。让我们通过一个程序员在处理160个API分析、需求设计、问题单清理和文档编写这些任务的真实故事来探索如何有效地管理这些看似永无止境的任务列表。 遇到的困难# 小李是一位软">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://breakdawncoder.com/images/%E5%B7%A5%E4%BD%9C%E7%9A%84%E4%BC%98%E5%85%88%E7%BA%A7%E6%8E%92%E5%BA%8F%E7%90%86%E8%AE%BA/1704116053192.png">
+<meta property="article:published_time" content="2024-01-01T12:07:32.000Z">
+<meta property="article:modified_time" content="2024-01-01T14:09:50.665Z">
+<meta property="article:author" content="breakDawn">
+<meta property="article:tag" content="书籍">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://breakdawncoder.com/images/%E5%B7%A5%E4%BD%9C%E7%9A%84%E4%BC%98%E5%85%88%E7%BA%A7%E6%8E%92%E5%BA%8F%E7%90%86%E8%AE%BA/1704116053192.png">
+
+<link rel="canonical" href="http://breakdawncoder.com/%E9%9A%8F%E7%AC%94/%E5%B7%A5%E4%BD%9C%E6%96%B9%E6%B3%95%E8%AE%BA/%E5%B7%A5%E4%BD%9C%E7%9A%84%E4%BC%98%E5%85%88%E7%BA%A7%E6%8E%92%E5%BA%8F%E7%90%86%E8%AE%BA/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>工作的优先级排序理论 | 破晓的知识屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">破晓的知识屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>知识索引地图</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>最新发布</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E9%9A%8F%E7%AC%94/%E5%B7%A5%E4%BD%9C%E6%96%B9%E6%B3%95%E8%AE%BA/%E5%B7%A5%E4%BD%9C%E7%9A%84%E4%BC%98%E5%85%88%E7%BA%A7%E6%8E%92%E5%BA%8F%E7%90%86%E8%AE%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          工作的优先级排序理论
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-01-01 20:07:32 / 修改时间：22:09:50" itemprop="dateCreated datePublished" datetime="2024-01-01T20:07:32+08:00">2024-01-01</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9A%8F%E7%AC%94/" itemprop="url" rel="index"><span itemprop="name">随笔</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9A%8F%E7%AC%94/%E4%B9%A6%E7%B1%8D/" itemprop="url" rel="index"><span itemprop="name">书籍</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E9%9A%8F%E7%AC%94/%E5%B7%A5%E4%BD%9C%E6%96%B9%E6%B3%95%E8%AE%BA/%E5%B7%A5%E4%BD%9C%E7%9A%84%E4%BC%98%E5%85%88%E7%BA%A7%E6%8E%92%E5%BA%8F%E7%90%86%E8%AE%BA/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E9%9A%8F%E7%AC%94/%E5%B7%A5%E4%BD%9C%E6%96%B9%E6%B3%95%E8%AE%BA/%E5%B7%A5%E4%BD%9C%E7%9A%84%E4%BC%98%E5%85%88%E7%BA%A7%E6%8E%92%E5%BA%8F%E7%90%86%E8%AE%BA/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>[toc]</p>
+<p><img src="/../images/%E5%B7%A5%E4%BD%9C%E7%9A%84%E4%BC%98%E5%85%88%E7%BA%A7%E6%8E%92%E5%BA%8F%E7%90%86%E8%AE%BA/1704116053192.png" alt="1704116053192"></p>
+<p>此文来自于我和ChatGpt的讨论，并让他输出总结的这篇文章。</p>
+<h2><span id="zhang-wo-yi-zhu-cheng-xu-yuan-de-gao-xiao-ren-wu-guan-li-zhi-dao"><strong>掌握艺术：程序员的高效任务管理之道</strong></span><a href="#zhang-wo-yi-zhu-cheng-xu-yuan-de-gao-xiao-ren-wu-guan-li-zhi-dao" class="header-anchor">#</a></h2>
+<p>在快节奏的职场生活中，我们经常会被各种任务淹没，从紧急的客户需求到突如其来的问题修复，再到那些永远不减的日常工作。让我们通过一个程序员在处理<strong>160个API分析</strong>、<strong>需求设计</strong>、<strong>问题单清理</strong>和<strong>文档编写</strong>这些任务的真实故事来探索如何有效地管理这些看似永无止境的任务列表。</p>
+<h3><span id="yu-dao-de-kun-nan"><strong>遇到的困难</strong></span><a href="#yu-dao-de-kun-nan" class="header-anchor">#</a></h3>
+<p>小李是一位软件开发工程师，他面对的挑战也许是许多职场人士的真实写照。他需要<strong>分析160个API</strong>，进行<strong>需求设计</strong>，<strong>清理问题单</strong>，并编写<strong>文档</strong>。听起来就让人头大对吧？他感到混乱，不知从何下手，每当决定开始一项任务时，其他的任务就像山一样压了过来，使他感到焦虑和无所适从。</p>
+<h3><span id="zhi-ding-ji-hua"><strong>制定计划</strong></span><a href="#zhi-ding-ji-hua" class="header-anchor">#</a></h3>
+<p>首先，小李需要一张清晰的任务清单。他将所有任务都写下来：<strong>160个API分析</strong>、<strong>需求设计</strong>、<strong>问题单清理</strong>和<strong>文档编写</strong>。接下来，重要的是要对这些任务进行分类，我们采用了<strong>紧急重要矩阵</strong>的方法。简而言之，每项任务都被评估其紧急性和重要性，并相应地分类。</p>
+<h3><span id="ren-wu-de-jin-ji-chong-yao-ju-zhen"><strong>任务的紧急重要矩阵</strong></span><a href="#ren-wu-de-jin-ji-chong-yao-ju-zhen" class="header-anchor">#</a></h3>
+<ol>
+<li><strong>紧急且重要</strong>：比如160个API分析，可能有严格的截止日期或对客户交付有直接影响。这些任务需要立即处理。</li>
+<li><strong>重要但不紧急</strong>：例如需求设计，虽然对产品的未来非常关键，但可能还有一些时间进行深入思考和规划。这些任务需要预留足够的时间来处理。</li>
+<li><strong>紧急但不重要</strong>：比如某些问题单清理，可能需要快速回应以满足团队其他成员的需求，但对长期目标的影响有限。可以考虑委托或快速处理。</li>
+<li><strong>既不紧急也不重要</strong>：例如文档编写，可能不会立即影响产品的功能或交付，但仍然是必要的工作。这些任务可以安排在较低的优先级上。</li>
+</ol>
+<h3><span id="cong-na-li-kai-shi"><strong>从哪里开始？</strong></span><a href="#cong-na-li-kai-shi" class="header-anchor">#</a></h3>
+<p>现在，小李知道了哪些任务是最重要的，但他仍然有几个“重要但不紧急”的任务，应该怎么排序呢？这时，他可以根据任务的长期影响、个人兴趣、资源可用性等因素来决定。比如，哪个任务完成后可以给团队带来最大的好处？或者哪个任务最符合他的个人成长路径？</p>
+<h3><span id="mian-dui-da-duan-he-bian-geng"><strong>面对打断和变更</strong></span><a href="#mian-dui-da-duan-he-bian-geng" class="header-anchor">#</a></h3>
+<p>但生活不总是那么一帆风顺，小李在处理任务时经常被打断，这让他感到沮丧和挫败。那么，当我们面对这样的打断时怎么办呢？我们可以采用&quot;<strong>番茄工作法</strong>&quot;，每个工作周期25分钟，专注于一项任务，然后休息5分钟。如果被打断，我们记录下中断的点，处理紧急情况后，再回到任务上。</p>
+<h3><span id="ru-he-bi-mian-cao-za-huan-jing-de-gan-rao-bing-chi-xu-ti-sheng-ji-hua-de-zheng-que-xing">如何避免嘈杂环境的干扰并持续提升计划的正确性</span><a href="#ru-he-bi-mian-cao-za-huan-jing-de-gan-rao-bing-chi-xu-ti-sheng-ji-hua-de-zheng-que-xing" class="header-anchor">#</a></h3>
+<p>小李发现，在繁忙的工作环境中持续跟踪和分析任务是一项挑战。为了应对这一挑战，他采用了便签纸和手机APP结合的方法。每天开始时，他在便签上快速列出主要任务， 确保在繁忙的工作中他也能一眼看到当天的重点任务， 并在特定时间（如午餐后）将这些内容输入到手机的任务管理APP中。这样做不仅使他能够直观地看到当天的任务，还利用APP的数据分析功能来评估自己的工作效率， 如哪些时间段最有生产力，哪类任务常常耗时超预期等。这样的数据洞察帮助小李更有针对性地调整自己的工作习惯和时间分配。</p>
+<h3><span id="mian-dui-duo-ge-chong-yao-dan-bu-jin-ji-de-ren-wu"><strong>面对多个“重要但不紧急”的任务</strong></span><a href="#mian-dui-duo-ge-chong-yao-dan-bu-jin-ji-de-ren-wu" class="header-anchor">#</a></h3>
+<p>假设小李现在面临着多个“重要但不紧急”的任务，比如需求设计、问题单清理和文档编写。这时，他如何决定它们的执行顺序呢？</p>
+<ol>
+<li><strong>评估影响和依赖性</strong>：首先，小李会考虑这些任务完成后对项目的影响。需求设计可能是启动其他工作的关键，因此可能需要优先处理。同时，问题单清理可能依赖于需求设计的结果，所以它可能紧随其后。</li>
+<li><strong>考虑个人效率</strong>：小李知道自己在一天中的不同时间效率不同。他可能会选择在精力最集中的时段处理需求设计这样的高认知需求任务，而将文档编写这类相对机械的工作安排在精力较散的时段。</li>
+<li><strong>资源和协作</strong>：如果文档编写需要其他团队成员的输入或反馈，小李可能需要先启动这项任务，以便给同事留出反馈时间。</li>
+</ol>
+<h3><span id="bao-chi-ling-huo-xing-he-gua-ying-xing"><strong>保持灵活性和适应性</strong></span><a href="#bao-chi-ling-huo-xing-he-gua-ying-xing" class="header-anchor">#</a></h3>
+<p>在所有这些计划和策略中，最重要的是保持灵活性和适应性。小李知道，任务的优先级可能会因为突发事件或新信息而变化。因此，他定期审视任务清单，根据最新情况进行调整。他也意识到，过分拘泥于计划可能会适得其反，所以他给自己的计划留有一定的弹性。</p>
+<h3><span id="lian-xi-he-fan-si"><strong>练习和反思</strong></span><a href="#lian-xi-he-fan-si" class="header-anchor">#</a></h3>
+<p>小李通过实际操作和反思，逐渐找到了适合自己的工作方式。他意识到理论和实践之间有差距，通过不断尝试和调整，他开始更有效地管理自己的任务和时间。他也开始与同事分享这些策略，一起提高工作效率。</p>
+<h3><span id="jie-yu-bu-duan-xue-xi-he-gua-ying"><strong>结语：不断学习和适应</strong></span><a href="#jie-yu-bu-duan-xue-xi-he-gua-ying" class="header-anchor">#</a></h3>
+<p>小李的故事告诉我们，在职场中，不断学习和适应是至关重要的。任务管理不仅仅是一个技能，更是一种持续的实践。我们每个人都在不断地学习如何更好地组织工作、优先处理任务、应对变化，以及在压力和不确定性中保持清晰的头脑。小李的经历只是众多职场故事中的一个，但他的策略和思考对所有追求效率和效能的职场人士都有启发意义。</p>
+<p>让我们一起探索、实践并优化我们的工作方法，成为更高效、更适应性强的职场人士。面对每一个充满挑战和机遇的新日子，让我们都能说：“我准备好了！”</p>
+<hr>
+<h3><span id="ti-wai-hua-dong-shou-shi-jian-jia-shen-li-jie">题外话：<strong>动手实践：加深理解</strong></span><a href="#ti-wai-hua-dong-shou-shi-jian-jia-shen-li-jie" class="header-anchor">#</a></h3>
+<p>在阅读了小李如何有效管理工作任务的故事后，现在是时候将所学应用到实践中了。以下是两个练习题，旨在帮助你运用紧急重要矩阵和时间管理策略来优化自己的任务处理方法。试着用你自己的工作或生活例子来解答这些问题，这将帮助你深化对这些概念的理解并加强实际应用能力。</p>
+<p>理解了，如果你希望通过具体的练习来检验自己对任务分配理论的理解，我们可以进行一些模拟练习。我会给出一些情景，你可以尝试应用之前讨论的任务分配和优先级设定理论来解决这些情景中的问题。之后，我会对你的答案进行点评。让我们开始吧：</p>
+<h3><span id="lian-xi-ti-1">练习题 1</span><a href="#lian-xi-ti-1" class="header-anchor">#</a></h3>
+<p><strong>情景描述</strong>： 你是一名项目经理，负责一个即将发布的新软件。你目前面临以下任务：</p>
+<ul>
+<li><strong>A. 客户反馈修改</strong>：根据最近的客户反馈，需要对软件的某个功能进行小幅修改。这个修改相对简单，预计需要4小时完成。客户期望在两天内看到改动。</li>
+<li><strong>B. 新功能开发</strong>：开发团队正在开发一个新功能，这是软件的核心卖点之一。你需要为这个新功能制定详细的设计方案。预计需要12小时完成，设计方案完成后，开发团队需要至少一周的时间来实现它。</li>
+<li><strong>C. 文档编写</strong>：你需要编写软件的用户手册，包括新功能的说明。这项工作不紧急，但需要细心和时间来完成，预计需要16小时。</li>
+<li><strong>D. 团队会议</strong>：组织一次团队会议，讨论软件发布的准备情况。会议预计需要2小时。</li>
+</ul>
+<p><strong>问题</strong>：请根据紧急性和重要性对这些任务进行排序，并简要说明你的理由。</p>
+<h3><span id="lian-xi-ti-2">练习题 2</span><a href="#lian-xi-ti-2" class="header-anchor">#</a></h3>
+<p><strong>情景描述</strong>： 你是一名学生，正准备期末考试，同时你也参与了一个学术项目。你目前面临以下任务：</p>
+<ul>
+<li><strong>E. 期末考试复习</strong>：还有一周就是你的数学期末考试，这是本学期最重要的一次考试，你需要花时间复习。</li>
+<li><strong>F. 学术项目报告</strong>：你参与的学术项目需要你在三天内提交一份报告，报告的质量将影响你的项目评分。</li>
+<li><strong>G. 朋友聚会</strong>：你的好友组织了一次聚会，邀请了你参加，聚会在两天后的晚上。</li>
+<li><strong>H. 健康检查</strong>：你预约了一次健康检查，时间是在四天后的上午。</li>
+</ul>
+<p><strong>问题</strong>：请根据紧急性和重要性对这些任务进行排序，并简要说明你的理由。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>breakDawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://breakdawncoder.com/%E9%9A%8F%E7%AC%94/%E5%B7%A5%E4%BD%9C%E6%96%B9%E6%B3%95%E8%AE%BA/%E5%B7%A5%E4%BD%9C%E7%9A%84%E4%BC%98%E5%85%88%E7%BA%A7%E6%8E%92%E5%BA%8F%E7%90%86%E8%AE%BA/" title="工作的优先级排序理论">http://breakdawncoder.com/随笔/工作方法论/工作的优先级排序理论/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E4%B9%A6%E7%B1%8D/" rel="tag"># 书籍</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E9%9A%8F%E7%AC%94/%E6%B8%B8%E6%88%8F/%E5%89%A7%E6%9C%AC%E4%BA%BA%E7%94%9F/%E8%8B%8D%E5%B2%90/" rel="prev" title="苍岐">
+      <i class="fa fa-chevron-left"></i> 苍岐
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E9%9A%8F%E7%AC%94/%E5%B7%A5%E4%BD%9C%E6%96%B9%E6%B3%95%E8%AE%BA/" rel="next" title="工作方法论">
+      工作方法论 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">掌握艺术：程序员的高效任务管理之道</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">遇到的困难</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">制定计划</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">任务的紧急重要矩阵</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.4.</span> <span class="nav-text">从哪里开始？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.5.</span> <span class="nav-text">面对打断和变更</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.6.</span> <span class="nav-text">如何避免嘈杂环境的干扰并持续提升计划的正确性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.7.</span> <span class="nav-text">面对多个“重要但不紧急”的任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.8.</span> <span class="nav-text">保持灵活性和适应性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.9.</span> <span class="nav-text">练习和反思</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.10.</span> <span class="nav-text">结语：不断学习和适应</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.11.</span> <span class="nav-text">题外话：动手实践：加深理解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.12.</span> <span class="nav-text">练习题 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.13.</span> <span class="nav-text">练习题 2</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="breakDawn"
+      src="/images/abd.png">
+  <p class="site-author-name" itemprop="name">breakDawn</p>
+  <div class="site-description" itemprop="description">君子终日乾乾,夕惕若厉,无咎</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">276</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">72</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10007940" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10007940" rel="noopener" target="_blank"><i class="custom bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-cn" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-05 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">breakDawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共359.3k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
+      appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
+      placeholder: "天下第一帅到此一游",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zn-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
