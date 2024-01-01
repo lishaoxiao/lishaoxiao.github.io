@@ -181,6 +181,691 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E4%BA%8B%E5%8A%A1%E5%BA%94%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E4%BA%8B%E5%8A%A1%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">redis事务应用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-09-22 23:46:12" itemprop="dateCreated datePublished" datetime="2022-09-22T23:46:12+08:00">2022-09-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-09-24 00:28:08" itemprop="dateModified" datetime="2022-09-24T00:28:08+08:00">2022-09-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">微服务组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/redis/redis%E5%9F%BA%E7%A1%80%E5%BA%94%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">redis基础应用</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E4%BA%8B%E5%8A%A1%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E4%BA%8B%E5%8A%A1%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>859</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#q-redis-shi-wu-you-na-xie-ming-ling">Q: redis事务有哪些命令？</a></li>
+<li><a href="#q-redis-shi-wu-chu-xian-cuo-wu-shi-hui-zen-me-chu-li-hui-gun-huan-shi-pao-qi">Q: redis事务出现错误时，会怎么处理？回滚还是抛弃？</a></li>
+<li><a href="#q-redis-zen-me-shi-xian-cas-le-guan-suo">Q: redis怎么实现CAS乐观锁？</a></li>
+<li><a href="#q-wei-shi-me-redis-bu-zhi-chi-hui-gun-wei-shi-me-mysql-zhe-lei-guan-xi-xing-shu-ju-ku-xu-yao-hui-gun">Q: 为什么redis不支持回滚？为什么mysql这类关系型数据库需要回滚？</a></li>
+<li><a href="#q-redis-man-zu-shi-wu-acid-de-na-ji-ge-shu-xing">Q: redis满足事务ACID的哪几个属性？</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<hr>
+<h1><span id="q-redis-shi-wu-you-na-xie-ming-ling">Q: redis事务有哪些命令？</span><a href="#q-redis-shi-wu-you-na-xie-ming-ling" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>MULTI: 开启事务。后面执行的操作都会放进队列里而不执行。</li>
+<li>EXEC: 执行事务中的所有操作命令</li>
+<li>DISCARD： 取消事务，放弃事务队列里的所有命令</li>
+<li>WATCH：监视一个或多个key，如果事务在“MULTI后， EXEC前”，被修改了，则事务中断</li>
+</ul>
+<hr>
+<h1><span id="q-redis-shi-wu-chu-xian-cuo-wu-shi-hui-zen-me-chu-li-hui-gun-huan-shi-pao-qi">Q:  redis事务出现错误时，会怎么处理？回滚还是抛弃？</span><a href="#q-redis-shi-wu-chu-xian-cuo-wu-shi-hui-zen-me-chu-li-hui-gun-huan-shi-pao-qi" class="header-anchor">#</a></h1>
+<p>A:<br>
+有2种情况</p>
+<ol>
+<li>语法错误， 例如MULTI之后， 输入了一个不存在的命令&quot;sets&quot;， 则事务终止， 后面再EXEC将不会有变化。</li>
+<li>运行期错误。语法正确，但类型错误，类型错误需要等真正运行时才知道。<br>
+<strong>这时候事务不会回滚，而是跳过错误命令，继续执行</strong></li>
+</ol>
+<hr>
+<h1><span id="q-redis-zen-me-shi-xian-cas-le-guan-suo">Q: redis怎么实现CAS乐观锁？</span><a href="#q-redis-zen-me-shi-xian-cas-le-guan-suo" class="header-anchor">#</a></h1>
+<p>A:<br>
+使用watch命令。<br>
+就是MULTI之后， 针对某个键执行WATCH， 当后面真正需要EXEC时，如果key变了，就会失败。<br>
+此时的redis程序需要重复MULTI WATCH EXEC的操作，直到真正执行成功</p>
+<hr>
+<h1><span id="q-wei-shi-me-redis-bu-zhi-chi-hui-gun-wei-shi-me-mysql-zhe-lei-guan-xi-xing-shu-ju-ku-xu-yao-hui-gun">Q: 为什么redis不支持回滚？为什么mysql这类关系型数据库需要回滚？</span><a href="#q-wei-shi-me-redis-bu-zhi-chi-hui-gun-wei-shi-me-mysql-zhe-lei-guan-xi-xing-shu-ju-ku-xu-yao-hui-gun" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>失败的命令是由编程错误造成的，而这些错误应该在开发的过程中被发现，而不应该出现在生产环境中。</li>
+<li>不需要对回滚进行支持，所以 Redis 的内部可以保持简单且快速。</li>
+</ul>
+<p>对于关系型数据库，他们是日志先行，可靠性大于效率的。<br>
+只有先做到了日志线性，才能保证正常回滚，而这肯定是有性能损耗，且实现复杂度非常高的。</p>
+<hr>
+<h1><span id="q-redis-man-zu-shi-wu-acid-de-na-ji-ge-shu-xing">Q: redis满足事务ACID的哪几个属性？</span><a href="#q-redis-man-zu-shi-wu-acid-de-na-ji-ge-shu-xing" class="header-anchor">#</a></h1>
+<p>A:<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/luoyang_java/article/details/100143164"></a></p>
+<ul>
+<li>原子性：Redis的事务是原子性的：所有的命令，要么全部执行，要么全部不执行。而不是完全成功。 不支持原子回滚</li>
+<li>一致性： redis不具备 ACID 中一致性的概念</li>
+<li>隔离性： 事务之间不影响，因为是单线程</li>
+<li>持久性： 通过一定策略可以保证持久性，但不保证</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/" class="post-title-link" itemprop="url">redis性能调优</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-09-22 23:35:12" itemprop="dateCreated datePublished" datetime="2022-09-22T23:35:12+08:00">2022-09-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-09-24 00:28:08" itemprop="dateModified" datetime="2022-09-24T00:28:08+08:00">2022-09-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">微服务组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/redis/redis%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">redis底层原理</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#q-redis-de-bing-fa-shi-zen-me-yang-de">Q: redis的并发是怎么样的？</a></li>
+<li><a href="#q-xiang-xi-jiang-jiang-redis-zen-me-li-yong-io-duo-lu-fu-yong-shi-xian-bai-wan-ji-bing-fa-de">Q: 详细讲讲redis怎么利用IO多路复用实现百万级并发的？</a></li>
+<li><a href="#q-redis-ru-he-chu-li-suo">Q:redis如何处理锁？</a></li>
+<li><a href="#q-jiang-yi-xia-redis-de-zhu-cong-fu-zhi-ce-lue">Q: 讲一下redis的主从复制策略？</a></li>
+<li><a href="#q-jiang-yi-xia-redis-you-na-xie-huan-cun-tao-tai-ce-lue-geng-xin-ce-lue">Q: 讲一下Redis有哪些缓存淘汰策略、更新策略</a></li>
+<li><a href="#q-jiang-yi-xia-redis-de-qi-chong-ji-he-lei-xing">Q: 讲一下redis的七种集合类型？</a></li>
+<li><a href="#q-redis-you-na-xie-shu-ju-jie-gou">Q: Redis有哪些数据结构？</a></li>
+<li><a href="#q-shi-yong-guo-redis-fen-bu-shi-suo-me-ta-shi-shi-me-hui-shi">Q: 使用过Redis分布式锁么，它是什么回事？</a></li>
+<li><a href="#q-jia-ru-redis-li-mian-you-1-yi-ge-key-qi-zhong-you-10w-ge-key-shi-yi-mou-ge-gu-ding-de-yi-zhi-de-qian-zhui-kai-tou-de-ru-guo-jiang-ta-men-quan-bu-zhao-chu-lai">Q: 假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？</a></li>
+<li><a href="#q-dui-fang-jie-zhao-zhui-wen-ru-guo-zhe-ge-redis-zheng-zai-gei-xian-shang-de-ye-wu-ti-gong-fu-wu-na-shi-yong-keys-zhi-ling-hui-you-shi-me-wen-ti">Q:对方接着追问：如果这个redis正在给线上的业务提供服务，那使用keys指令会有什么问题？</a></li>
+<li><a href="#q-shi-yong-guo-redis-zuo-yi-bu-dui-lie-me-ni-shi-zen-me-yong-de">Q: 使用过Redis做异步队列么，你是怎么用的？</a></li>
+<li><a href="#q-ru-guo-dui-fang-zhui-wen-ke-bu-ke-yi-bu-yong-sleep-ni">Q: 如果对方追问可不可以不用sleep呢？</a></li>
+<li><a href="#ru-guo-dui-fang-zhui-wen-neng-bu-neng-sheng-chan-yi-ci-xiao-fei-duo-ci-ni">如果对方追问能不能生产一次消费多次呢？</a></li>
+<li><a href="#q-dui-fang-zhui-wen-pub-sub-you-shi-me-que-dian">Q: 对方追问pub/sub有什么缺点？</a></li>
+<li><a href="#q-ru-guo-dui-fang-zhui-wen-redis-ru-he-shi-xian-yan-shi-dui-lie">Q: 如果对方追问redis如何实现延时队列？</a></li>
+<li><a href="#q-ru-guo-you-da-liang-de-key-xu-yao-she-zhi-tong-yi-shi-jian-guo-qi-yi-ban-xu-yao-zhu-yi-shi-me">Q: 如果有大量的key需要设置同一时间过期，一般需要注意什么？</a></li>
+<li><a href="#q-redis-ru-he-zuo-chi-jiu-hua-de">Q:Redis如何做持久化的？</a></li>
+<li><a href="#q-shang-mian-chi-jiu-hua-de-guo-cheng-ru-guo-tu-ran-ji-qi-diao-dian-hui-zen-yang">Q:上面持久化的过程如果突然机器掉电会怎样？</a></li>
+<li><a href="#q-dui-fang-zhui-wen-bgsave-de-yuan-li-shi-shi-me">Q: 对方追问bgsave的原理是什么？</a></li>
+<li><a href="#q-pipeline-you-shi-me-hao-chu-wei-shi-me-yao-yong-pipeline">Q: Pipeline有什么好处，为什么要用pipeline？</a></li>
+<li><a href="#q-redis-de-tong-bu-ji-zhi-liao-jie-me">Q: Redis的同步机制了解么？</a></li>
+<li><a href="#q-shi-fou-shi-yong-guo-redis-ji-qun-ji-qun-de-yuan-li-shi-shi-me">Q:是否使用过Redis集群，集群的原理是什么？</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="q-redis-de-bing-fa-shi-zen-me-yang-de">Q: redis的并发是怎么样的？</span><a href="#q-redis-de-bing-fa-shi-zen-me-yang-de" class="header-anchor">#</a></h1>
+<p>A:<br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/wanlei/p/10464517.html">https://www.cnblogs.com/wanlei/p/10464517.html</a><br>
+redis是单线程进程， 所有操作都在1个线程内执行， 因为大部分是内存k-v操作，所以不需要太多的CPU消耗，无需多线程。<br>
+但是支持IO多路复用。epoll。</p>
+<hr>
+<h1><span id="q-xiang-xi-jiang-jiang-redis-zen-me-li-yong-io-duo-lu-fu-yong-shi-xian-bai-wan-ji-bing-fa-de">Q: 详细讲讲redis怎么利用IO多路复用实现百万级并发的？</span><a href="#q-xiang-xi-jiang-jiang-redis-zen-me-li-yong-io-duo-lu-fu-yong-shi-xian-bai-wan-ji-bing-fa-de" class="header-anchor">#</a></h1>
+<p>A:<br>
+每个网络连接本质上都是文件， 涉及IO。<br>
+当客户端与redis服务建立连接， 输入到输出都需要时间， 此时如果连接很多，会不会影响其他的连接请求？<br>
+因此为了能快速响应redis请求，以及读取数据并返回， 使用了IO多路复用epoll来响应。 即我虽然和你建立了reids连接，但我等待你发数据了我才真正处理，而不是阻塞等待。<br>
+关于epoll的原理解析， 见高并发IO之epoll</p>
+<hr>
+<h1><span id="q-redis-ru-he-chu-li-suo">Q:redis如何处理锁？</span><a href="#q-redis-ru-he-chu-li-suo" class="header-anchor">#</a></h1>
+<p>A:<br>
+主要使用Redis Setnx 命令<br>
+在指定的 key 不存在时，为 key 设置指定的值<br>
+设置成功，返回 1 。 设置失败，返回 0<br>
+<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/114679415">详情</a></p>
+<hr>
+<h1><span id="q-jiang-yi-xia-redis-de-zhu-cong-fu-zhi-ce-lue">Q: 讲一下redis的主从复制策略？</span><a href="#q-jiang-yi-xia-redis-de-zhu-cong-fu-zhi-ce-lue" class="header-anchor">#</a></h1>
+<p>A:<br>
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/daofaziran/p/10978628.html">redis 主从复制链接</a><br>
+Redis主从同步策略<br>
+主从刚刚连接的时候，进行全量同步；<br>
+全同步结束后，进行增量同步。<br>
+当然，如果有需要，slave 在任何时候都可以发起全量同步。redis 策略是，无论如何，首先会尝试进行增量同步，如不成功，要求从机进行全量同步。</p>
+<hr>
+<h1><span id="q-jiang-yi-xia-redis-you-na-xie-huan-cun-tao-tai-ce-lue-geng-xin-ce-lue">Q: 讲一下Redis有哪些缓存淘汰策略、更新策略</span><a href="#q-jiang-yi-xia-redis-you-na-xie-huan-cun-tao-tai-ce-lue-geng-xin-ce-lue" class="header-anchor">#</a></h1>
+<p>A:<br>
+缓存有多种策略可以配置选择<br>
+经典的有LRU、默认策略、 最短超期等六种<br>
+过期： 惰性+定时<br>
+惰性：使用的时候都先检查一下是否超期<br>
+定时：定期扫描，随机查X个键，如果发现过期比例超过1/4,继续扫+清， 最大占25ms。 他这类似于分多次小批扫描<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/womenyiqilalala/article/details/105202483">详情</a></p>
+<hr>
+<h1><span id="q-jiang-yi-xia-redis-de-qi-chong-ji-he-lei-xing">Q: 讲一下redis的七种集合类型？</span><a href="#q-jiang-yi-xia-redis-de-qi-chong-ji-he-lei-xing" class="header-anchor">#</a></h1>
+<p>A:<br>
+Redis中7种集合类型应用场景</p>
+<ul>
+<li>
+<p>Strings——简单的key-value</p>
+<p>Strings 数据结构是简单的key-value类型，value其实不仅是String，也可以是数字。使用Strings类型，你可以完全实现目前 Memcached 的功能，并且效率更高。还可以享受Redis的定时持久化，操作日志及 Replication等功能。可提供与 Memcached 一样的get、set、incr、decr 等操作</p>
+</li>
+<li>
+<p>Hashs——用于结构体或者对象</p>
+<p>在Memcached中，我们经常将一些结构化的信息打包成hashmap，在客户端序列化后存储为一个字符串的值，比如用户的昵称、年龄、性别、积分等，这时候在需要修改其中某一项时，通常需要将所有值取出反序列化后，修改某一项的值，再序列化存储回去。这样不仅增大了开销，也不适用于一些可能并发操作的场合（比如两个并发的操作都需要修改积分）。而Redis的Hash结构可以使你像在数据库中Update一个属性一样只修改某一项属性值。</p>
+<p>每次存入一个hash对象， 接着存入键值对 key-value</p>
+<p>即存入一个</p>
+<p>lishaoxiao</p>
+<p>lishaoxiao下面有很多个键值对</p>
+<p>name lishaoxiao</p>
+<p>age 20</p>
+</li>
+<li>
+<p>Lists</p>
+<p>Lists 就是链表，相信略有数据结构知识的人都应该能理解其结构。使用Lists结构，我们可以轻松地实现最新消息排行等功能。Lists的另一个应用就是消息队列，可以利用Lists的PUSH操作，将任务存在Lists中，然后工作线程再用POP操作将任务取出进行执行。Redis还提供了操作Lists中某一段的api，你可以直接查询，删除Lists中某一段的元素。</p>
+</li>
+<li>
+<p>Sets</p>
+<p>Sets 就是一个集合，集合的概念就是一堆不重复值的组合。利用Redis提供的Sets数据结构，可以存储一些集合性的数据，比如在微博应用中，可以将一个用户所有的关注人存在一个集合中，将其所有粉丝存在一个集合。Redis还为集合提供了求交集、并集、差集等操作，可以非常方便的实现如共同关注、共同喜好、二度好友等功能，对上面的所有集合操作，你还可以使用不同的命令选择将结果返回给客户端还是存集到一个新的集合中。</p>
+</li>
+<li>
+<p>Sorted Sets</p>
+<p>和Sets相比，Sorted Sets增加了一个权重参数score，使得集合中的元素能够按score进行有序排列，比如一个存储全班同学成绩的Sorted Sets，其集合value可以是同学的学号，而score就可以是其考试得分，这样在数据插入集合的时候，就已经进行了天然的排序。另外还可以用Sorted Sets来做带权重的队列，比如普通消息的score为1，重要消息的score为2，然后工作线程可以选择按score的倒序来获取工作任务。让重要的任务优先执行。</p>
+</li>
+<li>
+<p>Pub/Sub</p>
+<p>Pub/Sub 从字面上理解就是发布（Publish）与订阅（Subscribe），在Redis中，你可以设定对某一个key值进行消息发布及消息订阅，当一个key值上进行了消息发布后，所有订阅它的客户端都会收到相应的消息。这一功能最明显的用法就是用作实时消息系统，比如普通的即时聊天，群聊等功能。</p>
+</li>
+<li>
+<p>Transactions</p>
+<p>谁说NoSQL都不支持事务，虽然Redis的Transactions提供的并不是严格的ACID的事务（比如一串用EXEC提交执行的命令，在执行中服务器宕机，那么会有一部分命令执行了，剩下的没执行），但是这个Transactions还是提供了基本的命令打包执行的功能（在服务器不出问题的情况下，可以保证一连串的命令是顺序在一起执行的，中间有会有其它客户端命令插进来执行）。Redis还提供了一个Watch功能，你可以对一个key进行Watch，然后再执行Transactions，在这过程中，如果这个Watched的值进行了修改，那么这个Transactions会发现并拒绝执行。</p>
+</li>
+</ul>
+<hr>
+<h1><span id="q-redis-you-na-xie-shu-ju-jie-gou">Q: Redis有哪些数据结构？</span><a href="#q-redis-you-na-xie-shu-ju-jie-gou" class="header-anchor">#</a></h1>
+<p>A: 字符串String、字典Hash、列表List、集合Set、有序集合SortedSet。<br>
+如果你是Redis中高级用户，还需要加上下面几种数据结构HyperLogLog、Geo、Pub/Sub。<br>
+如果你说还玩过Redis Module，像BloomFilter，RedisSearch，Redis-ML，面试官得眼睛就开始发亮了。</p>
+<h1><span id="q-shi-yong-guo-redis-fen-bu-shi-suo-me-ta-shi-shi-me-hui-shi">Q: 使用过Redis分布式锁么，它是什么回事？</span><a href="#q-shi-yong-guo-redis-fen-bu-shi-suo-me-ta-shi-shi-me-hui-shi" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>先拿setnx来争抢锁，抢到之后，再用expire给锁加一个过期时间防止锁忘记了释放。</li>
+<li>这时候对方会告诉你说你回答得不错，然后接着问如果在setnx之后执行expire之前进程意外crash或者要重启维护了，那会怎么样？</li>
+<li>这时候你要给予惊讶的反馈：唉，是喔，这个锁就永远得不到释放了。</li>
+<li>紧接着你需要抓一抓自己得脑袋，故作思考片刻，好像接下来的结果是你主动思考出来的，然后回答：我记得set指令有非常复杂的参数，这个应该是可以同时把setnx和expire合成一条指令来用的！对方这时会显露笑容，心里开始默念：摁，这小子还不错。</li>
+</ul>
+<hr>
+<h1><span id="q-jia-ru-redis-li-mian-you-1-yi-ge-key-qi-zhong-you-10w-ge-key-shi-yi-mou-ge-gu-ding-de-yi-zhi-de-qian-zhui-kai-tou-de-ru-guo-jiang-ta-men-quan-bu-zhao-chu-lai">Q: 假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？</span><a href="#q-jia-ru-redis-li-mian-you-1-yi-ge-key-qi-zhong-you-10w-ge-key-shi-yi-mou-ge-gu-ding-de-yi-zhi-de-qian-zhui-kai-tou-de-ru-guo-jiang-ta-men-quan-bu-zhao-chu-lai" class="header-anchor">#</a></h1>
+<p>A:使用keys指令可以扫出指定模式的key列表。</p>
+<hr>
+<h1><span id="q-dui-fang-jie-zhao-zhui-wen-ru-guo-zhe-ge-redis-zheng-zai-gei-xian-shang-de-ye-wu-ti-gong-fu-wu-na-shi-yong-keys-zhi-ling-hui-you-shi-me-wen-ti">Q:对方接着追问：如果这个redis正在给线上的业务提供服务，那使用keys指令会有什么问题？</span><a href="#q-dui-fang-jie-zhao-zhui-wen-ru-guo-zhe-ge-redis-zheng-zai-gei-xian-shang-de-ye-wu-ti-gong-fu-wu-na-shi-yong-keys-zhi-ling-hui-you-shi-me-wen-ti" class="header-anchor">#</a></h1>
+<p>A: 这个时候你要回答redis关键的一个特性：redis的单线程的。keys指令会导致线程阻塞一段时间，线上服务会停顿，直到指令执行完毕，服务才能恢复。这个时候可以使用scan指令，scan指令可以无阻塞的提取出指定模式的key列表，但是会有一定的重复概率，在客户端做一次去重就可以了，但是整体所花费的时间会比直接用keys指令长。</p>
+<hr>
+<h1><span id="q-shi-yong-guo-redis-zuo-yi-bu-dui-lie-me-ni-shi-zen-me-yong-de">Q: 使用过Redis做异步队列么，你是怎么用的？</span><a href="#q-shi-yong-guo-redis-zuo-yi-bu-dui-lie-me-ni-shi-zen-me-yong-de" class="header-anchor">#</a></h1>
+<p>A:<br>
+一般使用list结构作为队列，rpush生产消息，lpop消费消息。当lpop没有消息的时候，要适当sleep一会再重试。</p>
+<hr>
+<h1><span id="q-ru-guo-dui-fang-zhui-wen-ke-bu-ke-yi-bu-yong-sleep-ni">Q: 如果对方追问可不可以不用sleep呢？</span><a href="#q-ru-guo-dui-fang-zhui-wen-ke-bu-ke-yi-bu-yong-sleep-ni" class="header-anchor">#</a></h1>
+<p>A:<br>
+list还有个指令叫blpop，在没有消息的时候，它会阻塞住直到消息到来。</p>
+<hr>
+<p>Q:</p>
+<h1><span id="ru-guo-dui-fang-zhui-wen-neng-bu-neng-sheng-chan-yi-ci-xiao-fei-duo-ci-ni">如果对方追问能不能生产一次消费多次呢？</span><a href="#ru-guo-dui-fang-zhui-wen-neng-bu-neng-sheng-chan-yi-ci-xiao-fei-duo-ci-ni" class="header-anchor">#</a></h1>
+<p>A:<br>
+使用pub/sub主题订阅者模式，可以实现1:N的消息队列。</p>
+<hr>
+<h1><span id="q-dui-fang-zhui-wen-pub-sub-you-shi-me-que-dian">Q: 对方追问pub/sub有什么缺点？</span><a href="#q-dui-fang-zhui-wen-pub-sub-you-shi-me-que-dian" class="header-anchor">#</a></h1>
+<p>A:在消费者下线的情况下，生产的消息会丢失，得使用专业的消息队列如rabbitmq等。</p>
+<hr>
+<h1><span id="q-ru-guo-dui-fang-zhui-wen-redis-ru-he-shi-xian-yan-shi-dui-lie">Q: 如果对方追问redis如何实现延时队列？</span><a href="#q-ru-guo-dui-fang-zhui-wen-redis-ru-he-shi-xian-yan-shi-dui-lie" class="header-anchor">#</a></h1>
+<p>A:使用sortedset，拿时间戳作为score，消息内容作为key调用zadd来生产消息，消费者用zrangebyscore指令获取N秒之前的数据轮询进行处理。</p>
+<hr>
+<h1><span id="q-ru-guo-you-da-liang-de-key-xu-yao-she-zhi-tong-yi-shi-jian-guo-qi-yi-ban-xu-yao-zhu-yi-shi-me">Q: 如果有大量的key需要设置同一时间过期，一般需要注意什么？</span><a href="#q-ru-guo-you-da-liang-de-key-xu-yao-she-zhi-tong-yi-shi-jian-guo-qi-yi-ban-xu-yao-zhu-yi-shi-me" class="header-anchor">#</a></h1>
+<p>A: 如果大量的key过期时间设置的过于集中，到过期的那个时间点，redis可能会出现短暂的卡顿现象。一般需要在时间上加一个随机值，使得过期时间分散一些。</p>
+<hr>
+<h1><span id="q-redis-ru-he-zuo-chi-jiu-hua-de">Q:Redis如何做持久化的？</span><a href="#q-redis-ru-he-zuo-chi-jiu-hua-de" class="header-anchor">#</a></h1>
+<p>A:<br>
+bgsave做镜像全量持久化，aof做增量持久化。因为bgsave会耗费较长时间，不够实时，在停机的时候会导致大量丢失数据，所以需要aof来配合使用。在redis实例重启时，会使用bgsave持久化文件重新构建内存，再使用aof重放近期的操作指令来实现完整恢复重启之前的状态。</p>
+<hr>
+<h1><span id="q-shang-mian-chi-jiu-hua-de-guo-cheng-ru-guo-tu-ran-ji-qi-diao-dian-hui-zen-yang">Q:上面持久化的过程如果突然机器掉电会怎样？</span><a href="#q-shang-mian-chi-jiu-hua-de-guo-cheng-ru-guo-tu-ran-ji-qi-diao-dian-hui-zen-yang" class="header-anchor">#</a></h1>
+<p>A: 取决于aof日志sync属性的配置，如果不要求性能，在每条写指令时都sync一下磁盘，就不会丢失数据。但是在高性能的要求下每次都sync是不现实的，一般都使用定时sync，比如1s1次，这个时候最多就会丢失1s的数据。</p>
+<hr>
+<h1><span id="q-dui-fang-zhui-wen-bgsave-de-yuan-li-shi-shi-me">Q: 对方追问bgsave的原理是什么？</span><a href="#q-dui-fang-zhui-wen-bgsave-de-yuan-li-shi-shi-me" class="header-anchor">#</a></h1>
+<p>A:<br>
+你给出两个词汇就可以了，fork和cow。fork是指redis通过创建子进程来进行bgsave操作，cow指的是copy on write，子进程创建后，父子进程共享数据段，父进程继续提供读写服务，写脏的页面数据会逐渐和子进程分离开来。</p>
+<hr>
+<h1><span id="q-pipeline-you-shi-me-hao-chu-wei-shi-me-yao-yong-pipeline">Q: Pipeline有什么好处，为什么要用pipeline？</span><a href="#q-pipeline-you-shi-me-hao-chu-wei-shi-me-yao-yong-pipeline" class="header-anchor">#</a></h1>
+<p>A:<br>
+可以将多次IO往返的时间缩减为一次，前提是pipeline执行的指令之间没有因果相关性。使用redis-benchmark进行压测的时候可以发现影响redis的QPS峰值的一个重要因素是pipeline批次指令的数目。</p>
+<hr>
+<h1><span id="q-redis-de-tong-bu-ji-zhi-liao-jie-me">Q: Redis的同步机制了解么？</span><a href="#q-redis-de-tong-bu-ji-zhi-liao-jie-me" class="header-anchor">#</a></h1>
+<p>A:<br>
+Redis可以使用主从同步，从从同步。第一次同步时，主节点做一次bgsave，并同时将后续修改操作记录到内存buffer，待完成后将rdb文件全量同步到复制节点，复制节点接受完成后将rdb镜像加载到内存。加载完成后，再通知主节点将期间修改的操作记录同步到复制节点进行重放就完成了同步过程。</p>
+<hr>
+<h1><span id="q-shi-fou-shi-yong-guo-redis-ji-qun-ji-qun-de-yuan-li-shi-shi-me">Q:是否使用过Redis集群，集群的原理是什么？</span><a href="#q-shi-fou-shi-yong-guo-redis-ji-qun-ji-qun-de-yuan-li-shi-shi-me" class="header-anchor">#</a></h1>
+<p>A:<br>
+Redis Sentinal着眼于高可用，在master宕机时会自动将slave提升为master，继续提供服务。<br>
+Redis Cluster着眼于扩展性，在单个redis内存不足时，使用Cluster进行分片存储。</p>
+<hr>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" class="post-title-link" itemprop="url">redis性能调优</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-09-22 23:35:12" itemprop="dateCreated datePublished" datetime="2022-09-22T23:35:12+08:00">2022-09-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-09-24 00:28:08" itemprop="dateModified" datetime="2022-09-24T00:28:08+08:00">2022-09-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">微服务组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/redis/redis%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">redis底层原理</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#q-ni-zen-me-que-ren-ni-de-redis-bian-man-liao-huo-zhe-you-wen-ti-ni">Q: 你怎么确认你的redis变慢了或者有问题呢？</a></li>
+<li><a href="#q-shi-yong-shi-me-yang-de-redis-ming-ling-ke-neng-dao-zhi-xing-neng-xia-jiang">Q: 使用什么样的redis命令可能导致性能下降？</a></li>
+<li><a href="#q-pin-fan-xie-ru-huo-zhe-shan-chu-yi-ge-hen-da-de-zi-fu-chuan-you-shi-me-wen-ti">Q: 频繁写入或者删除一个很大的字符串有什么问题？</a></li>
+<li><a href="#q-ru-he-zhao-dao-redis-zhong-shi-fou-you-zhe-chong-bigkey">Q: 如何找到redis中是否有这种bigkey？</a></li>
+<li><a href="#q-you-yi-ge-he-scan-lei-si-de-ming-ling-jiao-keys-ming-ling-you-shi-me-qu-bie">Q: 有一个和scan类似的命令叫keys命令， 有什么区别？</a></li>
+<li><a href="#q-redis-4-0-lazy-free-ji-zhi-you-liao-jie-me">Q: redis 4.0 lazy-free机制有了解么？</a></li>
+<li><a href="#q-da-liang-key-ji-zhong-guo-qi-ye-hui-dao-zhi-mou-yi-shi-ke-xing-neng-da-liang-xia-jiang-chu-liao-jia-sui-ji-guo-qi-shi-jian-wai-huan-neng-ru-he-bi-mian">Q: 大量key集中过期也会导致某一时刻性能大量下降，除了加随机过期时间外，还能如何避免？</a></li>
+<li><a href="#q-ru-he-wo-de-redis-nei-cun-pei-zhi-de-xiao-liao-hui-ru-he-dui-xing-neng-zao-cheng-ying-xiang">Q: 如何我的redis内存配置的小了，会如何对性能造成影响？</a></li>
+<li><a href="#q-redis-shi-li-nei-cun-yue-da-yue-hao-ma-tai-da-de-hua-ke-neng-you-shi-me-wen-ti">Q:Redis 实例内存越大越好吗？太大的话可能有什么问题？</a></li>
+<li><a href="#q-linux-de-nei-cun-da-ye-you-liao-jie-me-kai-qi-hou-dui-redis-de-xing-neng-shi-ti-sheng-huan-shi-xia-jiang">Q: linux的内存大页有了解么？ 开启后对redis的性能是提升还是下降？</a></li>
+<li><a href="#q-aof-xu-yao-zhu-xian-cheng-zuo-tong-bu-xie-wo-pei-zhi-cheng-appendfsync-everysec-xie-nei-cun-mei-miao-xie-ci-pan-shi-bu-shi-jiu-bu-hui-zu-sai-zhu-xian-cheng-zao-cheng-xing-neng-xia-jiang-liao-wei-shi-me">Q: AOF需要主线程做同步写， 我配置成 appendfsync everysec （写内存，每秒写磁盘）， 是不是就不会阻塞主线程，造成性能下降了？为什么？</a></li>
+<li><a href="#q-ru-he-jie-jue-aof-de-xie-ci-pan-zu-sai-wen-ti">Q: 如何解决AOF的写磁盘阻塞问题？</a></li>
+<li><a href="#q-redis-da-liang-de-nei-cun-sui-pian-ye-hui-dao-zhi-xing-neng-xia-jiang-ru-he-you-hua-redis-de-sui-pian">Q: redis大量的内存碎片也会导致性能下降，如何优化redis的碎片？</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="q-ni-zen-me-que-ren-ni-de-redis-bian-man-liao-huo-zhe-you-wen-ti-ni">Q: 你怎么确认你的redis变慢了或者有问题呢？</span><a href="#q-ni-zen-me-que-ren-ni-de-redis-bian-man-liao-huo-zhe-you-wen-ti-ni" class="header-anchor">#</a></h1>
+<p>A:<br>
+用”相同规格“（CPU、内存）的其他redis（基准性能机器）做对比<br>
+用–latency-history 命令获取最近一段时间内各命令的响应延迟<br>
+如果比基准时间大了2倍以上，那就是变慢了。</p>
+<hr>
+<h1><span id="q-shi-yong-shi-me-yang-de-redis-ming-ling-ke-neng-dao-zhi-xing-neng-xia-jiang">Q: 使用什么样的redis命令可能导致性能下降？</span><a href="#q-shi-yong-shi-me-yang-de-redis-ming-ling-ke-neng-dao-zhi-xing-neng-xia-jiang" class="header-anchor">#</a></h1>
+<p>A:<br>
+O(N) 以上复杂度的命令，例如 SORT、SUNION、ZUNIONSTORE 等需要大量数据做聚合的命令<br>
+*注意， 对于数据的聚合操作，放在客户端做</p>
+<hr>
+<h1><span id="q-pin-fan-xie-ru-huo-zhe-shan-chu-yi-ge-hen-da-de-zi-fu-chuan-you-shi-me-wen-ti">Q: 频繁写入或者删除一个很大的字符串有什么问题？</span><a href="#q-pin-fan-xie-ru-huo-zhe-shan-chu-yi-ge-hen-da-de-zi-fu-chuan-you-shi-me-wen-ti" class="header-anchor">#</a></h1>
+<p>A:<br>
+如果一个 key 写入的 value 非常大，那么 Redis 在分配内存时就会比较耗时。<br>
+同样的，当删除这个 key 时（过期、淘汰），释放内存也会比较耗时，这种类型的 key 我们一般称之为 bigkey。<br>
+还有备份机制中，如果有bigkey，也会导致备份过程的写时复制很慢，导致性能下降。</p>
+<ul>
+<li>除了后台释放的方案外， 尽可能不要写bigkey！</li>
+</ul>
+<hr>
+<h1><span id="q-ru-he-zhao-dao-redis-zhong-shi-fou-you-zhe-chong-bigkey">Q: 如何找到redis中是否有这种bigkey？</span><a href="#q-ru-he-zhao-dao-redis-zhong-shi-fou-you-zhe-chong-bigkey" class="header-anchor">#</a></h1>
+<p>A:<br>
+”–bigkeys -i 频率”命令 可以获取各种类型的key大小分布情况<br>
+本质上就是调用了scan，拿到所有key后统计大小和个数。</p>
+<hr>
+<h1><span id="q-you-yi-ge-he-scan-lei-si-de-ming-ling-jiao-keys-ming-ling-you-shi-me-qu-bie">Q: 有一个和scan类似的命令叫keys命令， 有什么区别？</span><a href="#q-you-yi-ge-he-scan-lei-si-de-ming-ling-jiao-keys-ming-ling-you-shi-me-qu-bie" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>redis的单线程的。keys指令会导致线程阻塞一段时间，线上服务会停顿，直到指令执行完毕，服务才能恢复</li>
+<li>scan指令可以无阻塞的提取出指定模式的key列表,用的是额外线程。</li>
+</ul>
+<hr>
+<hr>
+<h1><span id="q-redis-4-0-lazy-free-ji-zhi-you-liao-jie-me">Q: redis 4.0 lazy-free机制有了解么？</span><a href="#q-redis-4-0-lazy-free-ji-zhi-you-liao-jie-me" class="header-anchor">#</a></h1>
+<p>A:<br>
+执行下面的命令，开启lazy-expire模式<br>
+#释放过期 key 的内存，放到后台线程执行<br>
+lazyfree-lazy-expire yes<br>
+涉及删除、过期造成的主线程延迟问题，都可改成lazy-free，在另外的线程中去释放。</p>
+<hr>
+<h1><span id="q-da-liang-key-ji-zhong-guo-qi-ye-hui-dao-zhi-mou-yi-shi-ke-xing-neng-da-liang-xia-jiang-chu-liao-jia-sui-ji-guo-qi-shi-jian-wai-huan-neng-ru-he-bi-mian">Q: 大量key集中过期也会导致某一时刻性能大量下降，除了加随机过期时间外，还能如何避免？</span><a href="#q-da-liang-key-ji-zhong-guo-qi-ye-hui-dao-zhi-mou-yi-shi-ke-xing-neng-da-liang-xia-jiang-chu-liao-jia-sui-ji-guo-qi-shi-jian-wai-huan-neng-ru-he-bi-mian" class="header-anchor">#</a></h1>
+<p>A:<br>
+通过运维手段处理</p>
+<ul>
+<li>在 Redis 上执行 INFO 命令就可以拿到这个实例所有的运行状态数据。</li>
+<li>重点关注 expired_keys 这一项，它代表整个实例到目前为止，累计删除过期 key 的数量。</li>
+<li>当这个指标在很短时间内出现了突增，需要及时报警出来，并进行这类key超时时间的调整和处理</li>
+</ul>
+<hr>
+<h1><span id="q-ru-he-wo-de-redis-nei-cun-pei-zhi-de-xiao-liao-hui-ru-he-dui-xing-neng-zao-cheng-ying-xiang">Q: 如何我的redis内存配置的小了，会如何对性能造成影响？</span><a href="#q-ru-he-wo-de-redis-nei-cun-pei-zhi-de-xiao-liao-hui-ru-he-dui-xing-neng-zao-cheng-ying-xiang" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>
+<p>Redis 内存达到 maxmemory 后，每次写入新的数据之前，Redis 必须先从实例中踢出一部分数据，让整个实例的内存维持在 maxmemory 之下，然后才能把新数据写进来。</p>
+<p>这个过程就是数据淘汰过程。 如果过小，频繁淘汰删除，肯定会影响性能。</p>
+</li>
+<li>
+<p>机器内存太小，导致频繁做系统的swap磁盘-内存页交换。</p>
+</li>
+</ul>
+<hr>
+<h1><span id="q-redis-shi-li-nei-cun-yue-da-yue-hao-ma-tai-da-de-hua-ke-neng-you-shi-me-wen-ti">Q:Redis 实例内存越大越好吗？太大的话可能有什么问题？</span><a href="#q-redis-shi-li-nei-cun-yue-da-yue-hao-ma-tai-da-de-hua-ke-neng-you-shi-me-wen-ti" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>当 Redis 开启了后台 RDB 和 AOF rewrite 后，在执行时，它们都需要主进程fork出一个子进程进行数据的持久化</li>
+<li>这个 fork 过程会消耗大量的 CPU 资源，在完成 fork 之前，整个 Redis 实例会被阻塞住，无法处理任何客户端请求。</li>
+<li>执行 fork 的耗时与redis实例大小有关，实例越大，耗时越久。</li>
+</ul>
+<blockquote>
+<p>注意，fork和部署类型也有关，如果部署在虚拟机上，fork所用的时间会更久。</p>
+</blockquote>
+<hr>
+<h1><span id="q-linux-de-nei-cun-da-ye-you-liao-jie-me-kai-qi-hou-dui-redis-de-xing-neng-shi-ti-sheng-huan-shi-xia-jiang">Q: linux的内存大页有了解么？ 开启后对redis的性能是提升还是下降？</span><a href="#q-linux-de-nei-cun-da-ye-you-liao-jie-me-kai-qi-hou-dui-redis-de-xing-neng-shi-ti-sheng-huan-shi-xia-jiang" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>Linux 内核从 2.6.38 开始，支持了内存大页机制，该机制允许应用程序以 2MB 大小为单位，向操作系统申请内存。</li>
+<li>这会导致申请内存的时间变大。</li>
+<li>当进行AOF或者RDB备份时，会进行写时复制，如果申请页过大，会导致及时只改20B的数据，也会用2MB单位申请，减慢主线程的请求响应速度。</li>
+</ul>
+<p>建议关闭redis部署机器上的内存大页。</p>
+<hr>
+<h1><span id="q-aof-xu-yao-zhu-xian-cheng-zuo-tong-bu-xie-wo-pei-zhi-cheng-appendfsync-everysec-xie-nei-cun-mei-miao-xie-ci-pan-shi-bu-shi-jiu-bu-hui-zu-sai-zhu-xian-cheng-zao-cheng-xing-neng-xia-jiang-liao-wei-shi-me">Q: AOF需要主线程做同步写， 我配置成 appendfsync everysec （写内存，每秒写磁盘）， 是不是就不会阻塞主线程，造成性能下降了？为什么？</span><a href="#q-aof-xu-yao-zhu-xian-cheng-zuo-tong-bu-xie-wo-pei-zhi-cheng-appendfsync-everysec-xie-nei-cun-mei-miao-xie-ci-pan-shi-bu-shi-jiu-bu-hui-zu-sai-zhu-xian-cheng-zao-cheng-xing-neng-xia-jiang-liao-wei-shi-me" class="header-anchor">#</a></h1>
+<p>A:<br>
+rewrite重写过慢<br>
+或者其他应用占用磁盘IO，导致写增量AOF文件过慢<br>
+这会导致主线吃还没同步写完，就收到了新的写请求，这时候新的写请求就会阻塞。</p>
+<hr>
+<h1><span id="q-ru-he-jie-jue-aof-de-xie-ci-pan-zu-sai-wen-ti">Q: 如何解决AOF的写磁盘阻塞问题？</span><a href="#q-ru-he-jie-jue-aof-de-xie-ci-pan-zu-sai-wen-ti" class="header-anchor">#</a></h1>
+<p>A:<br>
+如果是rewrite， 可以调整配置，让rewrite的时候不要做appendfsync写磁盘。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># AOF rewrite 期间，AOF 后台子线程不进行刷盘操作</span><br><span class="line"># 相当于在这期间，临时把 appendfsync 设置为了 none</span><br><span class="line">no-appendfsync-on-rewrite yes</span><br></pre></td></tr></table></figure>
+<p>提升磁盘性能，更换为SSD固态硬盘。</p>
+<hr>
+<h1><span id="q-redis-da-liang-de-nei-cun-sui-pian-ye-hui-dao-zhi-xing-neng-xia-jiang-ru-he-you-hua-redis-de-sui-pian">Q: redis大量的内存碎片也会导致性能下降，如何优化redis的碎片？</span><a href="#q-redis-da-liang-de-nei-cun-sui-pian-ye-hui-dao-zhi-xing-neng-xia-jiang-ru-he-you-hua-redis-de-sui-pian" class="header-anchor">#</a></h1>
+<p>A:<br>
+redis具有开启碎片整理的功能。<br>
+相关配置参考如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># 开启自动内存碎片整理（总开关）</span><br><span class="line">activedefrag yes</span><br><span class="line"> </span><br><span class="line"># 内存使用 100MB 以下，不进行碎片整理</span><br><span class="line">active-defrag-ignore-bytes 100mb</span><br><span class="line"> </span><br><span class="line"># 内存碎片率超过 10%，开始碎片整理</span><br><span class="line">active-defrag-threshold-lower 10</span><br><span class="line"># 内存碎片率超过 100%，尽最大努力碎片整理</span><br><span class="line">active-defrag-threshold-upper 100</span><br><span class="line"> </span><br><span class="line"># 内存碎片整理占用 CPU 资源最小百分比</span><br><span class="line">active-defrag-cycle-min 1</span><br><span class="line"># 内存碎片整理占用 CPU 资源最大百分比</span><br><span class="line">active-defrag-cycle-max 25</span><br><span class="line"> </span><br><span class="line"># 碎片整理期间，对于 List/Set/Hash/ZSet 类型元素一次 Scan 的数量</span><br><span class="line">active-defrag-max-scan-fields 1000</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%8F%91%E5%B8%83%E5%92%8C%E8%AE%A2%E9%98%85/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1667,837 +2352,6 @@ A:<br>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E9%AB%98%E5%B9%B6%E5%8F%91%E9%AB%98%E5%8E%8B%E5%9C%BA%E6%99%AF%E5%A4%84%E7%90%86%E8%AE%BE%E8%AE%A1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E9%AB%98%E5%B9%B6%E5%8F%91%E9%AB%98%E5%8E%8B%E5%9C%BA%E6%99%AF%E5%A4%84%E7%90%86%E8%AE%BE%E8%AE%A1/" class="post-title-link" itemprop="url">高并发/高压场景处理设计</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-09-21 22:30:12 / 修改时间：23:50:48" itemprop="dateCreated datePublished" datetime="2022-09-21T22:30:12+08:00">2022-09-21</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">系统设计</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E9%AB%98%E5%B9%B6%E5%8F%91%E9%AB%98%E5%8E%8B%E5%9C%BA%E6%99%AF%E5%A4%84%E7%90%86%E8%AE%BE%E8%AE%A1/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E9%AB%98%E5%B9%B6%E5%8F%91%E9%AB%98%E5%8E%8B%E5%9C%BA%E6%99%AF%E5%A4%84%E7%90%86%E8%AE%BE%E8%AE%A1/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.9k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#q-tun-tu-liang-tps-shi-shi-me">Q: 吞吐量（TPS）是什么</a></li>
-<li><a href="#q-qps-shi-shi-me">Q: QPS是什么</a></li>
-<li><a href="#q-qps-he-tps-de-qu-bie">Q: QPS和TPS的区别？</a></li>
-<li><a href="#q-tp-shi-shi-me">Q: TP是什么？</a></li>
-<li><a href="#q-jie-kou-fang-wen-liang-guo-da-hui-fa-sheng-shi-me">Q: 接口访问量过大会发生什么？</a></li>
-<li><a href="#q-ying-dui-gao-bing-fa-da-liu-liang-you-na-xie-chang-jian-shou-duan">Q: 应对高并发、大流量有哪些常见手段？</a></li>
-<li><a href="#q-shi-me-shi-liu-liang-de-lou-dou-mo-xing">Q: 什么是流量的漏斗模型？</a></li>
-<li><a href="#q-ru-he-zuo-jie-kou-xian-liu">Q: 如何做接口限流？</a></li>
-<li><a href="#q-ru-he-she-ji-yi-ge-xian-shi-qiang-gou-de-gong-neng">Q: 如何设计一个限时抢购的功能</a></li>
-<li><a href="#q-ru-he-zai-chan-pin-she-ji-shang-jin-xing-xue-feng">Q: 如何在 产品设计上进行削峰？</a></li>
-<li><a href="#q-ru-he-bi-mian-gao-bing-fa-xie-de-chang-jing-xia-de-shu-ju-ku-chao-mai-wen-ti">Q: 如何避免高并发写的场景下的数据库超卖问题</a></li>
-<li><a href="#q-ru-guo-ku-cun-chong-zu-wu-lun-duo-shao-de-xie-qing-qiu-du-yi-ci-xing-da-gei-shu-ju-ku-ma-he-xian-shi-qiang-gou-bu-tong-bu-kao-lu-xie-shi-bai">Q: 如果库存充足， 无论多少的写请求都一次性打给数据库吗？（和限时抢购不同，不考虑写失败）</a></li>
-<li><a href="#q-watch-de-yuan-li-shi-shi-me">Q: WATCH的原理是什么？</a></li>
-<li><a href="#q-redis-xie-cheng-gong-na-shi-me-shi-hou-tong-bu-dao-shu-ju-ku-ni">Q: redis写成功，那什么时候同步到数据库呢？</a></li>
-<li><a href="#miao-sha-xi-tong-she-ji-ti">秒杀系统设计题</a>
-<ul>
-<li><a href="#q-she-ji-yi-ge-miao-sha-xi-tong-da-gai-yao-zai-na-xie-ceng-mian-she-ji">Q: 设计一个秒杀系统大概要在哪些层面设计？</a></li>
-<li><a href="#q-liu-lan-qi-ceng-ke-yi-zen-me-lan-jie">Q: 浏览器层可以怎么拦截？</a></li>
-<li><a href="#q-zhan-dian-ceng-zen-me-fang-hu">Q: 站点层怎么防护？</a></li>
-<li><a href="#q-10w-ge-bu-tong-de-uid-tong-shi-da-ru-zhan-dian-ceng-huan-cun-lan-bu-zhu-liao-dao-fu-wu-ceng-liao-zen-me-ban">Q: 10w个不同的uid同时打入，站点层缓存拦不住了，到服务层了，怎么办？</a></li>
-<li><a href="#q-xie-dui-lie-man-liao-zen-me-ban">Q: 写队列满了怎么办？</a></li>
-<li><a href="#q-miao-sha-hou-wei-zhi-fu-zen-me-ban">Q: 秒杀后未支付，怎么办？</a></li>
-<li><a href="#q-xi-tong-zuo-liao-zhu-cong-du-xie-fen-chi-shi-zen-me-bao-zheng-xie-zhi-hou-neng-ma-shang-du-dao-xin-shu-ju">Q: 系统做了主从读写分离时， 怎么保证写之后能马上读到新数据？</a></li>
-</ul>
-</li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="q-tun-tu-liang-tps-shi-shi-me">Q: 吞吐量（TPS）是什么</span><a href="#q-tun-tu-liang-tps-shi-shi-me" class="header-anchor">#</a></h1>
-<p>A:<br>
-TPS：Transactions Per Second（每秒传输的事物处理个数），即服务器每秒处理的事务数。<br>
-TPS包括一条消息入和一条消息出，加上一次用户数据库访问。（业务TPS = CAPS × 每个呼叫平均TPS）</p>
-<ul>
-<li>对于无并发的应用系统而言，吞吐量与响应时间成严格的反比关系，实际上此时吞吐量就是响应时间的倒数</li>
-<li>对于并发系统而言，有你n个用户使用时，每个用户看到的响应时间通常并不是n×t，而往往比n×t小很多（因为并发执行，很多资源是交叉使用的）</li>
-<li>吞吐量是一个比较通用的指标，两个具有不同用户数和用户使用模式的系统，如果其最大吞吐量基本一致，则可以判断两个系统的处理能力基本一致</li>
-</ul>
-<hr>
-<h1><span id="q-qps-shi-shi-me">Q:   QPS是什么</span><a href="#q-qps-shi-shi-me" class="header-anchor">#</a></h1>
-<p>A:<br>
-(Query Per Second)<br>
-每秒查询率QPS是对一个特定的查询服务器在规定时间内所处理流量多少的衡量标准<br>
-在因特网上，作为域名系统服务器的机器的性能经常用每秒查询率来衡量。对应fetches/sec，即每秒的响应请求数，也即是最大吞吐能力。 （看来是类似于TPS，只是应用于特定场景的吞吐量）</p>
-<hr>
-<h1><span id="q-qps-he-tps-de-qu-bie">Q: QPS和TPS的区别？</span><a href="#q-qps-he-tps-de-qu-bie" class="header-anchor">#</a></h1>
-<p>A:<br>
-QPS是最大吞吐能力。<br>
-TPS是针对单个请求的简单事务处理能力判断。更多是针对单个接口而言。</p>
-<hr>
-<h1><span id="q-tp-shi-shi-me">Q:  TP是什么？</span><a href="#q-tp-shi-shi-me" class="header-anchor">#</a></h1>
-<p>A:<br>
-响应时间是指系统对请求作出响应的时间。是用户感知的时间，响应时间小于100毫秒应该是不错的，响应时间在1秒左右可能属于勉强可以接受，如果响应时间达到3秒就完全难以接受了。</p>
-<hr>
-<h1><span id="q-jie-kou-fang-wen-liang-guo-da-hui-fa-sheng-shi-me">Q:  接口访问量过大会发生什么？</span><a href="#q-jie-kou-fang-wen-liang-guo-da-hui-fa-sheng-shi-me" class="header-anchor">#</a></h1>
-<p>A:<br>
-服务器可能会崩溃。<br>
-服务器对于请求都是排队的，负载不大的时候感觉不到，因为都是1秒内处理了。<br>
-当请求数量上去后，就开始有感觉了。继续增大的话，队列会占满了，服务器开始丢弃部分请求<br>
-继续增大网络请求，操作系统的TCP协议栈也开始丢弃请求，对外表现为服务器网络也连不上了。<br>
-继续增大的话，网卡硬件部分开始满速运行，然后就看操作系统驱动和硬件质量了。<br>
-另一种说法：</p>
-<blockquote>
-<p>当访问量大的时候，后端发送给数据库的请求多，数据库并发读取或写入，受系统io影响，服务器磁盘io是固定的，一般受硬盘硬件读写影响，读写越多，io越高，到达上线就会等待，出现io等待，CPU就会等待，内存也会占用不释放，然后越来越多的请求阻塞，恶性循环，系统资源耗尽，系统崩溃，这也是为什么要提高性能，各种做缓存，从cdn到业务层缓存，代码编译缓存，数据库缓存</p>
-</blockquote>
-<hr>
-<h1><span id="q-ying-dui-gao-bing-fa-da-liu-liang-you-na-xie-chang-jian-shou-duan">Q: 应对高并发、大流量有哪些常见手段？</span><a href="#q-ying-dui-gao-bing-fa-da-liu-liang-you-na-xie-chang-jian-shou-duan" class="header-anchor">#</a></h1>
-<p>A:</p>
-<ul>
-<li>扩容——提升集群并行处理能力</li>
-<li>静态化——静态数据由cdn返回</li>
-<li>限流</li>
-<li>缓存</li>
-<li>队列——当上下游处理能力存在差距时，通过队列形成漏斗，等下游有处理能力时自己来消费。</li>
-</ul>
-<hr>
-<h1><span id="q-shi-me-shi-liu-liang-de-lou-dou-mo-xing">Q: 什么是流量的漏斗模型？</span><a href="#q-shi-me-shi-liu-liang-de-lou-dou-mo-xing" class="header-anchor">#</a></h1>
-<p>A:<br>
-即流量要经过的系统如同漏斗一样， 访问db应当是最少也最后才到达的地方<br>
-<img src="/images/%E9%AB%98%E5%B9%B6%E5%8F%91%E9%AB%98%E5%8E%8B%E5%9C%BA%E6%99%AF%E5%A4%84%E7%90%86%E8%AE%BE%E8%AE%A1/090537a7721ac40dd4fe69719d1d5bcffd1f4eed.png" alt="090537a7721ac40dd4fe69719d1d5bcffd1f4eed"></p>
-<hr>
-<h1><span id="q-ru-he-zuo-jie-kou-xian-liu">Q:  如何做接口限流？</span><a href="#q-ru-he-zuo-jie-kou-xian-liu" class="header-anchor">#</a></h1>
-<p>A:</p>
-<ol>
-<li>对客户端、前端限速，复杂业务操作例如验证码等，或者短时间内限制频繁操作次数上限。</li>
-<li>如果自己这个接口是基础接口，被内部调用， 则也要限制内部服务的并发，单纯增加服务A和B的数量，基础服务没跟上，会造成雪崩效应。<br>
-<img src="/images/%E9%AB%98%E5%B9%B6%E5%8F%91%E9%AB%98%E5%8E%8B%E5%9C%BA%E6%99%AF%E5%A4%84%E7%90%86%E8%AE%BE%E8%AE%A1/a2234b6a44085f9193cc95f37579b2e08bc260c1.png" alt="a2234b6a44085f9193cc95f37579b2e08bc260c1"></li>
-<li>使用漏桶算法</li>
-</ol>
-<ul>
-<li>不管服务调用多么不稳定，我们只固定进行服务输出，比如每10毫秒接受一次服务调用。既然是一个桶，那就肯定有容量，由于调用的消费速率已经固定，那么当桶的容量堆满了，则只能丢弃了</li>
-<li>实现方面，可以先准备一个队列，当做桶的容量，另外通过一个计划线程池（ScheduledExecutorService）来定期从队列中获取并执行请求调用，当然，我们没有限定一次性只能从队里中拿取一个请求，比如可以一次性拿100个请求，然后并发执行</li>
-<li>缺点：严格限制的吞吐量，无法响应瞬发性的高峰流量。</li>
-</ul>
-<ol start="4">
-<li>
-<p>使用令牌桶算法<br>
-<img src="/images/%E9%AB%98%E5%B9%B6%E5%8F%91%E9%AB%98%E5%8E%8B%E5%9C%BA%E6%99%AF%E5%A4%84%E7%90%86%E8%AE%BE%E8%AE%A1/c6414f5fac5125bfb466e8ac88d122a1e5da66f5.png" alt="c6414f5fac5125bfb466e8ac88d122a1e5da66f5"><br>
-生成令牌的速度是恒定的，而请求去拿令牌是没有速度限制的。这意味，面对瞬时大流量，该算法可以在短时间内请求拿到大量令牌，而且拿令牌的过程并不是消耗很大的事情。<br>
-<a target="_blank" rel="noopener" href="https://www.cnblogs.com/cjsblog/p/9379516.html">令牌桶源码解读</a></p>
-</li>
-<li>
-<p>计数器算法<br>
-在单位时间内， 有一个专门的计数器进行计数， 每请求一次计数器就+1，。 单位时间内如果到达阈值，则后续请求进行限流处理。 只有时间临界点到达后，才会重置，新的请求才能访问。</p>
-</li>
-</ol>
-<p>单位时间计数器可以用redis的setnx实现<br>
-要在 10 秒内限定 20 个请求，那么可以在 setnx 的时候设置过期时间 10，当请求的 setnx 数量达到 20 的时候即达到了限流效果。<br>
-Redis Setnx（SET if Not eXists） 命令在指定的 key 不存在时，为 key 设置指定的值。</p>
-<p>也可以用redis的zset实现<br>
-将请求打造成一个zset数组，当每一次请求进来的时候，value保持唯一，可以用UUID生成，而score可以用当前时间戳表示，因为score我们可以用来计算当前时间戳之内有多少的请求数量。而zset数据结构也提供了range方法让我们可以很轻易的获取到2个时间戳内有多少请求</p>
-<hr>
-<h1><span id="q-ru-he-she-ji-yi-ge-xian-shi-qiang-gou-de-gong-neng">Q:  如何设计一个限时抢购的功能</span><a href="#q-ru-he-she-ji-yi-ge-xian-shi-qiang-gou-de-gong-neng" class="header-anchor">#</a></h1>
-<p>例如每个商品都有特定的可抢购次数例如10w， 但是如果同时打进来可能直接导致数据库出现较大的负载压力。</p>
-<p>A:<br>
-应用层代码里用简单的时间片算法， 某一时间内阈值是1000， 时间到了后就拒绝后面用户的抢购，时间点到了后再允许接收。<br>
-同时开发一个接口， 支持动态修改其中的各个参数。</p>
-<p>另外如果商品数量过多，每个商品都有阈值， 可能总量会超出， 所以要根据商品总量动态调整每个商品的阈值上限。</p>
-<hr>
-<h1><span id="q-ru-he-zai-chan-pin-she-ji-shang-jin-xing-xue-feng">Q: 如何在 产品设计上进行削峰？</span><a href="#q-ru-he-zai-chan-pin-she-ji-shang-jin-xing-xue-feng" class="header-anchor">#</a></h1>
-<p>A:</p>
-<ol>
-<li>高流量活动分时段进行， 例如抢购5000个商品，分5个时间段，每个时间段开放1000个。</li>
-<li>答题验证，验证码</li>
-</ol>
-<hr>
-<h1><span id="q-ru-he-bi-mian-gao-bing-fa-xie-de-chang-jing-xia-de-shu-ju-ku-chao-mai-wen-ti">Q:  如何避免高并发写的场景下的数据库超卖问题</span><a href="#q-ru-he-bi-mian-gao-bing-fa-xie-de-chang-jing-xia-de-shu-ju-ku-chao-mai-wen-ti" class="header-anchor">#</a></h1>
-<p>A:<br>
-在Innodb中使用乐观锁来实现写入。<br>
-每次写入前先查出商品剩余量和version<br>
-调用update的时候加上where version条件， 如果version发生变化，自然就会update失败，于是进行重试。</p>
-<p>虽然还是会占行锁， 但是不会造成请求线程阻塞。</p>
-<hr>
-<h1><span id="q-ru-guo-ku-cun-chong-zu-wu-lun-duo-shao-de-xie-qing-qiu-du-yi-ci-xing-da-gei-shu-ju-ku-ma-he-xian-shi-qiang-gou-bu-tong-bu-kao-lu-xie-shi-bai">Q: 如果库存充足， 无论多少的写请求都一次性打给数据库吗？（和限时抢购不同，不考虑写失败）</span><a href="#q-ru-guo-ku-cun-chong-zu-wu-lun-duo-shao-de-xie-qing-qiu-du-yi-ci-xing-da-gei-shu-ju-ku-ma-he-xian-shi-qiang-gou-bu-tong-bu-kao-lu-xie-shi-bai" class="header-anchor">#</a></h1>
-<p>A:<br>
-可以使用redis缓存做库存扣减。</p>
-<ol>
-<li>客户端调用WATCH + （商品id） 这个命令</li>
-<li>调用MULTI命令标记事务块的开始</li>
-<li>输入写命令。</li>
-<li>调用EXEC进行事务提交<br>
-如果商品的缓存值在WATCH后被修改了， 则EXEC会失败， redis之后再重试即可。</li>
-</ol>
-<hr>
-<h1><span id="q-watch-de-yuan-li-shi-shi-me">Q: WATCH的原理是什么？</span><a href="#q-watch-de-yuan-li-shi-shi-me" class="header-anchor">#</a></h1>
-<p>A:<br>
-redis服务端会 维持一个监听key的客户端链表<br>
-当key发生变化之后，  这个key对应的客户端会被标记成REDIS_DIRTY_CAS状态<br>
-当接收到后面这个客户端的EXEC请求时，就返回执行失败。</p>
-<hr>
-<h1><span id="q-redis-xie-cheng-gong-na-shi-me-shi-hou-tong-bu-dao-shu-ju-ku-ni">Q: redis写成功，那什么时候同步到数据库呢？</span><a href="#q-redis-xie-cheng-gong-na-shi-me-shi-hou-tong-bu-dao-shu-ju-ku-ni" class="header-anchor">#</a></h1>
-<p>A:<br>
-将写成功的消息写入雕铣队列， 通过消息队列来实现削峰，确保写入数据库时的流量可控。</p>
-<hr>
-<h1><span id="miao-sha-xi-tong-she-ji-ti">秒杀系统设计题</span><a href="#miao-sha-xi-tong-she-ji-ti" class="header-anchor">#</a></h1>
-<p>秒杀系统，库存只有一份，所有人会在集中的时间读和写这些数据，多个人读一个数据</p>
-<h2><span id="q-she-ji-yi-ge-miao-sha-xi-tong-da-gai-yao-zai-na-xie-ceng-mian-she-ji">Q: 设计一个秒杀系统大概要在哪些层面设计？</span><a href="#q-she-ji-yi-ge-miao-sha-xi-tong-da-gai-yao-zai-na-xie-ceng-mian-she-ji" class="header-anchor">#</a></h2>
-<p>A:<br>
-首先考虑重要优化点：</p>
-<ol>
-<li>将请求尽可能拦截在上游。 因为实际上写操作不会有那么多。</li>
-<li>充分利用缓存。因为大部分失败的人都是读操作。<br>
-那么基于这2点，设计下面的架构：</li>
-<li>浏览器端，最上层，会执行到一些JS代码</li>
-<li>站点层，这一层会访问后端数据，拼html页面返回给浏览器(即和浏览器直接交互的）</li>
-<li>服务层，向上游屏蔽底层数据细节，提供数据访问（即直接提供数据查询的服务，这里数据实际读取和返回前台响应分成了2个服务）</li>
-<li>数据层，最终的库存是存在这里的，mysql是一个典型（当然还有会缓存）<br>
-<img src="/images/%E9%AB%98%E5%B9%B6%E5%8F%91%E9%AB%98%E5%8E%8B%E5%9C%BA%E6%99%AF%E5%A4%84%E7%90%86%E8%AE%BE%E8%AE%A1/5e79cd1be7028e577d625127bddb333d9ef76af1.png" alt="5e79cd1be7028e577d625127bddb333d9ef76af1"><br>
-各部分优化措施如下：</li>
-</ol>
-<ul>
-<li>浏览器和APP：做限速</li>
-<li>站点层：按照uid做限速，做页面缓存</li>
-<li>服务层：按照业务做写请求队列控制流量，做数据缓存</li>
-<li>数据层：闲庭信步</li>
-</ul>
-<hr>
-<h2><span id="q-liu-lan-qi-ceng-ke-yi-zen-me-lan-jie">Q: 浏览器层可以怎么拦截？</span><a href="#q-liu-lan-qi-ceng-ke-yi-zen-me-lan-jie" class="header-anchor">#</a></h2>
-<p>A:<br>
-验证码、 短时间内访问次数限制。 分段销售</p>
-<hr>
-<h2><span id="q-zhan-dian-ceng-zen-me-fang-hu">Q: 站点层怎么防护？</span><a href="#q-zhan-dian-ceng-zen-me-fang-hu" class="header-anchor">#</a></h2>
-<p>A:<br>
-站点层根据用户id做请求计数， uid只能5秒通过一次。这样可以避免恶意用户频繁用一个uid绕过客户端限制去下单。<br>
-同时补充页面缓存。</p>
-<hr>
-<h2><span id="q-10w-ge-bu-tong-de-uid-tong-shi-da-ru-zhan-dian-ceng-huan-cun-lan-bu-zhu-liao-dao-fu-wu-ceng-liao-zen-me-ban">Q: 10w个不同的uid同时打入，站点层缓存拦不住了，到服务层了，怎么办？</span><a href="#q-10w-ge-bu-tong-de-uid-tong-shi-da-ru-zhan-dian-ceng-huan-cun-lan-bu-zhu-liao-dao-fu-wu-ceng-liao-zen-me-ban" class="header-anchor">#</a></h2>
-<p>A:<br>
-服务层设计一个请求队列，每次只透有限的写请求去数据层<br>
-读请求怎么办？ 用数据缓存。cache缓存动态扩容。 热点发现</p>
-<hr>
-<h2><span id="q-xie-dui-lie-man-liao-zen-me-ban">Q: 写队列满了怎么办？</span><a href="#q-xie-dui-lie-man-liao-zen-me-ban" class="header-anchor">#</a></h2>
-<p>A:<br>
-最坏的情况下，缓存了若干请求之后，后续请求都直接返回“无票”（队列里已经有100w请求了，都等着，再接受请求也没有意义了）</p>
-<hr>
-<h2><span id="q-miao-sha-hou-wei-zhi-fu-zen-me-ban">Q: 秒杀后未支付，怎么办？</span><a href="#q-miao-sha-hou-wei-zhi-fu-zen-me-ban" class="header-anchor">#</a></h2>
-<p>A:<br>
-数据库里一个状态，未支付。如果超过时间，例如45分钟，库存会重新会恢复（大家熟知的“回仓”）</p>
-<hr>
-<h2><span id="q-xi-tong-zuo-liao-zhu-cong-du-xie-fen-chi-shi-zen-me-bao-zheng-xie-zhi-hou-neng-ma-shang-du-dao-xin-shu-ju">Q: 系统做了主从读写分离时， 怎么保证写之后能马上读到新数据？</span><a href="#q-xi-tong-zuo-liao-zhu-cong-du-xie-fen-chi-shi-zen-me-bao-zheng-xie-zhi-hou-neng-ma-shang-du-dao-xin-shu-ju" class="header-anchor">#</a></h2>
-<p>A:<br>
-用切面的方式做注解<br>
-通过注解判断哪些请求走主库，哪些请求走从库<br>
-例如有些场景写之后马上就读的概率很高，那就走主库<br>
-如果有些场景对读的实时性要求不高，那就从走从库<br>
-或者用一些mycat中间件。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" class="post-title-link" itemprop="url">动态规划</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-09-20 23:12:42" itemprop="dateCreated datePublished" datetime="2022-09-20T23:12:42+08:00">2022-09-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-21 00:10:51" itemprop="dateModified" datetime="2022-09-21T00:10:51+08:00">2022-09-21</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">算法大全</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%85%B6%E4%BB%96/" itemprop="url" rel="index"><span itemprop="name">其他</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#1-4-de-si-kao-tao-lu">1+4的思考套路</a>
-<ul>
-<li><a href="#jian-dan-li-zi">简单例子</a>
-<ul>
-<li><a href="#zai-chao-shi-de-si-lu-shang-xie-chu-yi-zu-ji-suan-guo-cheng-de-li-zi">①在超时的思路上写出一组计算过程的例子</a></li>
-<li><a href="#zai-chao-shi-li-zi-de-ji-chu-shang-you-na-xie-chong-fu-lang-fei-de-di-fang">②在超时例子的基础上，有哪些重复、浪费的地方？</a></li>
-<li><a href="#ru-he-ding-yi-dp-shu-zu">③如何定义dp数组？</a></li>
-<li><a href="#zhuang-tai-de-bian-hua-fang-xiang-shi-shi-me-shi-zen-me-bian-hua-de">④状态的变化方向是什么，是怎么变化的</a></li>
-<li><a href="#bian-jie-zhuang-tai-shi-shi-me">⑤边界状态是什么？</a></li>
-<li><a href="#shi-xian">实现</a></li>
-</ul>
-</li>
-<li><a href="#jin-jie-ban-er-wei-de-dong-tai-gui-hua">进阶版，二维的动态规划</a>
-<ul>
-<li><a href="#zai-chao-shi-de-si-lu-shang-xie-chu-yi-zu-ji-suan-guo-cheng-de-li-zi-1">①在超时的思路上写出一组计算过程的例子</a></li>
-<li><a href="#zai-chao-shi-li-zi-de-ji-chu-shang-you-na-xie-chong-fu-lang-fei-de-di-fang-1">②在超时例子的基础上，有哪些重复、浪费的地方？</a></li>
-<li><a href="#ru-he-ding-yi-dp-shu-zu-1">③如何定义dp数组？</a></li>
-<li><a href="#zhuang-tai-de-bian-hua-fang-xiang-shi-shi-me-shi-zen-me-bian-hua-de-1">④状态的变化方向是什么，是怎么变化的</a></li>
-<li><a href="#bian-jie-zhuang-tai-shi-shi-me-1">⑤边界状态是什么？</a></li>
-<li><a href="#shi-xian-1">实现</a></li>
-<li><a href="#nei-cun-yi-chu-chu-li">内存溢出处理</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#qi-ta-lei-si-ti-mu-lian-xi">其他类似题目练习</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<p>以后不定期更新一些算法方便自己的思考和总结。</p>
-<hr>
-<p>平时练习算法题学习算法知识时，经常会发现题解里写着“动态规划”，里面一上来就是一个复杂的dp公式，对于新人来说除了说声<br>
-<img src="/images/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/image(144).png" alt="image.png"></p>
-<p>剩下就是疑惑，他是怎么想到这个公式的？我能想到吗？这玩意工作中有用吗？<br>
-加上“动态规划”这高端的名字，然后就劝退了不少试图去理解他的人。<br>
-<img src="/images/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/image(145).png" alt="image.png"></p>
-<p>动态规划听起来太吓人，可以换个说法</p>
-<p>我在内心更喜欢叫他“状态缓存”<br>
-如果是服务开发，相信很熟悉这个词语， 利用缓存来加快一些重复的请求的响应速度。<br>
-而这个缓存的特点是 <em><strong>和其他缓存有所关联。</strong></em></p>
-<p>比如我们的服务要计算7天内的某金钱总和，计算后要缓存一下。<br>
-后来又收到一个请求，要计算8天内的金钱总和<br>
-那我们只需要取之前算过的7天内的金钱综合，加上第8天的金钱就行了。</p>
-<h1><span id="1-4-de-si-kao-tao-lu">1+4的思考套路</span><a href="#1-4-de-si-kao-tao-lu" class="header-anchor">#</a></h1>
-<p>自己针对动态规划总结了一个自己的思考套路，我叫他1组例子4个问题，就叫1+4好了，通过这5个过程，可以站在普通人的角度（就是非acm大佬那种的角度），去理解动态规划是如何被思考出来的</p>
-<ul>
-<li>在超时的思路上写出一组计算过程的例子</li>
-<li>在超时例子的基础上，有哪些重复、浪费的地方？</li>
-<li>如何定义dp数组</li>
-<li>状态的变化方向是什么，是怎么变化的</li>
-<li>边界状态是什么</li>
-</ul>
-<h2><span id="jian-dan-li-zi">简单例子</span><a href="#jian-dan-li-zi" class="header-anchor">#</a></h2>
-<p>以一道简单题为例：<br>
-爬楼梯：<br>
-<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/climbing-stairs/">https://leetcode-cn.com/problems/climbing-stairs/</a></p>
-<p><img src="/images/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/image(146).png" alt="image.png"></p>
-<p>这时候就要静下心，观察这个解法的例子中是否有重复经历的场景，而这个重复经历的场景就叫状态。<br>
-我处理动态规划的题目时， 都会问自己3个问题，一般就能顺利地解决。</p>
-<h3><span id="zai-chao-shi-de-si-lu-shang-xie-chu-yi-zu-ji-suan-guo-cheng-de-li-zi">①在超时的思路上写出一组计算过程的例子</span><a href="#zai-chao-shi-de-si-lu-shang-xie-chu-yi-zu-ji-suan-guo-cheng-de-li-zi" class="header-anchor">#</a></h3>
-<p>如果我们考虑最简单的解法，  就是从起点开始，每次选择走1步或者走2步，看下能否走到终点，能走到则方法数+1。<br>
-但这种方法注定超时（O（n^2)）<br>
-但我还是照着这个过程模拟了一下，随便列了几个<br>
-1 -&gt;2-&gt; 3-&gt; 4-&gt; 5<br>
-1 -&gt;2 -&gt;3-&gt; 5<br>
-1-&gt;3-&gt;4-&gt;5<br>
-1-&gt;3-&gt;5</p>
-<h3><span id="zai-chao-shi-li-zi-de-ji-chu-shang-you-na-xie-chong-fu-lang-fei-de-di-fang">②在超时例子的基础上，有哪些重复、浪费的地方？</span><a href="#zai-chao-shi-li-zi-de-ji-chu-shang-you-na-xie-chong-fu-lang-fei-de-di-fang" class="header-anchor">#</a></h3>
-<p>在上面，我发现了重复的地方<br>
-<img src="/images/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/image(147).png" alt="image.png"></p>
-<p>也就是说<br>
-从3到5总共就2种路线，已经在1-&gt;2之后计算过了，我后面从1走到3再往后走时，没必要再去算了。<br>
-换言之，当我走到3的时候，其实早就可以知道后面还剩下多少种走法。<br>
-发现重复的地方后，就可以开始建立dp公式了。</p>
-<h3><span id="ru-he-ding-yi-dp-shu-zu">③如何定义dp数组？</span><a href="#ru-he-ding-yi-dp-shu-zu" class="header-anchor">#</a></h3>
-<p>定义dp数组，也就是定义上面提到的重复的地方。重新看下之前的那句话<br>
-当我走到3的时候，其实早就可以知道后面还剩下多少种走法。<br>
-所以dp[3]代表的就是从3往后，有多少种可走的方法。</p>
-<h3><span id="zhuang-tai-de-bian-hua-fang-xiang-shi-shi-me-shi-zen-me-bian-hua-de">④状态的变化方向是什么，是怎么变化的</span><a href="#zhuang-tai-de-bian-hua-fang-xiang-shi-shi-me-shi-zen-me-bian-hua-de" class="header-anchor">#</a></h3>
-<ul>
-<li>首先思考状态的变化方向<br>
-重新看这句话：</li>
-</ul>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>当我走到3的时候，其实早就可以知道后面还剩下多少种走法</p>
-</blockquote>
-</blockquote>
-</blockquote>
-<p>说明结果取决于往 <em><strong>后面</strong></em> 的状态<br>
-因此我们要先计算后面的状态, 即从后往前算</p>
-<ul>
-<li>接着思考这个后面的状态和当前的状态有什么联系，是怎么变化的</li>
-</ul>
-<p>这个一般都包含在题目条件中<br>
-根据题意，要么走2步，要么走1步，因此每当我走到一层时，下一次就2种状态可以变化。<br>
-那么对于第3层而言，他后续有2种走法，走1步或者走2步<br>
-那么他的情况就是dp[3] = dp[3+1] + dp{3+2}<br>
-如果层数设为i，那么这个变化情况就是<br>
-dp[i] = dp[i+1] + dp[i+2]</p>
-<h3><span id="bian-jie-zhuang-tai-shi-shi-me">⑤边界状态是什么？</span><a href="#bian-jie-zhuang-tai-shi-shi-me" class="header-anchor">#</a></h3>
-<p>边界状态就是不需要依赖后面的状态了，直接可以得到结果的状态。<br>
-在这里肯定就是最后一层dp[n]， 最后一层默认是一种走法。 dp[n]=1</p>
-<h3><span id="shi-xian">实现</span><a href="#shi-xian" class="header-anchor">#</a></h3>
-<p>根据上面的过程，自己便定义了这个状态和变化</p>
-<ul>
-<li>定义：dp[i] :  代表从第i层往后，有多少种走法</li>
-<li>方向和变化：dp[i] =  dp[i+1] + dp[i+2];</li>
-<li>边界:  dp[n] = 1<br>
-根据这个写代码就很容易了<br>
-代码：</li>
-</ul>
-<pre><code class="language-java">    public int climbStairs(int n) &#123;
-        int[] dp = new int[n + 1];
-        dp[n] = 1;
-        dp[n-1] = 1;
-        for(int i = n-2; i &gt;=0;i--) &#123;
-            dp[i] = dp[i+1] + dp[i+2];
-        &#125;
-        return dp[0];
-    &#125;
-</code></pre>
-<h2><span id="jin-jie-ban-er-wei-de-dong-tai-gui-hua">进阶版，二维的动态规划</span><a href="#jin-jie-ban-er-wei-de-dong-tai-gui-hua" class="header-anchor">#</a></h2>
-<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/number-of-ways-to-stay-in-the-same-place-after-some-steps/">https://leetcode-cn.com/problems/number-of-ways-to-stay-in-the-same-place-after-some-steps/</a></p>
-<p><img src="/images/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/image(148).png" alt="image.png"></p>
-<h3><span id="zai-chao-shi-de-si-lu-shang-xie-chu-yi-zu-ji-suan-guo-cheng-de-li-zi">①在超时的思路上写出一组计算过程的例子</span><a href="#zai-chao-shi-de-si-lu-shang-xie-chu-yi-zu-ji-suan-guo-cheng-de-li-zi" class="header-anchor">#</a></h3>
-<p>超时的思路肯定是像搜索一样模拟所有的行走过程。<br>
-先假设1个steps=5, arrlen=3的情况<br>
-随便先列几个。模拟一下不断走的位置。数字指的是当前位置。<br>
-0-&gt;1-&gt;2-&gt;1-&gt;0-&gt;0<br>
-0-&gt;1-&gt;2-&gt;1-&gt;1-&gt;0<br>
-0-&gt;1-&gt;1-&gt;1-&gt;1-&gt;0<br>
-0-&gt;1-&gt;1-&gt;1-&gt;0-&gt;0<br>
-0-&gt;0-&gt;1-&gt;1-&gt;1-&gt;0<br>
-……</p>
-<h3><span id="zai-chao-shi-li-zi-de-ji-chu-shang-you-na-xie-chong-fu-lang-fei-de-di-fang">②在超时例子的基础上，有哪些重复、浪费的地方？</span><a href="#zai-chao-shi-li-zi-de-ji-chu-shang-you-na-xie-chong-fu-lang-fei-de-di-fang" class="header-anchor">#</a></h3>
-<p>0-&gt;1-&gt;2-&gt;<em><strong>1-&gt;0-&gt;0</strong></em><br>
-0-&gt;1-&gt;2-&gt;<em><strong>1-&gt;1-&gt;0</strong></em><br>
-0-&gt;1-&gt;1-&gt;<em><strong>1-&gt;1-&gt;0</strong></em><br>
-0-&gt;1-&gt;1-&gt;<em><strong>1-&gt;0-&gt;0</strong></em><br>
-0-&gt;0-&gt;1-&gt;<em><strong>1-&gt;1-&gt;0</strong></em><br>
-0-&gt;0-&gt;1-&gt;<em><strong>1-&gt;0-&gt;0</strong></em><br>
-我发现这部分标粗的部分重复了，<br>
-换句话说<br>
-当我还剩2步且当前位置为1的时候，后面还有多少种走法，其实早就知道了。</p>
-<h3><span id="ru-he-ding-yi-dp-shu-zu">③如何定义dp数组？</span><a href="#ru-he-ding-yi-dp-shu-zu" class="header-anchor">#</a></h3>
-<p>重新看这句话：</p>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>当我还剩2步且当前位置为1的时候，后面还有多少种走法，其实早就知道了。</p>
-</blockquote>
-</blockquote>
-</blockquote>
-<p>涉及了2个关键因素: 剩余步数和当前值，所以得用二维数组<br>
-因此<br>
-dp[realstep][index]<br>
-就代表了  剩余步数为step且位置为index时， 后续还剩多少种走法。</p>
-<h3><span id="zhuang-tai-de-bian-hua-fang-xiang-shi-shi-me-shi-zen-me-bian-hua-de">④状态的变化方向是什么，是怎么变化的</span><a href="#zhuang-tai-de-bian-hua-fang-xiang-shi-shi-me-shi-zen-me-bian-hua-de" class="header-anchor">#</a></h3>
-<ul>
-<li>先思考变化方向<br>
-“当我还剩2步且当前位置为1的时候，<em><strong>后面</strong></em> 还有多少种走法，其实早就知道了。”</li>
-</ul>
-<p>这个后面是指啥， 后面会怎么变?<br>
-后面肯定是步数越来越少的情况， 并且位置会根据规律变化。 所以变化方向是步数变少，位置则按照规定去变。<br>
-那么这个固定越来越少的这个“剩余步数”，就是核心的变化方向<br>
-我们计算时，可以先计算小的剩余步数的状态， 再去算大的剩余步数。</p>
-<ul>
-<li>如何变化<br>
-根据题意和方向，剩余步数肯定-1，  然后位置有3种选择（减1，不变，加1）， 那么方法就是3种选择的相加<br>
-dp[step][index] = dp[step-1][index-1] + dp[step-1][index] + dp[step-1][index+1]</li>
-</ul>
-<h3><span id="bian-jie-zhuang-tai-shi-shi-me">⑤边界状态是什么？</span><a href="#bian-jie-zhuang-tai-shi-shi-me" class="header-anchor">#</a></h3>
-<p>剩余步数为0时，只有当前位置为0才是我们最终想要的方案，把值设为1并提供给后面用，其他位置且步数为0时都认为是0。<br>
-dp[0][0] = 1；<br>
-dp[0][index] = 0；（index&gt;0)</p>
-<h3><span id="shi-xian">实现</span><a href="#shi-xian" class="header-anchor">#</a></h3>
-<p>那么最终出来了</p>
-<ul>
-<li>定义：dp{realstep][index]:    剩余步数为step且位置为index时， 后续还剩多少种走法。</li>
-<li>方向和变化：dp[step][index] = dp[step-1][index-1] + dp[step-1][index] + dp[step-1][index+1]</li>
-<li>边界:  dp[0][0] = 1；</li>
-</ul>
-<h3><span id="nei-cun-yi-chu-chu-li">内存溢出处理</span><a href="#nei-cun-yi-chu-chu-li" class="header-anchor">#</a></h3>
-<p>不过这题因为是困难题，所以给上面这个公式设立了一个小难度：<br>
-<img src="/images/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/image(149).png" alt="image.png"></p>
-<p>数组长度非常大，导致如果index的范围我们选择为0~arrLen-1, 那么最大情况dp[500][10^6]注定超时内存范围。<br>
-这时候就要去思考index设那么大是不是没必要<br>
-一般我们可以自己列这种情况的小例子，例如<br>
-step=2, arr=10<br>
-然后看下index有没有必要设成0~9，随便走几步<br>
-0-&gt;1-&gt;0<br>
-0-&gt;1-&gt;0<br>
-0-&gt;0-&gt;0<br>
-嗯？我发现就3种情况，arr后面那么长不用啦？<br>
-于是发现规律：<br>
-剩余的步数，必须支撑他返回原点！<br>
-也就是说，其实index的最大范围最多就是step/2， 不能再多了，再多肯定回不去了。<br>
-于是问题解决。</p>
-<h1><span id="qi-ta-lei-si-ti-mu-lian-xi">其他类似题目练习</span><a href="#qi-ta-lei-si-ti-mu-lian-xi" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/minimum-cost-for-tickets/">https://leetcode-cn.com/problems/minimum-cost-for-tickets/</a></p>
-<hr>
-<p>状态压缩的位dp，尽量从0往上更新，往后面看而不是往前面看</p>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/partition-to-k-equal-sum-subsets/">698. 划分为k个相等的子集 - 力扣（LeetCode）</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/" class="post-title-link" itemprop="url">微服务心跳管理机制设计</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-09-19 23:40:12 / 修改时间：23:25:44" itemprop="dateCreated datePublished" datetime="2022-09-19T23:40:12+08:00">2022-09-19</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">系统设计</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#ji-yu-lru-shi-xian-bai-wan-ji-bie-de-xin-tiao-jian-kong-fu-wu">基于LRU实现百万级别的心跳监控服务</a>
-<ul>
-<li><a href="#1-q-bai-wan-ji-bie-jie-dian-ru-he-kuai-su-zhao-dao-chi-xian-de-jie-dian-fei-shu-ju-ku-cun-chu-mo-shi">1. Q: 百万级别节点，如何快速找到离线的节点？（非数据库存储模式）</a></li>
-<li><a href="#2-q-ru-he-bao-zheng-xin-tiao-fu-wu-de-ke-kao-xing">2. Q: 如何保证心跳服务的可靠性？</a></li>
-<li><a href="#3-q-ru-he-ti-sheng-dan-ge-xin-tiao-fu-wu-jie-dian-de-xin-tiao-jie-shou-xing-neng">3. Q: 如何提升单个心跳服务节点的心跳接收性能？</a></li>
-<li><a href="#4-xin-tiao-bao-xuan-yong-tcp-huan-shi-udp">4. 心跳包选用TCP还是UDP？</a></li>
-</ul>
-</li>
-<li><a href="#ling-yi-ge-fang-shi-shi-jian-lun">另一个方式：时间轮</a>
-<ul>
-<li><a href="#q-java-de-delayqueue-lei-yuan-li-zhi-dao-ma">Q: java的DelayQueue类原理知道吗？</a></li>
-<li><a href="#q-shi-jian-lun-he-java-de-delayqueue-you-shi-me-qu-bie">Q: 时间轮和   java的delayQueue）有什么区别？</a></li>
-</ul>
-</li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<hr>
-<p>笔记来源：<br>
-<a target="_blank" rel="noopener" href="https://time.geekbang.org/column/article/240656">实战：单机如何实现管理百万主机的心跳服务</a></p>
-<h1><span id="ji-yu-lru-shi-xian-bai-wan-ji-bie-de-xin-tiao-jian-kong-fu-wu">基于LRU实现百万级别的心跳监控服务</span><a href="#ji-yu-lru-shi-xian-bai-wan-ji-bie-de-xin-tiao-jian-kong-fu-wu" class="header-anchor">#</a></h1>
-<h2><span id="1-q-bai-wan-ji-bie-jie-dian-ru-he-kuai-su-zhao-dao-chi-xian-de-jie-dian-fei-shu-ju-ku-cun-chu-mo-shi">1. Q: 百万级别节点，如何快速找到离线的节点？（非数据库存储模式）</span><a href="#1-q-bai-wan-ji-bie-jie-dian-ru-he-kuai-su-zhao-dao-chi-xian-de-jie-dian-fei-shu-ju-ku-cun-chu-mo-shi" class="header-anchor">#</a></h2>
-<p>全部遍历找超时，O(n)， 百万级别节点消耗非常大，   遍历时可能会因为涉及更新的同步问题， 导致此时无法插入。<br>
-如果用单线程，这个过程慢的话会造成阻塞。</p>
-<p>实现方式1： LRU+链表+哈希表<br>
-① 所有心跳放进一个LRU队列中，保证最新的心跳包在队尾，最老的心跳包在队头。<br>
-② 如果某节点有新的心跳包进来， 利用哈希表找到这个节点的链点位置，删除掉，再将新包插入到队尾。<br>
-③ 每次心跳检查时， 只要查询队头， 不断将超时的心跳包出队，直到队头的心跳包不超时即可。<br>
-<img src="/images/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/ee76fb4d7bfd65d2190dbadd7760c7f312f74079.png" alt="ee76fb4d7bfd65d2190dbadd7760c7f312f74079"><br>
-实现方式2： 时间轮，时间轮的做法见最后</p>
-<h2><span id="2-q-ru-he-bao-zheng-xin-tiao-fu-wu-de-ke-kao-xing">2. Q: 如何保证心跳服务的可靠性？</span><a href="#2-q-ru-he-bao-zheng-xin-tiao-fu-wu-de-ke-kao-xing" class="header-anchor">#</a></h2>
-<p>上面提到的心跳检查都在内存中，  心跳检查节点如果只有1个的话不可靠，而且量级也会很大。<br>
-但又不能落盘，这会导致数据库的并发查询压力很大，且数据库自身的可靠性又会成了问题。</p>
-<p>解决方式：<br>
-分布式处理。<br>
-心跳入口网关 根据节点的ip或者节点id做哈希， 确保相同节点的心跳包发往同一个节点。<br>
-如果网关发现某个节点挂了，利用哈希一致算法更新发送的节点即可。</p>
-<h2><span id="3-q-ru-he-ti-sheng-dan-ge-xin-tiao-fu-wu-jie-dian-de-xin-tiao-jie-shou-xing-neng">3. Q: 如何提升单个心跳服务节点的心跳接收性能？</span><a href="#3-q-ru-he-ti-sheng-dan-ge-xin-tiao-fu-wu-jie-dian-de-xin-tiao-jie-shou-xing-neng" class="header-anchor">#</a></h2>
-<p>收到心跳后， 涉及心跳的解包，LRU+哈希更新，需要提升处理性能。</p>
-<p>①  多线程处理， 同样利用上面的方法做哈希，分配到特定的心跳处理线程，不同线程之间处理的节点信息不会互相干扰。</p>
-<blockquote>
-<blockquote>
-<p>注意点：  缓存队列放到各自的工作线程中。 即push而非pull的方式，尽可能避免N之间的竞争，即只做1+1的竞争。<br>
-<img src="/images/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/68d6f3d4595ec0a8c74566349c25dda9fb4bb3f8.png" alt="68d6f3d4595ec0a8c74566349c25dda9fb4bb3f8"><br>
-队列锁采用自旋锁，避免工作线程频繁出现上下文切换（即保证工作线程一直在跑，这个用于高并发场景，高并发场景不能让他停下来的）</p>
-</blockquote>
-</blockquote>
-<p>② 心跳包资源池减少内存释放频率<br>
-如果只有10w个节点，那么每次收到心跳请求时，不要反复new新的心跳对象，而是从心跳资源池里取出构造好的对象，把最新时间set进去后再扔给分发线程。</p>
-<h2><span id="4-xin-tiao-bao-xuan-yong-tcp-huan-shi-udp">4. 心跳包选用TCP还是UDP？</span><a href="#4-xin-tiao-bao-xuan-yong-tcp-huan-shi-udp" class="header-anchor">#</a></h2>
-<p>满足以下条件的话选择UDP:</p>
-<ol>
-<li>心跳包报文长度内容信息量很少，基本小于MTU， 不需要利用TCP自带的分包机制。</li>
-<li>超时判断时间允许偶然一次的不可靠丢包（即偶尔丢一次并不影响）</li>
-</ol>
-<p>这种情况用UDP在网内发到心跳服务即可。<br>
-不需要TCP那样的高消耗。</p>
-<h1><span id="ling-yi-ge-fang-shi-shi-jian-lun">另一个方式：时间轮</span><a href="#ling-yi-ge-fang-shi-shi-jian-lun" class="header-anchor">#</a></h1>
-<p>参考自<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/0f0fec47a0ad">TimingWheel 时间轮详解</a></p>
-<p>时间轮本质：</p>
-<ol>
-<li>弄一个数组（看起来是一个环，实际上是数组）</li>
-<li>数组中中每个节点又存了一个双向链表，用于存放实际的任务（用链表是为了方便插入）</li>
-<li>任务具体放数组中的哪个位置？  根据 超期时间取余决定他的实际存放位置。</li>
-<li>如果数组的节点中有任务，会把本身的超期时间带着一起扔进一个 队列中</li>
-<li>队列每次取队头数据， 如果时间没到队头节点指定的延迟时间，就阻塞，直到时间到达，取出里面的任务逐个执行。</li>
-<li>如果任务的定时时间超过整个环的时间？  则新增一个时间轮，时间比这个更长，因此队列里可能会多插入一个节点，节点中会标识我是小时间轮还是大时间轮的。<br>
-<img src="/images/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/2e95b497a970bc8baad42f25d6dee04d0241a079.png" alt="2e95b497a970bc8baad42f25d6dee04d0241a079"></li>
-</ol>
-<hr>
-<p>其他的延时队列怎么做的?<br>
-<a target="_blank" rel="noopener" href="https://blog.csdn.net/woniu211111/article/details/109302412">延时队列实现的几种姿势</a></p>
-<hr>
-<h2><span id="q-java-de-delayqueue-lei-yuan-li-zhi-dao-ma">Q: java的DelayQueue类原理知道吗？</span><a href="#q-java-de-delayqueue-lei-yuan-li-zhi-dao-ma" class="header-anchor">#</a></h2>
-<p>A:</p>
-<ol>
-<li>有一个优先队列， 放入的任务会根据是否快要超期进行排序， 马上就要超期的会放在队头。</li>
-<li>当使用take方法取数据时，看一下队头任务，如果时间到了就返回。</li>
-<li>如果时间还没到</li>
-</ol>
-<ul>
-<li>首先看一下是否已经有线程在等待这个任务了，如果是的话，使用锁的condition机制做await等待。</li>
-<li>如果没有线程正在等待，就计算还差多少时间， 然后用 LockSupport.parkNanos()让这个调用take方法的线程等待特定时间。</li>
-</ul>
-<ol start="4">
-<li>注意等待期间，会释放锁，因此这期间可以正常offer和take。</li>
-<li>当时间到了后，这个线程肯定能取走数据了。  取完后，顺便看一下队列里还有没有数据，如果有， 调用condition.signal()，通知那堆正在等待的线程， 你们可以试着竞争一下取数据了。</li>
-<li>另外每当有新的任务offer时，如果发现最新入队的数据就是马上要超期的数据， 也会立刻通知等待的各位马上苏醒竞争（因为之前等待的线程认为自己还要睡一会才会有数据）</li>
-</ol>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/fuzhongmin05/article/details/105716205">Java阻塞延迟队列DelayQueue原理及使用</a></p>
-<hr>
-<h2><span id="q-shi-jian-lun-he-java-de-delayqueue-you-shi-me-qu-bie">Q: 时间轮和   java的delayQueue）有什么区别？</span><a href="#q-shi-jian-lun-he-java-de-delayqueue-you-shi-me-qu-bie" class="header-anchor">#</a></h2>
-<p>A:<br>
-java的delayQueue本质上是用堆（优先队列）实现的。<br>
-接收任务后， 直接把任务放进优先队列中， 按照超期时间确定堆位置。  每次poll时如果发现堆顶没到时间就阻塞，直到时间到了再poll。<br>
-取出来检查后，再加上时间扔回队列。</p>
-<p>坏处： 插入和删除的复杂度是O(logn)。</p>
-<p>而时间轮并不会把任务扔进 queue中，而是把时间轮的槽扔进queue中。  因此整个延迟队列实际上时针对槽的，不需要堆，按先入先出取数据和插槽即可，O(1)的复杂度。  而后面扔进来的任务，都是往槽里的双向链表塞进去而已。</p>
-<hr>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2569,7 +2423,7 @@ java的delayQueue本质上是用堆（优先队列）实现的。<br>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">276</span>
+          <span class="site-state-item-count">279</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -2588,9 +2442,6 @@ java的delayQueue本质上是用堆（优先队列）实现的。<br>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
         <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
       </span>
       <span class="links-of-author-item">
         <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
@@ -2640,7 +2491,7 @@ java的delayQueue本质上是用堆（优先队列）实现的。<br>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共359.3k字</span>
+  <span class="post-count">博客全站共359.4k字</span>
 </div>
 
         

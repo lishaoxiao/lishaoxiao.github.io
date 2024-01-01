@@ -181,6 +181,599 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/IO%E4%B8%AD%E6%96%AD%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/IO%E4%B8%AD%E6%96%AD%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">IO中断原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-12 23:17:49 / 修改时间：23:22:17" itemprop="dateCreated datePublished" datetime="2022-09-12T23:17:49+08:00">2022-09-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">计算机组成原理</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/IO%E4%B8%AD%E6%96%AD%E5%8E%9F%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/IO%E4%B8%AD%E6%96%AD%E5%8E%9F%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#shi-me-shi-zhong-duan">什么是中断</a></li>
+<li><a href="#zhong-duan-lei-xing">中断类型</a>
+<ul>
+<li><a href="#ying-jian-zhong-duan">硬件中断</a></li>
+<li><a href="#ruan-jian-zhong-duan">软件中断</a></li>
+<li><a href="#i-o-zhong-duan-liu-cheng">I/O中断流程</a></li>
+<li><a href="#wu-zhong-duan">无中断</a></li>
+<li><a href="#you-zhong-duan">有中断</a></li>
+</ul>
+</li>
+<li><a href="#zhong-duan-chu-li-wan-zheng-liu-cheng">中断处理完整流程</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<p>原文链接：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/Jack-Blog/p/12038716.html">I/O中断原理</a></p>
+<h1><span id="shi-me-shi-zhong-duan">什么是中断</span><a href="#shi-me-shi-zhong-duan" class="header-anchor">#</a></h1>
+<p>中断指当出现需要时，<strong>CPU暂时停止当前程序的执行转而执行处理新情况的程序和执行过程。</strong><br>
+即在程序运行过程中，系统出现了一个必须由CPU立即处理的情况，此时，CPU暂时中止程序的执行转而处理这个新的情况的过程就叫做中断。</p>
+<p>我们知道CPU是按指令顺序进行执行的，操作系统每过大约15ms会发生一次线程调度(Windows下)，根据线程优先级先调度优先级高的线程。但是实际情况并没有那么简单，若我们接收到一个网络请求，如果要等当前线程执行完或15ms线程调度之后才去处理网络请求，网卡缓冲区很有可能会被占满，此时就发生了丢包。</p>
+<h1><span id="zhong-duan-lei-xing">中断类型</span><a href="#zhong-duan-lei-xing" class="header-anchor">#</a></h1>
+<p>中断分为硬件中断和软件中断。</p>
+<h2><span id="ying-jian-zhong-duan">硬件中断</span><a href="#ying-jian-zhong-duan" class="header-anchor">#</a></h2>
+<p>硬件中断即为硬件发出的中断信号，如I/O中断和硬件失效中断。</p>
+<ul>
+<li>I/O中断：由I/O控制器产生，用于发送信号通知操作完成等信号。</li>
+<li>硬件失效中断：如掉电或存储器奇偶错之类的故障。</li>
+</ul>
+<h2><span id="ruan-jian-zhong-duan">软件中断</span><a href="#ruan-jian-zhong-duan" class="header-anchor">#</a></h2>
+<p>软件中断即为非硬件发出的中断信号，如程序中断和时钟中断。</p>
+<ul>
+<li>程序中断：一些指令产生的异常(如算数移除、除数为0等)。</li>
+<li>时钟中断：由处理器内部的计时器产生，允许操作系统以一定规程执行函数。</li>
+</ul>
+<blockquote>
+<blockquote>
+<p>我们提到了操作系统每过大约15ms会进行一次线程调度，就是利用时钟中断来实现的。</p>
+</blockquote>
+</blockquote>
+<h2><span id="i-o-zhong-duan-liu-cheng">I/O中断流程</span><a href="#i-o-zhong-duan-liu-cheng" class="header-anchor">#</a></h2>
+<p>I/O中断通过中断处理器执行中断操作。<br>
+当外部设备的I/O模块准备好时，它会发送给CPU一个中断信号，CPU则会“立即”做出响应，暂停当前程序的处理去服务该I/O设备的程序。</p>
+<p>为了更好的说明中断带来的性能提升，我们先描述一下没有中断时程序如何处理I/O操作。</p>
+<h2><span id="wu-zhong-duan">无中断</span><a href="#wu-zhong-duan" class="header-anchor">#</a></h2>
+<p><img src="/images/IO%E6%80%BB%E7%BA%BF/dec2cbc5c149303dc347d1ae30cfcd3a0413c63e.png" alt="dec2cbc5c149303dc347d1ae30cfcd3a0413c63e"></p>
+<ol>
+<li>当我们程序需要从硬盘读取一个文件时，会先检查内核缓存中是否有数据，若没有数据，则执行实际I/O操作。</li>
+<li>在I/O操作执行时，我们的用户线程将阻塞等待数据从硬盘写到内存中。对于用户来说线程是被阻塞的。</li>
+<li>在实际的I/O操作过程中，若没有中断操作，CPU会不断轮询检查I/O操作是否完成</li>
+<li>若I/O操作没有完成则继续调度其他线程，过一会儿再来检查。若操作完成，CPU将线程加入到线程就绪队列中并恢复线程上下文信息。</li>
+<li>线程处于就绪队列，可以被操作系统调度从而继续执行读操作，此时会将数据从操作系统内核缓存读取到用户缓存中。</li>
+</ol>
+<h2><span id="you-zhong-duan">有中断</span><a href="#you-zhong-duan" class="header-anchor">#</a></h2>
+<p><img src="/images/IO%E6%80%BB%E7%BA%BF/22fb8d915066c9a461c4fbe3a75f3a58d536469f.png" alt="22fb8d915066c9a461c4fbe3a75f3a58d536469f"></p>
+<ol>
+<li>当我们程序需要从硬盘读取一个文件时，会先检查内核缓存中是否有数据，若没有数据，则执行实际I/O操作。在I/O操作执行时，我们的用户线程将阻塞等待数据从硬盘写到内存中。对于用户来说线程是被阻塞的。</li>
+<li>在实际的I/O操作过程中，CPU向I/O模块(DMA控制器)发送读指令，然后就去调度其他线程。</li>
+<li>当I/O模块(DMA控制器)I/O执行完成后，会产生中断信号在通知CPU，CPU将线程加入到线程就绪队列中并恢复线程上下文信息。</li>
+<li>线程处于就绪队列，可以被操作系统调度从而继续执行读操作，此时会将数据从操作系统内核缓存读取到用户缓存中。</li>
+</ol>
+<ul>
+<li>由上面可知，有中断还是没有中断对于用户来说线程都是阻塞的，对于操作系统内核来说通过中断方式主动通知CPU的方式减少了线程轮询判断，提高了线程执行效率。</li>
+</ul>
+<h1><span id="zhong-duan-chu-li-wan-zheng-liu-cheng">中断处理完整流程</span><a href="#zhong-duan-chu-li-wan-zheng-liu-cheng" class="header-anchor">#</a></h1>
+<p>当I/O设备完成一次I/O操作时，发生以下事件：</p>
+<ol>
+<li>开始I/O操作前，处理器将当前处理的相关信息如指令地址、必要的状态信息等保存到栈中，使得中断后可以恢复执行。</li>
+<li>I/O操作完成后，设备给处理器发送一个中断信号。</li>
+<li>处理器响应中断信号。</li>
+<li>处理器对中断信号进行判断，若存在未响应的中断，则给产生中断信号的设备发送确认信号，确认信号使得设备取消它的中断信号。</li>
+<li>处理器将控制前转移给中断程序中，中断程序从栈中获取之前保存的信息，使得能继续执行I/O完成时的后续操作。</li>
+<li>处理器将中断程序入口地址载入到程序计数器中，使得处理器能继续执行下一个指令周期。</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86%E5%85%A8%E6%B5%81%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86%E5%85%A8%E6%B5%81%E7%A8%8B/" class="post-title-link" itemprop="url">计算机组成原理全流程</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-12 22:47:49 / 修改时间：23:18:27" itemprop="dateCreated datePublished" datetime="2022-09-12T22:47:49+08:00">2022-09-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">计算机组成原理</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86%E5%85%A8%E6%B5%81%E7%A8%8B/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86%E5%85%A8%E6%B5%81%E7%A8%8B/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>11</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<p>全景流程图：</p>
+<p><img src="/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86%E5%85%A8%E6%B5%81%E7%A8%8B/61d991c7e401fd06a8be13df.png" alt="计算机组成原理全景流程图"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">文件系统原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-09 00:20:49 / 修改时间：00:25:32" itemprop="dateCreated datePublished" datetime="2022-09-09T00:20:49+08:00">2022-09-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#7-1-ji-ben-gai-nian">7.1 基本概念</a>
+<ul>
+<li><a href="#7-1-1-wen-jian-ding-yi">7.1.1 文件定义</a></li>
+<li><a href="#7-1-2-wen-jian-jie-gou">7.1.2 文件结构</a></li>
+<li><a href="#7-1-3-wen-jian-shu-xing">7.1.3 文件属性</a></li>
+<li><a href="#7-1-4-wen-jian-chang-jian-cao-zuo">7.1.4 文件常见操作</a></li>
+<li><a href="#7-1-5-open-da-kai-wen-jian-de-guo-cheng">7.1.5 open打开文件的过程</a></li>
+</ul>
+</li>
+<li><a href="#7-2-mu-lu">7.2 目录</a>
+<ul>
+<li><a href="#7-2-1-wen-jian-de-zu-zhi-jie-gou">7.2.1 文件的组织结构</a>
+<ul>
+<li><a href="#7-2-1-1-wen-jian-kong-zhi-kuai-fcb-wen-jian-mu-lu-xiang">7.2.1.1 文件控制块FCB（文件目录项）</a></li>
+<li><a href="#7-2-1-2-suo-yin-jie-dian">7.2.1.2 索引节点</a></li>
+<li><a href="#7-2-1-3-wen-jian-kong-zhi-kuai-he-suo-yin-jie-dian-de-qu-bie">7.2.1.3 文件控制块和索引节点的区别</a></li>
+</ul>
+</li>
+<li><a href="#7-2-2-mu-lu-de-jie-gou">7.2.2 目录的结构</a></li>
+<li><a href="#7-2-3-wen-jian-ceng-ci-jie-gou">7.2.3 文件层次结构</a></li>
+<li><a href="#7-2-4-mu-lu-de-shi-xian-yuan-li">7.2.4 目录的实现原理</a></li>
+</ul>
+</li>
+<li><a href="#7-3-wen-jian-gong-xiang">7.3 文件共享</a>
+<ul>
+<li><a href="#7-3-1-ruan-lian-jie">7.3.1 软连接</a></li>
+<li><a href="#7-3-2-ying-lian-jie">7.3.2 硬连接</a></li>
+</ul>
+</li>
+<li><a href="#7-4-wen-jian-de-shi-xian-yuan-li">7.4 文件的实现原理</a>
+<ul>
+<li><a href="#7-4-1-wen-jian-fen-pei">7.4.1 文件分配</a></li>
+<li><a href="#7-4-1-1-lian-xu-fen-pei">7.4.1.1 连续分配：</a>
+<ul>
+<li><a href="#7-4-1-2-lian-jie-fen-pei">7.4.1.2 链接分配：</a></li>
+<li><a href="#7-4-1-3-suo-yin-fen-pei">7.4.1.3 索引分配</a></li>
+</ul>
+</li>
+<li><a href="#7-4-2-cun-chu-kong-jian-guan-li">7.4.2 存储空间管理</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="7-1-ji-ben-gai-nian">7.1 基本概念</span><a href="#7-1-ji-ben-gai-nian" class="header-anchor">#</a></h1>
+<h2><span id="7-1-1-wen-jian-ding-yi">7.1.1 文件定义</span><a href="#7-1-1-wen-jian-ding-yi" class="header-anchor">#</a></h2>
+<p>文件是以计算机硬盘为载体的信息集合<br>
+需要提供文件系统进行管理</p>
+<h2><span id="7-1-2-wen-jian-jie-gou">7.1.2 文件结构</span><a href="#7-1-2-wen-jian-jie-gou" class="header-anchor">#</a></h2>
+<ul>
+<li>数据项：<br>
+类似于int、string这种，或者 学号、姓名等值（类似sql表中的某个值内容）</li>
+<li>记录：<br>
+一组数据项集合<br>
+比如学号和姓名，组成了学生记录（例如sql表中的某一行）</li>
+<li>文件</li>
+</ul>
+<p>按逻辑结构可以分为2类：<br>
+? 无结构文件： 一般都是二进制文件流文件，直接按顺序封装。这里面不包含记录的概念<br>
+? 有结构文件： 包含记录的概念<br>
+顺序文件：按记录中的某个关键字排序过，可二分查找记录行<br>
+索引文件： 需要1个索引表，记录每个记录的位置<br>
+索引顺序文件：先按关键字索引，在部分擦护照<br>
+直接、散列文件：用哈希键值确定记录位置</p>
+<h2><span id="7-1-3-wen-jian-shu-xing">7.1.3 文件属性</span><a href="#7-1-3-wen-jian-shu-xing" class="header-anchor">#</a></h2>
+<p>名称<br>
+标识符——确认文件唯一性<br>
+类型<br>
+位置——设备文件指针<br>
+大小——文件大小或者文件最大值<br>
+保护——访问控制权限<br>
+时间、日期<br>
+用户标志——哪个用户可用</p>
+<h2><span id="7-1-4-wen-jian-chang-jian-cao-zuo">7.1.4 文件常见操作</span><a href="#7-1-4-wen-jian-chang-jian-cao-zuo" class="header-anchor">#</a></h2>
+<ul>
+<li>创建文件</li>
+<li>写文件——要指定一个写指针确认从哪开始写</li>
+<li>读文件——读写共用一个指针，避免文件不同步</li>
+<li>重定位——修改文件位置</li>
+<li>删除文件——先删除文件目录项，再去清理空间，避免还没清理完有人却正要用</li>
+<li>截断文件——把文件长度截断</li>
+</ul>
+<h2><span id="7-1-5-open-da-kai-wen-jian-de-guo-cheng">7.1.5 open打开文件的过程</span><a href="#7-1-5-open-da-kai-wen-jian-de-guo-cheng" class="header-anchor">#</a></h2>
+<ol>
+<li>从外存把文件属性拷贝进内存，建立文件目录表</li>
+<li>返回一个文件编号给用户</li>
+<li>用文件打开计数器，记录有多少个进程正在打开该进程。当没有进程在使用时，回收内存。</li>
+<li>进程获取文件的以下信息：</li>
+</ol>
+<ul>
+<li>文件指针</li>
+<li>文件打开计数</li>
+<li>文件磁盘位置</li>
+<li>访问权限</li>
+</ul>
+<h1><span id="7-2-mu-lu">7.2 目录</span><a href="#7-2-mu-lu" class="header-anchor">#</a></h1>
+<p>目录就是文件的外部组织结构</p>
+<h2><span id="7-2-1-wen-jian-de-zu-zhi-jie-gou">7.2.1 文件的组织结构</span><a href="#7-2-1-wen-jian-de-zu-zhi-jie-gou" class="header-anchor">#</a></h2>
+<h3><span id="7-2-1-1-wen-jian-kong-zhi-kuai-fcb-wen-jian-mu-lu-xiang">7.2.1.1 文件控制块FCB（文件目录项）</span><a href="#7-2-1-1-wen-jian-kong-zhi-kuai-fcb-wen-jian-mu-lu-xiang" class="header-anchor">#</a></h3>
+<ul>
+<li>存放了操作文件所需要的信息</li>
+<li>文件目录中存放了许多FCB，可以通过FCB按名查取。</li>
+<li>包含的信息有：<br>
+基本信息： 文件名/物理位置/逻辑结构/物理结构<br>
+存取控制信息： 访问权限<br>
+使用信息：建立时间、修改时间</li>
+</ul>
+<h3><span id="7-2-1-2-suo-yin-jie-dian">7.2.1.2 索引节点</span><a href="#7-2-1-2-suo-yin-jie-dian" class="header-anchor">#</a></h3>
+<ul>
+<li>
+<p>存放文件描述信息， 但是不包含文件名</p>
+</li>
+<li>
+<p>文件目录中只存放文件名和i节点指针</p>
+</li>
+<li>
+<p>可减少外村磁盘的查找速度</p>
+</li>
+<li>
+<p>节点内容包括：<br>
+标识符、类型、权限、存取时间<br>
+地址长度、链接计数<br>
+节点编号、状态（是否上锁）<br>
+访问计数、设备号</p>
+</li>
+<li>
+<p>文件打开时，会把索引节点从磁盘复制进内存，称为内存索引节点</p>
+</li>
+</ul>
+<h3><span id="7-2-1-3-wen-jian-kong-zhi-kuai-he-suo-yin-jie-dian-de-qu-bie">7.2.1.3 文件控制块和索引节点的区别</span><a href="#7-2-1-3-wen-jian-kong-zhi-kuai-he-suo-yin-jie-dian-de-qu-bie" class="header-anchor">#</a></h3>
+<p>只需要文件位置信息等时，只需要拿文件控制块来唯一确认一个文件即可。<br>
+但是需要真正使用文件时，则需要索引节点里的信息<br>
+但如果把索引节点提前加载进内存的话，容易导致开销浪费。所以只有需要的时候，才回去用到索引节点，减少要拷贝的信息。<br>
+<img src="/images/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86/2021031423522644.png" alt="在这里插入图片描述"></p>
+<h2><span id="7-2-2-mu-lu-de-jie-gou">7.2.2 目录的结构</span><a href="#7-2-2-mu-lu-de-jie-gou" class="header-anchor">#</a></h2>
+<p>单级目录<br>
+两级目录<br>
+多级目录：树形结构，有相对路径和绝对路径</p>
+<h2><span id="7-2-3-wen-jian-ceng-ci-jie-gou">7.2.3 文件层次结构</span><a href="#7-2-3-wen-jian-ceng-ci-jie-gou" class="header-anchor">#</a></h2>
+<p>从用户层从上往下排列</p>
+<ol>
+<li>用户接口：<br>
+若干程序模块组织曾，每一个模块对应一个系统调用</li>
+<li>文件目录系统： 查找目录项，找到索引节点<br>
+存取控制：用户要访问的权限和FCB中的权限做比对<br>
+逻辑文件系统： 把要读取的记录转为罗季葵爱好<br>
+物理文件系统——把逻辑块号转为实际物理地址<br>
+设备管理模块——分配磁盘设备做输入输出</li>
+</ol>
+<h2><span id="7-2-4-mu-lu-de-shi-xian-yuan-li">7.2.4 目录的实现原理</span><a href="#7-2-4-mu-lu-de-shi-xian-yuan-li" class="header-anchor">#</a></h2>
+<p>线性列表——宠用目录项， 顺序检索。<br>
+哈希表——根据文件名得到key值</p>
+<p>linux的目录实现原理：</p>
+<h1><span id="7-3-wen-jian-gong-xiang">7.3 文件共享</span><a href="#7-3-wen-jian-gong-xiang" class="header-anchor">#</a></h1>
+<h2><span id="7-3-1-ruan-lian-jie">7.3.1 软连接</span><a href="#7-3-1-ruan-lian-jie" class="header-anchor">#</a></h2>
+<p>符号链接<br>
+建立一个文件， 文件中存放共享文件的路径<br>
+只有文件拥有者才能有指向文件的i节点指针<br>
+不会出现指针悬空， 不存在时，软链接会被删除。<br>
+<img src="/images/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86/20210314235239640.png" alt="在这里插入图片描述"></p>
+<h2><span id="7-3-2-ying-lian-jie">7.3.2 硬连接</span><a href="#7-3-2-ying-lian-jie" class="header-anchor">#</a></h2>
+<p>即一个文件名的指针<br>
+各用户文件目录表用i节点指针指向同一个索引节点<br>
+当文件被删除，另一个用户就不能访问了。<br>
+容易出错。<br>
+<img src="/images/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86/20210314235249696.png" alt="在这里插入图片描述"></p>
+<h1><span id="7-4-wen-jian-de-shi-xian-yuan-li">7.4 文件的实现原理</span><a href="#7-4-wen-jian-de-shi-xian-yuan-li" class="header-anchor">#</a></h1>
+<h2><span id="7-4-1-wen-jian-fen-pei">7.4.1 文件分配</span><a href="#7-4-1-wen-jian-fen-pei" class="header-anchor">#</a></h2>
+<p>指怎么给文件分配磁盘块</p>
+<h2><span id="7-4-1-1-lian-xu-fen-pei">7.4.1.1 连续分配：</span><a href="#7-4-1-1-lian-xu-fen-pei" class="header-anchor">#</a></h2>
+<p>每个文件在磁盘上占一组连续的块<br>
+目录项记录文件的起始位置和长度<br>
+这样能让作业的磁盘寻道数最少<br>
+适用于长度固定的文件</p>
+<h3><span id="7-4-1-2-lian-jie-fen-pei">7.4.1.2 链接分配：</span><a href="#7-4-1-2-lian-jie-fen-pei" class="header-anchor">#</a></h3>
+<ul>
+<li>
+<p>隐式链接：<br>
+每个文件有一个链表， 每个节点是一个磁盘块，next指针指向下一个磁盘块</p>
+</li>
+<li>
+<p>显式链接：<br>
+用一个二维数组表替代next指针， [0]是盘块，[1]是下一个盘块<br>
+这个表就是文件分配表FAT<br>
+文件的第一个盘号也就是链表头 会放入FCB的物理地址中</p>
+</li>
+</ul>
+<h3><span id="7-4-1-3-suo-yin-fen-pei">7.4.1.3 索引分配</span><a href="#7-4-1-3-suo-yin-fen-pei" class="header-anchor">#</a></h3>
+<p>为了防止这个表占据太大空间或者不够用<br>
+给每个文件有一个索引表，按顺序给出盘块<br>
+同时可以多级索引， 即可以给出磁盘中下一级索引表的盘块号。然后再去把盘中的二级索引表导入到内存中使用</p>
+<h2><span id="7-4-2-cun-chu-kong-jian-guan-li">7.4.2 存储空间管理</span><a href="#7-4-2-cun-chu-kong-jian-guan-li" class="header-anchor">#</a></h2>
+<p>即把哪些磁盘块分给文件呢？</p>
+<ul>
+<li>文件卷、逻辑卷</li>
+</ul>
+<p>以下是空闲块分配方法：</p>
+<ul>
+<li>空闲表法—— 从空闲盘块表中选取， 释放的时候要做前后空闲区合并</li>
+<li>空闲链块法：把空闲块组成链表</li>
+<li>位视图法：  用010101确定是否空闲，可减少空闲块信息的大小</li>
+<li>成组链接法：<br>
+把n个空闲区分组，存入不同的空闲盘块栈中。并且有各种指针指向其他组的空闲盘块<br>
+当某组内的空闲块变化时， 可以修改上一个块号栈的指针指向位置。<br>
+<img src="/images/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86/20210314235307680.png" alt="在这里插入图片描述"></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E7%B3%BB%E7%BB%9F%E7%A3%81%E7%9B%98%E5%92%8CIO%E5%8E%9F%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2032,471 +2625,6 @@ swap： 原子交换命令， 交换2个字节内容。</li>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC86%20%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-930%E5%90%8D-3%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC86%20%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-930%E5%90%8D-3%E9%A2%98/" class="post-title-link" itemprop="url">第86 场双周赛-930名-3题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-09-04 22:12:42" itemprop="dateCreated datePublished" datetime="2022-09-04T22:12:42+08:00">2022-09-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-06 00:29:55" itemprop="dateModified" datetime="2022-09-06T00:29:55+08:00">2022-09-06</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">力扣周赛记录</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC86%20%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-930%E5%90%8D-3%E9%A2%98/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC86%20%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-930%E5%90%8D-3%E9%A2%98/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>5.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="/images/%E7%AC%AC86%20%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-930%E5%90%8D-3%E9%A2%98/1662394885933.png" alt="1662394885933"></p>
-<h2><span id="ben-qi-zong-jie">本期总结：</span><a href="#ben-qi-zong-jie" class="header-anchor">#</a></h2>
-<ol>
-<li>滑动窗口最大值，一定要用过期有限队列</li>
-</ol>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/find-subarrays-with-equal-sum/">2395. 和相等的子数组 - 力扣（LeetCode）</a></p>
-<p><img src="/images/%E7%AC%AC86%20%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-930%E5%90%8D-3%E9%A2%98/1662394935649.png" alt="1662394935649"></p>
-<p>直接哈希表，但是要处理long的问题</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">findSubarrays</span><span class="params">(<span class="type">int</span>[] nums)</span> &#123;</span><br><span class="line">        Set&lt;Long&gt; map = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; nums.length;i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (i + <span class="number">1</span> &lt; nums.length) &#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> i + <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">if</span>(map.contains((<span class="type">long</span>)nums[i] + nums[j])) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                map.add((<span class="type">long</span>) (nums[i] + nums[j]));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/strictly-palindromic-number/">2396. 严格回文的数字 - 力扣（LeetCode）</a></p>
-<p><img src="/images/%E7%AC%AC86%20%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-930%E5%90%8D-3%E9%A2%98/1662395006184.png" alt="1662395006184"></p>
-<p>还好，不需要考虑回文比较的性能，直接统计每个数字即可</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isStrictlyPalindromic</span><span class="params">(<span class="type">int</span> n)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">m</span> <span class="operator">=</span> n - <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">2</span>; i &lt;= n-<span class="number">2</span>;i++) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">num</span> <span class="operator">=</span> n;</span><br><span class="line">            <span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">            <span class="keyword">while</span> (num &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                sb.append(num % i);</span><br><span class="line">                num /= i;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="type">String</span> <span class="variable">s1</span> <span class="operator">=</span> sb.toString();</span><br><span class="line">            <span class="type">String</span> <span class="variable">s2</span> <span class="operator">=</span> sb.reverse().toString();</span><br><span class="line">            <span class="keyword">if</span> (!s1.equals(s2)) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/maximum-rows-covered-by-columns/">2397. 被列覆盖的最多行数 - 力扣（LeetCode）</a></p>
-<p><img src="/images/%E7%AC%AC86%20%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-930%E5%90%8D-3%E9%A2%98/1662395135512.png" alt="1662395135512"></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"> <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">maximumRows</span><span class="params">(<span class="type">int</span>[][] mat, <span class="type">int</span> cols)</span> &#123;</span><br><span class="line">        dfs(mat, cols, <span class="number">0</span>, <span class="keyword">new</span> <span class="title class_">boolean</span>[mat[<span class="number">0</span>].length]);</span><br><span class="line">        <span class="keyword">return</span> maxCount;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">int</span> <span class="variable">maxCount</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">dfs</span><span class="params">(<span class="type">int</span>[][] mat, <span class="type">int</span> colRealCount, <span class="type">int</span> colIndex, <span class="type">boolean</span>[] select)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (colRealCount == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">y</span> <span class="operator">=</span> <span class="number">0</span>;y&lt;mat.length;y++) &#123;</span><br><span class="line">                <span class="type">boolean</span> <span class="variable">flag</span> <span class="operator">=</span> <span class="literal">true</span>;</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">0</span>; x &lt; mat[<span class="number">0</span>].length;x++) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (mat[y][x] == <span class="number">1</span> &amp;&amp; !select[x]) &#123;</span><br><span class="line">                        flag  =<span class="literal">false</span>;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (flag) &#123;</span><br><span class="line">                    count++;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            maxCount = Math.max(maxCount, count);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">col</span> <span class="operator">=</span> colIndex;col &lt; mat[<span class="number">0</span>].length;col++) &#123;</span><br><span class="line">            select[col] = <span class="literal">true</span>;</span><br><span class="line">            dfs(mat, colRealCount-<span class="number">1</span>, col+<span class="number">1</span>, select);</span><br><span class="line">            select[col] = <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>直接dfs即可</p>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/maximum-number-of-robots-within-budget/">2398. 预算内的最多机器人数目 - 力扣（LeetCode）</a></p>
-<p><img src="/images/%E7%AC%AC86%20%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-930%E5%90%8D-3%E9%A2%98/1662395196873.png" alt="1662395196873"></p>
-<p>没有做完就总结， 已经忘记当时为什么11点30就提交了第一次，然后改了半个小时也没搞定。。</p>
-<p>好像是因为  我要求的应该是滑动窗口的最大值以及滑动窗口的总和， 然而最大值那个好像搞错了，应该要引入过期队列的</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">maximumRobots</span><span class="params">(<span class="type">int</span>[] chargeTimes, <span class="type">int</span>[] runningCosts, <span class="type">long</span> budget)</span> &#123;</span><br><span class="line">        <span class="type">int</span>[][] array = <span class="keyword">new</span> <span class="title class_">int</span>[chargeTimes.length][<span class="number">2</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; chargeTimes.length;i++) &#123;</span><br><span class="line">            array[i] = <span class="keyword">new</span> <span class="title class_">int</span>[]&#123;chargeTimes[i], runningCosts[i]&#125;;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> <span class="variable">left</span> <span class="operator">=</span> <span class="number">0</span>, right = runningCosts.length+<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">mid</span> <span class="operator">=</span> left + (right - left) / <span class="number">2</span>;</span><br><span class="line">            <span class="type">int</span> <span class="variable">queueCount</span> <span class="operator">=</span> mid - <span class="number">1</span>;</span><br><span class="line">            <span class="type">int</span> <span class="variable">k</span> <span class="operator">=</span> mid;</span><br><span class="line">            <span class="keyword">if</span> (mid == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="type">long</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="type">boolean</span> <span class="variable">flag</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line">            Queue&lt;<span class="type">int</span>[]&gt; queue = <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>&lt;&gt;((a,b)-&gt;(b[<span class="number">1</span>]-a[<span class="number">1</span>]));</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span> ; i &lt; array.length;i++) &#123;</span><br><span class="line">                sum += array[i][<span class="number">1</span>];</span><br><span class="line">                queue.offer(<span class="keyword">new</span> <span class="title class_">int</span>[]&#123;i, array[i][<span class="number">0</span>]&#125;);</span><br><span class="line">                <span class="keyword">if</span> ( i &lt; mid - <span class="number">1</span>) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">while</span> (!queue.isEmpty() &amp;&amp; queue.peek()[<span class="number">0</span>] &lt; i - queueCount) &#123;</span><br><span class="line">                    queue.poll();</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="type">int</span> <span class="variable">max</span> <span class="operator">=</span> queue.peek()[<span class="number">1</span>];</span><br><span class="line">                <span class="type">long</span> <span class="variable">ksum</span> <span class="operator">=</span> sum ;</span><br><span class="line">                <span class="type">long</span> <span class="variable">buck</span> <span class="operator">=</span> max + k * ksum;</span><br><span class="line">                <span class="keyword">if</span> (buck &lt;= budget) &#123;</span><br><span class="line">                    flag = <span class="literal">true</span>;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                sum -= array[i - queueCount][<span class="number">1</span>];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(flag) &#123;</span><br><span class="line">                left = mid+<span class="number">1</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                right = mid;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> Math.max(<span class="number">0</span>, left-<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>排个序就好了，没啥难的</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span>[] answerQueries(<span class="type">int</span>[] nums, <span class="type">int</span>[] queries) &#123;</span><br><span class="line">        Arrays.sort(nums);</span><br><span class="line">        <span class="type">int</span>[] res = <span class="keyword">new</span> <span class="title class_">int</span>[queries.length];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; queries.length;i++) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="type">int</span> <span class="variable">len</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>;j&lt;nums.length;j++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (sum + nums[j] &gt; queries[i]) &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                sum += nums[j];</span><br><span class="line">                len++;</span><br><span class="line">            &#125;</span><br><span class="line">            res[i] = len;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/removing-stars-from-a-string/">6161. 从字符串中移除星号 - 力扣（LeetCode）</a></p>
-<p><img src="/images/%E7%AC%AC308%E5%9C%BA%E5%91%A8%E8%B5%9B-357%E5%90%8D-4%E9%A2%98/1661701444253.png" alt="1661701444253"></p>
-<p>既然每次要移除最左边， 我就从右往左边遍历， 碰到星号，说明下次碰到字母时要变星号，记录一个数字即可</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">removeStars</span><span class="params">(String s)</span> &#123;</span><br><span class="line">        <span class="type">boolean</span>[] bs = <span class="keyword">new</span> <span class="title class_">boolean</span>[s.length()];</span><br><span class="line">        <span class="type">int</span> <span class="variable">needDeduceCount</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> s.length()-<span class="number">1</span>;i&gt;=<span class="number">0</span>;i--) &#123;</span><br><span class="line">            <span class="keyword">if</span> (s.charAt(i) == <span class="string">&#x27;*&#x27;</span>) &#123;</span><br><span class="line">                needDeduceCount++;</span><br><span class="line">                bs[i] = <span class="literal">true</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (needDeduceCount &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                needDeduceCount--;</span><br><span class="line">                bs[i] = <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; s.length();i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (bs[i]) &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            sb.append(s.charAt(i));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sb.toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/minimum-amount-of-time-to-collect-garbage/">6162. 收集垃圾的最少总时间 - 力扣（LeetCode）</a></p>
-<p><img src="/images/%E7%AC%AC308%E5%9C%BA%E5%91%A8%E8%B5%9B-357%E5%90%8D-4%E9%A2%98/1661701543477.png" alt="1661701543477"></p>
-<p>这种题目啥情况，啥算法也不用，直接3次遍历即可，主要是得计算到最后一个有这个垃圾的房子时就要截至了</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">garbageCollection</span><span class="params">(String[] garbage, <span class="type">int</span>[] travel)</span> &#123;</span><br><span class="line">        <span class="type">char</span>[] cs = <span class="keyword">new</span> <span class="title class_">char</span>[]&#123;<span class="string">&#x27;G&#x27;</span>, <span class="string">&#x27;P&#x27;</span>, <span class="string">&#x27;M&#x27;</span>&#125;;</span><br><span class="line">        <span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">char</span> c : cs) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="type">int</span> <span class="variable">realSum</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; garbage.length; i++) &#123;</span><br><span class="line">                <span class="type">String</span> <span class="variable">garba</span> <span class="operator">=</span> garbage[i];</span><br><span class="line">                <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">char</span> g : garba.toCharArray()) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (g == c) &#123;</span><br><span class="line">                        count++;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (count &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                    sum += count;</span><br><span class="line">                    realSum = sum;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (i != garbage.length-<span class="number">1</span>) &#123;</span><br><span class="line">                    sum += travel[i];</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            res += realSum;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/build-a-matrix-with-conditions/">6163. 给定条件下构造矩阵 - 力扣（LeetCode）</a></p>
-<p><img src="/images/%E7%AC%AC308%E5%9C%BA%E5%91%A8%E8%B5%9B-357%E5%90%8D-4%E9%A2%98/1661701601482.png" alt="1661701601482"></p>
-<p><img src="/images/%E7%AC%AC308%E5%9C%BA%E5%91%A8%E8%B5%9B-357%E5%90%8D-4%E9%A2%98/1661701607970.png" alt="1661701607970"></p>
-<p>想了半太天才意识到是拓扑排序，  越是叶子的，越可以放前面， 越是根的，越可以放后面</p>
-<p>早点想到的话应该20分钟就做出来了，拓扑还是很简单的</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span> <span class="type">int</span>[][] buildMatrix(<span class="type">int</span> k, <span class="type">int</span>[][] rowConditions, <span class="type">int</span>[][] colConditions) &#123;</span><br><span class="line">        <span class="type">int</span>[] rows = <span class="keyword">new</span> <span class="title class_">int</span>[k+<span class="number">1</span>];</span><br><span class="line">        <span class="type">int</span>[] cols = <span class="keyword">new</span> <span class="title class_">int</span>[k+<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">if</span> (!sort(k, rowConditions, rows) </span><br><span class="line">                ||  !sort(k, colConditions, cols)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">int</span>[][]&#123;&#125;;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="type">int</span>[][] res = <span class="keyword">new</span> <span class="title class_">int</span>[k][k];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;=k;i++) &#123;</span><br><span class="line">            res[rows[i]][cols[i]] = i;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> <span class="title function_">sort</span><span class="params">(<span class="type">int</span> k, <span class="type">int</span>[][] rowConditions, <span class="type">int</span>[] rows)</span> &#123;</span><br><span class="line">        <span class="type">int</span>[] inCount = <span class="keyword">new</span> <span class="title class_">int</span>[k+<span class="number">1</span>];</span><br><span class="line">        List&lt;Integer&gt;[] outLists = <span class="keyword">new</span> <span class="title class_">List</span>[k+<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;=k;i++) &#123;</span><br><span class="line">            outLists[i] = <span class="keyword">new</span> <span class="title class_">ArrayList</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span>[] row : rowConditions) &#123;</span><br><span class="line">            inCount[row[<span class="number">1</span>]]++;</span><br><span class="line">            outLists[row[<span class="number">0</span>]].add(row[<span class="number">1</span>]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> <span class="variable">y</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">boolean</span>[] vis = <span class="keyword">new</span> <span class="title class_">boolean</span>[k+<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">            <span class="type">int</span> i;</span><br><span class="line">            <span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= k; i++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (inCount[i]  &gt; <span class="number">0</span> || vis[i]) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                vis[i] = <span class="literal">true</span>;</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> out : outLists[i]) &#123;</span><br><span class="line">                    inCount[out]--;</span><br><span class="line">                &#125;</span><br><span class="line">                rows[i] = y;</span><br><span class="line">                y++;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(i == k+<span class="number">1</span>) &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>;i&lt;=k;i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (inCount[i] &gt;<span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC309%E5%9C%BA%E5%91%A8%E8%B5%9B-1345%E5%90%8D-3%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC309%E5%9C%BA%E5%91%A8%E8%B5%9B-1345%E5%90%8D-3%E9%A2%98/" class="post-title-link" itemprop="url">第309场周赛-1345名-3题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-09-04 00:12:42" itemprop="dateCreated datePublished" datetime="2022-09-04T00:12:42+08:00">2022-09-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-07 23:09:32" itemprop="dateModified" datetime="2022-09-07T23:09:32+08:00">2022-09-07</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">力扣周赛记录</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC309%E5%9C%BA%E5%91%A8%E8%B5%9B-1345%E5%90%8D-3%E9%A2%98/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC309%E5%9C%BA%E5%91%A8%E8%B5%9B-1345%E5%90%8D-3%E9%A2%98/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="/images/%E7%AC%AC309%E5%9C%BA%E5%91%A8%E8%B5%9B-1345%E5%90%8D-3%E9%A2%98/1662393708201.png" alt="1662393708201"></p>
-<h2><span id="ben-qi-zong-jie">本期总结：</span><a href="#ben-qi-zong-jie" class="header-anchor">#</a></h2>
-<ol>
-<li>子数字、子序列的题目， 一定要关注一下有没有”连续“二字！</li>
-<li>排列组合公式可以记忆一下，特别是C二维数组中左边是啥，右边是啥</li>
-</ol>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/check-distances-between-same-letters/">2399. 检查相同字母间的距离 - 力扣（LeetCode）</a></p>
-<p><img src="/images/%E7%AC%AC309%E5%9C%BA%E5%91%A8%E8%B5%9B-1345%E5%90%8D-3%E9%A2%98/1662393833962.png" alt="1662393833962"></p>
-<p>直接2个遍历找距离即可,因为每个字母恰好是2次！</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">checkDistances</span><span class="params">(String s, <span class="type">int</span>[] distance)</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; s.length();i++) &#123;</span><br><span class="line">            <span class="type">char</span> <span class="variable">c</span> <span class="operator">=</span> s.charAt(i);</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> i+<span class="number">1</span>;j&lt;s.length();j++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (c == s.charAt(j)) &#123;</span><br><span class="line">                    <span class="type">int</span> <span class="variable">len</span> <span class="operator">=</span> j - i - <span class="number">1</span>;</span><br><span class="line">                    <span class="keyword">if</span> (distance[c-<span class="string">&#x27;a&#x27;</span>] != len) &#123;</span><br><span class="line">                        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/number-of-ways-to-reach-a-position-after-exactly-k-steps/">2400. 恰好移动 k 步到达某一位置的方法数目 - 力扣（LeetCode）</a></p>
-<p><img src="/images/%E7%AC%AC309%E5%9C%BA%E5%91%A8%E8%B5%9B-1345%E5%90%8D-3%E9%A2%98/1662393987326.png" alt="1662393987326"></p>
-<p>这个题目为啥想了20分钟。。</p>
-<p>很明显左移和右移的个数是确定的！</p>
-<p>那基本就是排列组合了，结果那个排列组合的方法又整了半天，组合数的计算方式总是记不住！</p>
-<p>个数少的时候，直接杨辉三角解法即可， 注意我这个是c[n][m]，  n是大的那个！</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">numberOfWays</span><span class="params">(<span class="type">int</span> startPos, <span class="type">int</span> endPos, <span class="type">int</span> k)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">cha</span> <span class="operator">=</span> Math.abs(startPos - endPos);</span><br><span class="line">        <span class="type">int</span> <span class="variable">chak</span> <span class="operator">=</span> k - cha;</span><br><span class="line">        <span class="keyword">if</span> (chak %<span class="number">2</span> == <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (chak &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> <span class="variable">k1</span> <span class="operator">=</span> cha + chak/<span class="number">2</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">k2</span> <span class="operator">=</span> chak/<span class="number">2</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="type">int</span> <span class="variable">mod</span> <span class="operator">=</span> <span class="number">1000000007</span>;</span><br><span class="line">        <span class="type">long</span>[][] c = <span class="keyword">new</span> <span class="title class_">long</span>[k+<span class="number">1</span>][k+<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;=k;i++)&#123;</span><br><span class="line">            c[i][<span class="number">0</span>]=c[i][i]=<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> j=<span class="number">1</span>;j&lt;i;j++)</span><br><span class="line">                c[i][j]=(c[i-<span class="number">1</span>][j]+c[i-<span class="number">1</span>][j-<span class="number">1</span>])%mod;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> (<span class="type">int</span>)c[k][k1];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/longest-nice-subarray/">2401. 最长优雅子数组 - 力扣（LeetCode）</a></p>
-<p><img src="/images/%E7%AC%AC309%E5%9C%BA%E5%91%A8%E8%B5%9B-1345%E5%90%8D-3%E9%A2%98/1662394562551.png" alt="1662394562551"></p>
-<p>我TM又没看到“连续”二字！！！题目里也没有体现！</p>
-<p>以后看到子数组和子序列都注意啊！注意是不是连续，我十多分钟都花在怎么处理非连续了！</p>
-<p>知道连续以后就很容易了，记录最左边那个会造成同位1，然后时刻更新最左边的有效点</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">longestNiceSubarray</span><span class="params">(<span class="type">int</span>[] nums)</span> &#123;</span><br><span class="line">        <span class="type">int</span>[] indexNears = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">33</span>];</span><br><span class="line">        Arrays.fill(indexNears, -<span class="number">1</span>);</span><br><span class="line">        <span class="type">int</span> <span class="variable">lastLeft</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; nums.length;i++) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">num</span> <span class="operator">=</span> nums[i];</span><br><span class="line">            <span class="type">int</span> <span class="variable">k</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="type">int</span> <span class="variable">novalidLeft</span> <span class="operator">=</span> -<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">while</span> (num &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (num % <span class="number">2</span> == <span class="number">1</span>) &#123;</span><br><span class="line">                    novalidLeft = Math.max(novalidLeft, indexNears[k]);</span><br><span class="line">                    indexNears[k] = i;</span><br><span class="line">                &#125;</span><br><span class="line">                num/=<span class="number">2</span>;</span><br><span class="line">                k++;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="type">int</span> <span class="variable">canValidLeft</span> <span class="operator">=</span> novalidLeft + <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span> (canValidLeft &gt; lastLeft) &#123;</span><br><span class="line">                lastLeft = canValidLeft;</span><br><span class="line">            &#125;</span><br><span class="line">            res = Math.max(res, i - lastLeft + <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/meeting-rooms-iii/">2402. 会议室 III - 力扣（LeetCode）</a></p>
-<p>等待后面纳入日常中重新写</p>
-<p>题目我会做，就是几个细节没处理好导致gg，主要就是优先队列的比较函数</p>
-<ol>
-<li>当同时有几个会议室需要释放时， 需要选最小的会议室先出队，这导致我的优先队列比较函数非常关键</li>
-<li>会议延期要放入一个常规队列，且需要更新时间，还要对原先优先队列里的结束时间做过期处理</li>
-<li>注意int范围越界，特别是比较函数不可以直接a[0] - b[0],都可能越界</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">mostBooked</span><span class="params">(<span class="type">int</span> n, <span class="type">int</span>[][] meetings)</span> &#123;</span><br><span class="line">        <span class="type">long</span>[][] newMeetins = <span class="keyword">new</span> <span class="title class_">long</span>[meetings.length][<span class="number">2</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; meetings.length;i++) &#123;</span><br><span class="line">            newMeetins[i] = <span class="keyword">new</span> <span class="title class_">long</span>[]&#123;meetings[i][<span class="number">0</span>], meetings[i][<span class="number">1</span>]&#125;;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="comment">// 会议占用了哪个会议室</span></span><br><span class="line">        <span class="type">int</span>[] places = <span class="keyword">new</span> <span class="title class_">int</span>[newMeetins.length];</span><br><span class="line">        <span class="comment">//Arrays.fill(places, n+1);</span></span><br><span class="line">        Queue&lt;<span class="type">long</span>[]&gt; meets = <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>&lt;&gt;((a,b)-&gt;(!(a[<span class="number">1</span>] == b[<span class="number">1</span>] &amp;&amp; a[<span class="number">0</span>] == <span class="number">1</span> &amp;&amp; b[<span class="number">0</span>] == <span class="number">1</span>) ? ( a[<span class="number">1</span>] &gt;= b[<span class="number">1</span>] ? <span class="number">1</span> : -<span class="number">1</span>) :(places[(<span class="type">int</span>)a[<span class="number">2</span>]] - places[(<span class="type">int</span>)b[<span class="number">2</span>]])));</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">long</span>[] meet : newMeetins) &#123;</span><br><span class="line">            meets.add(<span class="keyword">new</span> <span class="title class_">long</span>[]&#123;<span class="number">0</span>, meet[<span class="number">0</span>], j&#125;);</span><br><span class="line">            meets.add(<span class="keyword">new</span> <span class="title class_">long</span>[]&#123;<span class="number">1</span>, meet[<span class="number">1</span>], j&#125;);</span><br><span class="line">            j++;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        PriorityQueue&lt;Integer&gt; priorityQueue = <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>&lt;&gt;();</span><br><span class="line">        priorityQueue.addAll(IntStream.range(<span class="number">0</span>, n).boxed().collect(Collectors.toSet()));</span><br><span class="line">        Queue&lt;Integer&gt; waitList = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;&gt;();</span><br><span class="line">        Set&lt;Integer&gt; waitSet = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">        <span class="type">int</span>[] meetHappendCounts = <span class="keyword">new</span> <span class="title class_">int</span>[n];</span><br><span class="line">        <span class="keyword">while</span> (!meets.isEmpty()) &#123;</span><br><span class="line">            <span class="type">long</span>[] meet = meets.poll();</span><br><span class="line">            <span class="type">long</span> <span class="variable">time</span> <span class="operator">=</span> meet[<span class="number">1</span>];</span><br><span class="line">            <span class="type">int</span> <span class="variable">meetIndex</span> <span class="operator">=</span> (<span class="type">int</span>)meet[<span class="number">2</span>];</span><br><span class="line">            <span class="keyword">if</span> (meet[<span class="number">0</span>] == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (!priorityQueue.isEmpty()) &#123;</span><br><span class="line">                    <span class="type">int</span> <span class="variable">place</span> <span class="operator">=</span> priorityQueue.poll();</span><br><span class="line">                    meetHappendCounts[place]++;</span><br><span class="line">                    places[meetIndex] = place;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    waitList.offer(meetIndex);</span><br><span class="line">                    waitSet.add(meetIndex);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (newMeetins[meetIndex][<span class="number">1</span>] != time) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (waitSet.contains(meetIndex)) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 要识别这个end是不是延迟的</span></span><br><span class="line">                <span class="type">int</span> <span class="variable">place</span> <span class="operator">=</span> places[meetIndex];</span><br><span class="line">                <span class="keyword">if</span> (!waitList.isEmpty()) &#123;</span><br><span class="line">                    <span class="type">int</span> <span class="variable">waitmeet</span> <span class="operator">=</span> waitList.poll();</span><br><span class="line">                    waitSet.remove(waitmeet);</span><br><span class="line">                    <span class="type">long</span> <span class="variable">startTime</span> <span class="operator">=</span> newMeetins[waitmeet][<span class="number">0</span>];</span><br><span class="line">                    <span class="type">long</span> <span class="variable">endTime</span> <span class="operator">=</span> newMeetins[waitmeet][<span class="number">1</span>];</span><br><span class="line">                    <span class="type">long</span> <span class="variable">use</span> <span class="operator">=</span> endTime - startTime;</span><br><span class="line">                    <span class="type">long</span> <span class="variable">newEndTime</span> <span class="operator">=</span> time + use;</span><br><span class="line">                    newMeetins[waitmeet][<span class="number">1</span>] = (<span class="type">long</span>)newEndTime;</span><br><span class="line">                    meets.offer(<span class="keyword">new</span> <span class="title class_">long</span>[]&#123;<span class="number">1</span>, newEndTime, waitmeet&#125;);</span><br><span class="line">                    places[waitmeet] = place;</span><br><span class="line">                    meetHappendCounts[place]++;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    priorityQueue.offer(place);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> <span class="variable">max</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">select</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; n;i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (meetHappendCounts[i] &gt; max) &#123;</span><br><span class="line">                max = meetHappendCounts[i];</span><br><span class="line">                select = i;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> select;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%BC%96%E7%A8%8B/%E6%80%9D%E8%80%83/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E8%A6%81%E5%9D%9A%E6%8C%81%E7%BB%83%E4%B9%A0%E7%AE%97%E6%B3%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%BC%96%E7%A8%8B/%E6%80%9D%E8%80%83/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E8%A6%81%E5%9D%9A%E6%8C%81%E7%BB%83%E4%B9%A0%E7%AE%97%E6%B3%95/" class="post-title-link" itemprop="url">为什么我要坚持练习算法</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-09-01 23:32:42" itemprop="dateCreated datePublished" datetime="2022-09-01T23:32:42+08:00">2022-09-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-01-07 15:13:34" itemprop="dateModified" datetime="2023-01-07T15:13:34+08:00">2023-01-07</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E8%A6%81%E5%9D%9A%E6%8C%81%E7%BB%83%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">为什么我要坚持练习</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%BC%96%E7%A8%8B/%E6%80%9D%E8%80%83/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E8%A6%81%E5%9D%9A%E6%8C%81%E7%BB%83%E4%B9%A0%E7%AE%97%E6%B3%95/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B/%E6%80%9D%E8%80%83/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E8%A6%81%E5%9D%9A%E6%8C%81%E7%BB%83%E4%B9%A0%E7%AE%97%E6%B3%95/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#yi-ti-sheng-kai-fa-zhe-zi-ce-neng-li">一、提升开发者自测能力</a></li>
-<li><a href="#er-jia-shen-dui-bian-cheng-yu-yan-de-shi-yong">二、加深对编程语言的使用</a>
-<ul>
-<li><a href="#1-api-ying-yong">1.api应用</a></li>
-<li><a href="#2-yu-fa-wen-ti-cha-que-bu-lou">2. 语法问题查缺补漏</a></li>
-</ul>
-</li>
-<li><a href="#san-shou-huo-si-xiang-zuo-wei-cheng-xu-you-hua-de-si-xiang-chu-bei">三、收获“思想”，作为程序优化的思想储备</a></li>
-<li><a href="#si-bao-chi-dai-ma-si-wei-he-shou-gan">四、保持代码思维和手感</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="yi-ti-sheng-kai-fa-zhe-zi-ce-neng-li">一、提升开发者自测能力</span><a href="#yi-ti-sheng-kai-fa-zhe-zi-ce-neng-li" class="header-anchor">#</a></h1>
-<p>面试时的上机编程有一个特点，就是不会给出“错误用例”。<br>
-有时也会听到“为什么不能提示错误用例”之类的吐槽。<br>
-这种思维类似于&quot;测试为什么没测出来这个bug&quot; 、“缺少堆栈和日志，不能设断点，我没法排查这个问题”</p>
-<p>然而被提单次数，会影响自己的代码质量评估。 生产环境往往也因为安全限制，无法直接远程调试。 因此这种思维是很危险和不可取的。<br>
-<img src="/images/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E8%A6%81%E5%9D%9A%E6%8C%81%E7%BB%83%E4%B9%A0%E7%AE%97%E6%B3%95/image(348).png" alt="image.png"></p>
-<p>算法题熟练的同学，有个特点，就是能在接口中提前加上各种判断，或者写上todo注释作为开发遗留。<br>
-原因就是在大量的算法题练习过程中，掌握了边界的处理，或者通过阅读代码逻辑，找出其中漏洞。<br>
-学习开发者的白盒测试理论是很有利于解决这种情况的。<br>
-里面的几种边界，对于开发者自身应该要能熟练掌握。<br>
-<img src="/images/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E8%A6%81%E5%9D%9A%E6%8C%81%E7%BB%83%E4%B9%A0%E7%AE%97%E6%B3%95/image(350).png" alt="image.png"></p>
-<p>因此大家平时如果在leetcode或者其他平台练习题目时，最好以零出错为目目标一次性搞定。 出错的第一时间， 先不要拿着用例去调试， 而是想一想自己为什么会漏了这种情况。 否则很容易形成对错误用例和调试的依赖。</p>
-<h1><span id="er-jia-shen-dui-bian-cheng-yu-yan-de-shi-yong">二、加深对编程语言的使用</span><a href="#er-jia-shen-dui-bian-cheng-yu-yan-de-shi-yong" class="header-anchor">#</a></h1>
-<h2><span id="1-api-ying-yong">1.api应用</span><a href="#1-api-ying-yong" class="header-anchor">#</a></h2>
-<p>以java为例， 当你频繁用for循环写各种初始化或者赋值代码时，可能会觉得心很累。<br>
-例如需要将&quot;0,1,2,3&quot;这个字符串转成一个整数数组，新手写法是</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public static int[] buildIntArray(String str) &#123;</span><br><span class="line">    String[] numStrs = str.split(&quot;,&quot;);</span><br><span class="line">    int[] result = new int[numStrs.length];</span><br><span class="line">    for (int i = 0;i&lt;result.length;i++) &#123;</span><br><span class="line">        result[i] = Integer.valueOf(numStrs[i]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>而使用javaStream的话，一行代码就搞定了</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public static int[] buildIntArray(String str) &#123;</span><br><span class="line">    return Arrays.stream(str.split(&quot;,&quot;)).mapToInt(Integer::valueOf).toArray();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>因此练习中即使解决了题目，也不妨看看其他人的代码， 进而将好的用法引申到工作中。（当然写太复杂的java stream代码会影响可读性，视情况而用）。</p>
-<h2><span id="2-yu-fa-wen-ti-cha-que-bu-lou">2. 语法问题查缺补漏</span><a href="#2-yu-fa-wen-ti-cha-que-bu-lou" class="header-anchor">#</a></h2>
-<p>另外练习过程中，也能遇到很多编程知识的应用。 假设我们需要自定义一个优先队列，有人写了下面这个代码，却有部分用例无法通过，为什么呢？</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">PriorityQueue&lt;Integer&gt; priorityQueue = <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>&lt;&gt;(<span class="keyword">new</span> <span class="title class_">Comparator</span>&lt;Integer&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">compare</span><span class="params">(Integer a, Integer b)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (a != b) &#123;</span><br><span class="line">            <span class="comment">// 当a=b的另一种判断条件.....</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span>  a - b;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>实际上是因为 Integer包装类型不能用==和!=直接去比较，  因为Integer范围不在-128到127时，比较的就是引用地址而非实际大小了。因此应该用equals方法。从这里可以看出一些编程知识在开发工作中的重要性。</p>
-<h1><span id="san-shou-huo-si-xiang-zuo-wei-cheng-xu-you-hua-de-si-xiang-chu-bei">三、收获“思想”，作为程序优化的思想储备</span><a href="#san-shou-huo-si-xiang-zuo-wei-cheng-xu-you-hua-de-si-xiang-chu-bei" class="header-anchor">#</a></h1>
-<p>相信很多人从做题攻略和自主练习过程中，  学到了 动态规划、 链表、KMP、二分查找、 并查集等 诸多“套路”。 这些算法却在平时的业务开发中却很少用到， 不免会让人吐槽都是&quot;花拳绣腿&quot;，折腾人，对绩效和KPI也没有帮助。</p>
-<p>那么可以换个角度理解，学习数学有什么用？ 如果仅仅是用于工程应用，不做研究，大部分也只是做api的调用者，不会追究到数学证明、公式推导等层面。<br>
-<img src="/images/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E8%A6%81%E5%9D%9A%E6%8C%81%E7%BB%83%E4%B9%A0%E7%AE%97%E6%B3%95/image(351).png" alt="image.png"></p>
-<p>但数学作为从小到大一直在重点考察的学科一直陪伴着我们。为什么？<br>
-个人理解，是因为数学可以锻炼我们的逻辑思维能力，培养一种理性思维和解决问题的方式。</p>
-<p>算法和数学都是一种思想。 包括你去学习设计模式、学习jvm原理、学习操作系统等，都是在学习一种思想。 而对思想的理解和加深，则需要大量的练习。因此上机编程成了重要的考察方式。</p>
-<p>以二分查找为例，有的人只关注循环不变式模板、&quot;逃课&quot;api(指不用手写二分，可以直接用的接口，例如treeMap的floor()）<br>
-有的人则会在大量的练习中，悟到什么时候、哪种情况下可以剔除不必要的搜索遍历过程，并使用二分解决性能问题。</p>
-<p>因此建议大家在备考刷题的过程中， 除了关注&quot;套路&quot;、&quot;题目面板&quot;外，多关注一下这个解法的背后思想是什么， 当你能理解到这一个层次时，  往往对你的编程工作会有持续的潜移默化影响，尽管可能不是那么显而易见罢了。</p>
-<h1><span id="si-bao-chi-dai-ma-si-wei-he-shou-gan">四、保持代码思维和手感</span><a href="#si-bao-chi-dai-ma-si-wei-he-shou-gan" class="header-anchor">#</a></h1>
-<p>大家应该都有这种时期， 就是某段时间都是各种杂事，可能1个月就写了几百行代码，事后再捡起来就不会写了。<br>
-因此这种时期练练题目，对自己也维持手感也会有帮助。有句话叫做“ 流水不腐户枢不蠹”。<br>
-另外看到一段关于跑步的话，这里分享一下：</p>
-<blockquote>
-<blockquote>
-<p>如果你经常跑步，你也许会知道其实 4 个多小时一点都不快，完全就是业余跑者的水平；也许你也知道，其实即便是大众跑者，5 年完成百公里也是相当难的，甚至身体的原因，不是所有人都能跑下来越野。<br>
-所以当我开始追求速度时，慢慢发现，当我在为 5 公里没有跑进 20 分而焦虑和努力时，学校里的那些体育生都在追求如何跑进 17 分了。后来我释然了：之前我对于跑步的疯狂，是因为没有搞懂跑步的意义：<br>
-因为跑步不会让我毕业。<br>
-因为跑步不会让我找到工作。<br>
-因为跑步不会让我找到女朋友。<br>
-跑步对于我的意义，就是能让我保持身体健康，仅此而已。</p>
-</blockquote>
-</blockquote>
-<hr>
-<p>以上就是我的一些想法，个人技术水平和经验有限，没有资格让大家全部认同。<br>
-另外考查程序员素养的指标绝对不仅仅只是代码。上机题的考察方式本身也可能存在缺陷。如果你是对此有更深理解的朋友，也可以讲一下你对这方面的看法和收获，大家一起学习和参考。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2568,7 +2696,7 @@ swap： 原子交换命令， 交换2个字节内容。</li>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">276</span>
+          <span class="site-state-item-count">279</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -2587,9 +2715,6 @@ swap： 原子交换命令， 交换2个字节内容。</li>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
         <a href="mailto:799581229@@qq.com" title="E-Mail → mailto:799581229@@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://breakdawncoder.com/images/%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0/1660493655011.png" title="Genshin-UID → http:&#x2F;&#x2F;breakdawncoder.com&#x2F;images&#x2F;%E5%8E%9F%E7%A5%9E%E6%97%85%E6%B8%B8%E6%97%A5%E8%AE%B0&#x2F;1660493655011.png"><i class="fa fa-gamepad fa-fw"></i>Genshin-UID</a>
       </span>
       <span class="links-of-author-item">
         <a href="/15990050657" title="WeChat → 15990050657"><i class="fa fa-weixin fa-fw"></i>WeChat</a>
@@ -2639,7 +2764,7 @@ swap： 原子交换命令， 交换2个字节内容。</li>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共359.3k字</span>
+  <span class="post-count">博客全站共359.4k字</span>
 </div>
 
         
