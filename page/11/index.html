@@ -181,6 +181,518 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%A4%87%E4%BB%BD%E5%92%8C%E6%8C%81%E4%B9%85%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%A4%87%E4%BB%BD%E5%92%8C%E6%8C%81%E4%B9%85%E5%8C%96/" class="post-title-link" itemprop="url">redis备份和持久化</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-09-23 00:36:12" itemprop="dateCreated datePublished" datetime="2022-09-23T00:36:12+08:00">2022-09-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-09-24 00:28:15" itemprop="dateModified" datetime="2022-09-24T00:28:15+08:00">2022-09-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">微服务组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/redis/redis%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">redis高可用原理</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%A4%87%E4%BB%BD%E5%92%8C%E6%8C%81%E4%B9%85%E5%8C%96/" class="post-meta-item leancloud_visitors" data-flag-title="redis备份和持久化" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%A4%87%E4%BB%BD%E5%92%8C%E6%8C%81%E4%B9%85%E5%8C%96/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%A4%87%E4%BB%BD%E5%92%8C%E6%8C%81%E4%B9%85%E5%8C%96/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#rdb-redis-database-redis-kuai-zhao">RDB（Redis DataBase） redis快照</a>
+<ul>
+<li><a href="#q-rdb-you-na-liang-chong-hong-fa-fang-shi">Q: RDB有哪两种触发方式？</a></li>
+<li><a href="#q-save-ming-ling-he-bgsave-ming-ling-you-shi-me-qu-bie">Q: save命令和bgsave命令有什么区别？</a></li>
+<li><a href="#q-ru-guo-yi-ci-zhi-xing-hao-ji-ge-bgsave-ming-ling-hui-zen-me-yang">Q: 如果一次执行好几个bgsave命令会怎么样？</a></li>
+<li><a href="#q-bgsave-de-guo-cheng-zhong-ru-guo-zhu-jin-cheng-shou-dao-xin-de-xie-shu-ju-zen-me-ban">Q: bgsave的过程中，如果主进程收到新的写数据怎么办？</a></li>
+<li><a href="#q-zhe-ge-tong-bu-fu-ben-gei-zi-jin-cheng-de-shi-hou-jin-cheng-beng-kui-zen-me-ban-dao-zhi-mei-you-luo-pan-dao-rdb">Q: 这个同步副本给子进程的时候进程崩溃怎么办？导致没有落盘到RDB</a></li>
+<li><a href="#q-mei-miao-zuo-yi-ci-bgsave-hui-you-shi-me-wen-ti-ru-guo-shu-ju-liang-bi-jiao-da-de-hua">Q: 每秒做一次bgsave会有什么问题？如果数据量比较大的话</a></li>
+<li><a href="#q-ru-he-jie-jue-shang-mian-de-wen-ti-you-neng-jin-ke-neng-bao-zheng-bei-fen-de-shi-shi-ke-kao-xing">Q: 如何解决上面的问题， 又能尽可能保证备份的实时可靠性？</a></li>
+<li><a href="#q-rdb-de-you-que-dian">Q: RDB的优缺点？</a></li>
+</ul>
+</li>
+<li><a href="#aof-append-only-file-chi-jiu-hua-fang-shi">AOF（append only file）持久化方式</a>
+<ul>
+<li><a href="#q-aof-cai-yong-xian-geng-xin-nei-cun-huan-cun-zai-xie-bei-fen-ri-zhi-he-mysql-ri-zhi-xian-xing-de-si-xiang-bu-tong-wei-shi-me">Q: AOF采用 ”先更新内存缓存， 再写备份日志“， 和”mysql日志先行“的思想不同，为什么？</a></li>
+<li><a href="#q-aof-ji-lu-shi-de-3-ge-bu-zou-shi-zen-yang-de">Q: AOF记录时的3个步骤是怎样的？</a></li>
+<li><a href="#q-sui-zhao-xie-ru-cao-zuo-yue-lai-yue-duo-aof-wen-jian-hui-yue-lai-yue-da-zen-me-ban">Q: 随着写入操作越来越多， AOF文件会越来越大，怎么办？</a></li>
+<li><a href="#q-chong-xie-shi-you-xin-de-shu-ju-xie-ru-zen-me-ban">Q: 重写时，由新的数据写入怎么办？</a></li>
+<li><a href="#q-ru-guo-chong-xie-de-shi-hou-redis-chong-qi-liao-zen-me-ban">Q: 如果重写的时候 redis重启了怎么办？</a></li>
+<li><a href="#q-zhu-jin-cheng-ru-he-kao-bei-shu-ju-gei-zi-jin-cheng">Q: 主进程如何拷贝数据给子进程？</a></li>
+<li><a href="#q-hui-fu-shi-ru-guo-tong-shi-you-rdb-wen-jian-he-aof-wen-jian-zen-me-xuan-ze">Q: 恢复时， 如果同时有RDB文件和AOF文件，怎么选择？</a></li>
+<li><a href="#q-na-me-wei-shi-me-hui-you-xian-jia-zai-aof-ni">Q: 那么为什么会优先加载AOF呢？</a></li>
+<li><a href="#q-xian-shang-gao-ya-huan-jing-ru-he-jin-xing-bei-fen-ji-zhi-de-diao-you-jian-shao-zu-sai">Q: 线上高压环境如何进行备份机制的调优，减少阻塞？</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<hr>
+<p>redis持久化是做什么的？就是为了做备份， 避免redis重启后要重新从数据库里拿缓存。<br>
+redis当前有两种持久化机制： RDB和AOC</p>
+<hr>
+<h1><span id="rdb-redis-database-redis-kuai-zhao">RDB（Redis DataBase） redis快照</span><a href="#rdb-redis-database-redis-kuai-zhao" class="header-anchor">#</a></h1>
+<h2><span id="q-rdb-you-na-liang-chong-hong-fa-fang-shi">Q: RDB有哪两种触发方式？</span><a href="#q-rdb-you-na-liang-chong-hong-fa-fang-shi" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>
+<p>手动触发。 调用save或者bgsave命令进行快照和备份。</p>
+<p>也可以配置redis.conf，做一个周期性快照，但本质上是使用上面这2个命令</p>
+</li>
+<li>
+<p>自动触发。m秒内有n次修改，或者主从复制时会触发。</p>
+</li>
+</ul>
+<hr>
+<h2><span id="q-save-ming-ling-he-bgsave-ming-ling-you-shi-me-qu-bie">Q: save命令和bgsave命令有什么区别？</span><a href="#q-save-ming-ling-he-bgsave-ming-ling-you-shi-me-qu-bie" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>
+<p>save命令会阻塞当前redis线程，导致缓存暂时不可用（stopwolrd）， 只能在开发环境或者测试环境使用。</p>
+</li>
+<li>
+<p>bgsave 会fork创建一个子进程，在子进程中做RDB操作。</p>
+<p>RDB快照存盘完成后，会通知主进程，主进程更新统计信息。</p>
+</li>
+</ul>
+<hr>
+<h2><span id="q-ru-guo-yi-ci-zhi-xing-hao-ji-ge-bgsave-ming-ling-hui-zen-me-yang">Q: 如果一次执行好几个bgsave命令会怎么样？</span><a href="#q-ru-guo-yi-ci-zhi-xing-hao-ji-ge-bgsave-ming-ling-hui-zen-me-yang" class="header-anchor">#</a></h2>
+<p>A:<br>
+当检测到有子进程时， 后面几个bgsave命令会直接返回，不会做创建。</p>
+<hr>
+<h2><span id="q-bgsave-de-guo-cheng-zhong-ru-guo-zhu-jin-cheng-shou-dao-xin-de-xie-shu-ju-zen-me-ban">Q: bgsave的过程中，如果主进程收到新的写数据怎么办？</span><a href="#q-bgsave-de-guo-cheng-zhong-ru-guo-zhu-jin-cheng-shou-dao-xin-de-xie-shu-ju-zen-me-ban" class="header-anchor">#</a></h2>
+<p>A:<br>
+主进程会把写数据生成一个副本，交给bgsave子进程， 子进程会把这个修改作为最新修改写入RDB文件。</p>
+<hr>
+<h2><span id="q-zhe-ge-tong-bu-fu-ben-gei-zi-jin-cheng-de-shi-hou-jin-cheng-beng-kui-zen-me-ban-dao-zhi-mei-you-luo-pan-dao-rdb">Q: 这个同步副本给子进程的时候进程崩溃怎么办？导致没有落盘到RDB</span><a href="#q-zhe-ge-tong-bu-fu-ben-gei-zi-jin-cheng-de-shi-hou-jin-cheng-beng-kui-zen-me-ban-dao-zhi-mei-you-luo-pan-dao-rdb" class="header-anchor">#</a></h2>
+<p>A:<br>
+RDB完全写入成功，才算成功。<br>
+写一半的RDB文件，被认为无效文件，因此会用上一次的有效RDB文件进行恢复。</p>
+<hr>
+<h2><span id="q-mei-miao-zuo-yi-ci-bgsave-hui-you-shi-me-wen-ti-ru-guo-shu-ju-liang-bi-jiao-da-de-hua">Q: 每秒做一次bgsave会有什么问题？如果数据量比较大的话</span><a href="#q-mei-miao-zuo-yi-ci-bgsave-hui-you-shi-me-wen-ti-ru-guo-shu-ju-liang-bi-jiao-da-de-hua" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ol>
+<li>磁盘压力比较大，频繁竞争磁盘通过（注意每次快照的文件都是不同的文件，但磁盘写入器会共用）</li>
+<li>创建fork子线程的操作，本身会阻塞一定的主进程时间。</li>
+</ol>
+<hr>
+<h2><span id="q-ru-he-jie-jue-shang-mian-de-wen-ti-you-neng-jin-ke-neng-bao-zheng-bei-fen-de-shi-shi-ke-kao-xing">Q: 如何解决上面的问题， 又能尽可能保证备份的实时可靠性？</span><a href="#q-ru-he-jie-jue-shang-mian-de-wen-ti-you-neng-jin-ke-neng-bao-zheng-bei-fen-de-shi-shi-ke-kao-xing" class="header-anchor">#</a></h2>
+<p>A:<br>
+做增量快照（只备份新增的修改），而增量快照的话RDB无法支持。</p>
+<hr>
+<h2><span id="q-rdb-de-you-que-dian">Q: RDB的优缺点？</span><a href="#q-rdb-de-you-que-dian" class="header-anchor">#</a></h2>
+<p>A:<br>
+优点：</p>
+<ul>
+<li>
+<p>使用了LZF算法做了压缩，数据量小于内存大小，很适合备份、全量复制。</p>
+</li>
+<li>
+<p>备份恢复速度比AOF快。</p>
+<p>缺点：</p>
+</li>
+<li>
+<p>效率不高，如果数据量太大的话。</p>
+</li>
+<li>
+<p>fork子进程操作比较重</p>
+</li>
+<li>
+<p>文件属于二进制文件，可读性差。</p>
+</li>
+</ul>
+<h1><span id="aof-append-only-file-chi-jiu-hua-fang-shi">AOF（append only file）持久化方式</span><a href="#aof-append-only-file-chi-jiu-hua-fang-shi" class="header-anchor">#</a></h1>
+<h2><span id="q-aof-cai-yong-xian-geng-xin-nei-cun-huan-cun-zai-xie-bei-fen-ri-zhi-he-mysql-ri-zhi-xian-xing-de-si-xiang-bu-tong-wei-shi-me">Q: AOF采用 ”先更新内存缓存， 再写备份日志“， 和”mysql日志先行“的思想不同，为什么？</span><a href="#q-aof-cai-yong-xian-geng-xin-nei-cun-huan-cun-zai-xie-bei-fen-ri-zhi-he-mysql-ri-zhi-xian-xing-de-si-xiang-bu-tong-wei-shi-me" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>
+<p>错误命令得调用redisobject方法的时候才能感知，写日志时不方便做检查。</p>
+<p>如果写了错误命令的日志，再执行命令，就不好恢复了（那mysql为什么没有这个顾虑？）</p>
+</li>
+<li>
+<p>尽快加速写操作的响应</p>
+<p>风险就是正巧写的时候挂了，那日志也丢了。</p>
+</li>
+</ul>
+<hr>
+<h2><span id="q-aof-ji-lu-shi-de-3-ge-bu-zou-shi-zen-yang-de">Q: AOF记录时的3个步骤是怎样的？</span><a href="#q-aof-ji-lu-shi-de-3-ge-bu-zou-shi-zen-yang-de" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ol>
+<li>
+<p>命令追加</p>
+<p>把写命令写道aof_buf缓冲区</p>
+</li>
+<li>
+<p>文件写入和同步</p>
+<p>什么时候写入文件，有3种策略</p>
+</li>
+</ol>
+<ul>
+<li>always：每次写入缓冲区后，都马上写入文件</li>
+<li>everySec:每秒把缓冲区里的数据写一次到文件（可能丢失1秒）</li>
+<li>no:由操作系统控制合何时写文件</li>
+</ul>
+<hr>
+<h2><span id="q-sui-zhao-xie-ru-cao-zuo-yue-lai-yue-duo-aof-wen-jian-hui-yue-lai-yue-da-zen-me-ban">Q: 随着写入操作越来越多， AOF文件会越来越大，怎么办？</span><a href="#q-sui-zhao-xie-ru-cao-zuo-yue-lai-yue-duo-aof-wen-jian-hui-yue-lai-yue-da-zen-me-ban" class="header-anchor">#</a></h2>
+<p>A:<br>
+当大到一定成都时， redis会创建一个新的AOF文件， 对老文件里的命令进行重写，去除一些冗余命令，只保留每个键的最后状态。<br>
+重写操作也是fork了一个子线程进行重写</p>
+<hr>
+<h2><span id="q-chong-xie-shi-you-xin-de-shu-ju-xie-ru-zen-me-ban">Q: 重写时，由新的数据写入怎么办？</span><a href="#q-chong-xie-shi-you-xin-de-shu-ju-xie-ru-zen-me-ban" class="header-anchor">#</a></h2>
+<p>A:<br>
+同步2份写操作， 老AOF文件写一份， 新AOF文件的缓冲区同步一份。</p>
+<ol>
+<li>
+<p>主线程fork出子进程重写aof日志</p>
+</li>
+<li>
+<p>子进程重写日志完成后，主线程追加aof日志缓冲</p>
+</li>
+<li>
+<p>替换日志文件</p>
+<p><img src="/images/redis%E5%A4%87%E4%BB%BD%E5%92%8C%E6%8C%81%E4%B9%85%E5%8C%96/860816c7e75a0e58e1850249253f77bdd72ff327.png" alt="860816c7e75a0e58e1850249253f77bdd72ff327"></p>
+</li>
+</ol>
+<hr>
+<h2><span id="q-ru-guo-chong-xie-de-shi-hou-redis-chong-qi-liao-zen-me-ban">Q: 如果重写的时候 redis重启了怎么办？</span><a href="#q-ru-guo-chong-xie-de-shi-hou-redis-chong-qi-liao-zen-me-ban" class="header-anchor">#</a></h2>
+<p>A:<br>
+没写完的AOF文件默认失效， 使用老的AOF文件。</p>
+<hr>
+<h2><span id="q-zhu-jin-cheng-ru-he-kao-bei-shu-ju-gei-zi-jin-cheng">Q: 主进程如何拷贝数据给子进程？</span><a href="#q-zhu-jin-cheng-ru-he-kao-bei-shu-ju-gei-zi-jin-cheng" class="header-anchor">#</a></h2>
+<p>A:<br>
+使用操作系统的copy on write<br>
+子进程时会拷贝父进程的页表，即虚实映射关系（虚拟内存和物理内存的映射索引表），而不会拷贝物理内存<br>
+<img src="/images/redis%E5%A4%87%E4%BB%BD%E5%92%8C%E6%8C%81%E4%B9%85%E5%8C%96/36b01fbc65c4c5b78e1f61f26f11766dc5a56407.png" alt="36b01fbc65c4c5b78e1f61f26f11766dc5a56407"></p>
+<hr>
+<p>一般都采用RDB和AOF混合的方式， 先全量快照， 然后一段时间内增量AOF。</p>
+<hr>
+<h2><span id="q-hui-fu-shi-ru-guo-tong-shi-you-rdb-wen-jian-he-aof-wen-jian-zen-me-xuan-ze">Q: 恢复时， 如果同时有RDB文件和AOF文件，怎么选择？</span><a href="#q-hui-fu-shi-ru-guo-tong-shi-you-rdb-wen-jian-he-aof-wen-jian-zen-me-xuan-ze" class="header-anchor">#</a></h2>
+<p>A:<br>
+优先选择AOF文件，AOF不存在再RDB。<br>
+<img src="/images/redis%E5%A4%87%E4%BB%BD%E5%92%8C%E6%8C%81%E4%B9%85%E5%8C%96/219bd9996098a234c7a2534fa4e5d24c2a0525c2.png" alt="219bd9996098a234c7a2534fa4e5d24c2a0525c2"></p>
+<hr>
+<h2><span id="q-na-me-wei-shi-me-hui-you-xian-jia-zai-aof-ni">Q: 那么为什么会优先加载AOF呢？</span><a href="#q-na-me-wei-shi-me-hui-you-xian-jia-zai-aof-ni" class="header-anchor">#</a></h2>
+<p>A:<br>
+因为AOF保存的数据更完整，通过上面的分析我们知道AOF基本上最多损失1s的数据。</p>
+<hr>
+<h2><span id="q-xian-shang-gao-ya-huan-jing-ru-he-jin-xing-bei-fen-ji-zhi-de-diao-you-jian-shao-zu-sai">Q: 线上高压环境如何进行备份机制的调优，减少阻塞？</span><a href="#q-xian-shang-gao-ya-huan-jing-ru-he-jin-xing-bei-fen-ji-zhi-de-diao-you-jian-shao-zu-sai" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ul>
+<li>关闭非敏感、重要性数据的备份</li>
+<li>通过一些其他补数据机制进行恢复，例如自己写一些缓存重新载入的补数据功能。</li>
+<li>redis集群实现滚动备份，避免全部同时在备份。</li>
+<li>redis主从复制时， 让从节点做备份，主节点不做部分。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E7%BD%91%E7%BB%9CIO%E6%A8%A1%E5%9E%8B%E5%92%8C%E4%BA%8B%E4%BB%B6%E8%A7%A6%E5%8F%91%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E7%BD%91%E7%BB%9CIO%E6%A8%A1%E5%9E%8B%E5%92%8C%E4%BA%8B%E4%BB%B6%E8%A7%A6%E5%8F%91%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">redis网络IO模型和事件触发原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-09-23 00:16:12" itemprop="dateCreated datePublished" datetime="2022-09-23T00:16:12+08:00">2022-09-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-09-24 00:28:08" itemprop="dateModified" datetime="2022-09-24T00:28:08+08:00">2022-09-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">微服务组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6/redis/redis%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">redis底层原理</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E7%BD%91%E7%BB%9CIO%E6%A8%A1%E5%9E%8B%E5%92%8C%E4%BA%8B%E4%BB%B6%E8%A7%A6%E5%8F%91%E5%8E%9F%E7%90%86/" class="post-meta-item leancloud_visitors" data-flag-title="redis网络IO模型和事件触发原理" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E7%BD%91%E7%BB%9CIO%E6%A8%A1%E5%9E%8B%E5%92%8C%E4%BA%8B%E4%BB%B6%E8%A7%A6%E5%8F%91%E5%8E%9F%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E7%BD%91%E7%BB%9CIO%E6%A8%A1%E5%9E%8B%E5%92%8C%E4%BA%8B%E4%BB%B6%E8%A7%A6%E5%8F%91%E5%8E%9F%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#q-redis-de-gao-tun-tu-lu-ju-ti-zhi-de-shi-shi-me">Q: redis的高吞吐率具体指的是什么？</a></li>
+<li><a href="#q-redis-suo-shuo-de-dan-xian-cheng-zhi-de-shi-na-xie-bu-fen-na-xie-bu-fen-bu-shi-dan-xian-cheng">Q: redis所说的单线程指的是哪些部分？哪些部分不是单线程？</a></li>
+<li><a href="#q-jiang-yi-xia-yi-ci-redis-ke-hu-duan-yu-fu-wu-qi-jin-xing-lian-jie-bing-qie-fa-song-ming-ling-de-guo-cheng">Q: 讲一下一次 Redis 客户端与服务器进行连接并且发送命令的过程？</a></li>
+<li><a href="#q-shang-mian-de-guo-cheng-zhong-ru-guo-mei-you-io-duo-lu-fu-yong-hui-you-shi-me-wen-ti">Q: 上面的过程中， 如果没有IO多路复用，会有什么问题？</a></li>
+<li><a href="#q-na-gai-cheng-io-duo-lu-fu-yong-hou-you-shi-zen-me-you-hua-de">Q: 那改成IO多路复用后又是怎么优化的？</a></li>
+<li><a href="#q-redis-de-duo-lu-fu-yong-ji-zhi-zhi-you-epoll-ma">Q: redis的多路复用机制只有epoll吗？</a></li>
+<li><a href="#q-redis-you-na-xie-shi-jian-shi-jian">Q: redis有哪些时间事件？</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<hr>
+<p>笔记来自<br>
+<a target="_blank" rel="noopener" href="https://pdai.tech/md/db/nosql-redis/db-redis-x-event.html">Redis进阶 - 事件：Redis事件机制详解</a></p>
+<hr>
+<h1><span id="q-redis-de-gao-tun-tu-lu-ju-ti-zhi-de-shi-shi-me">Q: redis的高吞吐率具体指的是什么？</span><a href="#q-redis-de-gao-tun-tu-lu-ju-ti-zhi-de-shi-shi-me" class="header-anchor">#</a></h1>
+<p>A:<br>
+在网络 IO 操作中能并发处理大量的客户端请求，并建立很多连接，却不会那么那么容易阻塞</p>
+<hr>
+<h1><span id="q-redis-suo-shuo-de-dan-xian-cheng-zhi-de-shi-na-xie-bu-fen-na-xie-bu-fen-bu-shi-dan-xian-cheng">Q: redis所说的单线程指的是哪些部分？哪些部分不是单线程？</span><a href="#q-redis-suo-shuo-de-dan-xian-cheng-zhi-de-shi-na-xie-bu-fen-na-xie-bu-fen-bu-shi-dan-xian-cheng" class="header-anchor">#</a></h1>
+<p>A:<br>
+单线程主要是指 Redis 的网络 IO 和键值对读写是由一个线程来完成的，这也是 Redis 对外提供键值存储服务的主要流程<br>
+需要额外线程执行的：</p>
+<ul>
+<li>持久化</li>
+<li>异步删除</li>
+<li>集群数据同步</li>
+</ul>
+<hr>
+<h1><span id="q-jiang-yi-xia-yi-ci-redis-ke-hu-duan-yu-fu-wu-qi-jin-xing-lian-jie-bing-qie-fa-song-ming-ling-de-guo-cheng">Q: 讲一下一次 Redis 客户端与服务器进行连接并且发送命令的过程？</span><a href="#q-jiang-yi-xia-yi-ci-redis-ke-hu-duan-yu-fu-wu-qi-jin-xing-lian-jie-bing-qie-fa-song-ming-ling-de-guo-cheng" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ol>
+<li>
+<p>客户端向服务端发起建立 socket 连接的请求，那么监听套接字将产生 AE_READABLE 事件，触发连接应答处理器执行。</p>
+</li>
+<li>
+<p>进行应答，然后创建客户端套接字，以及客户端状态，并将客户端套接字的 AE_READABLE 事件与命令请求处理器关联。</p>
+</li>
+<li>
+<p>客户端建立连接后，向服务器发送命令，那么客户端套接字将产生 AE_READABLE 事件，触发命令请求处理器执行，处理器读取客户端命令，然后传递给相关程序去执行。</p>
+</li>
+<li>
+<p>执行命令获得相应的命令回复。</p>
+<p>为了将命令回复传递给客户端，服务器将客户端套接字的 AE_WRITEABLE 事件与命令回复处理器关联。</p>
+<p>当客户端试图读取命令回复时，客户端套接字产生 AE_WRITEABLE 事件，触发命令回复处理器将命令回复全部写入到套接字中。</p>
+</li>
+</ol>
+<hr>
+<h1><span id="q-shang-mian-de-guo-cheng-zhong-ru-guo-mei-you-io-duo-lu-fu-yong-hui-you-shi-me-wen-ti">Q: 上面的过程中， 如果没有IO多路复用，会有什么问题？</span><a href="#q-shang-mian-de-guo-cheng-zhong-ru-guo-mei-you-io-duo-lu-fu-yong-hui-you-shi-me-wen-ti" class="header-anchor">#</a></h1>
+<p>A:<br>
+服务端将会有一个线程一直阻塞等待客户端的命令以及回复读取。占用CPU资源。</p>
+<hr>
+<h1><span id="q-na-gai-cheng-io-duo-lu-fu-yong-hou-you-shi-zen-me-you-hua-de">Q: 那改成IO多路复用后又是怎么优化的？</span><a href="#q-na-gai-cheng-io-duo-lu-fu-yong-hou-you-shi-zen-me-you-hua-de" class="header-anchor">#</a></h1>
+<p>A:<br>
+调用 epoll 机制，让内核监听这些套接字。<br>
+此时，Redis 线程不会阻塞在某一个特定的监听或已连接套接字上，也就是说，不会阻塞在某一个特定的客户端请求处理上。<br>
+正因为此，Redis 可以同时和多个客户端连接并处理请求，从而提升并发性。</p>
+<hr>
+<h1><span id="q-redis-de-duo-lu-fu-yong-ji-zhi-zhi-you-epoll-ma">Q: redis的多路复用机制只有epoll吗？</span><a href="#q-redis-de-duo-lu-fu-yong-ji-zhi-zhi-you-epoll-ma" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>
+<p>Redis 基于的底层 I/O 多路复用库有多套。包括select、epoll、evport和kqueue等。</p>
+</li>
+<li>
+<p>每个IO多路复用函数库在 Redis 源码中都对应一个单独的文件，比如ae_select.c，ae_epoll.c， ae_kqueue.c等。</p>
+</li>
+<li>
+<p>Redis 会根据不同的操作系统，按照不同的优先级选择多路复用技术。事件响应框架一般都采用该架构，比如 netty 和 libevent。</p>
+<p><img src="/images/redis%E7%BD%91%E7%BB%9CIO%E6%A8%A1%E5%9E%8B%E5%92%8C%E4%BA%8B%E4%BB%B6%E8%A7%A6%E5%8F%91%E5%8E%9F%E7%90%86/1bfbfd888006a50755f022d83af679ca0d670240.png" alt="1bfbfd888006a50755f022d83af679ca0d670240"></p>
+</li>
+</ul>
+<hr>
+<h1><span id="q-redis-you-na-xie-shi-jian-shi-jian">Q: redis有哪些时间事件？</span><a href="#q-redis-you-na-xie-shi-jian-shi-jian" class="header-anchor">#</a></h1>
+<p>A:</p>
+<ul>
+<li>定时事件：让一段程序在指定的时间之后执行一次，执行完就不再执行了。</li>
+<li>周期性事件：让一段程序每隔指定时间就执行一次。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%A0%B8%E5%BF%83%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -238,6 +750,13 @@
             </span>
 
           
+            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%A0%B8%E5%BF%83%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" class="post-meta-item leancloud_visitors" data-flag-title="redis数据结构核心实现原理" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
   
   <span class="post-meta-item">
     
@@ -684,6 +1203,13 @@ skip+dict比较复杂，如下图所示：<br>
             </span>
 
           
+            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E4%BA%8B%E5%8A%A1%E5%BA%94%E7%94%A8/" class="post-meta-item leancloud_visitors" data-flag-title="redis事务应用" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
   
   <span class="post-meta-item">
     
@@ -853,6 +1379,13 @@ skip+dict比较复杂，如下图所示：<br>
             </span>
 
           
+            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/" class="post-meta-item leancloud_visitors" data-flag-title="redis性能调优" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
   
   <span class="post-meta-item">
     
@@ -1138,6 +1671,13 @@ Redis Cluster着眼于扩展性，在单个redis内存不足时，使用Cluster�
             </span>
 
           
+            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" class="post-meta-item leancloud_visitors" data-flag-title="redis性能调优" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
   
   <span class="post-meta-item">
     
@@ -1369,6 +1909,13 @@ redis具有开启碎片整理的功能。<br>
             </span>
 
           
+            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%8F%91%E5%B8%83%E5%92%8C%E8%AE%A2%E9%98%85/" class="post-meta-item leancloud_visitors" data-flag-title="redis发布和订阅" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
   
   <span class="post-meta-item">
     
@@ -1521,6 +2068,13 @@ redis发布时，根据字典找到链表，然后逐个发送。</p>
             </span>
 
           
+            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis-stream%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E8%AF%A6%E8%A7%A3/" class="post-meta-item leancloud_visitors" data-flag-title="redis-stream消息队列详解" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
   
   <span class="post-meta-item">
     
@@ -1703,6 +2257,13 @@ pending消息还有个属性是被读取次数。<br>
             </span>
 
           
+            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" class="post-meta-item leancloud_visitors" data-flag-title="redis常见数据结构" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
   
   <span class="post-meta-item">
     
@@ -2044,6 +2605,13 @@ zset的底层实现变成了quicklist。</p>
             </span>
 
           
+            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/redis/redis%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" class="post-meta-item leancloud_visitors" data-flag-title="redis基础概念" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
   
   <span class="post-meta-item">
     
@@ -2134,470 +2702,10 @@ A:</p>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%AE%B9%E5%99%A8%E5%8C%96%E9%83%A8%E7%BD%B2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%AE%B9%E5%99%A8%E5%8C%96%E9%83%A8%E7%BD%B2/" class="post-title-link" itemprop="url">容器化部署（docker\K8s)</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-09-22 01:30:12 / 修改时间：00:00:41" itemprop="dateCreated datePublished" datetime="2022-09-22T01:30:12+08:00">2022-09-22</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">系统设计</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%AE%B9%E5%99%A8%E5%8C%96%E9%83%A8%E7%BD%B2/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%AE%B9%E5%99%A8%E5%8C%96%E9%83%A8%E7%BD%B2/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#q-jiang-yi-xia-ni-dui-xu-ni-hua-de-li-jie-shi-me-shi-xu-ni-hua">Q: 讲一下你对虚拟化的理解？什么是虚拟化？</a></li>
-<li><a href="#q-jiang-yi-xia-docker-shi-shi-me">Q: 讲一下docker是什么？</a></li>
-<li><a href="#q-docker-shi-na-chong-lei-xing-de-xu-ni-hua">Q: docker是哪种类型的虚拟化？</a></li>
-<li><a href="#q-ni-men-wei-shi-me-yao-yong-docker-you-shi-me-hao-chu">Q: 你们为什么要用docker？有什么好处？</a></li>
-<li><a href="#q-docker-he-xu-ni-ji-virtual-machine-de-qu-bie">Q: Docker和虚拟机Virtual Machine的区别？</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<hr>
-<h1><span id="q-jiang-yi-xia-ni-dui-xu-ni-hua-de-li-jie-shi-me-shi-xu-ni-hua">Q: 讲一下你对虚拟化的理解？什么是虚拟化？</span><a href="#q-jiang-yi-xia-ni-dui-xu-ni-hua-de-li-jie-shi-me-shi-xu-ni-hua" class="header-anchor">#</a></h1>
-<p>A:<br>
-虚拟化可以理解为，将一台机器上的各种资源，进行抽象和隔离，方便在一台机器上运行多个进程或者系统，而且他们互相隔离，各自使用各自的资源，不会在逻辑上互相竞争资源。</p>
-<p>虚拟机包含硬件和软件虚拟化。我这里只说软件虚拟化，也就是利用软件技术，在现有的物理平台上实现对物理平台访问的截获和模拟。</p>
-<p>经典的有VMWare桌面虚拟、KVM全虚拟化（linux内核模块）、LXC（linux容器，轻量级虚拟化，重点）</p>
-<hr>
-<h1><span id="q-jiang-yi-xia-docker-shi-shi-me">Q: 讲一下docker是什么？</span><a href="#q-jiang-yi-xia-docker-shi-shi-me" class="header-anchor">#</a></h1>
-<p>A:<br>
-Docker是一个开源的应用容器引擎</p>
-<ul>
-<li>它让开发者可以打包他们的应用以及依赖包到一个可移植的容器中，然后发布到安装了任何 Linux 发行版本的机器上</li>
-<li>发布到机器上之后， 会使用沙箱机制完全虚拟出一个完整的内部环境</li>
-<li>容器之间不会有任何接口，从而让容器与宿主机之间、容器与容器之间隔离的更加彻底</li>
-</ul>
-<hr>
-<h1><span id="q-docker-shi-na-chong-lei-xing-de-xu-ni-hua">Q: docker是哪种类型的虚拟化？</span><a href="#q-docker-shi-na-chong-lei-xing-de-xu-ni-hua" class="header-anchor">#</a></h1>
-<p>A:<br>
-docker属于操作系统层虚拟化（将操作系统内核虚拟化，可以允许使用者空间软件实例被分割成几个独立的单元，并没有模拟硬件）， 换句话说，无法改变操作系统的性质。<br>
-底层基于LXC（Linux Container，Linux容器）进行轻量化虚拟的实现。</p>
-<hr>
-<h1><span id="q-ni-men-wei-shi-me-yao-yong-docker-you-shi-me-hao-chu">Q: 你们为什么要用docker？有什么好处？</span><a href="#q-ni-men-wei-shi-me-yao-yong-docker-you-shi-me-hao-chu" class="header-anchor">#</a></h1>
-<p>A:</p>
-<ol>
-<li>
-<p>如果资源有限，只有1台机器，但是有3个微服务需要部署，每台部署3个服务进程后， 万一一个进程跑多线程时， 线程池打满了， 结果把cpu全占用， 让另外2个服务一起变慢了。   或者内存疯狂涨，把内存打满了搞挂另外2个进程。<br>
-因此引入docker后，每个服务隔离在容器中，使用的线程资源和内存受到独立的限制，就不会互相影响了。</p>
-</li>
-<li>
-<p>当需要部署新的微服务时， 如果没有docker，就需要手动部署，按照指导书一点点搭建，配置参数，很容易错，且容易导致开发环境和生产环境参数不一致。<br>
-使用docker后，可以打包docker镜像进行容器部署， 发布的速度也变快了，扩容也变简单了。</p>
-</li>
-</ol>
-<hr>
-<h1><span id="q-docker-he-xu-ni-ji-virtual-machine-de-qu-bie">Q: Docker和虚拟机Virtual Machine的区别？</span><a href="#q-docker-he-xu-ni-ji-virtual-machine-de-qu-bie" class="header-anchor">#</a></h1>
-<p>A:</p>
-<ul>
-<li>Docker容器不是虚拟机， 只是当初被疯狂宣传为“轻量级虚拟机”</li>
-<li>虚拟机必须要自己模拟一个虚拟操作系统guestOs才能运行， 但docker不需要，直接使用linux自身支持的namespace和cgroup实现资源隔离。</li>
-<li>云服务提供商通常采用虚拟机技术隔离不同的用户/租户。  而Docker通常用于隔离不同的应用，例如前端，后端以及数据库</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/" class="post-title-link" itemprop="url">微服务治理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-09-22 00:10:12" itemprop="dateCreated datePublished" datetime="2022-09-22T00:10:12+08:00">2022-09-22</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-21 23:58:42" itemprop="dateModified" datetime="2022-09-21T23:58:42+08:00">2022-09-21</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">系统设计</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#q-chu-li-wei-fu-wu-zhi-li-shi-wei-shi-me-da-duo-cai-yong-rpc-er-fei-restful-zuo-fu-wu-jian-diao-yong">Q: 处理微服务治理时，为什么大多采用rpc而非restful做服务间调用？</a></li>
-<li><a href="#q-fu-wu-a-diao-yong-fu-wu-b-shi-ru-guo-chao-shi-liao-ying-gai-zen-me-chu-li">Q： 服务A 调用服务B时， 如果超时了， 应该怎么处理？</a></li>
-<li><a href="#q-fu-wu-fa-xian-you-na-liang-chong-mo-shi">Q: 服务发现有哪两种模式？</a></li>
-<li><a href="#q-zookeeper-zuo-wei-zhu-ce-zhong-xin-you-shi-me-que-dian">Q: zookeeper作为注册中心有什么缺点？</a></li>
-<li><a href="#q-you-shi-me-ban-fa-jie-jue-shang-mian-de-wen-ti">Q: 有什么办法解决上面的问题？</a></li>
-<li><a href="#q-fu-wu-diao-yong-de-hu-xiang-xun-huan-yi-lai-wen-ti-ru-he-jie-jue-ji-a-fu-wu-qi-dong-yi-lai-b-fu-wu-mou-jie-kou-b-fu-wu-qi-dong-a-fu-wu-mou-jie-kou-de-shi-hou">Q: 服务调用的互相、循环依赖问题如何解决？ 即A服务启动依赖B服务某接口， B服务启动A服务某接口的时候</a></li>
-<li><a href="#q-zuo-yi-ge-fu-wu-diao-yong-lian-de-hua-yi-ci-qing-qiu-xu-yao-bao-han-na-xie-xin-xi">Q: 做一个服务调用链的话， 一次请求需要包含哪些信息？</a></li>
-<li><a href="#q-diao-yong-lian-gen-zong-you-na-xie-shi-jian-xin-xi-xu-yao-tong-ji">Q: 调用链跟踪有哪些时间信息需要统计？</a></li>
-<li><a href="#q-zen-me-zai-jie-shou-he-fa-chu-shi-neng-yong-dao-tong-yi-ge-traceid">Q: 怎么在接收和发出时， 能用到同一个traceId？</a></li>
-<li><a href="#q-suo-you-diao-yong-lian-xin-xi-zhi-jie-xie-ru-shu-ju-ku-ma">Q: 所有调用链信息直接写入数据库吗？</a></li>
-<li><a href="#q-you-na-xie-shi-xian-fang-shi-dai-ma-ru-he-shi-xian-dui-yu-wei-fu-wu-er-yan">Q: 有哪些实现方式（代码如何实现），对于微服务而言？</a></li>
-<li><a href="#q-ru-he-shi-xian-yi-ge-quan-ju-fu-wu-de-ding-shi-ren-wu-guan-li-ru-he-she-ji-ji-ru-guo-ni-men-xi-wang-zuo-ding-shi-ren-wu-de-hua-hui-zen-me-zuo">Q: 如何实现一个全局服务的定时任务管理？如何设计?  即如果你们希望做定时任务的话，会怎么做？</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<hr>
-<hr>
-<h1><span id="q-chu-li-wei-fu-wu-zhi-li-shi-wei-shi-me-da-duo-cai-yong-rpc-er-fei-restful-zuo-fu-wu-jian-diao-yong">Q: 处理微服务治理时，为什么大多采用rpc而非restful做服务间调用？</span><a href="#q-chu-li-wei-fu-wu-zhi-li-shi-wei-shi-me-da-duo-cai-yong-rpc-er-fei-restful-zuo-fu-wu-jian-diao-yong" class="header-anchor">#</a></h1>
-<p>A:</p>
-<ol>
-<li>restful大多基于json做序列化，  相比于直接做二进制序列化，性能较差。 而服务间调用频率往往非常高，必须做到低时延。</li>
-<li>常见的rpc框架往往能封装好底层网络通信协议、寻址、序列化问题，  通过一个proto文件即可生成 客户端代码和服务端代码， 大大简化开发工作。</li>
-</ol>
-<hr>
-<h1><span id="q-fu-wu-a-diao-yong-fu-wu-b-shi-ru-guo-chao-shi-liao-ying-gai-zen-me-chu-li">Q：  服务A 调用服务B时， 如果超时了， 应该怎么处理？</span><a href="#q-fu-wu-a-diao-yong-fu-wu-b-shi-ru-guo-chao-shi-liao-ying-gai-zen-me-chu-li" class="header-anchor">#</a></h1>
-<p>A:<br>
-要分情况。</p>
-<ul>
-<li>如果是读服务，可以做failover重试， 重试3次才报失败。</li>
-<li>如果是写服务， 考虑到幂等性，不应该做重试，直接报错。</li>
-<li>如果是耗时较长的接口， 如果超时时间设的太短，则可能因为重试引发雪崩（大量该接口调用都发生连锁超时）， 因此不应该采用重试。</li>
-</ul>
-<p>常见的超时处理操作和情况：</p>
-<ul>
-<li>重试——读操作</li>
-<li>失败就立刻报错——非幂等的读操作</li>
-<li>出现异常直接忽略——用于审计日志写入和读取等不重要的操作</li>
-<li>失败自动恢复，定时重发——用于重要消息通知等操作</li>
-</ul>
-<hr>
-<h1><span id="q-fu-wu-fa-xian-you-na-liang-chong-mo-shi">Q:   服务发现有哪两种模式？</span><a href="#q-fu-wu-fa-xian-you-na-liang-chong-mo-shi" class="header-anchor">#</a></h1>
-<p>A:</p>
-<ol>
-<li>
-<p>服务端服务发现模式<br>
-提供路由服务route，  由路由服务帮客户端做服务发现和负载均衡调用，  路由服务和注册中心相连接<br>
-缺点： 代理中心额外要引入容错性和伸缩性，成本比较大。 且性能上服务也较差。</p>
-</li>
-<li>
-<p>客户端服务发现模式，<br>
-客户端和注册中心相连接，  获取发现服务地址，自己处理多地址的负载均衡等策略。</p>
-</li>
-</ol>
-<hr>
-<h1><span id="q-zookeeper-zuo-wei-zhu-ce-zhong-xin-you-shi-me-que-dian">Q: zookeeper作为注册中心有什么缺点？</span><a href="#q-zookeeper-zuo-wei-zhu-ce-zhong-xin-you-shi-me-que-dian" class="header-anchor">#</a></h1>
-<p>A:</p>
-<ol>
-<li>服务扩容时， 应用启动缓慢</li>
-<li>冗余的服务配置项会增加存储压力， 扩大网络开销<br>
-原因：<br>
-ZK是一个典型的CP系统， 基于ZAB原子广播的强一致性中间件， 写操作存在单点问题，无法通过水平扩容来解决。 当客户端发送写请求时， 集群中的其他节点会优先转发给leader节点， leader节点来做具体的写操作。  只有N/2+1个以上的节点都同步成功， 写才算完成。<br>
-服务扩容的时候， tps越高，  服务注册写入效率月底， 导致上游大量请求排队， 服务启动和配置下载变得缓慢。</li>
-</ol>
-<hr>
-<h1><span id="q-you-shi-me-ban-fa-jie-jue-shang-mian-de-wen-ti">Q: 有什么办法解决上面的问题？</span><a href="#q-you-shi-me-ban-fa-jie-jue-shang-mian-de-wen-ti" class="header-anchor">#</a></h1>
-<p>A:</p>
-<ol>
-<li>增加zk的observer节点。 因为observer节点不会增加写入开销，但可以分担带宽压力。</li>
-<li>注册项精简， 只写入关键配置， 其他配置放到另外的元数据中心，实现配置垂直分离。</li>
-<li>去除zk的强一致性，  自研一个最终一致、增量数据返回、去中心化的分布式注册中心。</li>
-</ol>
-<hr>
-<h1><span id="q-fu-wu-diao-yong-de-hu-xiang-xun-huan-yi-lai-wen-ti-ru-he-jie-jue-ji-a-fu-wu-qi-dong-yi-lai-b-fu-wu-mou-jie-kou-b-fu-wu-qi-dong-a-fu-wu-mou-jie-kou-de-shi-hou">Q: 服务调用的互相、循环依赖问题如何解决？ 即A服务启动依赖B服务某接口， B服务启动A服务某接口的时候</span><a href="#q-fu-wu-diao-yong-de-hu-xiang-xun-huan-yi-lai-wen-ti-ru-he-jie-jue-ji-a-fu-wu-qi-dong-yi-lai-b-fu-wu-mou-jie-kou-b-fu-wu-qi-dong-a-fu-wu-mou-jie-kou-de-shi-hou" class="header-anchor">#</a></h1>
-<p>A:<br>
-尽量避免循环依赖， 调用流上要设计成单项依赖<br>
-如果确实存在， 要避免开启强制的check服务开关， 不去校验依赖服务是否通，而是启动后定时轮询。</p>
-<hr>
-<h1><span id="q-zuo-yi-ge-fu-wu-diao-yong-lian-de-hua-yi-ci-qing-qiu-xu-yao-bao-han-na-xie-xin-xi">Q:   做一个服务调用链的话， 一次请求需要包含哪些信息？</span><a href="#q-zuo-yi-ge-fu-wu-diao-yong-lian-de-hua-yi-ci-qing-qiu-xu-yao-bao-han-na-xie-xin-xi" class="header-anchor">#</a></h1>
-<p>A:<br>
-traceId， 表示这是哪一次请求的完整跟踪<br>
-spanId， 中间某次服务调用的请求/响应过程<br>
-parentSpanId， 上一次调用的id， 用于确定请求依赖关系<br>
-xxxConetext： 包含更多详细的信息， 例如是否是服务调用/提供方， host、port、接口名，被调用的服务方法名。</p>
-<hr>
-<h1><span id="q-diao-yong-lian-gen-zong-you-na-xie-shi-jian-xin-xi-xu-yao-tong-ji">Q:  调用链跟踪有哪些时间信息需要统计？</span><a href="#q-diao-yong-lian-gen-zong-you-na-xie-shi-jian-xin-xi-xu-yao-tong-ji" class="header-anchor">#</a></h1>
-<p>A:<br>
-以一次span为例，  需要记录<br>
-Client SendTime 客户端刚发出的时间CS<br>
-Server ReciveTime 服务接收请求时间SR<br>
-Server Send Time 服务发送响应时间SS<br>
-Client Receive Time 客户端接收响应时间CR</p>
-<ul>
-<li>服务调用耗时= CR - CS</li>
-<li>服务处理耗时= SS - SR</li>
-<li>网络开销总耗时= 服务调用耗时  - 服务处理耗时</li>
-<li>前置网络耗时  =SR-CS</li>
-<li>后置网络耗时 = CR - SS</li>
-</ul>
-<hr>
-<h1><span id="q-zen-me-zai-jie-shou-he-fa-chu-shi-neng-yong-dao-tong-yi-ge-traceid">Q: 怎么在接收和发出时， 能用到同一个traceId？</span><a href="#q-zen-me-zai-jie-shou-he-fa-chu-shi-neng-yong-dao-tong-yi-ge-traceid" class="header-anchor">#</a></h1>
-<p>A:<br>
-使用threadLocal即可， 从该线程中拿到这个traceId变量值，用完销毁。</p>
-<hr>
-<h1><span id="q-suo-you-diao-yong-lian-xin-xi-zhi-jie-xie-ru-shu-ju-ku-ma">Q: 所有调用链信息直接写入数据库吗？</span><a href="#q-suo-you-diao-yong-lian-xin-xi-zhi-jie-xie-ru-shu-ju-ku-ma" class="header-anchor">#</a></h1>
-<p>A:<br>
-不可以， 容易对数据库造成较大压力， 应该放入消息队列进行消费， 实现削峰的效果</p>
-<hr>
-<h1><span id="q-you-na-xie-shi-xian-fang-shi-dai-ma-ru-he-shi-xian-dui-yu-wei-fu-wu-er-yan">Q: 有哪些实现方式（代码如何实现），对于微服务而言？</span><a href="#q-you-na-xie-shi-xian-fang-shi-dai-ma-ru-he-shi-xian-dui-yu-wei-fu-wu-er-yan" class="header-anchor">#</a></h1>
-<p>A:<br>
-一种看框架本身是否支持相关的filter，继续配置，  例如dubb的filter<br>
-或者自己写动态AOP， 例如利用-javaagent 实现动态的jvm增强需求。 实质上利用了jdk1.5引入的Instrumentation接口</p>
-<hr>
-<h1><span id="q-ru-he-shi-xian-yi-ge-quan-ju-fu-wu-de-ding-shi-ren-wu-guan-li-ru-he-she-ji-ji-ru-guo-ni-men-xi-wang-zuo-ding-shi-ren-wu-de-hua-hui-zen-me-zuo">Q: 如何实现一个全局服务的定时任务管理？如何设计?  即如果你们希望做定时任务的话，会怎么做？</span><a href="#q-ru-he-shi-xian-yi-ge-quan-ju-fu-wu-de-ding-shi-ren-wu-guan-li-ru-he-she-ji-ji-ru-guo-ni-men-xi-wang-zuo-ding-shi-ren-wu-de-hua-hui-zen-me-zuo" class="header-anchor">#</a></h1>
-<p>A:</p>
-<ul>
-<li>方案一：<br>
-可以借助注册中心实现定时任务管理。</li>
-</ul>
-<ol>
-<li>服务自身维护需要的定时任务接口、定时触发条件。 可以自定义注解设置在接口上。</li>
-<li>然后通过注册动作将接口以及接口上的注解发布给注册中心。</li>
-<li>注册中心将定时类接口呈现给 注册中心服务的定时任务管理页。</li>
-<li>当到达时间， 注册中心调用定时任务接口，触发动作。  如果需要关闭，在管理页直接关闭即可。</li>
-<li>当服务的定时任务接口返回了已卸载或者不存在的接口时， 注册中心要删除这个定时任务，不再呈现在页面上。<br>
-<a target="_blank" rel="noopener" href="https://blog.csdn.net/xungen/article/details/106873673">一个简单的定时任务调度中心设计方案</a></li>
-</ol>
-<p>当时我自己服务里没有这种功能的注册中心， 实现起来的接口开发量还是比较大的。</p>
-<ul>
-<li>方案二：基于数据库锁quartz<br>
-当多个server的定时任务到时间时， 先去抢锁表里该任务的悲观锁，如果抢到了就执行， 如果抢不到就等待。当重新拿到锁后，发现该定时任务已经被设置成“完成”，时间也对的上，于是就不再执行了。</li>
-</ul>
-<p>缺点： 集群特性对于高CPU使用率的任务效果很好，但是对于大量的短任务，各个节点都会抢占数据库锁，这样就出现大量的线程等待资源。这种情况随着节点的增加会越来越严重。<br>
-另外，quartz的分布式只是解决了高可用的问题，并没有解决任务分片的问题，还是会有单机处理的极限，即某台机器执行过多的定时任务导致负载暴涨，而其他的机器一直凑巧没抢到。</p>
-<ul>
-<li>方案三： 引入支持任务分片的分布式任务调度框架</li>
-</ul>
-<ol>
-<li>elastic-job （当当）</li>
-<li>TBSchedule（淘宝）</li>
-<li>Saturn（唯品会）<br>
-默认的分片策略，作业数能被服务器数整除情况下均匀分配：<br>
-<img src="/images/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/4ef34664a006479928c47313a27a0dc4de910f47.png" alt="4ef34664a006479928c47313a27a0dc4de910f47"><br>
-根据哈希的分片策略：</li>
-</ol>
-<blockquote>
-<p>根据作业名的哈希值奇偶数决定采用IP升/降序算法实现分片，作业名的哈希值为奇数则IP升序，作业名的哈希值为偶数则IP降序，通过这种方式用于将不同的作业分片负载均衡至不同的服务器。<br>
-如作业名哈希值为偶数，则采用IP降序算法实现分片，这样就避免了采用平均分配算法时IP地址靠后的服务器空闲的问题。</p>
-</blockquote>
-<p><a target="_blank" rel="noopener" href="https://developer.51cto.com/art/201911/605783.htm">聊聊分布式定时任务elastic-job作业分片策略</a></p>
-<hr>
-<p>Q: 有哪些负载均衡算法？<br>
-A:</p>
-<ul>
-<li>
-<p>ActiveWeight / LeastActive ：低并发度优先， 统计某时刻的被调用 call 数越小优先级越高。即根据短时间内被调用数获取。需要统计的成本，实现难度比较高，存在耦合。</p>
-</li>
-<li>
-<p>Random ：随机，按权重设置随机概率。在一个截面上碰撞的概率高，但调用量越大分布越均匀，而且按概率使用权重后也比较均匀，有利于动态调整提供者权重。节点少的时候，随机有可能出现连续都随机到一个节点上，导致负载不均衡。</p>
-</li>
-<li>
-<p>RoundRobin ：轮循，按公约后的权重设置轮循比率。<br>
-存在慢的提供者累积请求问题，比如：第二台机器性能很慢，但没挂，当请求调到第二台时就卡在那，久而久之，所有请求都卡在调到第二台上。</p>
-</li>
-<li>
-<p>LocalFirst ：本地服务优先获取策略。</p>
-</li>
-<li>
-<p>Consistent ：一致性 Hash ，相同参数的请求总是发到同一提供者。当某一台提供者挂时，原本发往该提供者的请求，基于虚拟节点，平摊到其它提供者，不会引起剧烈变动。</p>
-</li>
-</ul>
-<hr>
-<p>Q: 负载均衡时，请求失败怎么办？<br>
-A:</p>
-<ul>
-<li>
-<p>Failover ：失败自动切换，当出现失败，重试其它服务器。<br>
-通常用于读操作，但重试会带来更长延迟。</p>
-</li>
-<li>
-<p>Failfast ：快速失败，只发起一次调用，失败立即报错。<br>
-通常用于非幂等性的写操作，比如新增记录。</p>
-</li>
-<li>
-<p>Failsafe ：失败安全，出现异常时，直接忽略。<br>
-通常用于写入审计日志等操作。</p>
-</li>
-<li>
-<p>Failback ：失败自动恢复，后台记录失败请求，定时重发。<br>
-通常用于消息通知操作。</p>
-</li>
-<li>
-<p>Forking ：并行调用多个服务器，只要一个成功即返回。通常用于实时性要求较高的读操作，但需要浪费更多服务资源。</p>
-</li>
-<li>
-<p>Broadcast ：广播调用所有提供者，逐个调用，任意一台报错则报错。通常用于通知所有提供者更新缓存或日志等本地资源信息。</p>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/10/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="extend next" rel="next" href="/page/12/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/10/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/29/">29</a><a class="extend next" rel="next" href="/page/12/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -2665,7 +2773,7 @@ A:</p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">280</span>
+          <span class="site-state-item-count">282</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -2733,7 +2841,7 @@ A:</p>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共360k字</span>
+  <span class="post-count">博客全站共362.4k字</span>
 </div>
 
         
@@ -2840,15 +2948,15 @@ NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
       notify     : false,
       appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
       appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
-      placeholder: "天下第一帅到此一游",
+      placeholder: "欢迎来访！",
       avatar     : 'mm',
       meta       : guest,
       pageSize   : '10' || 10,
-      visitor    : false,
+      visitor    : true,
       lang       : 'zn-cn' || 'zh-cn',
       path       : location.pathname,
       recordIP   : false,
-      serverURLs : ''
+      serverURLs : 'https://vanr4mln.lc-cn-n1-shared.com'
     });
   }, window.Valine);
 });

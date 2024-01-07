@@ -181,6 +181,384 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/ApplicationContext%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/ApplicationContext%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">ApplicationContext原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-31 23:30:12 / 修改时间：22:50:44" itemprop="dateCreated datePublished" datetime="2022-08-31T23:30:12+08:00">2022-08-31</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/spring%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">spring原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/spring%E5%8E%9F%E7%90%86/Ioc%E6%B3%A8%E5%85%A5%E6%9C%BA%E5%88%B6/" itemprop="url" rel="index"><span itemprop="name">Ioc注入机制</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/ApplicationContext%E5%8E%9F%E7%90%86/" class="post-meta-item leancloud_visitors" data-flag-title="ApplicationContext原理" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/ApplicationContext%E5%8E%9F%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/ApplicationContext%E5%8E%9F%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#xin-te-xing-yi-tong-yi-zi-yuan-jia-zai-ce-lue">新特性一：统一资源加载策略</a></li>
+<li><a href="#xin-zeng-te-xing-er-guo-ji-hua-xin-xi-zhi-chi">新增特性二：国际化信息支持</a></li>
+<li><a href="#xin-zeng-te-xing-san-rong-qi-nei-bu-shi-jian-fa-bu">新增特性三：容器内部事件发布</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<p>ApplicationContext除了拥有 BeanFactory支持的所有功能之外，还进一步扩展了基本容器的功能，包括<br>
+BeanFactoryPostProcessor、<br>
+BeanPostProcessor<br>
+其他特殊类型bean的自动识别<br>
+容器启动后bean实例的自动初始化<br>
+国际化的信息支持<br>
+容器内事件发布等</p>
+<hr>
+<p>3种ApplicationContext的实现<br>
+FileSystemXmlApplicationContext  :从文件系统加载bean<br>
+ClassPathXmlApplicationContext :从Classpath加载bean<br>
+XmlWebApplicationContext :用于Web应用程序的ApplicationContext实现</p>
+<hr>
+<h1><span id="xin-te-xing-yi-tong-yi-zi-yuan-jia-zai-ce-lue">新特性一：统一资源加载策略</span><a href="#xin-te-xing-yi-tong-yi-zi-yuan-jia-zai-ce-lue" class="header-anchor">#</a></h1>
+<p>Spring提出了一套基于Resource和ResourceLoader接口的资源抽象和加载策略。</p>
+<ul>
+<li>ByteArrayResource  将字节（byte）数组提供的数据作为一种资源进行封装? ClassPathResource    从Java应用程序的ClassPath中加载具体资源并进行封装</li>
+<li>FileSystemResource 以文件或者URL的形 式对该类型资源进行访问，只要能跟File打的交道</li>
+<li>UrlResource 通过java.net.URL进行的具体资源查找定位的实现类，内部委派URL进行具 体的资源操作。</li>
+<li>InputStreamResource  较为少用。</li>
+</ul>
+<p>ResourceLoader:查找和定位这些资源,资源定位器<br>
+<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/2020121023542886.png" alt="在这里插入图片描述"><br>
+相关资源的ResourceLoader实现类：</p>
+<ul>
+<li>
+<p>DefaultResourceLoader<br>
+<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201210235440383.png" alt="在这里插入图片描述"></p>
+</li>
+<li>
+<p>FileSystemResourceLoader<br>
+<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201210235504403.png" alt="在这里插入图片描述"></p>
+</li>
+<li>
+<p>ResourcePatternResolver（ResourceLoade的子接口）<br>
+是1个批量查找的ResourceLoader，会返回resource数组 实<br>
+可以根据指定的资源路径匹配模式， 每次返回多个Resource实例<br>
+支持基 于Ant风格的路径匹配模式（类似于**/<em>.suffix之类的路径形式），支持ResourcePatternResolver新 增加的classpath</em>:前缀等</p>
+</li>
+</ul>
+<p>总关系图<br>
+<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201210235550881.png" alt="在这里插入图片描述"><br>
+ApplicationContextt<strong>默认继承了ResourcePatternResolver</strong>，间接实现了ResourceLoader接口<br>
+<strong>任何的ApplicationContext实现都可以看作是一个 ResourceLoader甚至ResourcePatternResolver</strong></p>
+<ul>
+<li>ApplicationContext的资源用法：<br>
+1.扮演ResourceLoader的角色<br>
+<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201210235917941.png" alt="在这里插入图片描述"></li>
+</ul>
+<p>2.ResourceLoader类型的注入<br>
+ApplicationContext类型容器可以自动识别Aware接口<br>
+因此会自动把自己注入到需要ResourceLoader的实例中<br>
+<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201210235924349.png" alt="在这里插入图片描述"></p>
+<p>3.Resource类型的注入<br>
+BeanFactory如果想注入Resource类型的bean定义，就需要注册自定义的PropertyEditor到 BeanFactory容器<br>
+而Application- Context容器可以正确识别Resource类型并转换后注入相关对象<br>
+<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201210235930895.png" alt="在这里插入图片描述"></p>
+<ol start="4">
+<li>在特定情况下，ApplicationContext的Resource加载行为</li>
+</ol>
+<p>Spring扩展了协议前缀的集合。<br>
+ResourceLoader中增加了一种新 的资源路径协议——classpath:，<br>
+ResourcePatternResolver又增加了一种——classpath*:。<br>
+classpath*:与classpath:的唯一区别就在于，如果能够在classpath中找到多个指定的资源，则 返回多个</p>
+<p>ClassPathXmlApplicationContext默认从classpath中加载bean定义配置文件<br>
+<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201211000020650.png" alt="在这里插入图片描述"></p>
+<p>FileSystemXmlApplicationContext默认尝试从文件系统中加载bean定义文件<br>
+<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/2020121100002444.png" alt="在这里插入图片描述"></p>
+<p>但通过加前缀file或者classpath，可以修改加载方式</p>
+<h1><span id="xin-zeng-te-xing-er-guo-ji-hua-xin-xi-zhi-chi">新增特性二：国际化信息支持</span><a href="#xin-zeng-te-xing-er-guo-ji-hua-xin-xi-zhi-chi" class="header-anchor">#</a></h1>
+<p>1.Java SE 提供的国际化支持：<br>
+不同的 Locale代表不同的国家和地区，每个国家和地区在Locale这里都有相应的简写代码表ResourceBundle用来保存特定于某个Locale的信息<br>
+通过结合ResourceBundle和Locale，我们就能够实现应用程序的国际化信息支持</p>
+<ol start="2">
+<li></li>
+</ol>
+<p>Spring在Java SE的国际化支持的基础上，进一步抽象了国际化信息的访问接口，也就是 MessageSource<br>
+<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201211000046282.png" alt="在这里插入图片描述"></p>
+<p>ApplicationContext还 实现了MessageSource接口，<br>
+3种MessageSource实现<br>
+StaticMessageSource  。可以通过编程的方式添加信息条目，多用于测试，不应该用于正式的生产环境。<br>
+ResourceBundleMessage  是常用的、用于正式生产环境<br>
+ReloadableResourceBundleMessageSource  定期刷新并检查底层的properties资源文件是否有变更。</p>
+<p>ApplicationContext 启动的时候，会自动识别容器中类型为MessageSourceAware的bean定义<br>
+并将自身作为MessageSource注入相应对象实例中<br>
+PS：看一下自己工程里怎么实现的</p>
+<h1><span id="xin-zeng-te-xing-san-rong-qi-nei-bu-shi-jian-fa-bu">新增特性三：容器内部事件发布</span><a href="#xin-zeng-te-xing-san-rong-qi-nei-bu-shi-jian-fa-bu" class="header-anchor">#</a></h1>
+<p>java自带事件发布：<br>
+<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201211000125858.png" alt="在这里插入图片描述"><br>
+ApplicationContext 容器内部允许以ApplicationEvent的形式发布事件，。<br>
+容器内注册的ApplicationListener类型的bean定义会被ApplicationContext容器自动识别<br>
+一旦容器内发布ApplicationEvent及其子类型的事件， 注册到容器的ApplicationListener就会对这些事件进行处理。</p>
+<p><strong>application自定义事件ApplicationEvent</strong><br>
+Spring提供了三个实现。</p>
+<ul>
+<li>ContextClosedEvent：ApplicationContext容器在即将关闭的时候发布的事件类型。</li>
+<li>ContextRefreshedEvent：ApplicationContext容器在初始化或者刷新的时候发布的事件类 型。</li>
+<li>RequestHandledEvent：Web请求处理后发布的事件，其有一子类ServletRequestHandled- Event提供特定于Java EE的Servlet相关事件。</li>
+</ul>
+<p><strong>application自定义监听器ApplicationListener</strong><br>
+在启动时，会自动识别并加载EventListener类型bean定义， 一旦容器内有事件发布，将通知这些注册到容器的EventListener</p>
+<p><strong>application自定义发布者ApplicationContext</strong><br>
+ApplicationContext接口定义还继承了ApplicationEventPublisher接口</p>
+<p>容器启动伊始，就会检查容器内是否存在名称为ApplicationEventMulticaster的 ApplicationEventMulticaster对象实例。<br>
+有的话就使用提供的实现，没有则默认初始化一个 SimpleApplicationEventMulticaster作为将会使用的ApplicationEventMulticaster<br>
+<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201211000243358.png" alt="在这里插入图片描述"></p>
+<p><strong>Spring的ApplicationContext容器内的事件发布机制，主要用于单一容器内的简单消息通知和处 理，并不适合分布式、多进程、多容器之间的事件通知</strong><br>
+发布步骤：<br>
+1.MethodExecutionEvent的改装<br>
+<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201211000302141.png" alt="在这里插入图片描述"></p>
+<p>2.MethodExecutionEventListener的改<br>
+<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201211000306623.png" alt="在这里插入图片描述"></p>
+<p>3.MethodExeuctionEventPublisher改造<br>
+<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201211000310121.png" alt="在这里插入图片描述"></p>
+<ol start="4">
+<li>注册到ApplicationContext容器<br>
+<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201211000312873.png" alt="在这里插入图片描述"></li>
+</ol>
+<p>特性四：多配置模块加载的简化<br>
+<img src="/images/ApplicationContext%E5%8E%9F%E7%90%86/20201211000326999.png" alt="在这里插入图片描述"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-31/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-31/" class="post-title-link" itemprop="url">2022-0831</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-31 23:12:42 / 修改时间：22:44:09" itemprop="dateCreated datePublished" datetime="2022-08-31T23:12:42+08:00">2022-08-31</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">刷题日记</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022%E5%B9%B48%E6%9C%88/" itemprop="url" rel="index"><span itemprop="name">2022年8月</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-31/" class="post-meta-item leancloud_visitors" data-flag-title="2022-0831" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-31/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-31/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#di-yi-ti-shu-zu-wen-ti">第一题:数组问题</a></li>
+<li><a href="#di-er-ti-lian-biao-dao-shu-di-k-ge-yong-2-ge-zhi-zhen-wei-hu-ji-ke">第二题： 链表倒数第k个，用2个指针维护即可</a></li>
+<li><a href="#di-san-ti-zhan-de-yan-zheng">第三题: 栈的验证</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="di-yi-ti-shu-zu-wen-ti">第一题:数组问题</span><a href="#di-yi-ti-shu-zu-wen-ti" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/minimum-domino-rotations-for-equal-row/">1007. 行相等的最少多米诺旋转 - 力扣（LeetCode）</a></p>
+<p><img src="/images/2022-08-31/1661956709671.png" alt="1661956709671"></p>
+<p><img src="/images/2022-08-31/1661956718077.png" alt="1661956718077"></p>
+<p>很简单，搞3个统计数量的数组即可， 一个是去重后的总数，一个是A中各数字的总数，一个是B中各数字的总数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">minDominoRotations</span><span class="params">(<span class="type">int</span>[] tops, <span class="type">int</span>[] bottoms)</span> &#123;</span><br><span class="line">        <span class="type">int</span>[] counts = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">7</span>];</span><br><span class="line">        <span class="type">int</span>[] counts1 = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">7</span>];</span><br><span class="line">        <span class="type">int</span>[] counts2 = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">7</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; tops.length;i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (tops[i] == bottoms[i]) &#123;</span><br><span class="line">                counts[tops[i]]++;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                counts[tops[i]]++;</span><br><span class="line">                counts[bottoms[i]]++;</span><br><span class="line">            &#125;</span><br><span class="line">            counts1[tops[i]]++;</span><br><span class="line">            counts2[bottoms[i]]++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> Integer.MAX_VALUE;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i&lt;=<span class="number">6</span>;i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (counts[i] == tops.length) &#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">changeCount</span> <span class="operator">=</span> Math.min(tops.length - counts1[i], tops.length - counts2[i]);</span><br><span class="line">                res = Math.min(res, changeCount);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (res == Integer.MAX_VALUE) &#123;</span><br><span class="line">            <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> res;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1><span id="di-er-ti-lian-biao-dao-shu-di-k-ge-yong-2-ge-zhi-zhen-wei-hu-ji-ke">第二题： 链表倒数第k个，用2个指针维护即可</span><a href="#di-er-ti-lian-biao-dao-shu-di-k-ge-yong-2-ge-zhi-zhen-wei-hu-ji-ke" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/swapping-nodes-in-a-linked-list/">1721. 交换链表中的节点 - 力扣（LeetCode）</a></p>
+<p><img src="/images/2022-08-31/1661956816895.png" alt="1661956816895"></p>
+<p>求倒数第k个，那就是先走k步，然后再以起点为另一个指针，两边一起走，直到走到尾部即可</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> ListNode <span class="title function_">swapNodes</span><span class="params">(ListNode head, <span class="type">int</span> k)</span> &#123;</span><br><span class="line">        <span class="type">ListNode</span> <span class="variable">newHead</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ListNode</span>();</span><br><span class="line">        newHead.next = head;</span><br><span class="line">        <span class="type">ListNode</span> <span class="variable">node1</span> <span class="operator">=</span> head;</span><br><span class="line">        <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> k-<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span>(count-- &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            node1 = node1.next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">ListNode</span> <span class="variable">node2</span> <span class="operator">=</span> newHead;</span><br><span class="line">        <span class="type">ListNode</span> <span class="variable">node</span> <span class="operator">=</span> node1;</span><br><span class="line">        <span class="keyword">while</span>(node != <span class="literal">null</span>) &#123;</span><br><span class="line">            node = node.next;</span><br><span class="line">            node2 = node2.next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> <span class="variable">tmp</span> <span class="operator">=</span> node1.val;</span><br><span class="line">        node1.val = node2.val;</span><br><span class="line">        node2.val = tmp;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1><span id="di-san-ti-zhan-de-yan-zheng">第三题:  栈的验证</span><a href="#di-san-ti-zhan-de-yan-zheng" class="header-anchor">#</a></h1>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/validate-stack-sequences/">946. 验证栈序列 - 力扣（LeetCode）</a></p>
+<p><img src="/images/2022-08-31/1661957045969.png" alt="1661957045969"></p>
+<p>数据结构很基础的题目</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">validateStackSequences</span><span class="params">(<span class="type">int</span>[] pushed, <span class="type">int</span>[] popped)</span> &#123;</span><br><span class="line">        Deque&lt;Integer&gt; stack  = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;&gt;();</span><br><span class="line">        <span class="type">int</span> <span class="variable">i1</span> <span class="operator">=</span> <span class="number">0</span>, i2 = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>( i2 = <span class="number">0</span>;i2 &lt; popped.length;i2++) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">pop</span> <span class="operator">=</span> popped[i2];</span><br><span class="line">            <span class="keyword">if</span> (!stack.isEmpty() &amp;&amp; stack.peek() == pop) &#123;</span><br><span class="line">                stack.pop();</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">while</span>(i1 &lt; pushed.length &amp;&amp; pushed[i1] != pop) &#123;</span><br><span class="line">               stack.push(pushed[i1]);</span><br><span class="line">               i1++; </span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (i1 == pushed.length) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            i1++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/BeanFactory%E5%8E%9F%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -228,6 +606,13 @@
             </span>
 
           
+            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/BeanFactory%E5%8E%9F%E7%90%86/" class="post-meta-item leancloud_visitors" data-flag-title="Ioc基本概念和原理" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
   
   <span class="post-meta-item">
     
@@ -520,6 +905,13 @@ BeanPostProcessor是存在于对象实例化阶段<br>
             </span>
 
           
+            <span id="/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-30/" class="post-meta-item leancloud_visitors" data-flag-title="2022-0830" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
   
   <span class="post-meta-item">
     
@@ -653,6 +1045,13 @@ BeanPostProcessor是存在于对象实例化阶段<br>
             </span>
 
           
+            <span id="/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/%E9%9D%9E%E6%9A%B4%E5%8A%9B%E6%B2%9F%E9%80%9A/" class="post-meta-item leancloud_visitors" data-flag-title="非暴力沟通" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
   
   <span class="post-meta-item">
     
@@ -870,6 +1269,13 @@ BeanPostProcessor是存在于对象实例化阶段<br>
             </span>
 
           
+            <span id="/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-29/" class="post-meta-item leancloud_visitors" data-flag-title="2022-0829" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
   
   <span class="post-meta-item">
     
@@ -1019,6 +1425,13 @@ BeanPostProcessor是存在于对象实例化阶段<br>
             </span>
 
           
+            <span id="/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E4%BD%8D%E8%BF%90%E7%AE%97/" class="post-meta-item leancloud_visitors" data-flag-title="位运算" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
   
   <span class="post-meta-item">
     
@@ -1171,6 +1584,13 @@ int digit = Integer.bitCount(digitMask - 1); 得到是第2位。</p>
             </span>
 
           
+            <span id="/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%8B%93%E6%89%91%E6%8E%92%E5%BA%8F/" class="post-meta-item leancloud_visitors" data-flag-title="拓扑排序" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
   
   <span class="post-meta-item">
     
@@ -1305,6 +1725,13 @@ int digit = Integer.bitCount(digitMask - 1); 得到是第2位。</p>
             </span>
 
           
+            <span id="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC308%E5%9C%BA%E5%91%A8%E8%B5%9B-357%E5%90%8D-4%E9%A2%98/" class="post-meta-item leancloud_visitors" data-flag-title="第308场周赛-357名-4题" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
   
   <span class="post-meta-item">
     
@@ -1441,6 +1868,13 @@ int digit = Integer.bitCount(digitMask - 1); 得到是第2位。</p>
             </span>
 
           
+            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/Spring/Ioc%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E5%8E%9F%E7%90%86/" class="post-meta-item leancloud_visitors" data-flag-title="Ioc基本概念和原理" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
   
   <span class="post-meta-item">
     
@@ -1634,277 +2068,10 @@ singletonObjects：A,B</p>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-27/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-27/" class="post-title-link" itemprop="url">2022-0827</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-08-27 23:12:42 / 修改时间：23:09:30" itemprop="dateCreated datePublished" datetime="2022-08-27T23:12:42+08:00">2022-08-27</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">刷题日记</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022%E5%B9%B48%E6%9C%88/" itemprop="url" rel="index"><span itemprop="name">2022年8月</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-27/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-27/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#di-yi-ti-er-cha-shu-jie-dian-zai-mou-ceng-shi-di-ji-ge-de-qiu-jie-fang-fa">第一题：二叉树节点在某层是第几个的求解方法</a></li>
-<li><a href="#di-er-ti-ji-yu-shu-de-jian-dan-dong-tai-gui-hua">第二题 基于树的简单动态规划</a></li>
-<li><a href="#di-san-ti-jian-dan-lian-biao-ha-xi-ti">第三题 简单链表+哈希题</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="di-yi-ti-er-cha-shu-jie-dian-zai-mou-ceng-shi-di-ji-ge-de-qiu-jie-fang-fa">第一题：二叉树节点在某层是第几个的求解方法</span><a href="#di-yi-ti-er-cha-shu-jie-dian-zai-mou-ceng-shi-di-ji-ge-de-qiu-jie-fang-fa" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/maximum-width-of-binary-tree/">662. 二叉树最大宽度 - 力扣（LeetCode）</a></p>
-<p><img src="/images/2022-08-27/1661612722021.png" alt="1661612722021"></p>
-<p>注意是某一层最左边和最右边节点的距离，不包含右边的null</p>
-<p>那么只要知道如果是完全二叉树的话， 他是这一层的第几个即可。</p>
-<p>那就是父亲节点列索引乘2或者乘2+1</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for a binary tree node.</span></span><br><span class="line"><span class="comment"> * public class TreeNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     TreeNode left;</span></span><br><span class="line"><span class="comment"> *     TreeNode right;</span></span><br><span class="line"><span class="comment"> *     TreeNode() &#123;&#125;</span></span><br><span class="line"><span class="comment"> *     TreeNode(int val) &#123; this.val = val; &#125;</span></span><br><span class="line"><span class="comment"> *     TreeNode(int val, TreeNode left, TreeNode right) &#123;</span></span><br><span class="line"><span class="comment"> *         this.val = val;</span></span><br><span class="line"><span class="comment"> *         this.left = left;</span></span><br><span class="line"><span class="comment"> *         this.right = right;</span></span><br><span class="line"><span class="comment"> *     &#125;</span></span><br><span class="line"><span class="comment"> * &#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">widthOfBinaryTree</span><span class="params">(TreeNode root)</span> &#123;</span><br><span class="line">        dfs(root, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">    Map&lt;Integer, Integer&gt; minHIndex = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">dfs</span><span class="params">(TreeNode node, <span class="type">int</span> index, <span class="type">int</span> h)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (node == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!minHIndex.containsKey(h)) &#123;</span><br><span class="line">            minHIndex.put(h, index);</span><br><span class="line">        &#125;</span><br><span class="line">        res = Math.max(index - minHIndex.get(h) + <span class="number">1</span>, res);</span><br><span class="line">        </span><br><span class="line"></span><br><span class="line">        dfs(node.left, index*<span class="number">2</span>, h+<span class="number">1</span>);</span><br><span class="line">        dfs(node.right, index*<span class="number">2</span>+<span class="number">1</span>, h+<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1><span id="di-er-ti-ji-yu-shu-de-jian-dan-dong-tai-gui-hua">第二题 基于树的简单动态规划</span><a href="#di-er-ti-ji-yu-shu-de-jian-dan-dong-tai-gui-hua" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/binary-trees-with-factors/">823. 带因子的二叉树 - 力扣（LeetCode）</a></p>
-<p><img src="/images/2022-08-27/1661612958186.png" alt="1661612958186"></p>
-<p>排个序，然后按顺序求每个节点作为根节点的情况数，并放入缓存中</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">numFactoredBinaryTrees</span><span class="params">(<span class="type">int</span>[] arr)</span> &#123;</span><br><span class="line">        Arrays.sort(arr);</span><br><span class="line">        <span class="type">int</span> <span class="variable">mod</span> <span class="operator">=</span> <span class="number">1000000007</span>;</span><br><span class="line">        Map&lt;Integer, Long&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        <span class="type">long</span> <span class="variable">res</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; arr.length;i++) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">big</span> <span class="operator">=</span> arr[i];</span><br><span class="line">            <span class="type">long</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> i-<span class="number">1</span>;j&gt;=<span class="number">0</span>;j--) &#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">numLeft</span> <span class="operator">=</span> arr[j];</span><br><span class="line">                <span class="keyword">if</span> (big % numLeft != <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="type">int</span> <span class="variable">numRight</span> <span class="operator">=</span> big / numLeft;</span><br><span class="line">                <span class="keyword">if</span> (!map.containsKey(numRight)) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="type">long</span> <span class="variable">count1</span> <span class="operator">=</span> map.get(numLeft);</span><br><span class="line">                <span class="type">long</span> <span class="variable">count2</span> <span class="operator">=</span> map.get(numRight);</span><br><span class="line">                count += count1 * count2;</span><br><span class="line">                count %= mod;</span><br><span class="line">            &#125;</span><br><span class="line">            map.put(big, count);</span><br><span class="line">            res += count;</span><br><span class="line">            res %= mod;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> (<span class="type">int</span>)res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1><span id="di-san-ti-jian-dan-lian-biao-ha-xi-ti">第三题 简单链表+哈希题</span><a href="#di-san-ti-jian-dan-lian-biao-ha-xi-ti" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/remove-duplicates-from-an-unsorted-linked-list/">1836. 从未排序的链表中移除重复元素 - 力扣（LeetCode）</a></p>
-<p><img src="/images/2022-08-27/1661612941375.png" alt="1661612941375"></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * public class ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode next;</span></span><br><span class="line"><span class="comment"> *     ListNode() &#123;&#125;</span></span><br><span class="line"><span class="comment"> *     ListNode(int val) &#123; this.val = val; &#125;</span></span><br><span class="line"><span class="comment"> *     ListNode(int val, ListNode next) &#123; this.val = val; this.next = next; &#125;</span></span><br><span class="line"><span class="comment"> * &#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> ListNode <span class="title function_">deleteDuplicatesUnsorted</span><span class="params">(ListNode head)</span> &#123;</span><br><span class="line">        <span class="type">ListNode</span> <span class="variable">newHead</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ListNode</span>(<span class="number">0</span>);</span><br><span class="line">        newHead.next = head;</span><br><span class="line">        <span class="type">ListNode</span> <span class="variable">node</span> <span class="operator">=</span> head;</span><br><span class="line">        Map&lt;Integer, Integer&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;(); </span><br><span class="line">        <span class="keyword">while</span>(node != <span class="literal">null</span>) &#123;</span><br><span class="line">            map.put(node.val, map.getOrDefault(node.val, <span class="number">0</span>) + <span class="number">1</span>);</span><br><span class="line">            node = node.next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">ListNode</span> <span class="variable">lastNode</span> <span class="operator">=</span> newHead;</span><br><span class="line">        node = head;</span><br><span class="line">        <span class="keyword">while</span>(node != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (map.get(node.val) &gt; <span class="number">1</span>) &#123;</span><br><span class="line">                lastNode.next = node.next;</span><br><span class="line">                node = node.next;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                lastNode = node;</span><br><span class="line">                node = node.next;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> newHead.next;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-26/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-26/" class="post-title-link" itemprop="url">2022-0826</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-26 23:12:42" itemprop="dateCreated datePublished" datetime="2022-08-26T23:12:42+08:00">2022-08-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-27 00:33:00" itemprop="dateModified" datetime="2022-08-27T00:33:00+08:00">2022-08-27</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">刷题日记</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022%E5%B9%B48%E6%9C%88/" itemprop="url" rel="index"><span itemprop="name">2022年8月</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-26/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B/%E6%97%A5%E5%B8%B8%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0/2022-08-26/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#di-yi-ti-jian-dan-dfs">第一题简单dfs</a></li>
-<li><a href="#di-er-ti-ji-yi-hua-sou-suo">第二题-记忆化搜索</a></li>
-<li><a href="#di-san-ti-mei-ju-hui-wen-shu-zhi-yao-mei-ju-qian-yi-ban">第三题 枚举回文数，只要枚举前一半</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="di-yi-ti-jian-dan-dfs">第一题简单dfs</span><a href="#di-yi-ti-jian-dan-dfs" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/sZ59z6/">LCP 44. 开幕式焰火 - 力扣（LeetCode）</a></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    Set&lt;Integer&gt; set = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">numColor</span><span class="params">(TreeNode root)</span> &#123;</span><br><span class="line">        dfs(root);</span><br><span class="line">        <span class="keyword">return</span> set.size();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">dfs</span><span class="params">(TreeNode node)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (node == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        set.add(node.val);</span><br><span class="line">        dfs(node.left);</span><br><span class="line">        dfs(node.right);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1><span id="di-er-ti-ji-yi-hua-sou-suo">第二题-记忆化搜索</span><a href="#di-er-ti-ji-yi-hua-sou-suo" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/matchsticks-to-square/">473. 火柴拼正方形 - 力扣（LeetCode）</a></p>
-<p>用记忆化搜索有点长，看下答案的动态规划咋整的</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">makesquare</span><span class="params">(<span class="type">int</span>[] matchsticks)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">sum</span> <span class="operator">=</span> Arrays.stream(matchsticks).sum();</span><br><span class="line">        <span class="keyword">if</span> (sum % <span class="number">4</span>!=<span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span>[] vis = <span class="keyword">new</span> <span class="title class_">int</span>[matchsticks.length];</span><br><span class="line">        Arrays.fill(vis,<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">return</span> dfs(vis, </span><br><span class="line">            matchsticks, <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;(), <span class="number">0</span>, sum/<span class="number">4</span>);</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">boolean</span> <span class="title function_">dfs</span><span class="params">(<span class="type">int</span>[] vis, <span class="type">int</span>[] matchsticks, Set&lt;Integer&gt; set, <span class="type">int</span> nowSum, <span class="type">int</span> target)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">k</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> v :vis) &#123;</span><br><span class="line">            sum += v * k;</span><br><span class="line">            k*=<span class="number">2</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (nowSum == target) &#123;</span><br><span class="line">            nowSum = <span class="number">0</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span>(nowSum &gt; target) &#123;</span><br><span class="line">          set.add(sum);</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (nowSum == <span class="number">0</span> &amp;&amp; sum == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (set.contains(sum)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; matchsticks.length;i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (vis[i] == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            vis[i] = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">if</span>(dfs(vis, matchsticks, set, nowSum + matchsticks[i], target)) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            vis[i] = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        set.add(sum);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>实际上不需要考虑某个火柴放在第0个边还是第4个边，直接按边摆</p>
-<p>当你用了第1、3、7、9个火柴时，可以直接尝试往边上拼，正好拼满一个边就下一个</p>
-<p>dp[状态压缩标志位]表示当前正在摆的那个边的长度</p>
-<h1><span id="di-san-ti-mei-ju-hui-wen-shu-zhi-yao-mei-ju-qian-yi-ban">第三题 枚举回文数，只要枚举前一半</span><a href="#di-san-ti-mei-ju-hui-wen-shu-zhi-yao-mei-ju-qian-yi-ban" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/super-palindromes/">906. 超级回文数 - 力扣（LeetCode）</a></p>
-<p><img src="/images/2022-08-26/1661531403264.png" alt="1661531403264"></p>
-<p>18位回文数，但又要求是回文数的平方</p>
-<p>所以开根号的值是9位， 且必须是回文数</p>
-<p>那么9位回文数，最多只要求 前4位的数字，加中间可有可无的一个数字即可。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">superpalindromesInRange</span><span class="params">(String left, String right)</span> &#123;</span><br><span class="line">        dfs(<span class="number">0</span>, <span class="keyword">new</span> <span class="title class_">StringBuilder</span>());</span><br><span class="line">        <span class="type">Long</span> <span class="variable">leftNum</span> <span class="operator">=</span> Long.valueOf(left);</span><br><span class="line">        <span class="type">Long</span> <span class="variable">rightNum</span> <span class="operator">=</span> Long.valueOf(right);</span><br><span class="line">        <span class="type">int</span> <span class="variable">leftIndex</span> <span class="operator">=</span> -<span class="number">1</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">rightIndex</span> <span class="operator">=</span> -<span class="number">1</span>;</span><br><span class="line">        res.add(<span class="number">1L</span>);</span><br><span class="line">        res.add(<span class="number">4L</span>);</span><br><span class="line">        res.add(<span class="number">9L</span>);</span><br><span class="line">        List&lt;Long&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;(res);</span><br><span class="line">        Collections.sort(list);</span><br><span class="line">        System.out.println(list);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>;i &lt; res.size(); i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (leftIndex == -<span class="number">1</span> &amp;&amp; leftNum&lt;= list.get(i)) &#123;</span><br><span class="line">                leftIndex = i;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (rightIndex == -<span class="number">1</span> &amp;&amp; rightNum &lt;= list.get(i)) &#123;</span><br><span class="line">                rightIndex = i;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (rightIndex == -<span class="number">1</span>) &#123;</span><br><span class="line">                    rightIndex = list.size();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;right=&quot;</span> + rightIndex + <span class="string">&quot;;left=&quot;</span> + leftIndex);</span><br><span class="line">        <span class="keyword">return</span> rightIndex - leftIndex;</span><br><span class="line">    &#125;</span><br><span class="line">    Set&lt;Long&gt; res = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">dfs</span><span class="params">(<span class="type">int</span> index, StringBuilder sb)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (index == <span class="number">4</span>) &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> Integer.valueOf(sb.toString()).toString();</span><br><span class="line">            <span class="keyword">if</span> (s.equals(<span class="string">&quot;0&quot;</span>)) &#123;</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">char</span> <span class="variable">i</span> <span class="operator">=</span> <span class="string">&#x27;0&#x27;</span>; i &lt;=<span class="string">&#x27;9&#x27;</span>;i++) &#123;</span><br><span class="line">                <span class="type">String</span> <span class="variable">newS</span> <span class="operator">=</span> s + i + <span class="keyword">new</span> <span class="title class_">StringBuilder</span>(s).reverse().toString();</span><br><span class="line">                doPalid(newS);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="type">String</span> <span class="variable">newS</span> <span class="operator">=</span> s + <span class="keyword">new</span> <span class="title class_">StringBuilder</span>(s).reverse().toString();</span><br><span class="line">            doPalid(newS);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">char</span> <span class="variable">i</span> <span class="operator">=</span> <span class="string">&#x27;0&#x27;</span>; i &lt;=<span class="string">&#x27;9&#x27;</span>;i++) &#123;</span><br><span class="line">            dfs(index+<span class="number">1</span>, sb.append(i));</span><br><span class="line">            sb.deleteCharAt(sb.length()-<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">doPalid</span><span class="params">(String newS)</span> &#123;</span><br><span class="line">        <span class="type">Long</span> <span class="variable">newNum</span> <span class="operator">=</span> Long.valueOf(newS);</span><br><span class="line">        <span class="type">Long</span> <span class="variable">mulNum</span> <span class="operator">=</span> newNum * newNum;</span><br><span class="line">        <span class="comment">// 看是否是回文数</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">mulNumS</span> <span class="operator">=</span> String.valueOf(mulNum);</span><br><span class="line">        <span class="keyword">if</span> (mulNumS.equals(<span class="keyword">new</span> <span class="title class_">StringBuilder</span>().append(mulNumS).reverse().toString())) &#123;</span><br><span class="line">            res.add(mulNum);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/16/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><span class="page-number current">17</span><a class="page-number" href="/page/18/">18</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="extend next" rel="next" href="/page/18/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/16/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><span class="page-number current">17</span><a class="page-number" href="/page/18/">18</a><span class="space">&hellip;</span><a class="page-number" href="/page/29/">29</a><a class="extend next" rel="next" href="/page/18/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1972,7 +2139,7 @@ singletonObjects：A,B</p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">280</span>
+          <span class="site-state-item-count">282</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -2040,7 +2207,7 @@ singletonObjects：A,B</p>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共360k字</span>
+  <span class="post-count">博客全站共362.4k字</span>
 </div>
 
         
@@ -2147,15 +2314,15 @@ NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
       notify     : false,
       appId      : 'vANR4mLN0FDjQuhKexHroAe0-gzGzoHsz',
       appKey     : 'f23UP4XaRBeNlbo8CW07s3Dh',
-      placeholder: "天下第一帅到此一游",
+      placeholder: "欢迎来访！",
       avatar     : 'mm',
       meta       : guest,
       pageSize   : '10' || 10,
-      visitor    : false,
+      visitor    : true,
       lang       : 'zn-cn' || 'zh-cn',
       path       : location.pathname,
       recordIP   : false,
-      serverURLs : ''
+      serverURLs : 'https://vanr4mln.lc-cn-n1-shared.com'
     });
   }, window.Valine);
 });
