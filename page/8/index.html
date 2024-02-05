@@ -181,6 +181,592 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E4%BA%94%E7%AB%A0%E5%AD%97%E5%85%B8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E4%BA%94%E7%AB%A0%E5%AD%97%E5%85%B8/" class="post-title-link" itemprop="url">第五章字典</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-01-07 23:44:16 / 修改时间：16:43:31" itemprop="dateCreated datePublished" datetime="2023-01-07T23:44:16+08:00">2023-01-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/python%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">python基础</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E4%BA%94%E7%AB%A0%E5%AD%97%E5%85%B8/" class="post-meta-item leancloud_visitors" data-flag-title="第五章字典" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E4%BA%94%E7%AB%A0%E5%AD%97%E5%85%B8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E4%BA%94%E7%AB%A0%E5%AD%97%E5%85%B8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>657</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>item=[(a,b),(c,d)]<br>
+有一个列表，列表里是二元元组<br>
+则dict（item） 则返回一个字典</p>
+<hr>
+<p>字符串的格式化也可以用字典<br>
+记得在括号之后加s<br>
+string=‘my name is %(name)s,I’m is %(old)s years old’<br>
+data={name:lishaoxiao,old:20}<br>
+string % data</p>
+<hr>
+<p>字典方法：<br>
+有一个字典d={1:a,2:b,3:c}<br>
+d.clear()   清楚字典中所有项</p>
+<p>dd=d.copy()  浅复制,如果dd改变，则d也改变<br>
+dd=deepcopy(d)   深复制，如果dd改变，则d也改变</p>
+<p>d={}<br>
+d=d.fromkeys([1,2,3])   用列表中的元素作为字典的键<br>
+则d={1: None, 2: None, 3: None}</p>
+<p>d.get(键)  如果键不存在，返回None<br>
+PS：if d.get()  得到的一定是false，应该：<br>
+if d.get() is not None</p>
+<p>d.has_key(键)  检查字典中是否存在此键，返回True或者False<br>
+或者用 if 键 in 字典  来判断</p>
+<p>d.items（） 返回元组组成的列表<br>
+例如返回[(1,a),(2,b),(3,c)]</p>
+<p>iteritems() 返回迭代器而不是列表</p>
+<p>d.pop(键)  返回键对应的值，然后删除这个键</p>
+<p>d.popitem()  随机删除一个键，返回键和值组成的元组</p>
+<p>d.setdefault(键，a值)   如果键存在，则返回键值。若键不存在，则自动给其赋值</p>
+<p>d.update(字典) 将字典中的项加入到d中</p>
+<p>d.value() 返回字典中所有的值组成的列表</p>
+<p>字典可以当作hash表使用！对对对！</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E5%85%AB%E7%AB%A0%E5%87%BD%E6%95%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E5%85%AB%E7%AB%A0%E5%87%BD%E6%95%B0/" class="post-title-link" itemprop="url">第八章结构语句</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-01-07 23:44:16 / 修改时间：17:01:22" itemprop="dateCreated datePublished" datetime="2023-01-07T23:44:16+08:00">2023-01-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/python%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">python基础</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E5%85%AB%E7%AB%A0%E5%87%BD%E6%95%B0/" class="post-meta-item leancloud_visitors" data-flag-title="第八章结构语句" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E5%85%AB%E7%AB%A0%E5%87%BD%E6%95%B0/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E5%85%AB%E7%AB%A0%E5%87%BD%E6%95%B0/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>361</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>def function（n，list）<br>
+‘函数文档说明’     #这一行用于写函数说明，调用方式为funtion.<strong>doc</strong><br>
+n=2<br>
+list[0]=1<br>
+return</p>
+<hr>
+<p>函数的话，普通变量不能更改，列表可以被更改。<br>
+若不想更改列表，可以funtion(n,list[:])</p>
+<hr>
+<p>有一个字典d<br>
+def funciont(dd):<br>
+dd={}<br>
+dd[1]=0</p>
+<p>若有个空字典d<br>
+执行function（d）<br>
+则d不会发生变化，因为dd已经不再指向d了<br>
+所以应该去掉dd={}</p>
+<hr>
+<p>def funtion（x,y,z=3,*pos,**keypar）<br>
+x,y,z用于收集前3个位置参数<br>
+*pos用于收集剩余位置参数，变成一个元组<br>
+**keypar用于收集关键字参数，变成一个字典</p>
+<hr>
+<p>若要往函数中放入元组或者字典<br>
+则 调用function(*元组，**字典)</p>
+<p>函数中加<br>
+global x<br>
+后，则x则设置成全局变量</p>
+<hr>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0%E6%96%87%E4%BB%B6%E5%92%8C%E6%B5%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0%E6%96%87%E4%BB%B6%E5%92%8C%E6%B5%81/" class="post-title-link" itemprop="url">第十二章文件和流</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-01-07 23:44:16 / 修改时间：16:46:00" itemprop="dateCreated datePublished" datetime="2023-01-07T23:44:16+08:00">2023-01-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/python%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">python基础</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0%E6%96%87%E4%BB%B6%E5%92%8C%E6%B5%81/" class="post-meta-item leancloud_visitors" data-flag-title="第十二章文件和流" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0%E6%96%87%E4%BB%B6%E5%92%8C%E6%B5%81/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0%E6%96%87%E4%BB%B6%E5%92%8C%E6%B5%81/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>570</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>f=open(‘路径’，‘模式符号’,‘缓冲参数’)</p>
+<p>r’C:\A\B’ 这是个路径，记住r的作用是让后面的字符串中无视转义符的作用，一般都用于路径</p>
+<p>模式符号：<br>
+r   读模式<br>
+w  写模式<br>
+a   追加模式，用于写，在尾部追加而不是覆盖<br>
+b   二进制模式，处理图像等文件</p>
+<ul>
+<li>读和写模式</li>
+</ul>
+<p>缓冲参数：<br>
+0 无缓冲<br>
+1 有缓冲<br>
+大于1 则代表缓冲区大小<br>
+-1  使用默认缓冲大小</p>
+<hr>
+<p>f=open(……)<br>
+f.write(字符串)  往f中写入<br>
+f.close()</p>
+<p>f.read(数字)<br>
+数字代表从当前位置读几个字符<br>
+如果数字为空，则代表直接读到末尾</p>
+<hr>
+<p>管式输出(脚本)：<br>
+cat file.txt | python aa.pycat<br>
+cat得到一段文本，通过脚本读取<br>
+读取方式：<br>
+import sys<br>
+text=sys.stdin.read() #读取输入的所有文本，对于cat管道来说就是全部文本</p>
+<hr>
+<p>读取行：<br>
+readline(数字n)<br>
+若数字为空，则读取各行<br>
+若有数字，则最多最去n个字符</p>
+<p>readlines读取所有行！并且返回一个列表！</p>
+<p>writelines(列表)，则分行写入列表中的文本</p>
+<hr>
+<p>open()其实自带迭代效果<br>
+即<br>
+f=open(filename)<br>
+for line in f:<br>
+print line<br>
+f.close</p>
+<p>或者用fileinput迭代器<br>
+import fileinput<br>
+for line in fileinput.input(filename):<br>
+print line</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E5%9B%9B%E7%AB%A0%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9B%B8%E5%85%B3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E5%9B%9B%E7%AB%A0%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9B%B8%E5%85%B3/" class="post-title-link" itemprop="url">第四章字符串</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-01-07 23:44:16 / 修改时间：16:43:02" itemprop="dateCreated datePublished" datetime="2023-01-07T23:44:16+08:00">2023-01-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/python%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">python基础</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E5%9B%9B%E7%AB%A0%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9B%B8%E5%85%B3/" class="post-meta-item leancloud_visitors" data-flag-title="第四章字符串" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E5%9B%9B%E7%AB%A0%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9B%B8%E5%85%B3/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/%E7%AC%AC%E5%9B%9B%E7%AB%A0%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9B%B8%E5%85%B3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>870</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>“str1”“str2”<br>
+则会输出2者的拼接</p>
+<p>但是2个字符串变量的话，必须要用+号<br>
+s1+s2</p>
+<hr>
+<p>print 1000L<br>
+将输出1000，L被省略<br>
+若想不省略，则用repr( )，即括号内都转为字符串<br>
+或者str( )<br>
+repr是个函数，str是个类型转换</p>
+<hr>
+<p>input()输入的是自己判断的值，<br>
+raw_input()输入的一定会转成字符串</p>
+<hr>
+<p>长字符串可用’‘’     ‘’’  即3个单引号<br>
+在这里面可以换行， 特殊符号都不需要转义</p>
+<hr>
+<p>r’字符串’   这样字符串就变成了原始字符串，里面的转义符号’'将被去除转义</p>
+<p>字符串是不可修改的，故分片赋值什么的都是不行的</p>
+<hr>
+<p>字符串格式化：<br>
+string=‘%s is %d years old’<br>
+string % (‘Lishaoxiao’，‘23’)   通过%符号接一个元组，则可以进行格式化</p>
+<hr>
+<p>格式化顺序：</p>
+<p>%转换说明符开始</p>
+<p>转换表示：-左对齐 ， +在转换值之前要加上正负号。 空格则说明整数前要保留空格， 0表示位数不够用0填充</p>
+<p>最小字段宽度：指定宽度</p>
+<p>点 . 后跟精度值</p>
+<p>接着是转换类型</p>
+<hr>
+<p>字符串方法：<br>
+title.find(子串)  查找子串，返回最左端的位置，找不到则返回-1<br>
+title.find(子串，位置1)    从位置1开始查找子串<br>
+title.find(子串，位置1，位置2)   从位置1到位置2区间内查找子串</p>
+<hr>
+<p>有个列表seq=[‘1’,‘2’,‘3’] #列表中必须是字符<br>
+有个字符c=‘+’<br>
+c.join(seq) 则seq被拼接成字符串,间隔符是字符c</p>
+<p>故字符列表list转为字符串无间隔方法为<br>
+s=‘’<br>
+s.join(list)</p>
+<hr>
+<p>title.lower() 返回字符串的小写字母版</p>
+<p>titile.replace(字符串1，字符串2)   把title中的字符串1换成字符串2</p>
+<p>title.split©  则字符串被分割成列表，通过字符c分割。如果不提供字符，则默认为空格</p>
+<p>title.strip() 去除两侧的空格</p>
+<p>table=maketrans(‘abc’,‘def’)  则a变成d，b变成e，c变成f<br>
+接着title.translate(talbe) 则title中的a变成d，b变e，c变f</p>
+<p>enumrate(string) 则提供索引-值对</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/python/python%E5%9F%BA%E7%A1%80/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -213,7 +799,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 23:00:00" itemprop="dateModified" datetime="2024-01-07T23:00:00+08:00">2024-01-07</time>
+                <time title="修改时间：2024-02-06 00:05:07" itemprop="dateModified" datetime="2024-02-06T00:05:07+08:00">2024-02-06</time>
               </span>
 
           
@@ -321,7 +907,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 23:00:00" itemprop="dateModified" datetime="2024-01-07T23:00:00+08:00">2024-01-07</time>
+                <time title="修改时间：2024-02-06 00:05:07" itemprop="dateModified" datetime="2024-02-06T00:05:07+08:00">2024-02-06</time>
               </span>
 
           
@@ -422,7 +1008,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 23:00:00" itemprop="dateModified" datetime="2024-01-07T23:00:00+08:00">2024-01-07</time>
+                <time title="修改时间：2024-02-06 00:05:07" itemprop="dateModified" datetime="2024-02-06T00:05:07+08:00">2024-02-06</time>
               </span>
 
           
@@ -523,7 +1109,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 23:00:00" itemprop="dateModified" datetime="2024-01-07T23:00:00+08:00">2024-01-07</time>
+                <time title="修改时间：2024-02-06 00:05:07" itemprop="dateModified" datetime="2024-02-06T00:05:07+08:00">2024-02-06</time>
               </span>
 
           
@@ -626,7 +1212,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 23:00:00" itemprop="dateModified" datetime="2024-01-07T23:00:00+08:00">2024-01-07</time>
+                <time title="修改时间：2024-02-06 00:05:07" itemprop="dateModified" datetime="2024-02-06T00:05:07+08:00">2024-02-06</time>
               </span>
 
           
@@ -794,474 +1380,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E9%9A%8F%E7%AC%94/%E8%A7%82%E5%90%8E%E6%84%9F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E9%9A%8F%E7%AC%94/%E8%A7%82%E5%90%8E%E6%84%9F/" class="post-title-link" itemprop="url">观后感</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-01-07 16:12:01" itemprop="dateCreated datePublished" datetime="2023-01-07T16:12:01+08:00">2023-01-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 23:00:00" itemprop="dateModified" datetime="2024-01-07T23:00:00+08:00">2024-01-07</time>
-              </span>
-
-          
-            <span id="/%E9%9A%8F%E7%AC%94/%E8%A7%82%E5%90%8E%E6%84%9F/" class="post-meta-item leancloud_visitors" data-flag-title="观后感" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E9%9A%8F%E7%AC%94/%E8%A7%82%E5%90%8E%E6%84%9F/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E9%9A%8F%E7%AC%94/%E8%A7%82%E5%90%8E%E6%84%9F/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>40</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <a href="/%E9%9A%8F%E7%AC%94/%E8%A7%82%E5%90%8E%E6%84%9F/%E3%80%8A%E5%AE%87%E5%AE%99%E6%8E%A2%E7%B4%A2%E7%BC%96%E8%BE%91%E9%83%A8%E3%80%8B%E8%A7%82%E5%90%8E%E6%84%9F/" title="《宇宙探索编辑部》观后感">《宇宙探索编辑部》观后感</a><br>
-<a href="/%E9%9A%8F%E7%AC%94/%E8%A7%82%E5%90%8E%E6%84%9F/%E3%80%8A%E5%BF%83%E7%81%B5%E6%8D%95%E6%89%8B%E3%80%8B%E8%A7%82%E5%90%8E%E6%84%9F/" title="《心灵捕手》观后感">《心灵捕手》观后感</a><br>
-<a href="/%E9%9A%8F%E7%AC%94/%E8%A7%82%E5%90%8E%E6%84%9F/%E3%80%8A%E8%8D%92%E5%8E%9F%E7%8B%BC%E3%80%8B%E6%91%98%E5%BD%95/" title="《荒原狼》">《荒原狼》</a><br>
-<a href="/%E9%9A%8F%E7%AC%94/%E8%A7%82%E5%90%8E%E6%84%9F/%E3%80%8A%E8%B5%9B%E5%8D%9A%E6%9C%8B%E5%85%8B-%E8%BE%B9%E7%BC%98%E8%A1%8C%E8%80%85%E3%80%8B%E8%A7%82%E5%90%8E%E6%84%9F/" title="《赛博朋克-边缘行者》观后感">《赛博朋克-边缘行者》观后感</a><br>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/" class="post-title-link" itemprop="url">心理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-01-07 16:11:54" itemprop="dateCreated datePublished" datetime="2023-01-07T16:11:54+08:00">2023-01-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 23:00:00" itemprop="dateModified" datetime="2024-01-07T23:00:00+08:00">2024-01-07</time>
-              </span>
-
-          
-            <span id="/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/" class="post-meta-item leancloud_visitors" data-flag-title="心理" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>48</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <a href="/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/%E3%80%8A%E8%9B%A4%E8%9F%86%E5%85%88%E7%94%9F%E5%8E%BB%E7%9C%8B%E5%BF%83%E7%90%86%E5%8C%BB%E7%94%9F%E3%80%8B/" title="《蛤蟆先生去看心理医生》">《蛤蟆先生去看心理医生》</a><br>
-<a href="/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/%E5%8F%AA%E9%9C%80%E5%80%BE%E5%90%AC/" title="《只需倾听》笔记">《只需倾听》笔记</a><br>
-<a href="/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/%E5%A4%B1%E7%9C%A0%E7%96%97%E6%B3%95/" title="解决失眠的科学疗法">解决失眠的科学疗法</a><br>
-<a href="/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/%E5%BF%83%E7%90%86%E6%88%90%E9%95%BF%E6%84%9F%E6%82%9F/" title="心理感悟">心理感悟</a><br>
-<a href="/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/%E8%81%8A%E5%A4%A9%E8%AE%B0%E5%BD%95/" title="聊天记录">聊天记录</a><br>
-<a href="/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/%E8%A2%AB%E8%AE%A8%E5%8E%8C%E7%9A%84%E5%8B%87%E6%B0%94/" title="被讨厌的勇气">被讨厌的勇气</a><br>
-<a href="/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/%E9%9D%9E%E6%9A%B4%E5%8A%9B%E6%B2%9F%E9%80%9A/" title="非暴力沟通">非暴力沟通</a><br>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/%E8%81%8A%E5%A4%A9%E8%AE%B0%E5%BD%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/%E8%81%8A%E5%A4%A9%E8%AE%B0%E5%BD%95/" class="post-title-link" itemprop="url">聊天记录</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-01-04 23:35:22" itemprop="dateCreated datePublished" datetime="2023-01-04T23:35:22+08:00">2023-01-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-01-07 15:08:04" itemprop="dateModified" datetime="2023-01-07T15:08:04+08:00">2023-01-07</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9A%8F%E7%AC%94/" itemprop="url" rel="index"><span itemprop="name">随笔</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">心理</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/%E8%81%8A%E5%A4%A9%E8%AE%B0%E5%BD%95/" class="post-meta-item leancloud_visitors" data-flag-title="聊天记录" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/%E8%81%8A%E5%A4%A9%E8%AE%B0%E5%BD%95/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/%E8%81%8A%E5%A4%A9%E8%AE%B0%E5%BD%95/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>5</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          Here's something encrypted, password is required to continue reading.
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/%E9%9A%8F%E7%AC%94/%E5%BF%83%E7%90%86/%E8%81%8A%E5%A4%A9%E8%AE%B0%E5%BD%95/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%95%B0%E4%BD%8DDP/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%95%B0%E4%BD%8DDP/" class="post-title-link" itemprop="url">数位dp</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-10-19 23:12:42 / 修改时间：01:27:20" itemprop="dateCreated datePublished" datetime="2022-10-19T23:12:42+08:00">2022-10-19</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">算法大全</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%85%B6%E4%BB%96/" itemprop="url" rel="index"><span itemprop="name">其他</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%95%B0%E4%BD%8DDP/" class="post-meta-item leancloud_visitors" data-flag-title="数位dp" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%95%B0%E4%BD%8DDP/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%95%B0%E4%BD%8DDP/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>976</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#gai-nian-he-chang-jing">概念和场景</a></li>
-<li><a href="#zuo-fa">做法</a></li>
-<li><a href="#mo-ban">模板</a></li>
-<li><a href="#xiang-guan-ti-mu">相关题目</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="gai-nian-he-chang-jing">概念和场景</span><a href="#gai-nian-he-chang-jing" class="header-anchor">#</a></h1>
-<h1><span id="zuo-fa">做法</span><a href="#zuo-fa" class="header-anchor">#</a></h1>
-<ol>
-<li><img src="/images/%E6%95%B0%E4%BD%8DDP/1666111705052.png" alt="1666111705052"></li>
-</ol>
-<h1><span id="mo-ban">模板</span><a href="#mo-ban" class="header-anchor">#</a></h1>
-<p><img src="/images/%E6%95%B0%E4%BD%8DDP/1666111685258.png" alt="1666111685258"></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="type">int</span> <span class="title function_">f</span><span class="params">(<span class="type">int</span> i, <span class="type">boolean</span> isLimit, <span class="type">boolean</span> isNum)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (i == s.length) <span class="keyword">return</span> isNum ? <span class="number">1</span> : <span class="number">0</span>; <span class="comment">// 如果填了数字，则为 1 种合法方案</span></span><br><span class="line">    <span class="keyword">if</span> (!isLimit &amp;&amp; isNum &amp;&amp; dp[i] &gt;= <span class="number">0</span>) <span class="keyword">return</span> dp[i]; <span class="comment">// 在不受到任何约束的情况下，返回记录的结果，避免重复运算</span></span><br><span class="line">    <span class="type">var</span> <span class="variable">res</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (!isNum) <span class="comment">// 前面不填数字，那么可以跳过当前数位，也不填数字</span></span><br><span class="line">        <span class="comment">// isLimit 改为 false，因为没有填数字，位数都比 n 要短，自然不会受到 n 的约束</span></span><br><span class="line">        <span class="comment">// isNum 仍然为 false，因为没有填任何数字</span></span><br><span class="line">        res = f(i + <span class="number">1</span>, <span class="literal">false</span>, <span class="literal">false</span>);</span><br><span class="line">    <span class="type">var</span> <span class="variable">up</span> <span class="operator">=</span> isLimit ? s[i] : <span class="string">&#x27;9&#x27;</span>; <span class="comment">// 根据是否受到约束，决定可以填的数字的上限</span></span><br><span class="line">    <span class="comment">// 注意：对于一般的题目而言，如果此时 isNum 为 false，则必须从 1 开始枚举，由于本题 digits 没有 0，所以无需处理这种情况</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> d : digits) &#123; <span class="comment">// 枚举要填入的数字 d</span></span><br><span class="line">        <span class="keyword">if</span> (d.charAt(<span class="number">0</span>) &gt; up) <span class="keyword">break</span>; <span class="comment">// d 超过上限，由于 digits 是有序的，后面的 d 都会超过上限，故退出循环</span></span><br><span class="line">        <span class="comment">// isLimit：如果当前受到 n 的约束，且填的数字等于上限，那么后面仍然会受到 n 的约束</span></span><br><span class="line">        <span class="comment">// isNum 为 true，因为填了数字</span></span><br><span class="line">        res += f(i + <span class="number">1</span>, isLimit &amp;&amp; d.charAt(<span class="number">0</span>) == up, <span class="literal">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (!isLimit &amp;&amp; isNum) dp[i] = res; <span class="comment">// 在不受到任何约束的情况下，记录结果</span></span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<hr>
-<h1><span id="xiang-guan-ti-mu">相关题目</span><a href="#xiang-guan-ti-mu" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/numbers-at-most-n-given-digit-set/">902. 最大为 N 的数字组合 - 力扣（LeetCode）</a></p>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/number-of-digit-one/">https://leetcode.cn/problems/number-of-digit-one/</a></p>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/number-of-2s-in-range-lcci/">https://leetcode.cn/problems/number-of-2s-in-range-lcci/</a></p>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/digit-count-in-range/">https://leetcode.cn/problems/digit-count-in-range/</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1333,7 +1451,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">282</span>
+          <span class="site-state-item-count">286</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1401,7 +1519,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共362.4k字</span>
+  <span class="post-count">博客全站共364.2k字</span>
 </div>
 
         
