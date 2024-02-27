@@ -181,6 +181,161 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/" class="post-title-link" itemprop="url">RDD缓存管理cacheManager和磁盘管理DiskBlockManager.md</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-01-08 16:13:48 / 修改时间：16:56:21" itemprop="dateCreated datePublished" datetime="2023-01-08T16:13:48+08:00">2023-01-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">大数据组件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6/spark/" itemprop="url" rel="index"><span itemprop="name">spark</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/" class="post-meta-item leancloud_visitors" data-flag-title="RDD缓存管理cacheManager和磁盘管理DiskBlockManager.md" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#rdd-huan-cun-guan-li-cachemanager">RDD缓存管理cacheManager</a></li>
+<li><a href="#diskstore-he-diskblockmanager-you-shi-me-guan-xi">diskStore和diskBlockManager有什么关系？</a></li>
+<li><a href="#diskblockmanager-de-getfile-guo-cheng">diskBlockManager的getFile过程</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h2><span id="rdd-huan-cun-guan-li-cachemanager">RDD缓存管理cacheManager</span><a href="#rdd-huan-cun-guan-li-cachemanager" class="header-anchor">#</a></h2>
+<p>当需要计算RDD时，需要避免重复计算的RDD。</p>
+<ul>
+<li>什么时候RDD可能会被重复计算？一般是宽依赖RDD， 即RDD的下游可能有多个， 但是另一个下游的拉去可能较慢， 那么此时需要做缓存。<br>
+cacheManager只是对RDD的管理， 真正的缓存以及获取是通过blockManager，然后根据内存情况选择存内存还是存磁盘。<br>
+<img src="/images/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/20200630000626827-1673168180625.png" alt="在这里插入图片描述"></li>
+<li>RDD不是一定会做缓存，这取决于存储级别的设定。</li>
+<li>RDD没缓存时， 不一定要重新计算， 也可能从CheckPoint中拿</li>
+<li>checkPoint概念:</li>
+</ul>
+<blockquote>
+<blockquote>
+<p>checkpoint在spark中主要有两块应用：一块是在spark core中对RDD做checkpoint，可以切断做checkpoint RDD的依赖关系，将RDD数据保存到可靠存储（如HDFS）以便数据恢复；另外一块是应用在spark streaming中，使用checkpoint用来保存DStreamGraph以及相关配置信息，以便在Driver崩溃重启的时候能够接着之前进度继续进行处理（如之前waiting batch的job会在重启后继续处理）。</p>
+</blockquote>
+</blockquote>
+<p>如果需要存入内存，直接使用memoryStore即可，memoryStore的存储过程见上一篇博文。</p>
+<p>如果要写入磁盘，需要调用diskStore提供的put方法把RDD对应的block块写入磁盘</p>
+<h2><span id="diskstore-he-diskblockmanager-you-shi-me-guan-xi">diskStore和diskBlockManager有什么关系？</span><a href="#diskstore-he-diskblockmanager-you-shi-me-guan-xi" class="header-anchor">#</a></h2>
+<p>diskStore里要写入数据时，负责打开某个文件， 然后往文件里写入。<br>
+取出数据时，也是找到对应的文件，然后取出数据。</p>
+<p>而这个磁盘文件的管理并没有放到diskStore里实现，而是独立了一个diskBlockManager模块。<br>
+以DiskStore的putArray方法为例，从下图可看出关系：<br>
+<img src="/images/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/20200630001614715-1673168180692.png" alt="在这里插入图片描述"><br>
+即文件相关、序列化相关，都让diskBlockManager来搞了。</p>
+<h2><span id="diskblockmanager-de-getfile-guo-cheng">diskBlockManager的getFile过程</span><a href="#diskblockmanager-de-getfile-guo-cheng" class="header-anchor">#</a></h2>
+<p>上图里有个getFile的操作，即从DBM中拿到文件对象做写入。<br>
+那么这个文件创建时，怎么选路径，怎么命名？</p>
+<p>首先，文件的路径和文件名， 使用2次哈希得到<br>
+<img src="/images/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/20200630002035127-1673168180556.png" alt="在这里插入图片描述"><br>
+使用2级哈希做路径的目的，是因为一级目录有多个，需要用哈希选择放到哪个一级目录。</p>
+<p>每次创建文件的话，会把该文件放到DBM里的一个数组中，并加上钩子做管理，如果程序中止或者结束，需要主动清理临时文件。<br>
+<img src="/images/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/20200630002336941-1673168180792.png" alt="在这里插入图片描述"><br>
+DiskBlockManager全图:<br>
+<img src="/images/RDD%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86cacheManager%E5%92%8C%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86DiskBlockManager/20200630002455377-1673168180674.png" alt="在这里插入图片描述"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/Spark%E5%92%8Cmapreducer%E5%9C%A8shuffle%E6%97%B6%E7%9A%84%E5%8C%BA%E5%88%AB/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1748,175 +1903,6 @@ task的反序列化是在task线程中去执行的，即进入线程时，execut
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/blockManager%E4%BB%8B%E7%BB%8D/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/blockManager%E4%BB%8B%E7%BB%8D/" class="post-title-link" itemprop="url">blockManager介绍.md</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-01-08 16:12:32 / 修改时间：16:56:03" itemprop="dateCreated datePublished" datetime="2023-01-08T16:12:32+08:00">2023-01-08</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">开源组件原理</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">大数据组件</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%BB%84%E4%BB%B6/spark/" itemprop="url" rel="index"><span itemprop="name">spark</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/blockManager%E4%BB%8B%E7%BB%8D/" class="post-meta-item leancloud_visitors" data-flag-title="blockManager介绍.md" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/blockManager%E4%BB%8B%E7%BB%8D/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6%E5%8E%9F%E7%90%86/spark/blockManager%E4%BB%8B%E7%BB%8D/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#spark-de-cachemanager">spark的cacheManager</a></li>
-<li><a href="#driver-executor-he-blockmanager-de-guan-xi">driver、executor和BlockManager的关系</a></li>
-<li><a href="#blockmanager-bao-han-shi-me">blockManager包含什么</a></li>
-<li><a href="#ba-kuai-block-cun-ru-blockmanager-de-liu-cheng">把块block 存入blockManager的流程</a></li>
-<li><a href="#cong-blockmanager-zhong-shan-chu-kuai">从blockManager中删除块</a></li>
-<li><a href="#shuffclient-xia-zai-block-cao-zuo">shuffClient 下载block操作</a></li>
-<li><a href="#shuffeclinet-de-bei-fen-cao-zuo">shuffeClinet的备份操作</a></li>
-<li><a href="#wan-zheng-bi-ji-tu">完整笔记图</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h2><span id="spark-de-cachemanager">spark的cacheManager</span><a href="#spark-de-cachemanager" class="header-anchor">#</a></h2>
-<p><img src="/images/blockManager%E4%BB%8B%E7%BB%8D/20200609233244231-1673168159642.png" alt="在这里插入图片描述"><br>
-这张图能知道什么？<br>
-Q： spark对RDD的缓存是通过谁去做的？<br>
-A： 通过BlockManager去缓存， 并且根据配置选项，决定缓存在文件还是内存中。</p>
-<hr>
-<h2><span id="driver-executor-he-blockmanager-de-guan-xi">driver、executor和BlockManager的关系</span><a href="#driver-executor-he-blockmanager-de-guan-xi" class="header-anchor">#</a></h2>
-<p><img src="/images/blockManager%E4%BB%8B%E7%BB%8D/20200609233847637-1673168159547.png" alt="在这里插入图片描述"><br>
-从中可以看到</p>
-<ol>
-<li>blockManagerMaster在driver端生成</li>
-<li>executor中生成blockManager，并负责向BMM注册。</li>
-<li>spark中注册消息通过ActorSystem进行发送</li>
-</ol>
-<h2><span id="blockmanager-bao-han-shi-me">blockManager包含什么</span><a href="#blockmanager-bao-han-shi-me" class="header-anchor">#</a></h2>
-<p><img src="/images/blockManager%E4%BB%8B%E7%BB%8D/20200609234125891-1673168159580.png" alt="在这里插入图片描述"></p>
-<ul>
-<li>BlockManager的作用？我理解是负责做RDD的存储，如何存下来给后续任务去使用。</li>
-<li>memoryStore和DiskStore，说明把block做存储时，有内存和磁盘2种方式，存储后就都i通过这个Store去管理。</li>
-<li>存储时以Block为单位，所以会有个映射用的数组</li>
-<li>有一个负责和Driver的BlockManagerMaster通信的引用接口</li>
-<li>还有个shuffClient，负责做 <em><strong>备份</strong></em> 和 <em><strong>下载</strong></em></li>
-</ul>
-<h2><span id="ba-kuai-block-cun-ru-blockmanager-de-liu-cheng">把块block 存入blockManager的流程</span><a href="#ba-kuai-block-cun-ru-blockmanager-de-liu-cheng" class="header-anchor">#</a></h2>
-<p><img src="/images/blockManager%E4%BB%8B%E7%BB%8D/20200609234845230-1673168159568.png" alt="在这里插入图片描述"><br>
-需要注意的一个地方： 当内存不足以放入Block时， 他会先释放一下，再判断是否满足！</p>
-<h2><span id="cong-blockmanager-zhong-shan-chu-kuai">从blockManager中删除块</span><a href="#cong-blockmanager-zhong-shan-chu-kuai" class="header-anchor">#</a></h2>
-<p><img src="/images/blockManager%E4%BB%8B%E7%BB%8D/20200609235348520-1673168159568.png" alt="在这里插入图片描述"><br>
-红色方框写错了， 应该是如果只支持磁盘存储，则从DiskStore中调用方法取出block。</p>
-<h2><span id="shuffclient-xia-zai-block-cao-zuo">shuffClient 下载block操作</span><a href="#shuffclient-xia-zai-block-cao-zuo" class="header-anchor">#</a></h2>
-<p><img src="/images/blockManager%E4%BB%8B%E7%BB%8D/20200609235510213-1673168159568.png" alt="在这里插入图片描述"><br>
-BMMAC就是BlockManagerMasterActor,我当初瞎写的简称</p>
-<ul>
-<li>注意点：当要取的块来自好几个BlockManager时， 把它打乱顺序，避免好几个BM同时从某一个BM上下载数据！</li>
-</ul>
-<h2><span id="shuffeclinet-de-bei-fen-cao-zuo">shuffeClinet的备份操作</span><a href="#shuffeclinet-de-bei-fen-cao-zuo" class="header-anchor">#</a></h2>
-<p><img src="/images/blockManager%E4%BB%8B%E7%BB%8D/202006092359000-1673168159589.png" alt="在这里插入图片描述"></p>
-<ul>
-<li>BM为什么要备份他的block？这个书里没提！真坑。我的理解是为了防止节点崩溃或者丢失，导致中间任务无法继续执行？</li>
-<li>因为其他的BlockManager能接收的block可能有限，所以备份时可能会涉及多个block， 每次我们一样，从BMmaster那里拿一个 <em><strong>随机</strong></em>的blockManager做备份，避免都往同一个上备份。</li>
-</ul>
-<h2><span id="wan-zheng-bi-ji-tu">完整笔记图</span><a href="#wan-zheng-bi-ji-tu" class="header-anchor">#</a></h2>
-<p><img src="/images/blockManager%E4%BB%8B%E7%BB%8D/2020061000023444-1673168159598.png" alt="在这里插入图片描述"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1988,7 +1974,7 @@ BMMAC就是BlockManagerMasterActor,我当初瞎写的简称</p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">286</span>
+          <span class="site-state-item-count">287</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -2056,7 +2042,7 @@ BMMAC就是BlockManagerMasterActor,我当初瞎写的简称</p>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共364.2k字</span>
+  <span class="post-count">博客全站共364.8k字</span>
 </div>
 
         

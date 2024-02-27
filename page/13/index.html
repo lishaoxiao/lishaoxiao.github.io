@@ -181,6 +181,216 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/" class="post-title-link" itemprop="url">微服务心跳管理机制设计</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-19 23:40:12 / 修改时间：23:25:44" itemprop="dateCreated datePublished" datetime="2022-09-19T23:40:12+08:00">2022-09-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">系统设计</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/" class="post-meta-item leancloud_visitors" data-flag-title="微服务心跳管理机制设计" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#ji-yu-lru-shi-xian-bai-wan-ji-bie-de-xin-tiao-jian-kong-fu-wu">基于LRU实现百万级别的心跳监控服务</a>
+<ul>
+<li><a href="#1-q-bai-wan-ji-bie-jie-dian-ru-he-kuai-su-zhao-dao-chi-xian-de-jie-dian-fei-shu-ju-ku-cun-chu-mo-shi">1. Q: 百万级别节点，如何快速找到离线的节点？（非数据库存储模式）</a></li>
+<li><a href="#2-q-ru-he-bao-zheng-xin-tiao-fu-wu-de-ke-kao-xing">2. Q: 如何保证心跳服务的可靠性？</a></li>
+<li><a href="#3-q-ru-he-ti-sheng-dan-ge-xin-tiao-fu-wu-jie-dian-de-xin-tiao-jie-shou-xing-neng">3. Q: 如何提升单个心跳服务节点的心跳接收性能？</a></li>
+<li><a href="#4-xin-tiao-bao-xuan-yong-tcp-huan-shi-udp">4. 心跳包选用TCP还是UDP？</a></li>
+</ul>
+</li>
+<li><a href="#ling-yi-ge-fang-shi-shi-jian-lun">另一个方式：时间轮</a>
+<ul>
+<li><a href="#q-java-de-delayqueue-lei-yuan-li-zhi-dao-ma">Q: java的DelayQueue类原理知道吗？</a></li>
+<li><a href="#q-shi-jian-lun-he-java-de-delayqueue-you-shi-me-qu-bie">Q: 时间轮和   java的delayQueue）有什么区别？</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<hr>
+<p>笔记来源：<br>
+<a target="_blank" rel="noopener" href="https://time.geekbang.org/column/article/240656">实战：单机如何实现管理百万主机的心跳服务</a></p>
+<h1><span id="ji-yu-lru-shi-xian-bai-wan-ji-bie-de-xin-tiao-jian-kong-fu-wu">基于LRU实现百万级别的心跳监控服务</span><a href="#ji-yu-lru-shi-xian-bai-wan-ji-bie-de-xin-tiao-jian-kong-fu-wu" class="header-anchor">#</a></h1>
+<h2><span id="1-q-bai-wan-ji-bie-jie-dian-ru-he-kuai-su-zhao-dao-chi-xian-de-jie-dian-fei-shu-ju-ku-cun-chu-mo-shi">1. Q: 百万级别节点，如何快速找到离线的节点？（非数据库存储模式）</span><a href="#1-q-bai-wan-ji-bie-jie-dian-ru-he-kuai-su-zhao-dao-chi-xian-de-jie-dian-fei-shu-ju-ku-cun-chu-mo-shi" class="header-anchor">#</a></h2>
+<p>全部遍历找超时，O(n)， 百万级别节点消耗非常大，   遍历时可能会因为涉及更新的同步问题， 导致此时无法插入。<br>
+如果用单线程，这个过程慢的话会造成阻塞。</p>
+<p>实现方式1： LRU+链表+哈希表<br>
+① 所有心跳放进一个LRU队列中，保证最新的心跳包在队尾，最老的心跳包在队头。<br>
+② 如果某节点有新的心跳包进来， 利用哈希表找到这个节点的链点位置，删除掉，再将新包插入到队尾。<br>
+③ 每次心跳检查时， 只要查询队头， 不断将超时的心跳包出队，直到队头的心跳包不超时即可。<br>
+<img src="/images/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/ee76fb4d7bfd65d2190dbadd7760c7f312f74079.png" alt="ee76fb4d7bfd65d2190dbadd7760c7f312f74079"><br>
+实现方式2： 时间轮，时间轮的做法见最后</p>
+<h2><span id="2-q-ru-he-bao-zheng-xin-tiao-fu-wu-de-ke-kao-xing">2. Q: 如何保证心跳服务的可靠性？</span><a href="#2-q-ru-he-bao-zheng-xin-tiao-fu-wu-de-ke-kao-xing" class="header-anchor">#</a></h2>
+<p>上面提到的心跳检查都在内存中，  心跳检查节点如果只有1个的话不可靠，而且量级也会很大。<br>
+但又不能落盘，这会导致数据库的并发查询压力很大，且数据库自身的可靠性又会成了问题。</p>
+<p>解决方式：<br>
+分布式处理。<br>
+心跳入口网关 根据节点的ip或者节点id做哈希， 确保相同节点的心跳包发往同一个节点。<br>
+如果网关发现某个节点挂了，利用哈希一致算法更新发送的节点即可。</p>
+<h2><span id="3-q-ru-he-ti-sheng-dan-ge-xin-tiao-fu-wu-jie-dian-de-xin-tiao-jie-shou-xing-neng">3. Q: 如何提升单个心跳服务节点的心跳接收性能？</span><a href="#3-q-ru-he-ti-sheng-dan-ge-xin-tiao-fu-wu-jie-dian-de-xin-tiao-jie-shou-xing-neng" class="header-anchor">#</a></h2>
+<p>收到心跳后， 涉及心跳的解包，LRU+哈希更新，需要提升处理性能。</p>
+<p>①  多线程处理， 同样利用上面的方法做哈希，分配到特定的心跳处理线程，不同线程之间处理的节点信息不会互相干扰。</p>
+<blockquote>
+<blockquote>
+<p>注意点：  缓存队列放到各自的工作线程中。 即push而非pull的方式，尽可能避免N之间的竞争，即只做1+1的竞争。<br>
+<img src="/images/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/68d6f3d4595ec0a8c74566349c25dda9fb4bb3f8.png" alt="68d6f3d4595ec0a8c74566349c25dda9fb4bb3f8"><br>
+队列锁采用自旋锁，避免工作线程频繁出现上下文切换（即保证工作线程一直在跑，这个用于高并发场景，高并发场景不能让他停下来的）</p>
+</blockquote>
+</blockquote>
+<p>② 心跳包资源池减少内存释放频率<br>
+如果只有10w个节点，那么每次收到心跳请求时，不要反复new新的心跳对象，而是从心跳资源池里取出构造好的对象，把最新时间set进去后再扔给分发线程。</p>
+<h2><span id="4-xin-tiao-bao-xuan-yong-tcp-huan-shi-udp">4. 心跳包选用TCP还是UDP？</span><a href="#4-xin-tiao-bao-xuan-yong-tcp-huan-shi-udp" class="header-anchor">#</a></h2>
+<p>满足以下条件的话选择UDP:</p>
+<ol>
+<li>心跳包报文长度内容信息量很少，基本小于MTU， 不需要利用TCP自带的分包机制。</li>
+<li>超时判断时间允许偶然一次的不可靠丢包（即偶尔丢一次并不影响）</li>
+</ol>
+<p>这种情况用UDP在网内发到心跳服务即可。<br>
+不需要TCP那样的高消耗。</p>
+<h1><span id="ling-yi-ge-fang-shi-shi-jian-lun">另一个方式：时间轮</span><a href="#ling-yi-ge-fang-shi-shi-jian-lun" class="header-anchor">#</a></h1>
+<p>参考自<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/0f0fec47a0ad">TimingWheel 时间轮详解</a></p>
+<p>时间轮本质：</p>
+<ol>
+<li>弄一个数组（看起来是一个环，实际上是数组）</li>
+<li>数组中中每个节点又存了一个双向链表，用于存放实际的任务（用链表是为了方便插入）</li>
+<li>任务具体放数组中的哪个位置？  根据 超期时间取余决定他的实际存放位置。</li>
+<li>如果数组的节点中有任务，会把本身的超期时间带着一起扔进一个 队列中</li>
+<li>队列每次取队头数据， 如果时间没到队头节点指定的延迟时间，就阻塞，直到时间到达，取出里面的任务逐个执行。</li>
+<li>如果任务的定时时间超过整个环的时间？  则新增一个时间轮，时间比这个更长，因此队列里可能会多插入一个节点，节点中会标识我是小时间轮还是大时间轮的。<br>
+<img src="/images/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BF%83%E8%B7%B3%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E8%AE%BE%E8%AE%A1/2e95b497a970bc8baad42f25d6dee04d0241a079.png" alt="2e95b497a970bc8baad42f25d6dee04d0241a079"></li>
+</ol>
+<hr>
+<p>其他的延时队列怎么做的?<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/woniu211111/article/details/109302412">延时队列实现的几种姿势</a></p>
+<hr>
+<h2><span id="q-java-de-delayqueue-lei-yuan-li-zhi-dao-ma">Q: java的DelayQueue类原理知道吗？</span><a href="#q-java-de-delayqueue-lei-yuan-li-zhi-dao-ma" class="header-anchor">#</a></h2>
+<p>A:</p>
+<ol>
+<li>有一个优先队列， 放入的任务会根据是否快要超期进行排序， 马上就要超期的会放在队头。</li>
+<li>当使用take方法取数据时，看一下队头任务，如果时间到了就返回。</li>
+<li>如果时间还没到</li>
+</ol>
+<ul>
+<li>首先看一下是否已经有线程在等待这个任务了，如果是的话，使用锁的condition机制做await等待。</li>
+<li>如果没有线程正在等待，就计算还差多少时间， 然后用 LockSupport.parkNanos()让这个调用take方法的线程等待特定时间。</li>
+</ul>
+<ol start="4">
+<li>注意等待期间，会释放锁，因此这期间可以正常offer和take。</li>
+<li>当时间到了后，这个线程肯定能取走数据了。  取完后，顺便看一下队列里还有没有数据，如果有， 调用condition.signal()，通知那堆正在等待的线程， 你们可以试着竞争一下取数据了。</li>
+<li>另外每当有新的任务offer时，如果发现最新入队的数据就是马上要超期的数据， 也会立刻通知等待的各位马上苏醒竞争（因为之前等待的线程认为自己还要睡一会才会有数据）</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/fuzhongmin05/article/details/105716205">Java阻塞延迟队列DelayQueue原理及使用</a></p>
+<hr>
+<h2><span id="q-shi-jian-lun-he-java-de-delayqueue-you-shi-me-qu-bie">Q: 时间轮和   java的delayQueue）有什么区别？</span><a href="#q-shi-jian-lun-he-java-de-delayqueue-you-shi-me-qu-bie" class="header-anchor">#</a></h2>
+<p>A:<br>
+java的delayQueue本质上是用堆（优先队列）实现的。<br>
+接收任务后， 直接把任务放进优先队列中， 按照超期时间确定堆位置。  每次poll时如果发现堆顶没到时间就阻塞，直到时间到了再poll。<br>
+取出来检查后，再加上时间扔回队列。</p>
+<p>坏处： 插入和删除的复杂度是O(logn)。</p>
+<p>而时间轮并不会把任务扔进 queue中，而是把时间轮的槽扔进queue中。  因此整个延迟队列实际上时针对槽的，不需要堆，按先入先出取数据和插槽即可，O(1)的复杂度。  而后面扔进来的任务，都是往槽里的双向链表塞进去而已。</p>
+<hr>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E6%9C%8D%E5%8A%A1%E7%BC%93%E5%AD%98%E8%AE%BE%E8%AE%A1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1756,7 +1966,7 @@ kafka中， 每个消费者对应一个 partition。 partion中是有序的。</
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-02-06 00:05:07" itemprop="dateModified" datetime="2024-02-06T00:05:07+08:00">2024-02-06</time>
+                <time title="修改时间：2024-02-27 23:31:54" itemprop="dateModified" datetime="2024-02-27T23:31:54+08:00">2024-02-27</time>
               </span>
 
           
@@ -2046,196 +2256,6 @@ A:</p>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/" class="post-title-link" itemprop="url">linux系统启动过程</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-09-15 22:37:49 / 修改时间：23:49:58" itemprop="dateCreated datePublished" datetime="2022-09-15T22:37:49+08:00">2022-09-15</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">linux-unix原理</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/" class="post-meta-item leancloud_visitors" data-flag-title="linux系统启动过程" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/linux-unix%E5%8E%9F%E7%90%86/linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#zheng-ti-liu-cheng">整体流程</a></li>
-<li><a href="#qi-dong-di-yi-bu-jia-zai-bios">启动第一步－－加载BIOS</a></li>
-<li><a href="#qi-dong-di-er-bu-du-qu-mbr">启动第二步－－读取MBR</a></li>
-<li><a href="#qi-dong-di-san-bu-boot-loader">启动第三步－－Boot Loader</a></li>
-<li><a href="#qi-dong-di-si-bu-jia-zai-nei-he"><strong>启动<strong><strong>第四步</strong></strong>－－加载内核</strong></a></li>
-<li><a href="#qi-dong-di-wu-bu-yong-hu-ceng-init-yi-ju-inittab-wen-jian-lai-she-ding-yun-xing-deng-ji"><strong>启动<strong><strong>第五步</strong></strong>－－用户层init依据inittab文件来设定运行等级</strong></a></li>
-<li><a href="#qi-dong-di-liu-bu-init-jin-cheng-zhi-xing-rc-sysinit"><strong>启动<strong><strong>第六步</strong></strong>－－init进程执行rc.sysinit</strong></a></li>
-<li><a href="#qi-dong-di-qi-bu-qi-dong-nei-he-mo-kuai"><strong>启动<strong><strong>第七步</strong></strong>－－启动内核模块</strong></a></li>
-<li><a href="#qi-dong-di-ba-bu-zhi-xing-bu-tong-yun-xing-ji-bie-de-jiao-ben-cheng-xu"><strong>启动<strong><strong>第八步</strong></strong>－－执行不同运行级别的脚本程序</strong></a></li>
-<li><a href="#qi-dong-di-jiu-bu-zhi-xing-etc-rc-d-rc-local"><strong>启动<strong><strong>第九步</strong></strong>－－执行/etc/rc.d/rc.local</strong></a></li>
-<li><a href="#qi-dong-di-shi-bu-zhi-xing-bin-login-cheng-xu-jin-ru-deng-lu-zhuang-tai"><strong>启动<strong><strong>第十步</strong></strong>－－执行/bin/login程序，进入登录状态</strong></a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="zheng-ti-liu-cheng">整体流程</span><a href="#zheng-ti-liu-cheng" class="header-anchor">#</a></h1>
-<ol>
-<li>
-<p>加载BIOS(CPU相关信息)</p>
-</li>
-<li>
-<p>读取磁道第一个扇区MBR（预启动信息）</p>
-</li>
-<li>
-<p>boot loader(操作系统运行之前运行的小程序)</p>
-</li>
-<li>
-<p>加载内核</p>
-</li>
-<li>
-<p>设定运行等级</p>
-</li>
-<li>
-<p>启动内核</p>
-</li>
-<li>
-<p>启动脚本登录界面</p>
-</li>
-</ol>
-<h1><span id="qi-dong-di-yi-bu-jia-zai-bios">启动第一步－－加载BIOS</span><a href="#qi-dong-di-yi-bu-jia-zai-bios" class="header-anchor">#</a></h1>
-<p>当你打开计算机电源，计算机会首先加载BIOS信息，BIOS信息是如此的重要，以至于计算机必须在最开始就找到它。这是因为BIOS中包含了CPU的相关信息、设备启动顺序信息、硬盘信息、内存信息、时钟信息、PnP特性等等。在此之后，计算机心里就有谱了，知道应该去读取哪个硬件设备了。</p>
-<h1><span id="qi-dong-di-er-bu-du-qu-mbr">启动第二步－－读取MBR</span><a href="#qi-dong-di-er-bu-du-qu-mbr" class="header-anchor">#</a></h1>
-<p>众所周知，硬盘上第0磁道第一个扇区被称为MBR，也就是Master Boot Record，即主引导记录，它的大小是512字节，别看地方不大，可里面却存放了预启动信息、分区表信息。</p>
-<p>系统找到BIOS所指定的硬盘的MBR后，就会将其复制到0×7c00地址所在的物理内存中。其实被复制到物理内存的内容就是Boot Loader，而具体到你的电脑，那就是lilo或者grub了。</p>
-<h1><span id="qi-dong-di-san-bu-boot-loader">启动第三步－－Boot Loader</span><a href="#qi-dong-di-san-bu-boot-loader" class="header-anchor">#</a></h1>
-<p>Boot Loader 就是在操作系统内核运行之前运行的一段小程序。通过这段小程序，我们可以初始化硬件设备、建立内存空间的映射图，从而将系统的软硬件环境带到一个合适的状态，以便为最终调用操作系统内核做好一切准备。</p>
-<p>Boot Loader有若干种，其中Grub、Lilo和spfdisk是常见的Loader。</p>
-<p>我们以Grub为例来讲解吧，毕竟用lilo和spfdisk的人并不多。</p>
-<p>系统读取内存中的grub配置信息（一般为menu.lst或grub.lst），并依照此配置信息来启动不同的操作系统。</p>
-<h1><span id="qi-dong-di-si-bu-jia-zai-nei-he"><strong>启动<strong><strong>第四步</strong></strong>－－加载内核</strong></span><a href="#qi-dong-di-si-bu-jia-zai-nei-he" class="header-anchor">#</a></h1>
-<p>根据grub设定的内核映像所在路径，系统读取内存映像，并进行解压缩操作。此时，屏幕一般会输出“Uncompressing Linux”的提示。当解压缩内核完成后，屏幕输出“OK, booting the kernel”。</p>
-<p>系统将解压后的内核放置在内存之中，并调用start_kernel()函数来启动一系列的初始化函数并初始化各种设备，完成Linux核心环境的建立。至此，Linux内核已经建立起来了，基于Linux的程序应该可以正常运行了。</p>
-<h1><span id="qi-dong-di-wu-bu-yong-hu-ceng-init-yi-ju-inittab-wen-jian-lai-she-ding-yun-xing-deng-ji"><strong>启动<strong><strong>第五步</strong></strong>－－用户层init依据inittab文件来设定运行等级</strong></span><a href="#qi-dong-di-wu-bu-yong-hu-ceng-init-yi-ju-inittab-wen-jian-lai-she-ding-yun-xing-deng-ji" class="header-anchor">#</a></h1>
-<p>内核被加载后，<strong>第一个</strong>运行的程序便是/sbin/init，该文件会读取/etc/inittab文件，并依据此文件来进行初始化工作。</p>
-<p>其实/etc/inittab文件最主要的作用就是设定Linux的运行等级，其设定形式是“：id:5:initdefault:”，这就表明Linux需要运行在等级5上。Linux的运行等级设定如下：</p>
-<p>0：关机</p>
-<p>1：单用户模式</p>
-<p>2：无网络支持的多用户模式</p>
-<p>3：有网络支持的多用户模式</p>
-<p>4：保留，未使用</p>
-<p>5：有网络支持有X-Window支持的多用户模式</p>
-<p>6：重新引导系统，即重启</p>
-<p>关于/etc/inittab文件的学问，其实还有很多</p>
-<h1><span id="qi-dong-di-liu-bu-init-jin-cheng-zhi-xing-rc-sysinit"><strong>启动<strong><strong>第六步</strong></strong>－－init进程执行rc.sysinit</strong></span><a href="#qi-dong-di-liu-bu-init-jin-cheng-zhi-xing-rc-sysinit" class="header-anchor">#</a></h1>
-<p>在设定了运行等级后，Linux系统执行的第一个用户层文件就是/etc/rc.d/rc.sysinit脚本程序，它做的工作非常多，包括设定PATH、设定网络配置（/etc/sysconfig/network）、启动swap分区、设定/proc等等。如果你有兴趣，可以到/etc/rc.d中查看一下rc.sysinit文件，里面的脚本够你看几天的</p>
-<h1><span id="qi-dong-di-qi-bu-qi-dong-nei-he-mo-kuai"><strong>启动<strong><strong>第七步</strong></strong>－－启动内核模块</strong></span><a href="#qi-dong-di-qi-bu-qi-dong-nei-he-mo-kuai" class="header-anchor">#</a></h1>
-<p>具体是依据/etc/modules.conf文件或/etc/modules.d目录下的文件来装载内核模块。</p>
-<h1><span id="qi-dong-di-ba-bu-zhi-xing-bu-tong-yun-xing-ji-bie-de-jiao-ben-cheng-xu"><strong>启动<strong><strong>第八步</strong></strong>－－执行不同运行级别的脚本程序</strong></span><a href="#qi-dong-di-ba-bu-zhi-xing-bu-tong-yun-xing-ji-bie-de-jiao-ben-cheng-xu" class="header-anchor">#</a></h1>
-<p>根据运行级别的不同，系统会运行rc0.d到rc6.d中的相应的脚本程序，来完成相应的初始化工作和启动相应的服务。</p>
-<h1><span id="qi-dong-di-jiu-bu-zhi-xing-etc-rc-d-rc-local"><strong>启动<strong><strong>第九步</strong></strong>－－执行/etc/rc.d/rc.local</strong></span><a href="#qi-dong-di-jiu-bu-zhi-xing-etc-rc-d-rc-local" class="header-anchor">#</a></h1>
-<p>你如果打开了此文件，里面有一句话，读过之后，你就会对此命令的作用一目了然：</p>
-<p># This script will be executed <em>after</em> all the other init scripts.</p>
-<p># You can put your own initialization stuff in here if you don’t</p>
-<p># want to do the full Sys V style init stuff.</p>
-<p>rc.local就是在一切初始化工作后，Linux留给用户进行个性化的地方。你可以把你想设置和启动的东西放到这里。</p>
-<h1><span id="qi-dong-di-shi-bu-zhi-xing-bin-login-cheng-xu-jin-ru-deng-lu-zhuang-tai"><strong>启动<strong><strong>第十步</strong></strong>－－执行/bin/login程序，进入登录状态</strong></span><a href="#qi-dong-di-shi-bu-zhi-xing-bin-login-cheng-xu-jin-ru-deng-lu-zhuang-tai" class="header-anchor">#</a></h1>
-<p>此时，系统已经进入到了等待用户输入username和password的时候了，你已经可以用自己的帐号登入系统了。😃</p>
-<p>===</p>
-<p>漫长的启动过程结束了，一切都清静了…</p>
-<p>其实在这背后，还有着更加复杂的底层函数调用，等待着你去研究…本文就算抛砖引玉了:)</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2307,7 +2327,7 @@ A:</p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">286</span>
+          <span class="site-state-item-count">287</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -2375,7 +2395,7 @@ A:</p>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共364.2k字</span>
+  <span class="post-count">博客全站共364.8k字</span>
 </div>
 
         
