@@ -181,6 +181,917 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E8%A1%A8%E5%AD%97%E6%AE%B5%E5%AE%9A%E4%B9%89%E5%92%8C%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E8%A1%A8%E5%AD%97%E6%AE%B5%E5%AE%9A%E4%B9%89%E5%92%8C%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE/" class="post-title-link" itemprop="url">MYSQL表字段定义和优化建议</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-23 22:47:49" itemprop="dateCreated datePublished" datetime="2022-08-23T22:47:49+08:00">2022-08-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-24 00:12:29" itemprop="dateModified" datetime="2022-08-24T00:12:29+08:00">2022-08-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/SQL%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">SQL数据库</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E8%A1%A8%E5%AD%97%E6%AE%B5%E5%AE%9A%E4%B9%89%E5%92%8C%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE/" class="post-meta-item leancloud_visitors" data-flag-title="MYSQL表字段定义和优化建议" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E8%A1%A8%E5%AD%97%E6%AE%B5%E5%AE%9A%E4%B9%89%E5%92%8C%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E8%A1%A8%E5%AD%97%E6%AE%B5%E5%AE%9A%E4%B9%89%E5%92%8C%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#xuan-ze-shu-ju-lei-xing-de-yuan-ze">选择数据类型的原则：</a></li>
+<li><a href="#zheng-shu-lei-xing">整数类型：</a></li>
+<li><a href="#shi-shu-lei-xing-dai-xiao-shu-dian-de-lei-xing">实数类型（带小数点的类型）</a></li>
+<li><a href="#zi-fu-chuan-lei-xing">字符串类型</a>
+<ul>
+<li><a href="#varchar">varchar</a></li>
+<li><a href="#char">char</a></li>
+<li><a href="#binary-he-varbinary">binary 和varbinary</a></li>
+</ul>
+</li>
+<li><a href="#blob-he-text">BLOB和TEXT</a></li>
+<li><a href="#mei-ju-enum">枚举enum</a></li>
+<li><a href="#ri-qi-he-shi-jian-lei-xing">日期和时间类型</a>
+<ul>
+<li><a href="#datetime">DATETIME</a></li>
+<li><a href="#timestamp">TIMESTAMP</a></li>
+</ul>
+</li>
+<li><a href="#wei-lei-xing">位类型</a>
+<ul>
+<li><a href="#bit-n">bit（n)</a></li>
+<li><a href="#set">set</a></li>
+</ul>
+</li>
+<li><a href="#zhu-jian-de-xuan-ze">主键的选择</a></li>
+<li><a href="#schema-she-ji-shi-de-xian-jing">schema设计时的陷阱</a></li>
+<li><a href="#fan-shi-de-kao-liang">范式的考量</a></li>
+<li><a href="#cha-xun-de-huan-cun">查询的缓存</a></li>
+<li><a href="#alter-table-xing-neng-wen-ti">alter table性能问题</a></li>
+<li><a href="#fen-qu-de-xian-zhi">分区的限制</a></li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="xuan-ze-shu-ju-lei-xing-de-yuan-ze">选择数据类型的原则：</span><a href="#xuan-ze-shu-ju-lei-xing-de-yuan-ze" class="header-anchor">#</a></h1>
+<ul>
+<li>越小越好。 如果后续因为业务需求要alter增大范围， 会很耗时。</li>
+<li>简单数据类型， 比如用整数而不是字符串去存ip。</li>
+<li>尽量NOT NULL。原因:索引列如果存在null， 会需要一个额外的字节，? ?索引统计也变复杂了。</li>
+</ul>
+<h1><span id="zheng-shu-lei-xing">整数类型：</span><a href="#zheng-shu-lei-xing" class="header-anchor">#</a></h1>
+<ul>
+<li>mediumint是24位的， 其他分别是8、16、32、64对应tiny、small、int、big</li>
+<li>支持unsigned属性</li>
+<li>int(11)不代表用11位存储， 限定只是在客户端工具中只显示11位字符。</li>
+</ul>
+<h1><span id="shi-shu-lei-xing-dai-xiao-shu-dian-de-lei-xing">实数类型（带小数点的类型）</span><a href="#shi-shu-lei-xing-dai-xiao-shu-dian-de-lei-xing" class="header-anchor">#</a></h1>
+<ul>
+<li>有时候不一定是为了小数才选实数。  比如选decima而不是bigint是因为decimal可以存储比bigint还要大的数字</li>
+<li>float和double就是标准的16、32浮点运算</li>
+<li>decimal存储精确的小数和精确计算（精确计算只在mysql5.0之后）</li>
+<li>浮点比decimal要的存储空间更小， decimal(18.9）会用掉9个字节（4小数点前+4小数点后+1小数点本身）</li>
+<li>只有精确计算才用到decimal， 如果数据太多，为了节省空间， 可以改成用bigint（只要把小数点部分乘10的倍数，去掉小数点即可），毕竟decimal比较耗空间。</li>
+</ul>
+<h1><span id="zi-fu-chuan-lei-xing">字符串类型</span><a href="#zi-fu-chuan-lei-xing" class="header-anchor">#</a></h1>
+<h2><span id="varchar">varchar</span><a href="#varchar" class="header-anchor">#</a></h2>
+<ul>
+<li>存储可变长字符串。（例外： 用ROW_FORMAT=FIXED创建的话，varchar的空间会固定）</li>
+<li>可变长的概念：<br>
+char是固定长度的，例如你定义了12，插入了&quot;aa&quot;，后面它会给你补10个空。如果是varchar，那么&quot;aa&quot;就是&quot;aa&quot;不会给你补</li>
+<li>varchar(N)代表的N是最大长度</li>
+<li>需要1-2个额外字节， 来保存字符串长度<br>
+varchar(n）需要的最大存储空间长度=  n + (n&lt;=255?1:2)</li>
+<li>2种情况不适合用varchar</li>
+</ul>
+<ol>
+<li>最大长度比平均长度要大</li>
+<li>列的更新很少</li>
+</ol>
+<ul>
+<li>varchar(5)相比于varchar(200)的优势：  mysql会分配固定大小的内存块来保存内部值。尤其是使用内存临时表进行排序或者操作时会特别糟糕？？ 不懂</li>
+</ul>
+<h2><span id="char">char</span><a href="#char" class="header-anchor">#</a></h2>
+<ul>
+<li>char是定长的，因此总是会预留足够的空间</li>
+<li>char存储时，会删除字符串末尾的空格。 即’  abc  ‘存入后，会变成’  abc’</li>
+<li>char相比varchar的优势： 字符串很短时， 需要的空间比varchar少(varchar需要额外空间存储长度)</li>
+</ul>
+<h2><span id="binary-he-varbinary">binary 和varbinary</span><a href="#binary-he-varbinary" class="header-anchor">#</a></h2>
+<ul>
+<li>存储的是二进制字符串（字节码，0x77那种）</li>
+<li>binary 采用\0而不是空格来填充</li>
+<li>二进制字节码比较的速度比字符快</li>
+</ul>
+<h1><span id="blob-he-text">BLOB和TEXT</span><a href="#blob-he-text" class="header-anchor">#</a></h1>
+<ul>
+<li>为了存储超大的数据而设计的字符串类型</li>
+<li>mysql把他们当作独立的对象处理，专门使用外部的存储区域来存储， 内部存储指针。</li>
+<li>BLOB和TEXT的区别： 一个是二进制，一个带有字符集规则</li>
+<li>mysql对这2个类型做排序时， 只对前max_sort_length字节做排序</li>
+<li>因此不能将这2个类型的字段做索引</li>
+</ul>
+<h1><span id="mei-ju-enum">枚举enum</span><a href="#mei-ju-enum" class="header-anchor">#</a></h1>
+<p>create table enum_test(e ENUM(‘a’,‘b’,‘c’) NOT NULL)</p>
+<ul>
+<li>实际上存储的不是’a’这个字符串，而是1\2\3 这类数字</li>
+<li>按照定义顺序分配数字</li>
+<li>排序时也按照实际数字排序，而不是枚举的字典序</li>
+<li>枚举作为主键也优于字符串， 毕竟她本质是数字。但是比数字会差一点。</li>
+</ul>
+<h1><span id="ri-qi-he-shi-jian-lei-xing">日期和时间类型</span><a href="#ri-qi-he-shi-jian-lei-xing" class="header-anchor">#</a></h1>
+<h2><span id="datetime">DATETIME</span><a href="#datetime" class="header-anchor">#</a></h2>
+<ul>
+<li>从1001到9999年， 精度为秒</li>
+<li>与时区无关</li>
+<li>使用8个字节存储</li>
+</ul>
+<h2><span id="timestamp">TIMESTAMP</span><a href="#timestamp" class="header-anchor">#</a></h2>
+<ul>
+<li>从1970.1.1至今的秒数</li>
+<li>只使用4个字节</li>
+<li>显示依赖时区，服务端、客户端都需要配置时区，然后timeStamp的展示就会不同。</li>
+<li>TIMESTAMP默认为NOT NULL</li>
+<li>插入时会自动设置这个列的值为“当前时间”</li>
+</ul>
+<p>如果想存毫秒怎么办？ 可以使用bigint来存储毫秒级时间戳。</p>
+<h1><span id="wei-lei-xing">位类型</span><a href="#wei-lei-xing" class="header-anchor">#</a></h1>
+<p>通常用于存储acl权限</p>
+<h2><span id="bit-n">bit（n)</span><a href="#bit-n" class="header-anchor">#</a></h2>
+<ul>
+<li>mysql把bit当作字符串而不是数字类型</li>
+<li>存储00111001并且检索时， 得到的ASCII为57的字符串（即’9’)。  在数字上下文场景却是数字57</li>
+<li>因为这个特性，慎用bit</li>
+</ul>
+<h2><span id="set">set</span><a href="#set" class="header-anchor">#</a></h2>
+<ul>
+<li>如果字段内容就是一堆true或者false的位，可以放到set类型种</li>
+<li>替代方式： 用tinyint类型来替代， 就是比太好理解。</li>
+</ul>
+<hr>
+<h1><span id="zhu-jian-de-xuan-ze">主键的选择</span><a href="#zhu-jian-de-xuan-ze" class="header-anchor">#</a></h1>
+<ul>
+<li>整数是坠好的</li>
+<li>enum和set是糟糕的选择。</li>
+<li>字符串类型也尽量避免。空间大，检索慢</li>
+<li>避免随机生成的主键字符串，原因:</li>
+</ul>
+<ol>
+<li>插入值会随机写到索引的不同位置</li>
+<li>select语句会变慢</li>
+<li>随机值导致缓存失效( 局部性原理gg）<br>
+因此最好不要用string类型的UUID，  而是转为数字。</li>
+</ol>
+<hr>
+<h1><span id="schema-she-ji-shi-de-xian-jing">schema设计时的陷阱</span><a href="#schema-she-ji-shi-de-xian-jing" class="header-anchor">#</a></h1>
+<ul>
+<li>太长的列且列中有变长的字段， 可能会导致转换成行数据结构时要消耗很大的CPU。（从行缓冲种将编码过的列转成行数据的缘故）</li>
+<li>表的关联表太多会有问题。 建议查询最好在12个表内做关联。</li>
+<li>防止过度使用枚举。 枚举的缺点:<br>
+① 可能会有人搞一个enum(‘-1’,‘0’,‘1’,‘2’)这种误导人的枚举<br>
+② 每次要新增枚举必须alter table，会阻塞表</li>
+<li>set中的元素如果每次只能出现一个， 应该改成枚举。</li>
+<li>mysql会在索引中存储null，但是oracle不会。</li>
+<li>尽量不要用null，而是用空字符串、默认值替代，除非没有可以用的默认值，宁愿用null去引起调用方注意</li>
+</ul>
+<hr>
+<h1><span id="fan-shi-de-kao-liang">范式的考量</span><a href="#fan-shi-de-kao-liang" class="header-anchor">#</a></h1>
+<p>范式设计： 每个数据一般只会出现一次，没有冗余或者重复数据<br>
+反范式： 与范式相反。</p>
+<p>范式的优点：</p>
+<ul>
+<li>更新操作快，因为重复的记录少</li>
+<li>表更小，可以更好地放到内存里</li>
+<li>很少需要做distinct、groupby， 因此一般都是1对1的关系</li>
+</ul>
+<p>缺点：<br>
+查询时经常需要关联，当关联后的另外一个表需要做条件判断，可能会消耗一定性能</p>
+<p>反范式的优缺点和范式正好相反。</p>
+<hr>
+<h1><span id="cha-xun-de-huan-cun">查询的缓存</span><a href="#cha-xun-de-huan-cun" class="header-anchor">#</a></h1>
+<ul>
+<li>有时候会弄一个叫缓存表或者汇总表的东西， 避免每次查询所有记录来得到一个区间的结果</li>
+<li>计数器表，如果表里只有1行，可能导致并发效率低。 可以弄100行，然后大家更新时随机更新。  统计结果时直接sum即可</li>
+</ul>
+<hr>
+<h1><span id="alter-table-xing-neng-wen-ti">alter table性能问题</span><a href="#alter-table-xing-neng-wen-ti" class="header-anchor">#</a></h1>
+<ul>
+<li>mysql中，  alter table的原理一般是  用新的结构创建一个新表，然后把数据导入到新表中。</li>
+<li>有一些操作可以只修改表的.frm文件来达到修改结构的作用。<br>
+比如 alter column修改默认值，  移除列的auto_increment属性， 或者修改enum、set的常量 （可以通过弄一个新表，然后只修改新表的属性，接着进入数据库后端直接替换tablename.frm文件</li>
+</ul>
+<h1><span id="fen-qu-de-xian-zhi">分区的限制</span><a href="#fen-qu-de-xian-zhi" class="header-anchor">#</a></h1>
+<p>MySQL分区的限制</p>
+<ul>
+<li>
+<p>一个表最多只能有1024个分区。</p>
+</li>
+<li>
+<p>MySQL5.1中，分区表达式必须是整数，或者返回整数的表达式。在MySQL5.5中提供了非整数表达式分区的支持。</p>
+</li>
+<li>
+<p>如果分区字段中有主键或者唯一索引的列，那么多有主键列和唯一索引列都必须包含进来。即：分区字段要么不包含主键或者索引列，要么包含全部主键和索引列。</p>
+</li>
+<li>
+<p>分区表中无法使用外键约束。</p>
+</li>
+<li>
+<p>MySQL的分区适用于一个表的所有数据和索引，不能只对表数据分区而不对索引分区，也不能只对索引分区而不对表分区，也不能只对表的一部分数据分区。</p>
+</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_35190486/article/details/108758205">分区详细用法</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E8%AF%AD%E5%8F%A5%E8%B0%83%E4%BC%98%E6%89%8B%E6%AE%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E8%AF%AD%E5%8F%A5%E8%B0%83%E4%BC%98%E6%89%8B%E6%AE%B5/" class="post-title-link" itemprop="url">MYSQL语句调优手段</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-23 00:47:49 / 修改时间：00:30:02" itemprop="dateCreated datePublished" datetime="2022-08-23T00:47:49+08:00">2022-08-23</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/SQL%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">SQL数据库</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E8%AF%AD%E5%8F%A5%E8%B0%83%E4%BC%98%E6%89%8B%E6%AE%B5/" class="post-meta-item leancloud_visitors" data-flag-title="MYSQL语句调优手段" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E8%AF%AD%E5%8F%A5%E8%B0%83%E4%BC%98%E6%89%8B%E6%AE%B5/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E8%AF%AD%E5%8F%A5%E8%B0%83%E4%BC%98%E6%89%8B%E6%AE%B5/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#cha-xun-wei-shi-me-hui-man">查询为什么会慢？</a></li>
+<li><a href="#ying-yong-luo-ji-shang-chu-li-di-xiao-cha-xun">应用逻辑上处理低效查询</a>
+<ul>
+<li><a href="#ying-yong-ceng-luo-ji-shang-shi-bu-shi-fan-hui-liao-tai-duo-hui-bei-zi-ji-pao-qi-de-shu-ju">应用层逻辑上，是不是返回了太多会被自己抛弃的数据</a></li>
+<li><a href="#mysql-zhong-shi-fou-zai-sao-miao-e-wai-de-ji-lu">mysql中，是否在扫描额外的记录</a></li>
+</ul>
+</li>
+<li><a href="#chong-gou-cha-xun-yu-ju">重构查询语句</a>
+<ul>
+<li><a href="#limit-qie-fen-cha-xun">limit切分查询</a></li>
+<li><a href="#guan-lian-cha-xun-join-fen-jie">关联查询（join）分解</a></li>
+<li><a href="#you-hua-in-cha-xun">优化In查询</a></li>
+<li><a href="#you-hua-union-jia-limit">优化UNION加limit</a></li>
+<li><a href="#suo-yin-he-bing-you-hua">索引合并优化</a></li>
+<li><a href="#deng-zhi-chuan-di">等值传递</a></li>
+<li><a href="#bing-xing-zhi-xing">并行执行？</a></li>
+<li><a href="#ha-xi-guan-lian">哈希关联</a></li>
+<li><a href="#song-san-suo-yin-sao-miao">松散索引扫描</a></li>
+<li><a href="#zui-da-he-zui-xiao-zhi-you-hua">最大和最小值优化</a></li>
+<li><a href="#tong-biao-cha-xun-he-geng-xin">同表查询和更新</a></li>
+<li><a href="#you-hua-count">优化Count()</a></li>
+<li><a href="#guan-lian-cha-xun-you-hua">关联查询优化</a></li>
+<li><a href="#group-by-you-hua">Group by优化</a></li>
+<li><a href="#you-hua-limit-fen-ye">优化LIMIT分页</a></li>
+<li><a href="#ru-he-zhi-dao-shi-fou-you-xia-yi-ye-fen-duo-shao-ye">如何知道是否有下一页?分多少页？</a></li>
+<li><a href="#you-hua-union">优化UNION</a></li>
+<li><a href="#shi-yong-zi-ding-yi-bian-liang-you-hua">使用自定义变量优化</a></li>
+<li><a href="#yong-te-shu-guan-jian-zi-kong-zhi-zhi-xing-ji-hua">用特殊关键字控制执行计划</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="cha-xun-wei-shi-me-hui-man">查询为什么会慢？</span><a href="#cha-xun-wei-shi-me-hui-man" class="header-anchor">#</a></h1>
+<ul>
+<li>查询的生命周期<br>
+客户端发送-&gt;服务器接收-&gt;服务器解析sql-&gt;生成执行计划-&gt;执行-&gt;返回结果<br>
+其中最耗时的就是执行了。</li>
+<li>查询执行时耗费的时间：</li>
+</ul>
+<ol>
+<li>网络</li>
+<li>CPU计算</li>
+<li>生成统计信息</li>
+<li>锁等待</li>
+<li>IO操作</li>
+</ol>
+<h1><span id="ying-yong-luo-ji-shang-chu-li-di-xiao-cha-xun">应用逻辑上处理低效查询</span><a href="#ying-yong-luo-ji-shang-chu-li-di-xiao-cha-xun" class="header-anchor">#</a></h1>
+<h2><span id="ying-yong-ceng-luo-ji-shang-shi-bu-shi-fan-hui-liao-tai-duo-hui-bei-zi-ji-pao-qi-de-shu-ju">应用层逻辑上，是不是返回了太多会被自己抛弃的数据</span><a href="#ying-yong-ceng-luo-ji-shang-shi-bu-shi-fan-hui-liao-tai-duo-hui-bei-zi-ji-pao-qi-de-shu-ju" class="header-anchor">#</a></h2>
+<p>这个主要和 返回的数据有关</p>
+<ul>
+<li>sql里写的是返回所有行， 却在代码里只取resultSet的前10行。</li>
+<li>sql里写的是返回select *，  代码里却只需要特定几列。</li>
+<li>每次查询肯定是相同的结果，却没有做缓存。</li>
+</ul>
+<h2><span id="mysql-zhong-shi-fou-zai-sao-miao-e-wai-de-ji-lu">mysql中，是否在扫描额外的记录</span><a href="#mysql-zhong-shi-fou-zai-sao-miao-e-wai-de-ji-lu" class="header-anchor">#</a></h2>
+<p>这个主要和查询的过程有关（返回的数据已经优化到最优了)</p>
+<ul>
+<li>扫描的行数/返回的行数的比值越小越好</li>
+<li>EXPLAIN分析中有几个type，从坏到好分别是</li>
+</ul>
+<ol>
+<li>全表扫描All</li>
+<li>索引扫描ref</li>
+<li>范围扫描</li>
+<li>唯一索引查询</li>
+<li>常数引用<br>
+EXPLANIN里会显示扫描的行数row， 你可以和返回的行数做对比</li>
+</ol>
+<ul>
+<li>mysql中有3种方式来使用where条件，从好到坏分别是</li>
+</ul>
+<ol>
+<li>在索引中直接做where判断来过滤，然后返回底层数据，这个需要在存储引擎层完成</li>
+<li>索引覆盖扫描，直接在索引中返回数据，没有走到底层的数据处，这个在服务器层完成即可，不用走到底层存储引擎</li>
+<li>先从存储引擎返回数据， 然后再在服务器层做where判断来过滤</li>
+</ol>
+<ul>
+<li>为了减少扫描的行数，常见优化方式：</li>
+</ul>
+<ol>
+<li>使用索引覆盖扫描</li>
+<li>使用汇总表（就是每次做一些操作就会触发更新，不要再去重复查询了）</li>
+<li>重写复杂查询(联结等）</li>
+</ol>
+<h1><span id="chong-gou-cha-xun-yu-ju">重构查询语句</span><a href="#chong-gou-cha-xun-yu-ju" class="header-anchor">#</a></h1>
+<h2><span id="limit-qie-fen-cha-xun">limit切分查询</span><a href="#limit-qie-fen-cha-xun" class="header-anchor">#</a></h2>
+<ul>
+<li>指的是用limit等分页手段来切分，分多次执行</li>
+<li>适用于一些可能会锁表的大批量操作。</li>
+<li>比如删除某10w条数据， 最好先查询+limit 1w，分10次执行，中间间隔一些时间， 避免长时间的锁表。</li>
+</ul>
+<h2><span id="guan-lian-cha-xun-join-fen-jie">关联查询（join）分解</span><a href="#guan-lian-cha-xun-join-fen-jie" class="header-anchor">#</a></h2>
+<ul>
+<li>如果一个语句中join多次， 看下能不能在应用层分3个select依次执行，每次取前一次select的结果加入自己的条件中</li>
+<li>好处：</li>
+</ul>
+<ol>
+<li>分解后条件变简单了，就有可能利用mysql的缓存。</li>
+<li>也因为条件变简单且是单表，可能会利用上索引</li>
+<li>减少锁的竞争</li>
+<li>每个表相当于只查询了一次， 减少了重复访问。</li>
+</ol>
+<h2><span id="you-hua-in-cha-xun">优化In查询</span><a href="#you-hua-in-cha-xun" class="header-anchor">#</a></h2>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> a <span class="keyword">where</span> id <span class="keyword">in</span> (<span class="keyword">select</span> id <span class="keyword">from</span> b <span class="keyword">where</span> b.xx<span class="operator">&lt;</span>y)</span><br></pre></td></tr></table></figure>
+<p>注意上面并不是先计算in子表返回的内容，然后作为条件去做检查<br>
+而是变成一个关联查询</p>
+<p>select * from a where exist(select * from b where b.xx&lt;y and <a target="_blank" rel="noopener" href="http://a.id=b.id">a.id=b.id</a>))</p>
+<p>会先对file表做全表扫描，然后再进行条件查询。这这会很慢</p>
+<ul>
+<li>改进：</li>
+</ul>
+<ol>
+<li>用inner join改写成内联</li>
+<li>用GROUP_CONCAT生成一个列表，再提供给IN去使用。<br>
+P 224-225</li>
+</ol>
+<h2><span id="you-hua-union-jia-limit">优化UNION加limit</span><a href="#you-hua-union-jia-limit" class="header-anchor">#</a></h2>
+<p>（select …） UNION ALL (select …) limit 20<br>
+这句话本质上会把需要联合的表全部取出，做合并之后，再limit，如果表很大，limit相当于没有他本该的作用。<br>
+可以改成 在内部都加上一个limit来减少union时的量</p>
+<h2><span id="suo-yin-he-bing-you-hua">索引合并优化</span><a href="#suo-yin-he-bing-you-hua" class="header-anchor">#</a></h2>
+<h2><span id="deng-zhi-chuan-di">等值传递</span><a href="#deng-zhi-chuan-di" class="header-anchor">#</a></h2>
+<p>IN（）列表可能会被复制到关联的各个表中， 列表很大就会导致执行变慢</p>
+<h2><span id="bing-xing-zhi-xing">并行执行？</span><a href="#bing-xing-zhi-xing" class="header-anchor">#</a></h2>
+<p>mysql都是单线程进行查询</p>
+<h2><span id="ha-xi-guan-lian">哈希关联</span><a href="#ha-xi-guan-lian" class="header-anchor">#</a></h2>
+<ul>
+<li>mysql不支持哈希关联， 关联都是通过 嵌套循环关联的。</li>
+<li>除非用之前提过的自定义哈希索引部分（弄一个触发器来生成哈希索引）</li>
+</ul>
+<h2><span id="song-san-suo-yin-sao-miao">松散索引扫描</span><a href="#song-san-suo-yin-sao-miao" class="header-anchor">#</a></h2>
+<p>指没有用到第一列索引，却需要用第二列索引时，按照下面的方式去查：<br>
+<img src="/images/MYSQL%E8%AF%AD%E5%8F%A5%E8%B0%83%E4%BC%98%E6%89%8B%E6%AE%B5/7276f16be3c71df35198c15d8fdcab0a8032bf14.png" alt="7276f16be3c71df35198c15d8fdcab0a8032bf14"><br>
+select * from xxx where B = xxx group by A;<br>
+添加 group by 字段后，会先根据 A 索引分组后，会在每个 A 的范围内使用索引进行快速查询定位所需要的 B 列，这就叫做松散索引扫描，比新建一个索引的效率会慢 A 的 distinct 倍，但省去了新索引的消耗</p>
+<h2><span id="zui-da-he-zui-xiao-zhi-you-hua">最大和最小值优化</span><a href="#zui-da-he-zui-xiao-zhi-you-hua" class="header-anchor">#</a></h2>
+<p>如果你MIN（）的是主键，且where中没有用到索引， 那么MYQL就进行全表顺序扫描。<br>
+扫描时按理应当满足第一个可行的值时，就是最小值（主键按顺序排列）<br>
+但是mysql不支持。<br>
+可以用limit 1来优化，不要用MIN或者MAX， 如果你要统计的是主键的值的话。</p>
+<h2><span id="tong-biao-cha-xun-he-geng-xin">同表查询和更新</span><a href="#tong-biao-cha-xun-he-geng-xin" class="header-anchor">#</a></h2>
+<p>mysql不允许 在同一张表进行查询和更新<br>
+<img src="/images/MYSQL%E8%AF%AD%E5%8F%A5%E8%B0%83%E4%BC%98%E6%89%8B%E6%AE%B5/177fdc92efb7933bd40b061f64dc615480e891e7.png" alt="177fdc92efb7933bd40b061f64dc615480e891e7"></p>
+<h2><span id="you-hua-count">优化Count()</span><a href="#you-hua-count" class="header-anchor">#</a></h2>
+<ul>
+<li>count(列或列的表达式) 会过滤掉无值或者null的情况。 而count(*)直接统计所有行数</li>
+<li>count(*)的性能好一点， 因为他不用过滤和比较是否为空，可以直接用存储引擎记录的一些信息直接得到。</li>
+<li>count(*) 不带where非常快，  如果带了where，就要遍历。</li>
+<li>一种优化： 如果统计where id&gt;5， 而id&gt;5很多，&lt;5却很少，可以反向求接，改成<br>
+select (select count(<em>) from city) - count(</em>) from t where id &lt; 5。<br>
+毕竟不带where的是很快的。</li>
+<li>如果对计数要求不是那么精确， 可以用汇总表去处理总和的问题，每隔一段时间更新一次。</li>
+<li>注意这种用法<br>
+select count(color=‘blue’ OR NULL) AS bule, count(color=‘red’ OR NULL) as red from items;<br>
+可以求红色和蓝色的个数并展示在同一行中，无需分组。</li>
+</ul>
+<h2><span id="guan-lian-cha-xun-you-hua">关联查询优化</span><a href="#guan-lian-cha-xun-you-hua" class="header-anchor">#</a></h2>
+<ul>
+<li>确保ON或者USING的列上有索引</li>
+<li>如果B join A， 那么A上有索引足够了。因为联结是是遍历B的每一行，拿B的joinKey 去A里面搜索，所以真正用到的是A的索引（除非执行计划做了优化）</li>
+<li>优化GROUP BY 或者DISTINCT</li>
+</ul>
+<h2><span id="group-by-you-hua">Group by优化</span><a href="#group-by-you-hua" class="header-anchor">#</a></h2>
+<ul>
+<li>分组时，要么利用文件要么利用内存做临时表，你可以用优化器的提示去控制用内存还是文件</li>
+<li>join后再分组， 分组里的列尽量用join的key，  比如你虽然是要按名字分组并栈式的，但名字和id是一一对应的，所以按id分组并展示名字是ok的</li>
+<li>不要用分组去展示非分组列（即不是聚合结果也不是分组列）</li>
+<li>分组时，会自动对分组后的结果按分组列排序，消耗一定时间。  如果不希望排序，可以加一个ORDER BY NULL</li>
+</ul>
+<h2><span id="you-hua-limit-fen-ye">优化LIMIT分页</span><a href="#you-hua-limit-fen-ye" class="header-anchor">#</a></h2>
+<ul>
+<li>对于“LIMIT 100000,10”     里面存在100000的偏移，而偏移本质上得扫描掉前面的100020条记录。</li>
+<li>有3种优化方式：</li>
+</ul>
+<ol>
+<li>构造一个联结临时表，临时表里做索引覆盖查询+limit（即select的只有limit列），然后再拿得到的id做联结，获取你需要的列。</li>
+<li>如果确定是某个limit的范围，且为索引，则用where 索引范围来代替</li>
+<li>或者where xx&lt;100020 ORDER BY XX DESC LIMIT 20来反向求。</li>
+</ol>
+<h2><span id="ru-he-zhi-dao-shi-fou-you-xia-yi-ye-fen-duo-shao-ye">如何知道是否有下一页?分多少页？</span><a href="#ru-he-zhi-dao-shi-fou-you-xia-yi-ye-fen-duo-shao-ye" class="header-anchor">#</a></h2>
+<ol>
+<li>LIMIT的时候加上SQL_CALC_FOUND_ROWS。这样会返回除去LIMIT之外的其他行数，相当于剩下还需要的行数。</li>
+<li>每次LIMIT X+1， 应用层只拿X行， 如果有多一行，说明还有下一页</li>
+<li>每次LIMIT 10X， 然后10X作为缓存，应用层每次取X作为一页展示。</li>
+</ol>
+<h2><span id="you-hua-union">优化UNION</span><a href="#you-hua-union" class="header-anchor">#</a></h2>
+<ul>
+<li>UNION的本质是创建并填充临时表</li>
+<li>用UNION ALL， 否则会默认加上DISTINCT关键字进行唯一性检查，消耗性能</li>
+</ul>
+<h2><span id="shi-yong-zi-ding-yi-bian-liang-you-hua">使用自定义变量优化</span><a href="#shi-yong-zi-ding-yi-bian-liang-you-hua" class="header-anchor">#</a></h2>
+<p>见6.4自定义变量</p>
+<h2><span id="yong-te-shu-guan-jian-zi-kong-zhi-zhi-xing-ji-hua">用特殊关键字控制执行计划</span><a href="#yong-te-shu-guan-jian-zi-kong-zhi-zhi-xing-ji-hua" class="header-anchor">#</a></h2>
+<ul>
+<li>High_Priority/low_priority<br>
+多个语句同时操作一个表时， 可以用这个来控制语句的优先级。</li>
+<li>Delayed<br>
+对插入和更新操作而言， 他会直接返回响应给客户端，然后把数据缓存下来，等服务器空闲了再去插</li>
+<li>Straight_join<br>
+可以用这个关键字控制 join顺序，而不是用优化器的join顺序</li>
+<li>SQL_small_result<br>
+告诉优化器 结果集很小，你可以搞个内存临时表做排序</li>
+<li>SQL_big_result<br>
+告诉优化器 结果集很大， 可以提早准备磁盘排序而不是等发现不够了采用磁盘。</li>
+<li>SQL_CACHE<br>
+结果集是否应该缓存。</li>
+<li>SQL_CALC_FOUND_ROWS<br>
+让返回的结果集包含更多信息（例如limit 10,结果集里却有个总数信息）</li>
+<li>For update / Lock in share ode<br>
+提示优化器加行锁</li>
+<li>Use/ignore/force Index</li>
+<li>告诉优化器要不要用索引，如果是force，即使where里没有索引，也会去用索引。 如果是ignore，则就是不用，傲娇</li>
+<li>optimizer_search_depth<br>
+dfs搜索计划时的最大深度</li>
+<li>optimizer_prune_level<br>
+根据扫描的行数来决定是否跳过执行计划？</li>
+<li>optimizer_switch<br>
+选择是否关闭某些优化器特性</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E6%89%A7%E8%A1%8C%E5%92%8C%E5%86%85%E9%83%A8%E4%BC%98%E5%8C%96%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/abd.png">
+      <meta itemprop="name" content="breakDawn">
+      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓的知识屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E6%89%A7%E8%A1%8C%E5%92%8C%E5%86%85%E9%83%A8%E4%BC%98%E5%8C%96%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">MYSQL执行和内部优化原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-22 23:47:49" itemprop="dateCreated datePublished" datetime="2022-08-22T23:47:49+08:00">2022-08-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-23 00:26:48" itemprop="dateModified" datetime="2022-08-23T00:26:48+08:00">2022-08-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/SQL%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">SQL数据库</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E6%89%A7%E8%A1%8C%E5%92%8C%E5%86%85%E9%83%A8%E4%BC%98%E5%8C%96%E5%8E%9F%E7%90%86/" class="post-meta-item leancloud_visitors" data-flag-title="MYSQL执行和内部优化原理" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E6%89%A7%E8%A1%8C%E5%92%8C%E5%86%85%E9%83%A8%E4%BC%98%E5%8C%96%E5%8E%9F%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL%E6%89%A7%E8%A1%8C%E5%92%8C%E5%86%85%E9%83%A8%E4%BC%98%E5%8C%96%E5%8E%9F%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="toc">
+<!-- toc -->
+<ul>
+<li><a href="#mysql-zhi-xing-cha-xun-de-guo-cheng">mysql执行查询的过程</a>
+<ul>
+<li><a href="#yi-ke-hu-duan-fa-cha-xun-qing-qiu-dao-fu-wu-duan-zhi-jian-de-yuan-li">一、客户端发查询请求到服务端之间的原理</a></li>
+<li><a href="#er-you-xian-cha-xun-huan-cun">二、优先查询缓存</a></li>
+<li><a href="#san-cha-xun-qian-zuo-yu-ju-you-hua-chu-li">三、查询前做语句优化处理</a>
+<ul>
+<li><a href="#1-yu-fa-jie-xi-qi-he-yu-chu-li">1.语法解析器和预处理</a></li>
+<li><a href="#2-cha-xun-you-hua-qi-chong-dian">2.查询优化器(重点）</a>
+<ul>
+<li><a href="#mysql-de-you-hua-lei-xing">mysql的优化类型</a></li>
+</ul>
+</li>
+<li><a href="#3-shu-ju-he-suo-yin-de-tong-ji-xin-xi">3.数据和索引的统计信息</a></li>
+<li><a href="#4-mysql-dui-guan-lian-cha-xun-de-zhi-xing">4.MYSQL对关联查询的执行</a></li>
+<li><a href="#5-zhi-xing-shu-you-hua">5. 执行树优化</a></li>
+<li><a href="#6-guan-lian-cha-xun-you-hua-qi">6. 关联查询优化器</a></li>
+<li><a href="#7-pai-xu-you-hua">7.排序优化</a></li>
+</ul>
+</li>
+<li><a href="#si-zhen-zheng-zhi-xing-cha-xun-ji-hua">四、真正执行查询计划</a></li>
+<li><a href="#wu-fan-hui-jie-guo-gei-ke-hu-duan">五、返回结果给客户端</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+</div> 
+<p>[toc]</p>
+<h1><span id="mysql-zhi-xing-cha-xun-de-guo-cheng">mysql执行查询的过程</span><a href="#mysql-zhi-xing-cha-xun-de-guo-cheng" class="header-anchor">#</a></h1>
+<p><img src="/images/MYSQL%E6%89%A7%E8%A1%8C%E5%92%8C%E5%86%85%E9%83%A8%E4%BC%98%E5%8C%96%E5%8E%9F%E7%90%86/d07d12af7b4cd173bb9275fd8ef0e6e6ea2a8aca.png" alt="d07d12af7b4cd173bb9275fd8ef0e6e6ea2a8aca"></p>
+<ol>
+<li>客户端先发送查询语句给服务器</li>
+<li>服务器检查缓存，如果存在则返回</li>
+<li>进行sql解析，生成解析树，再预处理，生成第二个解析树，最后再经过优化器，生成真正的执行计划</li>
+<li>根据执行计划，调用存储引擎的API来执行查询</li>
+<li>将结果返回给客户端。</li>
+</ol>
+<p>下面是详解</p>
+<h2><span id="yi-ke-hu-duan-fa-cha-xun-qing-qiu-dao-fu-wu-duan-zhi-jian-de-yuan-li">一、客户端发查询请求到服务端之间的原理</span><a href="#yi-ke-hu-duan-fa-cha-xun-qing-qiu-dao-fu-wu-duan-zhi-jian-de-yuan-li" class="header-anchor">#</a></h2>
+<ul>
+<li>客户端和服务端之间是半双工的， 即一个通道内只能一个在发一个接收， 不能同时互相发互相接收</li>
+<li>客户端只会发送一个数据包给服务端，并不会在应用层拆成2个数据包去发（max_allowed_packet可以设置数据包最大长）， 这关系到sql语句不能太长。</li>
+<li>服务端返回给客户端可以有多个数据包， 但是客户端必须完整接收，不能接到一半停掉连接或用连接去做其他事（UI界面可以操作，不同的线程）</li>
+<li>例如java，如果没设置fetchSize，那么都是一次性把结果读进内存。当你使用resultSet的时候，其实已经全部进来了，而不是一条条从服务端获取。————使用fetch Size边读边处理的坏处： 服务端占用的资源时间变久了。</li>
+</ul>
+<p><strong>查询mysql服务此时的状态：</strong></p>
+<p>使用 <em><strong>show full processlist</strong></em> 命令可以查看mysql服务端某些线程的状态</p>
+<ul>
+<li>Sleep  正在等待客户端发送新的请求</li>
+<li>Query 正在执行查询， 或者发结果发给客户端</li>
+<li>Locked  正在等待表锁（注意表锁是服务器层的， 而行锁是存储引擎层的，行锁时状态为query）</li>
+<li>Analyzing and statistics  正在生成查询的计划或者收集统计信息</li>
+<li>copying to tmp table  临时表操作，一般是正在做group by等操作</li>
+<li>sorting result  正在对结果集做排序</li>
+<li>sending data 正在服务器线程之间传数据</li>
+</ul>
+<h2><span id="er-you-xian-cha-xun-huan-cun">二、优先查询缓存</span><a href="#er-you-xian-cha-xun-huan-cun" class="header-anchor">#</a></h2>
+<ul>
+<li>缓存的查询在sql解析之前进行。</li>
+<li>缓存的查找通过一个 对大小写敏感的哈希表实现，即直接比对sql字符串。</li>
+<li>因此只要有一个字节不同，都不会匹配中。（毕竟还没开始解析，大小写什么的他也不知道要不要区分）</li>
+<li>第7章中有更详细的查询缓存。</li>
+</ul>
+<h2><span id="san-cha-xun-qian-zuo-yu-ju-you-hua-chu-li">三、查询前做语句优化处理</span><a href="#san-cha-xun-qian-zuo-yu-ju-you-hua-chu-li" class="header-anchor">#</a></h2>
+<h3><span id="1-yu-fa-jie-xi-qi-he-yu-chu-li">1.语法解析器和预处理</span><a href="#1-yu-fa-jie-xi-qi-he-yu-chu-li" class="header-anchor">#</a></h3>
+<ul>
+<li>这里就是把sql做解析， 变成一个解析树。解析时会做mysql语法规则验证。</li>
+<li>语法解析器: 检查关键字错误、关键字顺序、引号匹配</li>
+<li>预处理：和元数据关联校验， 检查数据表和列是否存在，解析名字和别名。</li>
+<li>权限校验</li>
+</ul>
+<h3><span id="2-cha-xun-you-hua-qi-chong-dian">2.查询优化器(重点）</span><a href="#2-cha-xun-you-hua-qi-chong-dian" class="header-anchor">#</a></h3>
+<ul>
+<li>mysql可能会生成多种计划， 他会分别计算一个预测成本值，然后选一个成本最小的计划</li>
+<li>计算信息来自于 表的页面个数、索引分布、长度、个数、数据行长度</li>
+<li>因为多种原因，可能不会选择到最优的计划，有偏差</li>
+<li>静态优化和动态优化的区别：<br>
+静态优化类似“编译期优化”，只和语句结构有关，和具体值无关<br>
+动态优化是在运行中去优化的，需要依赖索引行数、where取值，执行次数可能比静态优化要多。</li>
+</ul>
+<h4><span id="mysql-de-you-hua-lei-xing">mysql的优化类型</span><a href="#mysql-de-you-hua-lei-xing" class="header-anchor">#</a></h4>
+<ul>
+<li>关联表（join）的顺序可能会变</li>
+<li>outer join可能会变成内连接</li>
+<li>优化条件表达式， 例如 5=5 AND a&gt;5被简化成a&gt;5</li>
+<li>优化MAX\MIN， 如果是MAX(索引），那么直接拿B+树的第一条或者最后一条即可。</li>
+<li>当发现某个查询或者表达式的结果是可以提前计算出来的时候，就会优化成常数</li>
+<li>索引覆盖，如果只要返回索引列，就不会走到最底层去。</li>
+<li>子查询优化</li>
+<li>提前终止查询（例如LIMIT）</li>
+<li>等值传播： join中可能把左表的where 拿给右表一起用</li>
+<li>IN(1,2,3,4,5,6)这个条件， 并不是简单遍历判断， 会先排序，然后用二分去判断是否存在。</li>
+</ul>
+<h3><span id="3-shu-ju-he-suo-yin-de-tong-ji-xin-xi">3.数据和索引的统计信息</span><a href="#3-shu-ju-he-suo-yin-de-tong-ji-xin-xi" class="header-anchor">#</a></h3>
+<ul>
+<li>统计信息是存储引擎去计算的，不同的存储引擎有不同的统计信息</li>
+<li>服务器层生成查询计划时，会向存储引擎获取这些信息。</li>
+</ul>
+<h3><span id="4-mysql-dui-guan-lian-cha-xun-de-zhi-xing">4.MYSQL对关联查询的执行</span><a href="#4-mysql-dui-guan-lian-cha-xun-de-zhi-xing" class="header-anchor">#</a></h3>
+<ul>
+<li>join查询的本质其实是读取临时表做关联</li>
+<li>例如a inner join b on <a target="_blank" rel="noopener" href="http://a.id=b.id">a.id=b.id</a> where a.xx=y</li>
+</ul>
+<ol>
+<li>遍历a的每一行（此时a表本质上是 select * from a where a.xx=y）</li>
+<li>在那行中a的id被定下来， 那么就会去获取一个临时表，临时表为（select * from b where <a target="_blank" rel="noopener" href="http://a.id">a.id</a> = id）</li>
+<li>接着用这个临时表和a那一行拼接，输出多行。</li>
+<li>然后再用这里的结果作为临时表，给更上层的关联去用（嵌套查询的含义）。</li>
+</ol>
+<ul>
+<li>如果是left join，则就是临时表如果为空，则给a那一行拼接一个null。</li>
+</ul>
+<h3><span id="5-zhi-xing-shu-you-hua">5. 执行树优化</span><a href="#5-zhi-xing-shu-you-hua" class="header-anchor">#</a></h3>
+<p><img src="/images/MYSQL%E6%89%A7%E8%A1%8C%E5%92%8C%E5%86%85%E9%83%A8%E4%BC%98%E5%8C%96%E5%8E%9F%E7%90%86/d8e575f3226ca6bd15ed537fc2af07a297ce5c7a.png" alt="d8e575f3226ca6bd15ed537fc2af07a297ce5c7a"></p>
+<h3><span id="6-guan-lian-cha-xun-you-hua-qi">6. 关联查询优化器</span><a href="#6-guan-lian-cha-xun-you-hua-qi" class="header-anchor">#</a></h3>
+<ul>
+<li>join实际执行的顺序会关系到性能</li>
+<li>例如a\b\c三个表关联， 可能先让a和b关联得到的临时表里的记录只有10条， 而如果让a和c先关联，会有10000条， 那么后面的效率就会截然不同</li>
+<li>EXPLAIN EXTENDED可以展示关联的顺序</li>
+<li>STRAIGHT_JOIN可以手动指定关联顺序</li>
+<li>mysql自己会评估搜索一个最优的顺序， 但如果join表太多，则无法搜完所有结果（O(n!))， 那时候就会采用贪心。  是否使用贪心算法的边界值可以根据optimizer_seartch_depth去指定。</li>
+</ul>
+<h3><span id="7-pai-xu-you-hua">7.排序优化</span><a href="#7-pai-xu-you-hua" class="header-anchor">#</a></h3>
+<ul>
+<li>如果排序的量小，就用内存快速排序；如果排序的量大，就用文件排序</li>
+<li>mysql有2种取排序数据的方式：</li>
+</ul>
+<ol>
+<li>两次传输排序：  先取要排序的字段加行序号，按照字段排序好之后，再根据行索引一条条取读<br>
+优点: 排序时占用内存小。<br>
+缺点: 排序之后读的过程会很慢，根据行序号取读不是很方便</li>
+<li>单次传输排序： 直接把行读出来（行里只有需要用的列，不一定是整行） ，然后排序<br>
+优点: 把全部行读出来相当于顺序IO，读取速度快<br>
+缺点: 可能会很大导致需要文件排序</li>
+</ol>
+<ul>
+<li>关联查询order by的注意事项<br>
+如果order by的列 <em><strong>都</strong></em> 来自关联的 <em><strong>第一张</strong></em>  表，则直接第一张表join的时候就排序了。<br>
+除此之外！！ 都是全部join完，再排序！ 就算用了limit，也是全部join+排序后， 再limit的！</li>
+</ul>
+<h2><span id="si-zhen-zheng-zhi-xing-cha-xun-ji-hua">四、真正执行查询计划</span><a href="#si-zhen-zheng-zhi-xing-cha-xun-ji-hua" class="header-anchor">#</a></h2>
+<ul>
+<li>执行计划是一个数据结构</li>
+</ul>
+<h2><span id="wu-fan-hui-jie-guo-gei-ke-hu-duan">五、返回结果给客户端</span><a href="#wu-fan-hui-jie-guo-gei-ke-hu-duan" class="header-anchor">#</a></h2>
+<ul>
+<li>用tcp封包并逐步传送，而不是全部准备好再发送。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1819,7 +2730,7 @@ mysql此时就会从某个自增表中申请一个主键，当申请成功之后
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-02-27 23:31:54" itemprop="dateModified" datetime="2024-02-27T23:31:54+08:00">2024-02-27</time>
+                <time title="修改时间：2024-03-24 23:42:18" itemprop="dateModified" datetime="2024-03-24T23:42:18+08:00">2024-03-24</time>
               </span>
 
           
@@ -1876,475 +2787,6 @@ mysql此时就会从某个自增表中申请一个主键，当申请成功之后
 <a href="/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E6%95%B0%E4%BD%8DDP/" title="数位dp">数位dp</a><br>
 <a href="/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E7%AE%97%E6%B3%95%E9%A2%98%E5%B8%B8%E8%A7%81%E6%83%85%E5%86%B5%E5%BA%94%E5%AF%B9%E6%80%9D%E8%B7%AF/" title="算法题常见情况应对思路">算法题常见情况应对思路</a><br>
 <a href="/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E7%BB%84%E5%90%88%E6%95%B0/" title="组合数（排列组合）">组合数（排列组合）</a><br>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/%E7%BD%91%E7%BB%9C%E5%A8%81%E8%83%81%E5%88%86%E6%9E%90%E5%92%8C%E5%BA%94%E5%AF%B9%E6%96%B9%E5%BC%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/%E7%BD%91%E7%BB%9C%E5%A8%81%E8%83%81%E5%88%86%E6%9E%90%E5%92%8C%E5%BA%94%E5%AF%B9%E6%96%B9%E5%BC%8F/" class="post-title-link" itemprop="url">网络威胁分析和应对方式</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-08-21 00:30:12 / 修改时间：00:57:04" itemprop="dateCreated datePublished" datetime="2022-08-21T00:30:12+08:00">2022-08-21</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">后台开发知识</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">网络安全</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/%E7%BD%91%E7%BB%9C%E5%A8%81%E8%83%81%E5%88%86%E6%9E%90%E5%92%8C%E5%BA%94%E5%AF%B9%E6%96%B9%E5%BC%8F/" class="post-meta-item leancloud_visitors" data-flag-title="网络威胁分析和应对方式" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/%E7%BD%91%E7%BB%9C%E5%A8%81%E8%83%81%E5%88%86%E6%9E%90%E5%92%8C%E5%BA%94%E5%AF%B9%E6%96%B9%E5%BC%8F/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E5%BA%94%E7%94%A8/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/%E7%BD%91%E7%BB%9C%E5%A8%81%E8%83%81%E5%88%86%E6%9E%90%E5%92%8C%E5%BA%94%E5%AF%B9%E6%96%B9%E5%BC%8F/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#spoofing-fang-mou-ren-zheng">Spoofing 仿冒—&gt;认证</a></li>
-<li><a href="#tampering-cuan-gai-wan-zheng-xing">Tampering 篡改—&gt;完整性</a></li>
-<li><a href="#repudiation-di-lai-fou-ren-zuo-guo-de-shi-fang-di-lai">Repudiation 抵赖，否认做过的事—&gt;防抵赖</a></li>
-<li><a href="#imformation-disclosure-xin-xi-xie-lu-ji-mi-xing">Imformation Disclosure 信息泄露—&gt;机密性</a></li>
-<li><a href="#denial-of-service-ju-jue-fu-wu-ke-yong-xing">Denial of Service 拒绝服务—&gt;可用性</a></li>
-<li><a href="#elevation-of-privilege-quan-xian-ti-sheng-shou-quan">Elevation of privilege 权限提升—&gt;授权</a></li>
-<li><a href="#privacy-yin-si-tuo-min">Privacy隐私—&gt;脱敏</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="spoofing-fang-mou-gt-ren-zheng">Spoofing 仿冒—&gt;认证</span><a href="#spoofing-fang-mou-gt-ren-zheng" class="header-anchor">#</a></h1>
-<p>搞一个克隆的手机号， 接入到公用wifi中看违反视频干违法之事，然后另一个人背锅了 （ 外部交互方）—— 手机短信验证码接入， 或者ssl证书双向认证</p>
-<p>公用wifi被我替换成了仿冒的同名假wifi， 其他手机就误接进来了，我就能偷偷知道谁在下小黄片了 （处理过程）， 或者是搞了个假的淘宝，让别人点进来—— ssl双向认证</p>
-<h1><span id="tampering-cuan-gai-gt-wan-zheng-xing">Tampering 篡改—&gt;完整性</span><a href="#tampering-cuan-gai-gt-wan-zheng-xing" class="header-anchor">#</a></h1>
-<p>服务器的监听特性被纂改?（处理过程）—— 校验端口正确，配置文件mac对比，mac存到服务端</p>
-<p>直接再数据库里修改你的个人信息或者金钱（存储）——acl权限控制</p>
-<p>某app偷偷修改你的host，把你想发给华为的数据发送到黑客的服务器上了。（数据流) —— acl权限认证，host不可更改，或者文件mac对比</p>
-<h1><span id="repudiation-di-lai-fou-ren-zuo-guo-de-shi-gt-fang-di-lai">Repudiation 抵赖，否认做过的事—&gt;防抵赖</span><a href="#repudiation-di-lai-fou-ren-zuo-guo-de-shi-gt-fang-di-lai" class="header-anchor">#</a></h1>
-<p>有人用root登录后干了rm -rf 这事， 却说自己没做过，你查不到我（外部交互方) ——审计日志</p>
-<p>修改日志记录函数（例如替换jar包之类的）， 日志故意不记录自己的名字 （ 处理过程）——认证</p>
-<p>直接去存储的地方修改日志信息（存储过程， 只有日志会存盘才有可能）——认证</p>
-<h1><span id="imformation-disclosure-xin-xi-xie-lu-gt-ji-mi-xing">Imformation Disclosure 信息泄露—&gt;机密性</span><a href="#imformation-disclosure-xin-xi-xie-lu-gt-ji-mi-xing" class="header-anchor">#</a></h1>
-<p>从app的应用启动目录找到一个二进制文件，可以解密处密钥（处理过程）——加密</p>
-<p>入侵数据库里。可以找到明文口令（存储过程）——加密</p>
-<p>明文口令直接加在http中， 然后被人直接抓包拿到口令了（数据流）——加密</p>
-<h1><span id="denial-of-service-ju-jue-fu-wu-gt-ke-yong-xing">Denial of Service 拒绝服务—&gt;可用性</span><a href="#denial-of-service-ju-jue-fu-wu-gt-ke-yong-xing" class="header-anchor">#</a></h1>
-<p>服务器承载不住请求量，内存不足或者cpu爆满（处理过程） ——负载均衡</p>
-<p>疯狂执行写操作，然后磁盘满了（存储过程）——缓存</p>
-<p>故意拦截中间链路，导致数据流中断（数据流）——过滤</p>
-<h1><span id="elevation-of-privilege-quan-xian-ti-sheng-gt-shou-quan">Elevation of privilege 权限提升—&gt;授权</span><a href="#elevation-of-privilege-quan-xian-ti-sheng-gt-shou-quan" class="header-anchor">#</a></h1>
-<p>在处理过程中， 用户权限比实际的高（处理过程）——权限最小化\沙箱</p>
-<h1><span id="privacy-yin-si-gt-tuo-min">Privacy隐私—&gt;脱敏</span><a href="#privacy-yin-si-gt-tuo-min" class="header-anchor">#</a></h1>
-<p>外部交互方： 没有经过用户同意，就收集隐私—— 应该加勾选项告知用户</p>
-<p>数据存储： 直接把用户数据存盘却没有加密或者脱敏—— 数据脱敏、匿名化</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%B9%B6%E6%9F%A5%E9%9B%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%B9%B6%E6%9F%A5%E9%9B%86/" class="post-title-link" itemprop="url">并查集</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-20 23:12:42" itemprop="dateCreated datePublished" datetime="2022-08-20T23:12:42+08:00">2022-08-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-30 00:58:25" itemprop="dateModified" datetime="2022-08-30T00:58:25+08:00">2022-08-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">算法大全</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%9B%BE/" itemprop="url" rel="index"><span itemprop="name">图</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%B9%B6%E6%9F%A5%E9%9B%86/" class="post-meta-item leancloud_visitors" data-flag-title="并查集" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%B9%B6%E6%9F%A5%E9%9B%86/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B/%E7%AE%97%E6%B3%95%E5%A4%A7%E5%85%A8/%E5%B9%B6%E6%9F%A5%E9%9B%86/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>686</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="toc">
-<!-- toc -->
-<ul>
-<li><a href="#gai-nian">概念</a></li>
-<li><a href="#he-xin-si-lu">核心思路：</a></li>
-<li><a href="#dai-ma-mo-ban">代码模板</a></li>
-<li><a href="#xiang-guan-ti-mu">相关题目</a></li>
-</ul>
-<!-- tocstop -->
-</div> 
-<p>[toc]</p>
-<h1><span id="gai-nian">概念</span><a href="#gai-nian" class="header-anchor">#</a></h1>
-<ul>
-<li>
-<p>谁和谁相互关联， 问你最终每个集体或者最多集体有多少人， 或者有多少个集体，用并查集即可。</p>
-</li>
-<li>
-<p>区间合并问题直接上并查集，别整更新左区间，更新右区间这种玩意，很容易错。</p>
-</li>
-</ul>
-<h1><span id="he-xin-si-lu">核心思路：</span><a href="#he-xin-si-lu" class="header-anchor">#</a></h1>
-<ol>
-<li>partent[k] 指k的父亲节点是什么</li>
-<li>每次getParent(k)时， 要通过递归， 将其父节点更新成最上面的父节点，实现并查集的压缩，大大减少了复杂度</li>
-<li>union时， 则随意选一方进行连接</li>
-<li>如何涉及集合中的数量问题，尽量别在union中更新，容易写错，  建议最后全部遍历一边，得到集合中的数量或者价值总数。</li>
-<li>如果一定要union更新，注意顺序，p[p1]] = p2的话，说明p1的父亲变成了p2，那么应该是p2作为被加方，即sum[p2] += sum[p1]，反过来了。且注意在getParent中不需要更新val</li>
-</ol>
-<h1><span id="dai-ma-mo-ban">代码模板</span><a href="#dai-ma-mo-ban" class="header-anchor">#</a></h1>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">   <span class="type">long</span>[] sums;</span><br><span class="line">   <span class="type">int</span>[] parent;    </span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">union</span><span class="params">(<span class="type">int</span> n1, <span class="type">int</span> n2)</span> &#123;</span><br><span class="line">       <span class="type">int</span> <span class="variable">p1</span> <span class="operator">=</span> getParent(n1);</span><br><span class="line">       <span class="type">int</span> <span class="variable">p2</span> <span class="operator">=</span> getParent(n2);</span><br><span class="line">       parent[p1] = p2;</span><br><span class="line">       sums[p2] += sums[p1];</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="type">int</span> <span class="title function_">getParent</span><span class="params">(<span class="type">int</span> num)</span> &#123;</span><br><span class="line">       <span class="type">int</span> <span class="variable">p</span> <span class="operator">=</span> parent[num];</span><br><span class="line">       <span class="keyword">if</span> (p == num) &#123;</span><br><span class="line">           <span class="keyword">return</span> p;</span><br><span class="line">       &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">           p = getParent(p);</span><br><span class="line">       &#125;</span><br><span class="line">       parent[num] = p;</span><br><span class="line">       <span class="keyword">return</span> p;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
-<h1><span id="xiang-guan-ti-mu">相关题目</span><a href="#xiang-guan-ti-mu" class="header-anchor">#</a></h1>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/maximum-segment-sum-after-removals/">6159. 删除操作后的最大子段和 - 力扣（LeetCode）</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://breakdawncoder.com/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/abd.png">
-      <meta itemprop="name" content="breakDawn">
-      <meta itemprop="description" content="君子终日乾乾,夕惕若厉,无咎">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="破晓的知识屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/" class="post-title-link" itemprop="url">第86场双周赛-376名-4题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-20 22:12:42" itemprop="dateCreated datePublished" datetime="2022-08-20T22:12:42+08:00">2022-08-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-21 00:45:44" itemprop="dateModified" datetime="2022-08-21T00:45:44+08:00">2022-08-21</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">力扣周赛记录</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/" class="post-meta-item leancloud_visitors" data-flag-title="第86场双周赛-376名-4题" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B/%E5%8A%9B%E6%89%A3%E5%91%A8%E8%B5%9B%E8%AE%B0%E5%BD%95/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>5.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="/images/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/1661012250432.png" alt="1661012250432"></p>
-<h2><span id="ben-qi-zong-jie">本期总结：</span><a href="#ben-qi-zong-jie" class="header-anchor">#</a></h2>
-<ol>
-<li>
-<p>涉及边界问题一定要自己检查看是否写错了，花1分钟检查总好过避免WA浪费5分钟</p>
-</li>
-<li>
-<p>取余问题一定要注意负数的情况，必须要用加上Mod值直到大于0才能去取余</p>
-</li>
-<li>
-<p>区间合并问题直接上并查集，别整更新左区间，更新右区间这种玩意，很容易错。</p>
-</li>
-</ol>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/minimum-recolors-to-get-k-consecutive-black-blocks/">6156. 得到 K 个黑块的最少涂色次数 - 力扣（LeetCode）</a></p>
-<p>很简单，滑动窗口，而且因为数量够小，直接暴力解决即可，不用做滑动窗口的特殊处理</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">minimumRecolors</span><span class="params">(String blocks, <span class="type">int</span> k)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">min</span> <span class="operator">=</span> Integer.MAX_VALUE;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; blocks.length();i++) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (j = i; j &lt; i+k &amp;&amp;  j &lt; blocks.length();j++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (blocks.charAt(j) == <span class="string">&#x27;W&#x27;</span>) &#123;</span><br><span class="line">                    count++;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (j != i+k) &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            min = Math.min(count, min);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> min;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/time-needed-to-rearrange-a-binary-string/">6157. 二进制字符串重新安排顺序需要的时间 - 力扣（LeetCode）</a></p>
-<p><img src="/images/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/1661012329860.png" alt="1661012329860"></p>
-<p><img src="/images/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/1661012381790.png" alt="1661012381790"></p>
-<p>首先花了几分钟，推断出来最多变化n次（因为每处理一次至少前缀1会增加1个）</p>
-<p>那么直接暴力O(n2)即可</p>
-<p>但是因为边界处理写急了导致出错，我应该自己提交前再检查一下的</p>
-<p>下面是错误的地方：</p>
-<p><img src="/images/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/1661012470616.png" alt="1661012470616"></p>
-<p>i+1==s.length()了，怎么可能添加11， 最多添加1个1才对。</p>
-<p>正确答案：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">secondsToRemoveOccurrences</span><span class="params">(String s)</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">            <span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">            <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (s.charAt(i) == <span class="string">&#x27;0&#x27;</span> &amp;&amp; (i+<span class="number">1</span>!=s.length() &amp;&amp; s.charAt(i + <span class="number">1</span>) == <span class="string">&#x27;1&#x27;</span>)) &#123;</span><br><span class="line">                    sb.append(<span class="string">&quot;10&quot;</span>);</span><br><span class="line">                    i++;</span><br><span class="line">                    count++;</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (s.charAt(i) == <span class="string">&#x27;0&#x27;</span> &amp;&amp; (i+<span class="number">1</span> == s.length() || s.charAt(i + <span class="number">1</span>) == <span class="string">&#x27;0&#x27;</span>)) &#123;</span><br><span class="line">                    sb.append(<span class="string">&quot;0&quot;</span>);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (s.charAt(i) == <span class="string">&#x27;1&#x27;</span> &amp;&amp; (i+<span class="number">1</span> != s.length() &amp;&amp; s.charAt(i + <span class="number">1</span>) == <span class="string">&#x27;1&#x27;</span>)) &#123;</span><br><span class="line">                    sb.append(<span class="string">&quot;11&quot;</span>);</span><br><span class="line">                    i++;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    sb.append(<span class="string">&quot;1&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            s = sb.toString();</span><br><span class="line">            <span class="keyword">if</span> (count == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> res;</span><br><span class="line">            &#125;</span><br><span class="line">            res++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/shifting-letters-ii/">6158. 字母移位 II - 力扣（LeetCode）</a></p>
-<p><img src="/images/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/1661012520347.png" alt="1661012520347"></p>
-<p><img src="/images/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/1661012525774.png" alt="1661012525774"></p>
-<p>做过这类题，和那种任务流的题目类似</p>
-<p>直接记录每个位置有多少起点，多少终点，根据情况进行加或者减。</p>
-<p>但是对于移位的处理有点问题</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; s.length();i++) &#123;</span><br><span class="line">    count += startPlaces[i];</span><br><span class="line">    cs[i] = (<span class="type">char</span>)((s.charAt(i) -<span class="string">&#x27;a&#x27;</span> + count)%<span class="number">26</span> + <span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">    count += endPlaces[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>看似很对， 却忘记了 负数取余也是负数。。</p>
-<p>对负数取余应当通过加上26的倍数让他大于0才对。于是改成下面这样得到移位后的字符：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span> <span class="title function_">getMod</span><span class="params">(<span class="type">char</span> c, <span class="type">int</span> count)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">num</span> <span class="operator">=</span> c - <span class="string">&#x27;a&#x27;</span>  + count;</span><br><span class="line">    <span class="keyword">if</span> (num &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">mul</span> <span class="operator">=</span> num / <span class="number">26</span>;</span><br><span class="line">        num += (mul+<span class="number">2</span>)*<span class="number">26</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    num %= <span class="number">26</span>;</span><br><span class="line">    <span class="keyword">return</span> (<span class="type">char</span>)(num + <span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>结果还是错</p>
-<p>因为我忘记了num是负数的时候，num/26也是负数。。应该要加一个Math.abs</p>
-<p>正确做法如下getMod：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="type">char</span> <span class="title function_">getMod</span><span class="params">(<span class="type">char</span> c, <span class="type">int</span> count)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">num</span> <span class="operator">=</span> c - <span class="string">&#x27;a&#x27;</span>  + count;</span><br><span class="line">        <span class="keyword">if</span> (num &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">mul</span> <span class="operator">=</span> Math.abs(num / <span class="number">26</span>);</span><br><span class="line">            num += (mul+<span class="number">1</span>)*<span class="number">26</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        num %= <span class="number">26</span>;</span><br><span class="line">        <span class="keyword">return</span> (<span class="type">char</span>)(num + <span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">shiftingLetters</span><span class="params">(String s, <span class="type">int</span>[][] shifts)</span> &#123;</span><br><span class="line">        <span class="type">int</span>[] startPlaces = <span class="keyword">new</span> <span class="title class_">int</span>[s.length()+<span class="number">1</span>];</span><br><span class="line">        <span class="type">int</span>[] endPlaces = <span class="keyword">new</span> <span class="title class_">int</span>[s.length()+<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; shifts.length;i++) &#123;</span><br><span class="line">            <span class="type">int</span>[] shift = shifts[i];</span><br><span class="line">            startPlaces[shift[<span class="number">0</span>]] += (shift[<span class="number">2</span>] == <span class="number">1</span> ? <span class="number">1</span>: -<span class="number">1</span>);</span><br><span class="line">            endPlaces[shift[<span class="number">1</span>]] += (shift[<span class="number">2</span>] == <span class="number">0</span> ? <span class="number">1</span>: -<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">char</span>[] cs = <span class="keyword">new</span> <span class="title class_">char</span>[s.length()];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; s.length();i++) &#123;</span><br><span class="line">            count += startPlaces[i];</span><br><span class="line">            cs[i] = getMod(s.charAt(i), count);</span><br><span class="line">            count += endPlaces[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">String</span>(cs);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/maximum-segment-sum-after-removals/">6159. 删除操作后的最大子段和 - 力扣（LeetCode）</a></p>
-<p><img src="/images/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/1661012916961.png" alt="1661012916961"></p>
-<p><img src="/images/%E7%AC%AC86%E5%9C%BA%E5%8F%8C%E5%91%A8%E8%B5%9B-376%E5%90%8D-4%E9%A2%98/1661012929643.png" alt="1661012929643">、</p>
-<p>这题又是做过类似的题，删点的题目可以反过来变成加点。</p>
-<p>即从后往前逐步遍历，新增，逐步合并区间</p>
-<p>结果还是用了错误的方式去更新，想着直接更新左右两个索引的sum值即可</p>
-<p>实际上你要更新的应该是左边索引的最左点， 右边索引的最右点才对，而且每次合并都要修改左右的最左点或者最右点，非常麻烦，如下中间那4个if， 绕来绕去，注定要搞一次WA才能知道问题，非常不对劲：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">long</span>[] maximumSegmentSum(<span class="type">int</span>[] nums, <span class="type">int</span>[] removeQueries) &#123;</span><br><span class="line">        <span class="type">long</span>[] sums = <span class="keyword">new</span> <span class="title class_">long</span>[nums.length];</span><br><span class="line">        <span class="type">long</span>[] results = <span class="keyword">new</span> <span class="title class_">long</span>[nums.length];</span><br><span class="line">        <span class="type">int</span>[] lefts = <span class="keyword">new</span> <span class="title class_">int</span>[nums.length];</span><br><span class="line">        <span class="type">int</span>[] rights = <span class="keyword">new</span> <span class="title class_">int</span>[nums.length];</span><br><span class="line">        <span class="type">long</span> <span class="variable">maxNum</span> <span class="operator">=</span> Long.MIN_VALUE;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> removeQueries.length-<span class="number">1</span>;i&gt;=<span class="number">1</span>;i--) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> removeQueries[i];</span><br><span class="line">            <span class="type">long</span> <span class="variable">leftSum</span> <span class="operator">=</span> index-<span class="number">1</span> &gt;= <span class="number">0</span> ? sums[index-<span class="number">1</span>] :<span class="number">0</span>;</span><br><span class="line">            <span class="type">long</span> <span class="variable">rightSum</span> <span class="operator">=</span> index + <span class="number">1</span> &lt; nums.length ? sums[index+<span class="number">1</span>] : <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">            <span class="type">long</span> <span class="variable">sum</span> <span class="operator">=</span> leftSum + rightSum + nums[index];</span><br><span class="line">            lefts[index] = rights[index] = index;</span><br><span class="line">            sums[index] = sum;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (leftSum &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                lefts[index] = lefts[index-<span class="number">1</span>];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (rightSum &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                rights[index] = rights[index+<span class="number">1</span>];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (leftSum &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                rights[lefts[index]] = rights[index];</span><br><span class="line">                sums[lefts[index]] = sum;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (rightSum &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                lefts[rights[index]] = lefts[index];</span><br><span class="line">                sums[rights[index]] = sum;</span><br><span class="line">            &#125;</span><br><span class="line">            maxNum = Math.max(maxNum, sum);</span><br><span class="line">            results[i-<span class="number">1</span>] = maxNum;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> results;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这种合并的题目就别取巧了， 直接并查集走起</p>
-<p>注意并查集合并时，涉及val的合并， 在getParent中不需要更新val</p>
-<p>在union中，注意顺序，p[p1]] = p2的话，说明p1的父亲变成了p2，那么应该是p2作为被加方，即sum[p2] += sum[p1]，反过来了</p>
-<p>另外注意要先取变量，不要直接基于函数去搞，下面这样是错误的！因为第一步之后已经发生变成了：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">union</span><span class="params">(<span class="type">int</span> n1, <span class="type">int</span> n2)</span> &#123;</span><br><span class="line">    parent[getParent(n1)] = getParent(n2);</span><br><span class="line">    sums[getParent(n2)] += sums[getParent(n1)];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>应该是：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">union</span><span class="params">(<span class="type">int</span> n1, <span class="type">int</span> n2)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">p1</span> <span class="operator">=</span> getParent(n1);</span><br><span class="line">    <span class="type">int</span> <span class="variable">p2</span> <span class="operator">=</span> getParent(n2);</span><br><span class="line">    parent[p1] = p2;</span><br><span class="line">    sums[p2] += sums[p1];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>并查集正确做法：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="type">long</span>[] sums;</span><br><span class="line">    <span class="type">int</span>[] parent;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">long</span>[] maximumSegmentSum(<span class="type">int</span>[] nums, <span class="type">int</span>[] removeQueries) &#123;</span><br><span class="line">        <span class="type">long</span>[] results = <span class="keyword">new</span> <span class="title class_">long</span>[nums.length];</span><br><span class="line">        sums = <span class="keyword">new</span> <span class="title class_">long</span>[nums.length];</span><br><span class="line">        <span class="type">long</span> <span class="variable">maxNum</span> <span class="operator">=</span> Long.MIN_VALUE;</span><br><span class="line">        parent = <span class="keyword">new</span> <span class="title class_">int</span>[nums.length];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; parent.length;i++) &#123;</span><br><span class="line">            parent[i] = i;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> removeQueries.length-<span class="number">1</span>;i&gt;=<span class="number">1</span>;i--) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> removeQueries[i];</span><br><span class="line"></span><br><span class="line">            <span class="type">long</span> <span class="variable">leftSum</span> <span class="operator">=</span> index-<span class="number">1</span> &gt;= <span class="number">0</span> ? sums[getParent(index-<span class="number">1</span>)] :<span class="number">0</span>;</span><br><span class="line">            <span class="type">long</span> <span class="variable">rightSum</span> <span class="operator">=</span> index + <span class="number">1</span> &lt; nums.length ? sums[getParent(index+<span class="number">1</span>)] : <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">            sums[index] = nums[index];</span><br><span class="line">            <span class="keyword">if</span> (leftSum &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                union(index-<span class="number">1</span>, index);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (rightSum &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                union(index, index+<span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            maxNum = Math.max(maxNum, sums[getParent(index)]);</span><br><span class="line">            results[i-<span class="number">1</span>] = maxNum;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> results;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">union</span><span class="params">(<span class="type">int</span> n1, <span class="type">int</span> n2)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">p1</span> <span class="operator">=</span> getParent(n1);</span><br><span class="line">        <span class="type">int</span> <span class="variable">p2</span> <span class="operator">=</span> getParent(n2);</span><br><span class="line">        parent[p1] = p2;</span><br><span class="line">        sums[p2] += sums[p1];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> <span class="title function_">getParent</span><span class="params">(<span class="type">int</span> num)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">p</span> <span class="operator">=</span> parent[num];</span><br><span class="line">        <span class="keyword">if</span> (p == num) &#123;</span><br><span class="line">            <span class="keyword">return</span> p;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            p = getParent(p);</span><br><span class="line">        &#125;</span><br><span class="line">        parent[num] = p;</span><br><span class="line">        <span class="keyword">return</span> p;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -2431,7 +2873,7 @@ mysql此时就会从某个自增表中申请一个主键，当申请成功之后
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">287</span>
+          <span class="site-state-item-count">290</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -2499,7 +2941,7 @@ mysql此时就会从某个自增表中申请一个主键，当申请成功之后
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共364.8k字</span>
+  <span class="post-count">博客全站共366.1k字</span>
 </div>
 
         
